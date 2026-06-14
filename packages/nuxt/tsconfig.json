@@ -1,0 +1,14 @@
+{
+  "extends": "../../tooling/tsconfig/dom.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "paths": {
+      "@forge-ui/vue": ["../vue/src/index.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "../vue" }]
+}

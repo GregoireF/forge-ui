@@ -1,0 +1,38 @@
+{
+  "name": "@forge-ui/nuxt",
+  "version": "0.0.0",
+  "private": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/module.d.ts",
+      "import": "./dist/module.js",
+      "require": "./dist/module.cjs"
+    }
+  },
+  "main": "./dist/module.cjs",
+  "module": "./dist/module.js",
+  "types": "./dist/module.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun run ../../tooling/scripts/build-nuxt.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "@forge-ui/vue": "*",
+    "nuxt": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@forge-ui/vue": "workspace:*",
+    "@nuxt/kit": "^4.0.0",
+    "@nuxt/schema": "^4.0.0",
+    "nuxt": "^4.0.0",
+    "typescript": "*",
+    "vitest": "*"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/primitives/dialog" },
+    { "path": "./packages/react" },
+    { "path": "./packages/vue" },
+    { "path": "./packages/nuxt" }
+  ]
+}

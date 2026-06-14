@@ -1,0 +1,46 @@
+{
+  "name": "forge-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "bun@1.2.1",
+  "workspaces": [
+    "packages/*",
+    "packages/primitives/*",
+    "apps/*",
+    "e2e"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test --filter=!e2e",
+    "test:e2e": "bun run --cwd e2e test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "prepare": "lefthook install",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "release": "turbo run build && changeset publish"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@changesets/cli": "^2.27.0",
+    "@commitlint/cli": "^19.0.0",
+    "@gregoiref/changeset-config": "^1.0.0",
+    "@gregoiref/commitlint-config": "^1.0.0",
+    "@gregoiref/tsconfig": "^1.0.0",
+    "@playwright/test": "^1.48.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@vitest/coverage-v8": "^4.0.0",
+    "happy-dom": "^15.7.0",
+    "lefthook": "^1.7.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.0.0"
+  }
+}

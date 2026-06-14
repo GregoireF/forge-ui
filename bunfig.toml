@@ -1,0 +1,8 @@
+[install]
+exact = false
+
+[install.cache]
+disable = false
+
+[install.scopes]
+"@gregoiref" = { url = "https://npm.pkg.github.com/", token = "$GITHUB_TOKEN" }

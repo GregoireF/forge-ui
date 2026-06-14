@@ -1,0 +1,15 @@
+{
+  "extends": "../../tooling/tsconfig/react.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "paths": {
+      "@forge-ui/core": ["../core/src/index.ts"],
+      "@forge-ui/dialog": ["../primitives/dialog/src/index.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "tests"],
+  "references": [{ "path": "../core" }, { "path": "../primitives/dialog" }]
+}
