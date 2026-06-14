@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config/schema.json",
-  "changelog": ["@gregoiref/changeset-config/changelog", { "repo": "GregoireF/forge-ui" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "GregoireF/forge-ui" }],
   "commit": false,
   "fixed": [],
   "linked": [],
