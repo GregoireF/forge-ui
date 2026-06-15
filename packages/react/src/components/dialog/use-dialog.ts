@@ -14,6 +14,19 @@ export function useDialog(options: UseDialogOptions = {}) {
   const id = options.id ?? reactId.replace(/:/g, "");
 
   const [machine] = useState(() => createDialogMachine({ id, ...options }));
+
+  // Sync controlled open prop during render so useSyncExternalStore captures the
+  // correct state on the first render — no second render cycle per prop change.
+  // machine.start() must be called first (idempotent; also called in useMachine)
+  // because machine.send is a no-op while the machine is stopped.
+  machine.start();
+  if (options.open !== undefined) {
+    const machineIsOpen = machine.getSnapshot().matches("open");
+    if (options.open !== machineIsOpen) {
+      machine.send(options.open ? "OPEN" : "CLOSE");
+    }
+  }
+
   const [snapshot, send] = useMachine(machine);
 
   return {

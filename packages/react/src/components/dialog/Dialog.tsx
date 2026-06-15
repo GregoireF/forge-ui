@@ -32,12 +32,6 @@ function Root({ children, open: openProp, defaultOpen, ...opts }: DialogRootProp
     ...(openProp !== undefined && { open: openProp }),
   });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable
-  useLayoutEffect(() => {
-    if (openProp === undefined) return;
-    api.setOpen(openProp);
-  }, [openProp]);
-
   return <DialogCtx.Provider value={api}>{children}</DialogCtx.Provider>;
 }
 
@@ -158,10 +152,15 @@ function Content({
           "[forge-ui/dialog] Missing accessible name: mount <Dialog.Title> inside <Dialog.Content>, or pass aria-label / aria-labelledby to <Dialog.Content>.",
         );
       }
+      if (!api.descriptionRegistered && !rest["aria-describedby"]) {
+        console.warn(
+          "[forge-ui/dialog] Missing description: add <Dialog.Description> inside <Dialog.Content>, or pass aria-describedby. Descriptions help users understand the dialog's purpose.",
+        );
+      }
     });
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api.isOpen, api.titleRegistered]);
+  }, [api.isOpen, api.titleRegistered, api.descriptionRegistered]);
 
   // Sync content-level event callbacks into the machine so activities pick them up.
   // Content-level callbacks take precedence over Root-level ones.

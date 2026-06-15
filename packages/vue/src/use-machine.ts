@@ -1,5 +1,5 @@
 import type { EventObject, MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import { onUnmounted, shallowRef } from "vue";
+import { onScopeDispose, shallowRef } from "vue";
 
 /**
  * Binds a machine instance to Vue's reactivity via shallowRef.
@@ -19,7 +19,9 @@ export function useMachine<
     snapshot.value = s;
   });
 
-  onUnmounted(() => {
+  // onScopeDispose fires on both client unmount and server-side scope disposal
+  // (Nuxt SSR), preventing machine instances from leaking across requests.
+  onScopeDispose(() => {
     unsubscribe();
     machine.stop();
   });
