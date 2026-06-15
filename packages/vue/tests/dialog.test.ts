@@ -77,13 +77,11 @@ describe("useDialog (Vue)", () => {
       expect(screen.getByTestId("trigger")).toHaveAttribute("aria-expanded", "true");
     });
 
-    it("dialog has role=dialog, aria-modal, aria-labelledby, aria-describedby", async () => {
+    it("dialog has role=dialog and aria-modal", async () => {
       render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       const dialog = screen.getByRole("dialog");
       expect(dialog).toHaveAttribute("aria-modal", "true");
-      expect(dialog).toHaveAttribute("aria-labelledby", "test-dialog-title");
-      expect(dialog).toHaveAttribute("aria-describedby", "test-dialog-description");
     });
   });
 
@@ -192,6 +190,27 @@ describe("useDialog (Vue)", () => {
       expect(screen.getByRole("dialog")).toBeInTheDocument();
       await user.click(screen.getByTestId("close"));
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("aria-labelledby and aria-describedby are set when Title and Description are mounted", async () => {
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose },
+        template: `
+          <DialogRoot id="test-aria-ids">
+            <DialogTrigger data-testid="trigger">Open</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Title</DialogTitle>
+              <DialogDescription>Desc</DialogDescription>
+              <DialogClose data-testid="close">×</DialogClose>
+            </DialogContent>
+          </DialogRoot>
+        `,
+      });
+      render(Fixture);
+      await user.click(screen.getByTestId("trigger"));
+      const dialog = screen.getByRole("dialog");
+      expect(dialog).toHaveAttribute("aria-labelledby", "test-aria-ids-title");
+      expect(dialog).toHaveAttribute("aria-describedby", "test-aria-ids-description");
     });
 
     it("Content with forceMount stays in DOM when closed", () => {

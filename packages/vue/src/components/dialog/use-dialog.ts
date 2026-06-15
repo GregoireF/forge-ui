@@ -1,10 +1,13 @@
 import type { CreateDialogMachineOptions } from "@forge-ui/dialog";
+import type { DialogContentCallbacks } from "@forge-ui/dialog";
 import { connectDialog, createDialogMachine } from "@forge-ui/dialog";
 import { computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseDialogOptions extends Omit<CreateDialogMachineOptions, "id"> {
   id?: string;
+  /** Uncontrolled initial open state. Use instead of open when you don't need external state. */
+  defaultOpen?: boolean;
 }
 
 export function useDialog(options: UseDialogOptions = {}) {
@@ -27,10 +30,11 @@ export function useDialog(options: UseDialogOptions = {}) {
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
     getTriggerProps: () => api.value.getTriggerProps(),
     getOverlayProps: () => api.value.getOverlayProps(),
-    getBackdropProps: () => api.value.getBackdropProps(),
     getContentProps: () => api.value.getContentProps(),
     getTitleProps: () => api.value.getTitleProps(),
     getDescriptionProps: () => api.value.getDescriptionProps(),
     getCloseProps: () => api.value.getCloseProps(),
+    setContentCallbacks: (callbacks: DialogContentCallbacks) =>
+      api.value.setContentCallbacks(callbacks),
   };
 }

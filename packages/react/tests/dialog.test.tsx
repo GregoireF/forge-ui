@@ -90,8 +90,23 @@ describe("useDialog (React)", () => {
       await user.click(screen.getByTestId("trigger"));
       const dialog = screen.getByRole("dialog");
       expect(dialog).toHaveAttribute("aria-modal", "true");
-      expect(dialog).toHaveAttribute("aria-labelledby", "test-dialog-title");
-      expect(dialog).toHaveAttribute("aria-describedby", "test-dialog-description");
+    });
+
+    it("aria-labelledby and aria-describedby are set when Title and Description are mounted", async () => {
+      render(
+        <Dialog.Root id="test-aria-ids">
+          <Dialog.Trigger data-testid="trigger">Open</Dialog.Trigger>
+          <Dialog.Content>
+            <Dialog.Title>Title</Dialog.Title>
+            <Dialog.Description>Desc</Dialog.Description>
+            <Dialog.Close data-testid="close">×</Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Root>,
+      );
+      await user.click(screen.getByTestId("trigger"));
+      const dialog = screen.getByRole("dialog");
+      expect(dialog).toHaveAttribute("aria-labelledby", "test-aria-ids-title");
+      expect(dialog).toHaveAttribute("aria-describedby", "test-aria-ids-description");
     });
   });
 

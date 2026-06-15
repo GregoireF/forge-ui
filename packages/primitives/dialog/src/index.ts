@@ -1,4 +1,4 @@
-export type { DialogApi } from "./dialog.connect.js";
+export type { DialogApi, DialogContentCallbacks } from "./dialog.connect.js";
 export { connectDialog } from "./dialog.connect.js";
 export type { CreateDialogMachineOptions } from "./dialog.machine.js";
 export { createDialogMachine } from "./dialog.machine.js";

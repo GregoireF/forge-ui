@@ -1,5 +1,5 @@
 import type { ComponentPublicInstance, PropType } from "vue";
-import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch } from "vue";
+import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch, watchEffect } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "./DialogPortal.js";
 import { dialogKey } from "./dialog-context.js";
@@ -22,6 +22,8 @@ const DialogRoot = defineComponent({
   name: "ForgeDialogRoot",
   props: {
     open: { type: Boolean as PropType<boolean>, default: undefined },
+    /** Uncontrolled initial open state. */
+    defaultOpen: { type: Boolean as PropType<boolean>, default: undefined },
     modal: { type: Boolean as PropType<boolean>, default: undefined },
     role: { type: String as PropType<"dialog" | "alertdialog">, default: undefined },
     trapFocus: { type: Boolean as PropType<boolean>, default: undefined },
@@ -57,6 +59,7 @@ const DialogRoot = defineComponent({
   setup(props, { slots, emit }) {
     const api = useDialog({
       ...(props.id !== undefined && { id: props.id }),
+      ...(props.defaultOpen !== undefined && { defaultOpen: props.defaultOpen }),
       ...(props.open !== undefined && { open: props.open }),
       ...(props.modal !== undefined && { modal: props.modal }),
       ...(props.role !== undefined && { role: props.role }),
@@ -169,6 +172,7 @@ const DialogOverlay = defineComponent({
 
 // ---------------------------------------------------------------------------
 // Content — Presence-aware.
+// Accepts event callbacks that override Root-level ones when provided.
 // ---------------------------------------------------------------------------
 
 const DialogContent = defineComponent({
@@ -176,10 +180,39 @@ const DialogContent = defineComponent({
   props: {
     forceMount: { type: Boolean, default: false },
     asChild: { type: Boolean, default: false },
+    onOpenAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
+    onCloseAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
+    onPointerDownOutside: {
+      type: Function as PropType<(e: PointerEvent) => void>,
+      default: undefined,
+    },
+    onFocusOutside: { type: Function as PropType<(e: FocusEvent) => void>, default: undefined },
+    onInteractOutside: {
+      type: Function as PropType<(e: PointerEvent | FocusEvent) => void>,
+      default: undefined,
+    },
+    onEscapeKeyDown: {
+      type: Function as PropType<(e: KeyboardEvent) => void>,
+      default: undefined,
+    },
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
     const { isPresent, presenceRef } = usePresence(api.isOpen);
+
+    // Sync content-level callbacks into the machine whenever props change.
+    watchEffect(() => {
+      api.setContentCallbacks({
+        onOpenAutoFocus: props.onOpenAutoFocus,
+        onCloseAutoFocus: props.onCloseAutoFocus,
+        onPointerDownOutside: props.onPointerDownOutside,
+        onFocusOutside: props.onFocusOutside,
+        onInteractOutside: props.onInteractOutside,
+        onEscapeKeyDown: props.onEscapeKeyDown,
+      });
+    });
+
+    onUnmounted(() => api.setContentCallbacks({}));
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;

@@ -11,7 +11,10 @@ import type { DialogContext, DialogEvent, DialogState } from "./dialog.types.js"
 
 export interface CreateDialogMachineOptions {
   id: string;
+  /** Controlled open state. Pair with onOpenChange to manage externally. */
   open?: boolean;
+  /** Uncontrolled initial open state. Use instead of open when you don't need to manage the state. */
+  defaultOpen?: boolean;
   role?: "dialog" | "alertdialog";
   modal?: boolean;
   trapFocus?: boolean;
@@ -91,8 +94,9 @@ const manageFocus = makeFocusActivity<DialogContext>({
   getContentEl: (ctx) => ctx.contentEl,
   getInitialFocusEl: (ctx) => ctx.initialFocusEl?.() ?? null,
   getFinalFocusEl: (ctx) => ctx.finalFocusEl?.() ?? null,
-  getOnOpenAutoFocus: (ctx) => ctx.onOpenAutoFocus,
-  getOnCloseAutoFocus: (ctx) => ctx.onCloseAutoFocus,
+  // Content-level overrides take precedence over Root-level callbacks.
+  getOnOpenAutoFocus: (ctx) => ctx.contentOnOpenAutoFocus ?? ctx.onOpenAutoFocus,
+  getOnCloseAutoFocus: (ctx) => ctx.contentOnCloseAutoFocus ?? ctx.onCloseAutoFocus,
 });
 
 const trapKeyboard = makeKeyboardActivity<DialogContext>({
@@ -100,7 +104,7 @@ const trapKeyboard = makeKeyboardActivity<DialogContext>({
   getContentEl: (ctx) => ctx.contentEl,
   isModal: (ctx) => ctx.trapFocus,
   sendEscape: "ESCAPE_KEY",
-  getOnEscapeKeyDown: (ctx) => ctx.onEscapeKeyDown,
+  getOnEscapeKeyDown: (ctx) => ctx.contentOnEscapeKeyDown ?? ctx.onEscapeKeyDown,
 });
 
 const hideBackground = makeHideBackgroundActivity<DialogContext>({
@@ -117,9 +121,9 @@ const watchOutside = makeWatchOutsideActivity<DialogContext>({
   getId: (ctx) => ctx.id,
   getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl],
   sendClose: "INTERACT_OUTSIDE",
-  getOnPointerDownOutside: (ctx) => ctx.onPointerDownOutside,
-  getOnFocusOutside: (ctx) => ctx.onFocusOutside,
-  getOnInteractOutside: (ctx) => ctx.onInteractOutside,
+  getOnPointerDownOutside: (ctx) => ctx.contentOnPointerDownOutside ?? ctx.onPointerDownOutside,
+  getOnFocusOutside: (ctx) => ctx.contentOnFocusOutside ?? ctx.onFocusOutside,
+  getOnInteractOutside: (ctx) => ctx.contentOnInteractOutside ?? ctx.onInteractOutside,
 });
 
 // ---------------------------------------------------------------------------
@@ -131,6 +135,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
   const role = options.role ?? "dialog";
   const isAlertDialog = role === "alertdialog";
   const modal = options.modal ?? true;
+  const initialOpen = options.open ?? options.defaultOpen ?? false;
 
   const onEscapeKeyDown = isAlertDialog
     ? makeDefaultAlertOnEscapeKeyDown(options.onEscapeKeyDown)
@@ -143,7 +148,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
     id: `forge-dialog:${id}`,
     context: {
       id,
-      open: options.open ?? false,
+      open: initialOpen,
       role,
       modal,
       trapFocus: options.trapFocus ?? modal,
@@ -169,7 +174,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
       ...(onEscapeKeyDown !== undefined && { onEscapeKeyDown }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
     },
-    initial: options.open ? "open" : "closed",
+    initial: initialOpen ? "open" : "closed",
 
     states: {
       closed: {

@@ -25,8 +25,12 @@ export interface DialogRootProps extends UseDialogOptions {
   children: ReactNode;
 }
 
-function Root({ children, open: openProp, ...opts }: DialogRootProps) {
-  const api = useDialog({ ...opts, ...(openProp !== undefined && { open: openProp }) });
+function Root({ children, open: openProp, defaultOpen, ...opts }: DialogRootProps) {
+  const api = useDialog({
+    ...(defaultOpen !== undefined && { defaultOpen }),
+    ...opts,
+    ...(openProp !== undefined && { open: openProp }),
+  });
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable
   useLayoutEffect(() => {
@@ -47,7 +51,9 @@ export interface DialogTriggerProps extends ButtonHTMLAttributes<HTMLButtonEleme
 
 function Trigger({ asChild, children, ...rest }: DialogTriggerProps) {
   const api = useCtx();
-  const props = { ...api.getTriggerProps(), ...rest };
+  const { "aria-haspopup": hasPopup, ...triggerRest } = api.getTriggerProps();
+  // React's aria-haspopup type set omits "alertdialog" — cast to widen for WAI-ARIA compliance.
+  const props = { ...triggerRest, "aria-haspopup": hasPopup as ButtonHTMLAttributes<HTMLButtonElement>["aria-haspopup"], ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;
 }
@@ -105,16 +111,55 @@ function Overlay({ asChild, forceMount, children, ...rest }: DialogOverlayProps)
 // Content
 // Presence-aware: stays in DOM while exit animation runs.
 // During exit: aria-hidden + pointer-events:none keep content inert.
+// Accepts event callbacks that override Root-level ones when provided.
 // ---------------------------------------------------------------------------
 
 export interface DialogContentProps extends HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
   forceMount?: boolean;
+  /** Override Root-level callback. Called before focusing first element on open. */
+  onOpenAutoFocus?: (e: Event) => void;
+  /** Override Root-level callback. Called before restoring focus on close. */
+  onCloseAutoFocus?: (e: Event) => void;
+  /** Override Root-level callback. Called on pointerdown outside content. */
+  onPointerDownOutside?: (e: PointerEvent) => void;
+  /** Override Root-level callback. Called on focus moving outside content. */
+  onFocusOutside?: (e: FocusEvent) => void;
+  /** Override Root-level callback. Called on any interaction outside (pointer OR focus). */
+  onInteractOutside?: (e: PointerEvent | FocusEvent) => void;
+  /** Override Root-level callback. Called on Escape key press. */
+  onEscapeKeyDown?: (e: KeyboardEvent) => void;
 }
 
-function Content({ asChild, forceMount, children, ...rest }: DialogContentProps) {
+function Content({
+  asChild,
+  forceMount,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
+  onPointerDownOutside,
+  onFocusOutside,
+  onInteractOutside,
+  onEscapeKeyDown,
+  children,
+  ...rest
+}: DialogContentProps) {
   const api = useCtx();
   const { isPresent, presenceRef } = usePresence(api.isOpen);
+
+  // Sync content-level event callbacks into the machine so activities pick them up.
+  // Content-level callbacks take precedence over Root-level ones.
+  useLayoutEffect(() => {
+    api.setContentCallbacks({
+      onOpenAutoFocus,
+      onCloseAutoFocus,
+      onPointerDownOutside,
+      onFocusOutside,
+      onInteractOutside,
+      onEscapeKeyDown,
+    });
+    return () => api.setContentCallbacks({});
+    // biome-ignore lint/correctness/useExhaustiveDependencies: api is stable; callbacks compared by identity
+  }, [api, onOpenAutoFocus, onCloseAutoFocus, onPointerDownOutside, onFocusOutside, onInteractOutside, onEscapeKeyDown]);
 
   if (!forceMount && !isPresent) return null;
 

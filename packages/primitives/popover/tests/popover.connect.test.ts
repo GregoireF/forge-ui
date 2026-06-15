@@ -63,9 +63,17 @@ describe("connectPopover — getContentProps", () => {
     expect(props["aria-modal"]).toBe(false); // modal defaults false for popover
   });
 
-  it("has aria-labelledby pointing to titleId", () => {
+  it("omits aria-labelledby when title is not registered", () => {
     const { api } = makeOpenApi();
-    expect(api.getContentProps()["aria-labelledby"]).toBe("test-title");
+    expect(api.getContentProps()["aria-labelledby"]).toBeUndefined();
+  });
+
+  it("emits aria-labelledby when title is registered", () => {
+    const { machine } = makeOpenApi();
+    machine.send("REGISTER_TITLE");
+    const snapshot = machine.getSnapshot();
+    const updated = connectPopover(snapshot, machine.send.bind(machine), machine);
+    expect(updated.getContentProps()["aria-labelledby"]).toBe("test-title");
   });
 
   it("has data-forge-scope='popover'", () => {

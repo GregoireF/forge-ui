@@ -45,6 +45,11 @@ describe("connectDialog — getTriggerProps", () => {
     expect(api.getTriggerProps()["aria-expanded"]).toBe(true);
   });
 
+  it("aria-haspopup reflects role — 'alertdialog' for alertdialog", () => {
+    const { api } = makeApi({ role: "alertdialog" });
+    expect(api.getTriggerProps()["aria-haspopup"]).toBe("alertdialog");
+  });
+
   it("has data-forge-scope='dialog' and data-forge-part='trigger'", () => {
     const { api } = makeApi();
     const props = api.getTriggerProps();
@@ -67,13 +72,37 @@ describe("connectDialog — getTriggerProps", () => {
 });
 
 describe("connectDialog — getContentProps", () => {
-  it("has correct ARIA attributes", () => {
+  it("omits aria-labelledby when title is not registered", () => {
+    const { api } = makeOpenApi();
+    expect(api.getContentProps()["aria-labelledby"]).toBeUndefined();
+  });
+
+  it("omits aria-describedby when description is not registered", () => {
+    const { api } = makeOpenApi();
+    expect(api.getContentProps()["aria-describedby"]).toBeUndefined();
+  });
+
+  it("emits aria-labelledby when title is registered", () => {
+    const { machine } = makeOpenApi();
+    machine.send("REGISTER_TITLE");
+    const snapshot = machine.getSnapshot();
+    const updated = connectDialog(snapshot, machine.send.bind(machine), machine);
+    expect(updated.getContentProps()["aria-labelledby"]).toBe("test-title");
+  });
+
+  it("emits aria-describedby when description is registered", () => {
+    const { machine } = makeOpenApi();
+    machine.send("REGISTER_DESCRIPTION");
+    const snapshot = machine.getSnapshot();
+    const updated = connectDialog(snapshot, machine.send.bind(machine), machine);
+    expect(updated.getContentProps()["aria-describedby"]).toBe("test-description");
+  });
+
+  it("has correct role, modal, data-state attributes", () => {
     const { api } = makeOpenApi();
     const props = api.getContentProps();
     expect(props.role).toBe("dialog");
     expect(props["aria-modal"]).toBe(true);
-    expect(props["aria-labelledby"]).toBe("test-title");
-    expect(props["aria-describedby"]).toBe("test-description");
     expect(props["data-state"]).toBe("open");
   });
 
@@ -105,21 +134,15 @@ describe("connectDialog — getContentProps", () => {
   });
 });
 
-describe("connectDialog — getOverlayProps / getBackdropProps", () => {
-  it("getOverlayProps is aria-hidden", () => {
+describe("connectDialog — getOverlayProps", () => {
+  it("is aria-hidden", () => {
     const { api } = makeApi();
     expect(api.getOverlayProps()["aria-hidden"]).toBe(true);
   });
 
-  it("getOverlayProps has data-forge-part='overlay'", () => {
+  it("has data-forge-part='overlay'", () => {
     const { api } = makeApi();
     expect(api.getOverlayProps()["data-forge-part"]).toBe("overlay");
-  });
-
-  it("getBackdropProps is an alias for getOverlayProps", () => {
-    const { api } = makeApi();
-    expect(api.getBackdropProps()["aria-hidden"]).toBe(true);
-    expect(api.getBackdropProps()["data-forge-part"]).toBe("overlay");
   });
 
   it("has no onClick (interact-outside handled by machine activity)", () => {
@@ -141,6 +164,11 @@ describe("connectDialog — getCloseProps", () => {
     expect(props["data-forge-scope"]).toBe("dialog");
     expect(props["data-forge-part"]).toBe("close");
   });
+
+  it("has no hardcoded aria-label (text button uses its own accessible name)", () => {
+    const { api } = makeApi();
+    expect((api.getCloseProps() as Record<string, unknown>)["aria-label"]).toBeUndefined();
+  });
 });
 
 describe("connectDialog — getTitleProps / getDescriptionProps", () => {
@@ -158,5 +186,21 @@ describe("connectDialog — getTitleProps / getDescriptionProps", () => {
   it("description has correct id", () => {
     const { api } = makeApi();
     expect(api.getDescriptionProps().id).toBe("test-description");
+  });
+});
+
+describe("connectDialog — setContentCallbacks", () => {
+  it("sets content-level onEscapeKeyDown in machine context", () => {
+    const { machine, api } = makeOpenApi();
+    const handler = (e: KeyboardEvent) => e.preventDefault();
+    api.setContentCallbacks({ onEscapeKeyDown: handler });
+    expect(machine.getSnapshot().context.contentOnEscapeKeyDown).toBe(handler);
+  });
+
+  it("clears content-level callbacks when called with empty object", () => {
+    const { machine, api } = makeOpenApi();
+    api.setContentCallbacks({ onEscapeKeyDown: () => {} });
+    api.setContentCallbacks({});
+    expect(machine.getSnapshot().context.contentOnEscapeKeyDown).toBeUndefined();
   });
 });

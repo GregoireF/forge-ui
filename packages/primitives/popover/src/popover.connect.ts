@@ -81,8 +81,8 @@ export function connectPopover(
         id: context.contentId,
         role: "dialog" as const,
         "aria-modal": context.modal,
-        "aria-labelledby": context.titleId,
-        "aria-describedby": context.descriptionId,
+        ...(context.titleRegistered && { "aria-labelledby": context.titleId }),
+        ...(context.descriptionRegistered && { "aria-describedby": context.descriptionId }),
         tabIndex: -1,
         "data-state": state,
         "data-forge-scope": "popover",
@@ -120,7 +120,6 @@ export function connectPopover(
     getCloseProps() {
       return {
         type: "button" as const,
-        "aria-label": "Close popover",
         "data-forge-scope": "popover",
         "data-forge-part": "close",
         onClick() {

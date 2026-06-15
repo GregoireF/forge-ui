@@ -37,6 +37,17 @@ export interface DialogContext {
   onInteractOutside?: (e: PointerEvent | FocusEvent) => void;
   /** Preventable callback — called on Escape key press. */
   onEscapeKeyDown?: (e: KeyboardEvent) => void;
+  /**
+   * Content-level callback overrides — set by Dialog.Content when it receives
+   * matching props. Take precedence over Root-level callbacks when defined.
+   * Cleared automatically when Content unmounts.
+   */
+  contentOnOpenAutoFocus?: ((e: Event) => void) | undefined;
+  contentOnCloseAutoFocus?: ((e: Event) => void) | undefined;
+  contentOnPointerDownOutside?: ((e: PointerEvent) => void) | undefined;
+  contentOnFocusOutside?: ((e: FocusEvent) => void) | undefined;
+  contentOnInteractOutside?: ((e: PointerEvent | FocusEvent) => void) | undefined;
+  contentOnEscapeKeyDown?: ((e: KeyboardEvent) => void) | undefined;
   /** Unified open-state change callback. */
   onOpenChange?: (open: boolean) => void;
 }
