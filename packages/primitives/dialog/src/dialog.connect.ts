@@ -34,6 +34,8 @@ export function connectDialog(
 
   return {
     isOpen,
+    titleRegistered: context.titleRegistered,
+    descriptionRegistered: context.descriptionRegistered,
 
     getTriggerProps() {
       return {

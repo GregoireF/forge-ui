@@ -1,6 +1,6 @@
 import { mergeRefs } from "@forge-ui/core";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
-import { createContext, useContext, useLayoutEffect } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "./DialogPortal.js";
 import { Slot } from "./Slot.js";
@@ -145,6 +145,23 @@ function Content({
 }: DialogContentProps) {
   const api = useCtx();
   const { isPresent, presenceRef } = usePresence(api.isOpen);
+
+  // Dev-only: warn when the dialog opens and no accessible title is registered.
+  // Fires via rAF so Dialog.Title has had a chance to mount and send REGISTER_TITLE.
+  // The rAF delay avoids a false positive when Title and Content mount in the same tick.
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    if (!api.isOpen) return;
+    const raf = requestAnimationFrame(() => {
+      if (!api.titleRegistered && !rest["aria-label"] && !rest["aria-labelledby"]) {
+        console.warn(
+          "[forge-ui/dialog] Missing accessible name: mount <Dialog.Title> inside <Dialog.Content>, or pass aria-label / aria-labelledby to <Dialog.Content>.",
+        );
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [api.isOpen, api.titleRegistered]);
 
   // Sync content-level event callbacks into the machine so activities pick them up.
   // Content-level callbacks take precedence over Root-level ones.

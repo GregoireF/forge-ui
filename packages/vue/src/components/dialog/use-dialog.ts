@@ -18,6 +18,8 @@ export function useDialog(options: UseDialogOptions = {}) {
   const { snapshot, send } = useMachine(machine);
 
   const isOpen = computed(() => snapshot.value.matches("open"));
+  const titleRegistered = computed(() => snapshot.value.context.titleRegistered);
+  const descriptionRegistered = computed(() => snapshot.value.context.descriptionRegistered);
 
   // Single connectDialog instance per snapshot — avoids creating N instances
   // per-render (one per getter call in the old pattern).
@@ -25,6 +27,8 @@ export function useDialog(options: UseDialogOptions = {}) {
 
   return {
     isOpen,
+    titleRegistered,
+    descriptionRegistered,
     snapshot,
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),

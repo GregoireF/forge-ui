@@ -534,6 +534,83 @@ describe("useDialog (Vue)", () => {
     });
   });
 
+  describe("nested dialogs", () => {
+    // aria-hidden is applied immediately on close (before Presence removes the DOM node).
+    // queryByRole excludes aria-hidden elements, so this checks "accessible closed"
+    // without waiting for the 1 s Presence fallback.
+
+    const {
+      Root: DialogRoot,
+      Trigger: DialogTrigger,
+      Content: DialogContent,
+      Title: DialogTitle,
+      Close: DialogClose,
+    } = Dialog;
+
+    it("Escape closes only the innermost dialog, outer stays open", async () => {
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle, DialogClose },
+        template: `
+          <DialogRoot id="vue-nd-outer">
+            <DialogTrigger data-testid="vue-nd-outer-trigger">Open outer</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Outer dialog</DialogTitle>
+              <DialogRoot id="vue-nd-inner">
+                <DialogTrigger data-testid="vue-nd-inner-trigger">Open inner</DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Inner dialog</DialogTitle>
+                  <DialogClose data-testid="vue-nd-inner-close">×</DialogClose>
+                </DialogContent>
+              </DialogRoot>
+              <DialogClose data-testid="vue-nd-outer-close">×</DialogClose>
+            </DialogContent>
+          </DialogRoot>
+        `,
+      });
+
+      render(Fixture);
+      await user.click(screen.getByTestId("vue-nd-outer-trigger"));
+      expect(screen.getByRole("dialog", { name: "Outer dialog" })).toBeInTheDocument();
+
+      await user.click(screen.getByTestId("vue-nd-inner-trigger"));
+      expect(screen.getByRole("dialog", { name: "Inner dialog" })).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+      // Inner becomes aria-hidden — not accessible anymore
+      expect(screen.queryByRole("dialog", { name: "Inner dialog" })).not.toBeInTheDocument();
+      // Outer dialog stays accessible
+      expect(screen.getByRole("dialog", { name: "Outer dialog" })).toBeInTheDocument();
+    });
+
+    it("second Escape closes the outer dialog", async () => {
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle, DialogClose },
+        template: `
+          <DialogRoot id="vue-nd-outer2">
+            <DialogTrigger data-testid="vue-nd-outer2-trigger">Open outer</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Outer dialog 2</DialogTitle>
+              <DialogRoot id="vue-nd-inner2">
+                <DialogTrigger data-testid="vue-nd-inner2-trigger">Open inner</DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Inner dialog 2</DialogTitle>
+                </DialogContent>
+              </DialogRoot>
+            </DialogContent>
+          </DialogRoot>
+        `,
+      });
+
+      render(Fixture);
+      await user.click(screen.getByTestId("vue-nd-outer2-trigger"));
+      await user.click(screen.getByTestId("vue-nd-inner2-trigger"));
+      await user.keyboard("{Escape}");
+      expect(screen.queryByRole("dialog", { name: "Inner dialog 2" })).not.toBeInTheDocument();
+      await user.keyboard("{Escape}");
+      expect(screen.queryByRole("dialog", { name: "Outer dialog 2" })).not.toBeInTheDocument();
+    });
+  });
+
   describe("DialogPortal", () => {
     it("renders children via Teleport after mount", async () => {
       const Fixture = defineComponent({

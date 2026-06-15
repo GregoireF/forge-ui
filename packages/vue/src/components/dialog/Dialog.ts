@@ -200,6 +200,21 @@ const DialogContent = defineComponent({
     const api = useCtx();
     const { isPresent, presenceRef } = usePresence(api.isOpen);
 
+    // Dev-only: warn when the dialog opens and no accessible title is registered.
+    if (process.env.NODE_ENV !== "production") {
+      watchEffect((onCleanup) => {
+        if (!api.isOpen.value) return;
+        const raf = requestAnimationFrame(() => {
+          if (!api.titleRegistered.value && !attrs["aria-label"] && !attrs["aria-labelledby"]) {
+            console.warn(
+              "[forge-ui/dialog] Missing accessible name: mount <Dialog.Title> inside <Dialog.Content>, or pass aria-label / aria-labelledby to <Dialog.Content>.",
+            );
+          }
+        });
+        onCleanup(() => cancelAnimationFrame(raf));
+      });
+    }
+
     // Sync content-level callbacks into the machine whenever props change.
     watchEffect(() => {
       api.setContentCallbacks({

@@ -8,8 +8,13 @@ export function useMachine<
 >(
   machine: MachineInstance<TContext, TState, TEvent>,
 ): [MachineSnapshot<TContext, TState>, (event: TEvent | TEvent["type"]) => void] {
+  // Start synchronously so the machine is running when child useLayoutEffect hooks
+  // fire (e.g., Dialog.Title sending REGISTER_TITLE). machine.start() is idempotent
+  // (guarded by `if (running) return`) so re-renders and Strict Mode double-invocation
+  // are safe. The effect below handles cleanup only.
+  machine.start();
+
   useEffect(() => {
-    machine.start();
     return () => machine.stop();
   }, [machine]);
 

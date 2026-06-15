@@ -484,6 +484,67 @@ describe("useDialog (React)", () => {
     });
   });
 
+  describe("nested dialogs", () => {
+    // aria-hidden is applied immediately on close (before Presence removes the DOM node).
+    // queryByRole excludes aria-hidden elements, so this checks "accessible closed"
+    // without waiting for the 1 s Presence fallback.
+
+    it("Escape closes only the innermost dialog, outer stays open", async () => {
+      render(
+        <Dialog.Root id="nd-outer">
+          <Dialog.Trigger data-testid="nd-outer-trigger">Open outer</Dialog.Trigger>
+          <Dialog.Content>
+            <Dialog.Title>Outer dialog</Dialog.Title>
+            <Dialog.Root id="nd-inner">
+              <Dialog.Trigger data-testid="nd-inner-trigger">Open inner</Dialog.Trigger>
+              <Dialog.Content>
+                <Dialog.Title>Inner dialog</Dialog.Title>
+                <Dialog.Close data-testid="nd-inner-close">×</Dialog.Close>
+              </Dialog.Content>
+            </Dialog.Root>
+            <Dialog.Close data-testid="nd-outer-close">×</Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Root>,
+      );
+
+      await user.click(screen.getByTestId("nd-outer-trigger"));
+      expect(screen.getByRole("dialog", { name: "Outer dialog" })).toBeInTheDocument();
+
+      await user.click(screen.getByTestId("nd-inner-trigger"));
+      expect(screen.getByRole("dialog", { name: "Inner dialog" })).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+      // Inner becomes aria-hidden — not accessible anymore
+      expect(screen.queryByRole("dialog", { name: "Inner dialog" })).not.toBeInTheDocument();
+      // Outer dialog stays accessible
+      expect(screen.getByRole("dialog", { name: "Outer dialog" })).toBeInTheDocument();
+    });
+
+    it("second Escape closes the outer dialog", async () => {
+      render(
+        <Dialog.Root id="nd-outer2">
+          <Dialog.Trigger data-testid="nd-outer2-trigger">Open outer</Dialog.Trigger>
+          <Dialog.Content>
+            <Dialog.Title>Outer dialog 2</Dialog.Title>
+            <Dialog.Root id="nd-inner2">
+              <Dialog.Trigger data-testid="nd-inner2-trigger">Open inner</Dialog.Trigger>
+              <Dialog.Content>
+                <Dialog.Title>Inner dialog 2</Dialog.Title>
+              </Dialog.Content>
+            </Dialog.Root>
+          </Dialog.Content>
+        </Dialog.Root>,
+      );
+
+      await user.click(screen.getByTestId("nd-outer2-trigger"));
+      await user.click(screen.getByTestId("nd-inner2-trigger"));
+      await user.keyboard("{Escape}");
+      expect(screen.queryByRole("dialog", { name: "Inner dialog 2" })).not.toBeInTheDocument();
+      await user.keyboard("{Escape}");
+      expect(screen.queryByRole("dialog", { name: "Outer dialog 2" })).not.toBeInTheDocument();
+    });
+  });
+
   describe("DialogPortal", () => {
     it("renders children into document.body", () => {
       const { baseElement } = render(
