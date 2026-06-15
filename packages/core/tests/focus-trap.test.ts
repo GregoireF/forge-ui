@@ -62,6 +62,39 @@ describe("getFocusableElements", () => {
     expect(getFocusableElements(container)).toHaveLength(1);
   });
 
+  it("includes contenteditable elements", () => {
+    container.innerHTML = `
+      <div contenteditable="true">editor</div>
+      <div contenteditable="">also editor</div>
+      <div contenteditable="false">not editor</div>
+      <div>plain div</div>
+    `;
+    const els = getFocusableElements(container);
+    // contenteditable="true" and contenteditable="" are focusable; false and none are not
+    expect(els).toHaveLength(2);
+    expect(els.every((el) => el.getAttribute("contenteditable") !== "false")).toBe(true);
+  });
+
+  it("excludes buttons hidden via display:none inline style", () => {
+    container.innerHTML = `<button>visible</button><button style="display:none">hidden</button>`;
+    expect(getFocusableElements(container)).toHaveLength(1);
+  });
+
+  it("excludes buttons inside a display:none parent", () => {
+    container.innerHTML = `<button>visible</button><div style="display:none"><button>inside hidden</button></div>`;
+    expect(getFocusableElements(container)).toHaveLength(1);
+  });
+
+  it("excludes buttons hidden via visibility:hidden", () => {
+    container.innerHTML = `<button>visible</button><button style="visibility:hidden">invisible</button>`;
+    expect(getFocusableElements(container)).toHaveLength(1);
+  });
+
+  it("excludes buttons whose parent has visibility:hidden", () => {
+    container.innerHTML = `<button>visible</button><div style="visibility:hidden"><button>child</button></div>`;
+    expect(getFocusableElements(container)).toHaveLength(1);
+  });
+
   it("returns empty array when no focusable elements", () => {
     container.innerHTML = `<div>nothing focusable</div>`;
     expect(getFocusableElements(container)).toHaveLength(0);

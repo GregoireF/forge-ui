@@ -55,6 +55,10 @@ function applyLock(): void {
     return;
   }
 
+  // Measure BEFORE overflow:hidden — once the scrollbar is hidden,
+  // window.innerWidth - clientWidth collapses to 0 and compensation never fires.
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
   savedStyles = {
     overflow: body.style.overflow,
     paddingRight: body.style.paddingRight,
@@ -62,13 +66,12 @@ function applyLock(): void {
 
   body.style.overflow = "hidden";
 
-  if (!isScrollbarGutterStable()) {
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    if (scrollbarWidth > 0) {
-      body.style.setProperty("--forge-scrollbar-width", `${scrollbarWidth}px`);
-      const current = Number.parseFloat(savedStyles.paddingRight) || 0;
-      body.style.paddingRight = `${current + scrollbarWidth}px`;
-    }
+  if (!isScrollbarGutterStable() && scrollbarWidth > 0) {
+    body.style.setProperty("--forge-scrollbar-width", `${scrollbarWidth}px`);
+    // getComputedStyle reads CSS-declared padding too, not just inline — so
+    // body { padding-right: 20px } in a stylesheet is correctly accounted for.
+    const current = Number.parseFloat(getComputedStyle(body).paddingRight) || 0;
+    body.style.paddingRight = `${current + scrollbarWidth}px`;
   }
 }
 

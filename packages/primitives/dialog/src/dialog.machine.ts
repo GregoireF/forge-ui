@@ -40,8 +40,12 @@ function makeDefaultAlertOnEscapeKeyDown(
   userCallback?: (e: KeyboardEvent) => void,
 ): (e: KeyboardEvent) => void {
   return (e) => {
-    e.preventDefault();
+    // Fire the user callback first while e.defaultPrevented is still false — the
+    // callback is informational (e.g. show a warning toast on Escape attempt).
+    // We always prevent afterwards: alertdialog must never close on Escape per
+    // WAI-ARIA, regardless of what the callback does.
     userCallback?.(e);
+    e.preventDefault();
   };
 }
 
@@ -49,8 +53,9 @@ function makeDefaultAlertOnInteractOutside(
   userCallback?: (e: PointerEvent | FocusEvent) => void,
 ): (e: PointerEvent | FocusEvent) => void {
   return (e) => {
-    e.preventDefault();
+    // Same rationale: callback first (informational), then unconditional prevent.
     userCallback?.(e);
+    e.preventDefault();
   };
 }
 
