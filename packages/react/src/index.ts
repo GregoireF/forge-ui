@@ -13,7 +13,16 @@ export type { DialogPortalProps } from "./components/dialog/DialogPortal.js";
 export { DialogPortal } from "./components/dialog/DialogPortal.js";
 export type { UseDialogOptions } from "./components/dialog/use-dialog.js";
 export { useDialog } from "./components/dialog/use-dialog.js";
-
+export type {
+  FieldControlProps,
+  FieldDescriptionProps,
+  FieldErrorProps,
+  FieldLabelProps,
+  FieldRootProps,
+} from "./components/field/Field.js";
+export { Field } from "./components/field/Field.js";
+export type { CreateFieldOptions } from "./components/field/use-field.js";
+export { useField } from "./components/field/use-field.js";
 export type {
   PopoverArrowProps,
   PopoverCloseProps,

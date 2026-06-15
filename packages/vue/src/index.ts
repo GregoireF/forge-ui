@@ -11,7 +11,16 @@ export {
 export { DialogPortal } from "./components/dialog/DialogPortal.js";
 export type { UseDialogOptions } from "./components/dialog/use-dialog.js";
 export { useDialog } from "./components/dialog/use-dialog.js";
-
+export {
+  Field,
+  FieldControl,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldRoot,
+} from "./components/field/Field.js";
+export type { CreateFieldOptions } from "./components/field/use-field.js";
+export { useField } from "./components/field/use-field.js";
 export {
   Popover,
   PopoverAnchor,

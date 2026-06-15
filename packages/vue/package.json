@@ -30,6 +30,7 @@
   "dependencies": {
     "@forge-ui/core": "workspace:*",
     "@forge-ui/dialog": "workspace:*",
+    "@forge-ui/field": "workspace:*",
     "@forge-ui/popover": "workspace:*"
   },
   "devDependencies": {

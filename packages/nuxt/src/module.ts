@@ -29,13 +29,15 @@ export default defineNuxtModule({
     addImports([
       { name: "useDialog", from },
       { name: "usePopover", from },
+      { name: "useField", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
     ]);
 
-    // Namespace objects — enable <Dialog.Root> / <Popover.Root> in templates
+    // Namespace objects — enable <Dialog.Root> / <Popover.Root> / <Field.Root> in templates
     addImports({ name: "Dialog", from });
     addImports({ name: "Popover", from });
+    addImports({ name: "Field", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -68,6 +70,18 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of popoverComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const fieldComponents = [
+      "FieldRoot",
+      "FieldLabel",
+      "FieldControl",
+      "FieldDescription",
+      "FieldError",
+    ] as const;
+
+    for (const name of fieldComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },

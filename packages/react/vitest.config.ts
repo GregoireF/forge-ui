@@ -10,6 +10,7 @@ export default defineConfig({
       "@forge-ui/dialog": fileURLToPath(
         new URL("../primitives/dialog/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/field": fileURLToPath(new URL("../field/src/index.ts", import.meta.url)),
     },
   },
   test: {
