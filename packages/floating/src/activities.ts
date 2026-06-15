@@ -33,6 +33,10 @@ export interface FloatingContext {
 
 // ---------------------------------------------------------------------------
 // makeComputePositionActivity
+//
+// Uses requestAnimationFrame to defer setup until after the framework
+// (React/Vue) has rendered the floating content element and the ref
+// callback has fired — at that point ctx.contentEl is guaranteed non-null.
 // ---------------------------------------------------------------------------
 
 export function makeComputePositionActivity<
@@ -45,7 +49,7 @@ export function makeComputePositionActivity<
       return ctx.anchorEl ?? ctx.triggerEl ?? null;
     }
 
-    function update(): void {
+    function runUpdate(): void {
       const reference = getReference();
       const floating = ctx.contentEl;
       if (!reference || !floating) return;
@@ -120,16 +124,27 @@ export function makeComputePositionActivity<
       });
     }
 
-    const reference = getReference();
-    const floating = ctx.contentEl;
-    if (!reference || !floating) return;
+    let autoUpdateCleanup: (() => void) | undefined;
 
-    if (!ctx.positioning.disableAutoUpdate) {
-      const cleanup = autoUpdate(reference, floating, update);
-      update();
-      return cleanup;
-    }
+    // Defer setup until after the framework has rendered the floating element
+    // and the ref callback has fired (contentEl becomes non-null).
+    // This matches the pattern used by makeFocusActivity.
+    const raf = requestAnimationFrame(() => {
+      const reference = getReference();
+      const floating = ctx.contentEl;
+      if (!reference || !floating) return;
 
-    update();
+      if (!ctx.positioning.disableAutoUpdate) {
+        autoUpdateCleanup = autoUpdate(reference, floating, runUpdate);
+        runUpdate();
+      } else {
+        runUpdate();
+      }
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      autoUpdateCleanup?.();
+    };
   };
 }
