@@ -1,5 +1,7 @@
+import { mergeRefs } from "@forge-ui/core";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useLayoutEffect } from "react";
+import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
 import type { UsePopoverOptions } from "./use-popover.js";
@@ -26,7 +28,7 @@ export interface PopoverRootProps extends UsePopoverOptions {
 function Root({ children, open: openProp, ...opts }: PopoverRootProps) {
   const api = usePopover({ ...opts, ...(openProp !== undefined && { open: openProp }) });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable in behaviour
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable
   useLayoutEffect(() => {
     if (openProp === undefined) return;
     api.setOpen(openProp);
@@ -51,8 +53,7 @@ function Trigger({ asChild, children, ...rest }: PopoverTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Anchor — optional reference element override.
-// Always asChild (renders no own DOM element).
+// Anchor — always Slot, no own DOM element.
 // ---------------------------------------------------------------------------
 
 export interface PopoverAnchorProps {
@@ -81,9 +82,10 @@ function Portal({ children, container, forceMount }: PopoverPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content — wraps the hidden positioner internally.
-// The positioner provides position: fixed + top/left computed by @floating-ui.
-// The content div itself stays clean (no position style) for animation support.
+// Content — Presence-aware.
+// The positioner div provides position:fixed + top/left from @floating-ui.
+// The content div stays clean for animation support.
+// During exit: aria-hidden + pointer-events:none keep content inert.
 // ---------------------------------------------------------------------------
 
 export interface PopoverContentProps extends HTMLAttributes<HTMLDivElement> {
@@ -93,28 +95,44 @@ export interface PopoverContentProps extends HTMLAttributes<HTMLDivElement> {
 
 function Content({ asChild, forceMount, children, ...rest }: PopoverContentProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const { isPresent, presenceRef } = usePresence(api.isOpen);
+
+  if (!forceMount && !isPresent) return null;
 
   const positionerProps = api.getPositionerProps();
-  const contentProps = { ...api.getContentProps(), ...rest };
+  const contentProps = api.getContentProps();
+
+  const closingProps = !api.isOpen
+    ? ({
+        "aria-hidden": true,
+        style: { pointerEvents: "none" },
+      } as const)
+    : {};
+
+  const mergedContentProps = {
+    ...contentProps,
+    ...closingProps,
+    ...rest,
+    ref: mergeRefs(contentProps.ref, presenceRef),
+  };
 
   if (asChild) {
     return (
       <div {...positionerProps}>
-        <Slot {...contentProps}>{children}</Slot>
+        <Slot {...mergedContentProps}>{children}</Slot>
       </div>
     );
   }
 
   return (
     <div {...positionerProps}>
-      <div {...contentProps}>{children}</div>
+      <div {...mergedContentProps}>{children}</div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless: always acts as Slot, merges getArrowProps onto child.
+// Arrow — renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface PopoverArrowProps {
@@ -184,7 +202,7 @@ function Description({ asChild, children, ...rest }: PopoverDescriptionProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Namespace export — Popover.Root, Popover.Trigger, ...
+// Namespace export
 // ---------------------------------------------------------------------------
 
 export const Popover = {

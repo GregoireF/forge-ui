@@ -30,6 +30,7 @@ export default defineNuxtModule({
       { name: "useDialog", from },
       { name: "usePopover", from },
       { name: "useMachine", from },
+      { name: "usePresence", from },
     ]);
 
     // Namespace objects — enable <Dialog.Root> / <Popover.Root> in templates

@@ -68,6 +68,17 @@
         "typescript": "*",
       },
     },
+    "packages/floating": {
+      "name": "@forge-ui/floating",
+      "version": "0.0.0",
+      "dependencies": {
+        "@floating-ui/dom": "^1.6.0",
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/nuxt": {
       "name": "@forge-ui/nuxt",
       "version": "0.0.0",
@@ -98,8 +109,8 @@
       "name": "@forge-ui/popover",
       "version": "0.0.0",
       "dependencies": {
-        "@floating-ui/dom": "^1.6.0",
         "@forge-ui/core": "workspace:*",
+        "@forge-ui/floating": "workspace:*",
       },
       "devDependencies": {
         "typescript": "*",
@@ -380,6 +391,8 @@
     "@forge-ui/core": ["@forge-ui/core@workspace:packages/core"],
 
     "@forge-ui/dialog": ["@forge-ui/dialog@workspace:packages/primitives/dialog"],
+
+    "@forge-ui/floating": ["@forge-ui/floating@workspace:packages/floating"],
 
     "@forge-ui/nuxt": ["@forge-ui/nuxt@workspace:packages/nuxt"],
 

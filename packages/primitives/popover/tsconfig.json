@@ -5,10 +5,11 @@
     "rootDir": "./src",
     "composite": true,
     "paths": {
-      "@forge-ui/core": ["../../core/src/index.ts"]
+      "@forge-ui/core": ["../../core/src/index.ts"],
+      "@forge-ui/floating": ["../../floating/src/index.ts"]
     }
   },
-  "references": [{ "path": "../../core" }],
+  "references": [{ "path": "../../core" }, { "path": "../../floating" }],
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tests"]
 }

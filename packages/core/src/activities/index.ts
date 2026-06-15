@@ -2,12 +2,16 @@ import type { ActivityFn } from "../machine/types.js";
 import { hideOthers } from "../utils/aria-hidden.js";
 import { focusFirst, trapFocus } from "../utils/focus-trap.js";
 import { lockScroll } from "../utils/scroll-lock.js";
+import {
+  getLayerContentEls,
+  isTopLayer,
+  popLayer,
+  pushLayer,
+  updateLayerContentEl,
+} from "../utils/stack-registry.js";
 
 // ---------------------------------------------------------------------------
 // makeFocusActivity
-// Manages focus on open/close: saves previous focus, focuses initial element,
-// restores focus on cleanup. Supports initialFocusEl, finalFocusEl,
-// onOpenAutoFocus, and onCloseAutoFocus preventable callbacks.
 // ---------------------------------------------------------------------------
 
 export interface FocusActivityOptions<TContext extends object> {
@@ -59,11 +63,11 @@ export function makeFocusActivity<TContext extends object>(
 // ---------------------------------------------------------------------------
 // makeWatchOutsideActivity
 // Fires preventable callbacks when pointer/focus events occur outside containers.
-// If the event is not prevented and no specific callback handles it, sends
-// the provided close event type.
+// Only acts when this layer is the topmost in the stack registry.
 // ---------------------------------------------------------------------------
 
 export interface WatchOutsideActivityOptions<TContext extends object> {
+  getId: (ctx: TContext) => string;
   getContainers: (ctx: TContext) => (HTMLElement | null)[];
   sendClose: string;
   getOnPointerDownOutside?: (ctx: TContext) => ((e: PointerEvent) => void) | undefined;
@@ -83,6 +87,7 @@ export function makeWatchOutsideActivity<TContext extends object>(
     }
 
     function handlePointerDown(e: PointerEvent): void {
+      if (!isTopLayer(opts.getId(ctx))) return;
       if (!isOutside(e.target as Node)) return;
       const onPointer = opts.getOnPointerDownOutside?.(ctx);
       const onInteract = opts.getOnInteractOutside?.(ctx);
@@ -92,6 +97,7 @@ export function makeWatchOutsideActivity<TContext extends object>(
     }
 
     function handleFocusIn(e: FocusEvent): void {
+      if (!isTopLayer(opts.getId(ctx))) return;
       if (!isOutside(e.target as Node)) return;
       const onFocus = opts.getOnFocusOutside?.(ctx);
       const onInteract = opts.getOnInteractOutside?.(ctx);
@@ -112,10 +118,12 @@ export function makeWatchOutsideActivity<TContext extends object>(
 
 // ---------------------------------------------------------------------------
 // makeKeyboardActivity
-// Handles Tab (trap focus when modal) and Escape key with preventable callback.
+// Handles Tab (trap focus when modal) and Escape with preventable callback.
+// Escape only fires on the topmost layer in the stack registry.
 // ---------------------------------------------------------------------------
 
 export interface KeyboardActivityOptions<TContext extends object> {
+  getId: (ctx: TContext) => string;
   getContentEl: (ctx: TContext) => HTMLElement | null;
   isModal: (ctx: TContext) => boolean;
   sendEscape: string;
@@ -135,6 +143,7 @@ export function makeKeyboardActivity<TContext extends object>(
         return;
       }
       if (e.key === "Escape") {
+        if (!isTopLayer(opts.getId(ctx))) return;
         const onEscape = opts.getOnEscapeKeyDown?.(ctx);
         if (onEscape) onEscape(e);
         if (!e.defaultPrevented) send(opts.sendEscape);
@@ -148,11 +157,13 @@ export function makeKeyboardActivity<TContext extends object>(
 
 // ---------------------------------------------------------------------------
 // makeHideBackgroundActivity
-// Hides all elements outside content from assistive technologies (aria-hidden).
-// Only active when hideOthers option resolves to true.
+// Hides all elements outside ALL open layers from assistive technologies.
+// Passes the content elements of every registered layer to hideOthers so
+// stacked primitives (Dialog → Popover) remain accessible simultaneously.
 // ---------------------------------------------------------------------------
 
 export interface HideBackgroundActivityOptions<TContext extends object> {
+  getId: (ctx: TContext) => string;
   getContentEl: (ctx: TContext) => HTMLElement | null;
   isHideOthers: (ctx: TContext) => boolean;
 }
@@ -164,8 +175,14 @@ export function makeHideBackgroundActivity<TContext extends object>(
     if (!opts.isHideOthers(ctx)) return;
     let cleanup: (() => void) | undefined;
     const raf = requestAnimationFrame(() => {
-      const contentEl = opts.getContentEl(ctx);
-      if (contentEl) cleanup = hideOthers(contentEl);
+      // Include ALL open layers so nested primitives are not hidden from SR.
+      const layerEls = getLayerContentEls().filter(Boolean) as HTMLElement[];
+      if (layerEls.length === 0) {
+        const el = opts.getContentEl(ctx);
+        if (el) cleanup = hideOthers(el);
+      } else {
+        cleanup = hideOthers(layerEls);
+      }
     });
     return () => {
       cancelAnimationFrame(raf);
@@ -176,7 +193,6 @@ export function makeHideBackgroundActivity<TContext extends object>(
 
 // ---------------------------------------------------------------------------
 // makeLockScrollActivity
-// Prevents body scroll while active. Only active when preventScroll resolves true.
 // ---------------------------------------------------------------------------
 
 export interface LockScrollActivityOptions<TContext extends object> {
@@ -191,3 +207,30 @@ export function makeLockScrollActivity<TContext extends object>(
     return lockScroll();
   };
 }
+
+// ---------------------------------------------------------------------------
+// makeLayerActivity
+// Registers/deregisters this primitive in the unified stack registry.
+// Must be the FIRST activity listed so the layer is registered before other
+// activities (hideBackground, keyboard) read the registry.
+// ---------------------------------------------------------------------------
+
+export interface LayerActivityOptions<TContext extends object> {
+  getId: (ctx: TContext) => string;
+  getContentEl: (ctx: TContext) => HTMLElement | null;
+}
+
+export function makeLayerActivity<TContext extends object>(
+  opts: LayerActivityOptions<TContext>,
+): ActivityFn<TContext> {
+  return (ctx) => {
+    const id = opts.getId(ctx);
+    pushLayer(id, opts.getContentEl(ctx));
+    return () => popLayer(id);
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Re-export registry helpers needed by machine connect
+// ---------------------------------------------------------------------------
+export { updateLayerContentEl };

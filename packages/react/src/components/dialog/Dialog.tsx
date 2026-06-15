@@ -1,5 +1,7 @@
+import { mergeRefs } from "@forge-ui/core";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useLayoutEffect } from "react";
+import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "./DialogPortal.js";
 import { Slot } from "./Slot.js";
 import type { UseDialogOptions } from "./use-dialog.js";
@@ -26,8 +28,7 @@ export interface DialogRootProps extends UseDialogOptions {
 function Root({ children, open: openProp, ...opts }: DialogRootProps) {
   const api = useDialog({ ...opts, ...(openProp !== undefined && { open: openProp }) });
 
-  // Controlled mode: sync external `open` prop into the machine.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable in behaviour
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable
   useLayoutEffect(() => {
     if (openProp === undefined) return;
     api.setOpen(openProp);
@@ -69,6 +70,8 @@ function Portal({ children, container, forceMount }: DialogPortalCompoundProps) 
 
 // ---------------------------------------------------------------------------
 // Overlay
+// Presence-aware: stays in DOM while exit animation runs (data-state="closed").
+// During exit: aria-hidden + pointer-events:none prevent interaction.
 // ---------------------------------------------------------------------------
 
 export interface DialogOverlayProps extends HTMLAttributes<HTMLDivElement> {
@@ -78,14 +81,30 @@ export interface DialogOverlayProps extends HTMLAttributes<HTMLDivElement> {
 
 function Overlay({ asChild, forceMount, children, ...rest }: DialogOverlayProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
-  const props = { ...api.getOverlayProps(), ...rest };
+  const { isPresent, presenceRef } = usePresence(api.isOpen);
+
+  if (!forceMount && !isPresent) return null;
+
+  const overlayProps = api.getOverlayProps();
+  const closingProps = !api.isOpen
+    ? ({ "aria-hidden": true, style: { pointerEvents: "none" } } as const)
+    : {};
+
+  const props = {
+    ...overlayProps,
+    ...closingProps,
+    ...rest,
+    ref: presenceRef,
+  };
+
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <div {...props} />;
 }
 
 // ---------------------------------------------------------------------------
 // Content
+// Presence-aware: stays in DOM while exit animation runs.
+// During exit: aria-hidden + pointer-events:none keep content inert.
 // ---------------------------------------------------------------------------
 
 export interface DialogContentProps extends HTMLAttributes<HTMLDivElement> {
@@ -95,14 +114,32 @@ export interface DialogContentProps extends HTMLAttributes<HTMLDivElement> {
 
 function Content({ asChild, forceMount, children, ...rest }: DialogContentProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
-  const props = { ...api.getContentProps(), ...rest };
+  const { isPresent, presenceRef } = usePresence(api.isOpen);
+
+  if (!forceMount && !isPresent) return null;
+
+  const contentProps = api.getContentProps();
+
+  const closingProps = !api.isOpen
+    ? ({
+        "aria-hidden": true,
+        style: { pointerEvents: "none" },
+      } as const)
+    : {};
+
+  const props = {
+    ...contentProps,
+    ...closingProps,
+    ...rest,
+    ref: mergeRefs(contentProps.ref, presenceRef),
+  };
+
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <div {...props}>{children}</div>;
 }
 
 // ---------------------------------------------------------------------------
-// Title — registers itself in the machine on mount for presence detection.
+// Title
 // ---------------------------------------------------------------------------
 
 export interface DialogTitleProps extends HTMLAttributes<HTMLHeadingElement> {
@@ -112,7 +149,6 @@ export interface DialogTitleProps extends HTMLAttributes<HTMLHeadingElement> {
 function Title({ asChild, children, ...rest }: DialogTitleProps) {
   const api = useCtx();
 
-  // send is a stable reference from machine.send — safe as useLayoutEffect dep.
   useLayoutEffect(() => {
     api.send("REGISTER_TITLE");
     return () => api.send("UNREGISTER_TITLE");
@@ -160,7 +196,7 @@ function Close({ asChild, children, ...rest }: DialogCloseProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Namespace export — Dialog.Root, Dialog.Trigger, ...
+// Namespace export
 // ---------------------------------------------------------------------------
 
 export const Dialog = {

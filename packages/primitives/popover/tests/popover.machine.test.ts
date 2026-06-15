@@ -1,11 +1,21 @@
+import { clearRegistry } from "@forge-ui/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createPopoverMachine } from "../src/popover.machine.js";
+
+let activeMachines: ReturnType<typeof createPopoverMachine>[] = [];
 
 function makeMachine(overrides = {}) {
   const m = createPopoverMachine({ id: "test", ...overrides });
   m.start();
+  activeMachines.push(m);
   return m;
 }
+
+afterEach(() => {
+  for (const m of activeMachines) m.stop();
+  activeMachines = [];
+  clearRegistry();
+});
 
 describe("createPopoverMachine — state transitions", () => {
   it("starts closed by default", () => {

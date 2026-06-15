@@ -1,4 +1,5 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import { updateLayerContentEl } from "@forge-ui/core";
 import type { DialogContext, DialogEvent, DialogSend, DialogState } from "./dialog.types.js";
 
 export type DialogApi = ReturnType<typeof connectDialog>;
@@ -66,7 +67,11 @@ export function connectDialog(
         "data-state": state,
         "data-forge-scope": "dialog",
         "data-forge-part": "content",
-        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+        ref: (el: unknown) => {
+          const contentEl = el as HTMLElement | null;
+          machine.setContext({ contentEl });
+          updateLayerContentEl(context.id, contentEl);
+        },
       };
     },
 

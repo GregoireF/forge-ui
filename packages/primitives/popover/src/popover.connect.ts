@@ -1,4 +1,10 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import { updateLayerContentEl } from "@forge-ui/core";
+import {
+  getAlignFromPlacement,
+  getSideFromPlacement,
+  getTransformOrigin,
+} from "@forge-ui/floating";
 import type { PopoverContext, PopoverEvent, PopoverSend, PopoverState } from "./popover.types.js";
 
 export type PopoverApi = ReturnType<typeof connectPopover>;
@@ -22,8 +28,8 @@ export function connectPopover(
   const isOpen = snapshot.matches("open");
   const state = isOpen ? "open" : "closed";
 
-  // Derive data-side / data-align from currentPlacement for CSS convenience.
-  const [side, align = "center"] = context.currentPlacement.split("-") as [string, string?];
+  const side = getSideFromPlacement(context.currentPlacement);
+  const align = getAlignFromPlacement(context.currentPlacement);
 
   return {
     isOpen,
@@ -85,9 +91,13 @@ export function connectPopover(
         "data-align": align,
         "data-placement": context.currentPlacement,
         style: {
-          "--forge-popover-content-transform-origin": getTransformOrigin(side, align),
+          "--forge-popover-content-transform-origin": getTransformOrigin(context.currentPlacement),
         } as unknown as Record<string, string>,
-        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+        ref: (el: unknown) => {
+          const contentEl = el as HTMLElement | null;
+          machine.setContext({ contentEl });
+          updateLayerContentEl(context.id, contentEl);
+        },
       };
     },
 
@@ -135,18 +145,4 @@ export function connectPopover(
       };
     },
   };
-}
-
-// Derive CSS transform-origin from resolved side + align.
-function getTransformOrigin(side: string, align: string): string {
-  const opposite: Record<string, string> = {
-    top: "bottom",
-    bottom: "top",
-    left: "right",
-    right: "left",
-  };
-  const origin = opposite[side] ?? "center";
-  if (align === "start") return `${origin} 0%`;
-  if (align === "end") return `${origin} 100%`;
-  return `${origin} 50%`;
 }

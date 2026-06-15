@@ -3,6 +3,7 @@ import {
   makeFocusActivity,
   makeHideBackgroundActivity,
   makeKeyboardActivity,
+  makeLayerActivity,
   makeLockScrollActivity,
   makeWatchOutsideActivity,
 } from "@forge-ui/core";
@@ -29,16 +30,14 @@ export interface CreateDialogMachineOptions {
 
 // ---------------------------------------------------------------------------
 // AlertDialog defaults: prevent close on outside interaction and Escape
-// per WAI-ARIA alertdialog spec (user MUST explicitly acknowledge).
-// Consumers can override by providing their own callbacks that don't call
-// e.preventDefault().
+// per WAI-ARIA alertdialog spec.
 // ---------------------------------------------------------------------------
 
 function makeDefaultAlertOnEscapeKeyDown(
   userCallback?: (e: KeyboardEvent) => void,
 ): (e: KeyboardEvent) => void {
   return (e) => {
-    e.preventDefault(); // block close by default for alertdialog
+    e.preventDefault();
     userCallback?.(e);
   };
 }
@@ -47,7 +46,7 @@ function makeDefaultAlertOnInteractOutside(
   userCallback?: (e: PointerEvent | FocusEvent) => void,
 ): (e: PointerEvent | FocusEvent) => void {
   return (e) => {
-    e.preventDefault(); // block close by default for alertdialog
+    e.preventDefault();
     userCallback?.(e);
   };
 }
@@ -80,10 +79,13 @@ function unregisterDescription({
 }
 
 // ---------------------------------------------------------------------------
-// Activity factories — instantiated once, reused per-machine.
-// Each factory captures ctx-accessor functions so the activity always reads
-// the latest context values at event time (not at activity-start time).
+// Activity factories
 // ---------------------------------------------------------------------------
+
+const registerLayer = makeLayerActivity<DialogContext>({
+  getId: (ctx) => ctx.id,
+  getContentEl: (ctx) => ctx.contentEl,
+});
 
 const manageFocus = makeFocusActivity<DialogContext>({
   getContentEl: (ctx) => ctx.contentEl,
@@ -94,6 +96,7 @@ const manageFocus = makeFocusActivity<DialogContext>({
 });
 
 const trapKeyboard = makeKeyboardActivity<DialogContext>({
+  getId: (ctx) => ctx.id,
   getContentEl: (ctx) => ctx.contentEl,
   isModal: (ctx) => ctx.trapFocus,
   sendEscape: "ESCAPE_KEY",
@@ -101,6 +104,7 @@ const trapKeyboard = makeKeyboardActivity<DialogContext>({
 });
 
 const hideBackground = makeHideBackgroundActivity<DialogContext>({
+  getId: (ctx) => ctx.id,
   getContentEl: (ctx) => ctx.contentEl,
   isHideOthers: (ctx) => ctx.hideOthers,
 });
@@ -110,6 +114,7 @@ const lockBodyScroll = makeLockScrollActivity<DialogContext>({
 });
 
 const watchOutside = makeWatchOutsideActivity<DialogContext>({
+  getId: (ctx) => ctx.id,
   getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl],
   sendClose: "INTERACT_OUTSIDE",
   getOnPointerDownOutside: (ctx) => ctx.onPointerDownOutside,
@@ -127,8 +132,6 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
   const isAlertDialog = role === "alertdialog";
   const modal = options.modal ?? true;
 
-  // alertdialog prevents close by default; wrap user callbacks to preserve
-  // their intent while adding the default-prevent behavior.
   const onEscapeKeyDown = isAlertDialog
     ? makeDefaultAlertOnEscapeKeyDown(options.onEscapeKeyDown)
     : options.onEscapeKeyDown;
@@ -182,7 +185,9 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
       },
       open: {
         tags: ["open"],
+        // registerLayer MUST be first — other activities read the registry.
         activities: [
+          "registerLayer",
           "manageFocus",
           "trapKeyboard",
           "hideBackground",
@@ -203,6 +208,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
     },
 
     activities: {
+      registerLayer,
       manageFocus,
       trapKeyboard,
       hideBackground,

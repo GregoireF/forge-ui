@@ -3,16 +3,13 @@ import {
   makeFocusActivity,
   makeHideBackgroundActivity,
   makeKeyboardActivity,
+  makeLayerActivity,
   makeLockScrollActivity,
   makeWatchOutsideActivity,
 } from "@forge-ui/core";
-import { makeComputePositionActivity } from "./activities.js";
-import type {
-  PopoverContext,
-  PopoverEvent,
-  PopoverPositioning,
-  PopoverState,
-} from "./popover.types.js";
+import type { FloatingPositioning } from "@forge-ui/floating";
+import { makeComputePositionActivity } from "@forge-ui/floating";
+import type { PopoverContext, PopoverEvent, PopoverState } from "./popover.types.js";
 
 export interface CreatePopoverMachineOptions {
   id: string;
@@ -21,7 +18,7 @@ export interface CreatePopoverMachineOptions {
   trapFocus?: boolean;
   preventScroll?: boolean;
   hideOthers?: boolean;
-  positioning?: PopoverPositioning;
+  positioning?: FloatingPositioning;
   initialFocusEl?: () => HTMLElement | null;
   finalFocusEl?: () => HTMLElement | null;
   onOpenAutoFocus?: (e: Event) => void;
@@ -64,6 +61,13 @@ function unregisterDescription({
 // Activity factories
 // ---------------------------------------------------------------------------
 
+const registerLayer = makeLayerActivity<PopoverContext>({
+  getId: (ctx) => ctx.id,
+  getContentEl: (ctx) => ctx.contentEl,
+});
+
+const computePosition = makeComputePositionActivity<PopoverContext>();
+
 const manageFocus = makeFocusActivity<PopoverContext>({
   getContentEl: (ctx) => ctx.contentEl,
   getInitialFocusEl: (ctx) => ctx.initialFocusEl?.() ?? null,
@@ -73,6 +77,7 @@ const manageFocus = makeFocusActivity<PopoverContext>({
 });
 
 const trapKeyboard = makeKeyboardActivity<PopoverContext>({
+  getId: (ctx) => ctx.id,
   getContentEl: (ctx) => ctx.contentEl,
   isModal: (ctx) => ctx.trapFocus,
   sendEscape: "ESCAPE_KEY",
@@ -80,6 +85,7 @@ const trapKeyboard = makeKeyboardActivity<PopoverContext>({
 });
 
 const hideBackground = makeHideBackgroundActivity<PopoverContext>({
+  getId: (ctx) => ctx.id,
   getContentEl: (ctx) => ctx.contentEl,
   isHideOthers: (ctx) => ctx.hideOthers,
 });
@@ -89,14 +95,14 @@ const lockBodyScroll = makeLockScrollActivity<PopoverContext>({
 });
 
 const watchOutside = makeWatchOutsideActivity<PopoverContext>({
+  getId: (ctx) => ctx.id,
+  // Include anchorEl: clicking the anchor should not close the popover.
   getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl, ctx.anchorEl],
   sendClose: "INTERACT_OUTSIDE",
   getOnPointerDownOutside: (ctx) => ctx.onPointerDownOutside,
   getOnFocusOutside: (ctx) => ctx.onFocusOutside,
   getOnInteractOutside: (ctx) => ctx.onInteractOutside,
 });
-
-const computePosition = makeComputePositionActivity();
 
 // ---------------------------------------------------------------------------
 // Machine factory
@@ -133,7 +139,12 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
         placement: pos.placement ?? "bottom",
         strategy: pos.strategy ?? "fixed",
         offset: pos.offset ?? 4,
-        middleware: pos.middleware,
+        shiftPadding: pos.shiftPadding ?? 8,
+        sameWidth: pos.sameWidth ?? false,
+        hideWhenDetached: pos.hideWhenDetached ?? false,
+        disableAutoUpdate: pos.disableAutoUpdate ?? false,
+        ...(pos.boundary !== undefined && { boundary: pos.boundary }),
+        ...(pos.middleware !== undefined && { middleware: pos.middleware }),
       },
       ...(options.initialFocusEl !== undefined && { initialFocusEl: options.initialFocusEl }),
       ...(options.finalFocusEl !== undefined && { finalFocusEl: options.finalFocusEl }),
@@ -165,7 +176,10 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
       },
       open: {
         tags: ["open"],
+        // registerLayer first — other activities read the registry.
+        // computePosition first among behaviours — positions before focus.
         activities: [
+          "registerLayer",
           "computePosition",
           "manageFocus",
           "trapKeyboard",
@@ -187,6 +201,7 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
     },
 
     activities: {
+      registerLayer,
       computePosition,
       manageFocus,
       trapKeyboard,

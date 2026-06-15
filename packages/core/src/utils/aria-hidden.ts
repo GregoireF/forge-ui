@@ -11,22 +11,25 @@ interface HiddenRecord {
  * Implements WAI-ARIA requirement for modal dialogs: background content must
  * be hidden from screen readers when a modal is open.
  */
-export function hideOthers(container: Element): () => void {
+export function hideOthers(container: Element | Element[]): () => void {
   const hidden: HiddenRecord[] = [];
+  const containers = Array.isArray(container) ? container : [container];
 
   function hide(el: Element): void {
     hidden.push({ el, prevValue: el.getAttribute("aria-hidden") });
     el.setAttribute("aria-hidden", "true");
   }
 
-  let node: Element | null = container;
-  while (node && node !== document.body && node.parentElement) {
-    for (const sibling of Array.from(node.parentElement.children)) {
-      if (sibling !== node) {
-        hide(sibling);
+  for (const root of containers) {
+    let node: Element | null = root;
+    while (node && node !== document.body && node.parentElement) {
+      for (const sibling of Array.from(node.parentElement.children)) {
+        if (!containers.includes(sibling) && sibling !== node) {
+          hide(sibling);
+        }
       }
+      node = node.parentElement;
     }
-    node = node.parentElement;
   }
 
   return function cleanup() {

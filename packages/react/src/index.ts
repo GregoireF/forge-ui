@@ -27,5 +27,5 @@ export type {
 export { Popover } from "./components/popover/Popover.js";
 export type { UsePopoverOptions } from "./components/popover/use-popover.js";
 export { usePopover } from "./components/popover/use-popover.js";
-
+export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

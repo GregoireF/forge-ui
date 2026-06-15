@@ -1,11 +1,23 @@
+import { clearRegistry } from "@forge-ui/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDialogMachine } from "../src/dialog.machine.js";
+
+let activeMachines: ReturnType<typeof createDialogMachine>[] = [];
 
 function makeMachine(overrides = {}) {
   const m = createDialogMachine({ id: "test", ...overrides });
   m.start();
+  activeMachines.push(m);
   return m;
 }
+
+// Stop all machines and clear stack registry after every test so event
+// listeners and registry entries don't bleed into subsequent tests.
+afterEach(() => {
+  for (const m of activeMachines) m.stop();
+  activeMachines = [];
+  clearRegistry();
+});
 
 describe("createDialogMachine — state transitions", () => {
   it("starts closed by default", () => {
