@@ -6,16 +6,22 @@ import {
   makeLockScrollActivity,
   makeWatchOutsideActivity,
 } from "@forge-ui/core";
-import type { DialogContext, DialogEvent, DialogState } from "./dialog.types.js";
+import { makeComputePositionActivity } from "./activities.js";
+import type {
+  PopoverContext,
+  PopoverEvent,
+  PopoverPositioning,
+  PopoverState,
+} from "./popover.types.js";
 
-export interface CreateDialogMachineOptions {
+export interface CreatePopoverMachineOptions {
   id: string;
   open?: boolean;
-  role?: "dialog" | "alertdialog";
   modal?: boolean;
   trapFocus?: boolean;
   preventScroll?: boolean;
   hideOthers?: boolean;
+  positioning?: PopoverPositioning;
   initialFocusEl?: () => HTMLElement | null;
   finalFocusEl?: () => HTMLElement | null;
   onOpenAutoFocus?: (e: Event) => void;
@@ -28,64 +34,37 @@ export interface CreateDialogMachineOptions {
 }
 
 // ---------------------------------------------------------------------------
-// AlertDialog defaults: prevent close on outside interaction and Escape
-// per WAI-ARIA alertdialog spec (user MUST explicitly acknowledge).
-// Consumers can override by providing their own callbacks that don't call
-// e.preventDefault().
-// ---------------------------------------------------------------------------
-
-function makeDefaultAlertOnEscapeKeyDown(
-  userCallback?: (e: KeyboardEvent) => void,
-): (e: KeyboardEvent) => void {
-  return (e) => {
-    e.preventDefault(); // block close by default for alertdialog
-    userCallback?.(e);
-  };
-}
-
-function makeDefaultAlertOnInteractOutside(
-  userCallback?: (e: PointerEvent | FocusEvent) => void,
-): (e: PointerEvent | FocusEvent) => void {
-  return (e) => {
-    e.preventDefault(); // block close by default for alertdialog
-    userCallback?.(e);
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Named actions
+// Actions
 // ---------------------------------------------------------------------------
 
 function invokeOnOpenChange(open: boolean) {
-  return function action({ context }: { context: DialogContext }) {
+  return function action({ context }: { context: PopoverContext }) {
     context.onOpenChange?.(open);
   };
 }
 
-function registerTitle({ setContext }: { setContext: (u: Partial<DialogContext>) => void }) {
+function registerTitle({ setContext }: { setContext: (u: Partial<PopoverContext>) => void }) {
   setContext({ titleRegistered: true });
 }
-function unregisterTitle({ setContext }: { setContext: (u: Partial<DialogContext>) => void }) {
+function unregisterTitle({ setContext }: { setContext: (u: Partial<PopoverContext>) => void }) {
   setContext({ titleRegistered: false });
 }
-function registerDescription({ setContext }: { setContext: (u: Partial<DialogContext>) => void }) {
+function registerDescription({ setContext }: { setContext: (u: Partial<PopoverContext>) => void }) {
   setContext({ descriptionRegistered: true });
 }
 function unregisterDescription({
   setContext,
 }: {
-  setContext: (u: Partial<DialogContext>) => void;
+  setContext: (u: Partial<PopoverContext>) => void;
 }) {
   setContext({ descriptionRegistered: false });
 }
 
 // ---------------------------------------------------------------------------
-// Activity factories — instantiated once, reused per-machine.
-// Each factory captures ctx-accessor functions so the activity always reads
-// the latest context values at event time (not at activity-start time).
+// Activity factories
 // ---------------------------------------------------------------------------
 
-const manageFocus = makeFocusActivity<DialogContext>({
+const manageFocus = makeFocusActivity<PopoverContext>({
   getContentEl: (ctx) => ctx.contentEl,
   getInitialFocusEl: (ctx) => ctx.initialFocusEl?.() ?? null,
   getFinalFocusEl: (ctx) => ctx.finalFocusEl?.() ?? null,
@@ -93,58 +72,49 @@ const manageFocus = makeFocusActivity<DialogContext>({
   getOnCloseAutoFocus: (ctx) => ctx.onCloseAutoFocus,
 });
 
-const trapKeyboard = makeKeyboardActivity<DialogContext>({
+const trapKeyboard = makeKeyboardActivity<PopoverContext>({
   getContentEl: (ctx) => ctx.contentEl,
   isModal: (ctx) => ctx.trapFocus,
   sendEscape: "ESCAPE_KEY",
   getOnEscapeKeyDown: (ctx) => ctx.onEscapeKeyDown,
 });
 
-const hideBackground = makeHideBackgroundActivity<DialogContext>({
+const hideBackground = makeHideBackgroundActivity<PopoverContext>({
   getContentEl: (ctx) => ctx.contentEl,
   isHideOthers: (ctx) => ctx.hideOthers,
 });
 
-const lockBodyScroll = makeLockScrollActivity<DialogContext>({
+const lockBodyScroll = makeLockScrollActivity<PopoverContext>({
   isPreventScroll: (ctx) => ctx.preventScroll,
 });
 
-const watchOutside = makeWatchOutsideActivity<DialogContext>({
-  getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl],
+const watchOutside = makeWatchOutsideActivity<PopoverContext>({
+  getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl, ctx.anchorEl],
   sendClose: "INTERACT_OUTSIDE",
   getOnPointerDownOutside: (ctx) => ctx.onPointerDownOutside,
   getOnFocusOutside: (ctx) => ctx.onFocusOutside,
   getOnInteractOutside: (ctx) => ctx.onInteractOutside,
 });
 
+const computePosition = makeComputePositionActivity();
+
 // ---------------------------------------------------------------------------
 // Machine factory
 // ---------------------------------------------------------------------------
 
-export function createDialogMachine(options: CreateDialogMachineOptions) {
+export function createPopoverMachine(options: CreatePopoverMachineOptions) {
   const { id } = options;
-  const role = options.role ?? "dialog";
-  const isAlertDialog = role === "alertdialog";
-  const modal = options.modal ?? true;
+  const modal = options.modal ?? false;
+  const pos = options.positioning ?? {};
 
-  // alertdialog prevents close by default; wrap user callbacks to preserve
-  // their intent while adding the default-prevent behavior.
-  const onEscapeKeyDown = isAlertDialog
-    ? makeDefaultAlertOnEscapeKeyDown(options.onEscapeKeyDown)
-    : options.onEscapeKeyDown;
-  const onInteractOutside = isAlertDialog
-    ? makeDefaultAlertOnInteractOutside(options.onInteractOutside)
-    : options.onInteractOutside;
-
-  return createMachine<DialogContext, DialogState, DialogEvent>({
-    id: `forge-dialog:${id}`,
+  return createMachine<PopoverContext, PopoverState, PopoverEvent>({
+    id: `forge-popover:${id}`,
     context: {
       id,
       open: options.open ?? false,
-      role,
       modal,
       trapFocus: options.trapFocus ?? modal,
-      preventScroll: options.preventScroll ?? modal,
+      preventScroll: options.preventScroll ?? false,
       hideOthers: options.hideOthers ?? modal,
       triggerId: `${id}-trigger`,
       contentId: `${id}-content`,
@@ -152,8 +122,19 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
       descriptionId: `${id}-description`,
       titleRegistered: false,
       descriptionRegistered: false,
-      contentEl: null,
       triggerEl: null,
+      anchorEl: null,
+      contentEl: null,
+      arrowEl: null,
+      x: 0,
+      y: 0,
+      currentPlacement: pos.placement ?? "bottom",
+      positioning: {
+        placement: pos.placement ?? "bottom",
+        strategy: pos.strategy ?? "fixed",
+        offset: pos.offset ?? 4,
+        middleware: pos.middleware,
+      },
       ...(options.initialFocusEl !== undefined && { initialFocusEl: options.initialFocusEl }),
       ...(options.finalFocusEl !== undefined && { finalFocusEl: options.finalFocusEl }),
       ...(options.onOpenAutoFocus !== undefined && { onOpenAutoFocus: options.onOpenAutoFocus }),
@@ -162,8 +143,10 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
         onPointerDownOutside: options.onPointerDownOutside,
       }),
       ...(options.onFocusOutside !== undefined && { onFocusOutside: options.onFocusOutside }),
-      ...(onInteractOutside !== undefined && { onInteractOutside }),
-      ...(onEscapeKeyDown !== undefined && { onEscapeKeyDown }),
+      ...(options.onInteractOutside !== undefined && {
+        onInteractOutside: options.onInteractOutside,
+      }),
+      ...(options.onEscapeKeyDown !== undefined && { onEscapeKeyDown: options.onEscapeKeyDown }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
     },
     initial: options.open ? "open" : "closed",
@@ -183,6 +166,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
       open: {
         tags: ["open"],
         activities: [
+          "computePosition",
           "manageFocus",
           "trapKeyboard",
           "hideBackground",
@@ -203,6 +187,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
     },
 
     activities: {
+      computePosition,
       manageFocus,
       trapKeyboard,
       hideBackground,

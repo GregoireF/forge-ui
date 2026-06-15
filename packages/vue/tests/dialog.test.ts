@@ -7,14 +7,15 @@ import { DialogPortal } from "../src/components/dialog/DialogPortal.js";
 import { useDialog } from "../src/components/dialog/use-dialog.js";
 
 // ---------------------------------------------------------------------------
-// Test component
+// Test component — uses useDialog() headless hook directly
 // ---------------------------------------------------------------------------
-function makeDialogFixture(props: {
-  onOpen?: () => void;
-  onClose?: () => void;
-  closeOnEscapeKey?: boolean;
-  closeOnInteractOutside?: boolean;
-}) {
+function makeDialogFixture(
+  props: {
+    onOpenChange?: (open: boolean) => void;
+    onEscapeKeyDown?: (e: KeyboardEvent) => void;
+    onInteractOutside?: (e: PointerEvent | FocusEvent) => void;
+  } = {},
+) {
   return defineComponent({
     setup() {
       return useDialog({
@@ -26,7 +27,7 @@ function makeDialogFixture(props: {
       <div>
         <button v-bind="getTriggerProps()" data-testid="trigger">Open</button>
         <template v-if="isOpen">
-          <div v-bind="getBackdropProps()" data-testid="backdrop" />
+          <div v-bind="getOverlayProps()" data-testid="overlay" />
           <div v-bind="getContentProps()" data-testid="content">
             <h2 v-bind="getTitleProps()">Dialog Title</h2>
             <p v-bind="getDescriptionProps()">Description</p>
@@ -46,18 +47,18 @@ describe("useDialog (Vue)", () => {
 
   describe("rendering", () => {
     it("renders closed by default", () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
     it("opens on trigger click", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
 
     it("closes on close button click", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       await user.click(screen.getByTestId("close-btn"));
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -66,18 +67,18 @@ describe("useDialog (Vue)", () => {
 
   describe("ARIA attributes", () => {
     it("trigger has aria-expanded=false when closed", () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       expect(screen.getByTestId("trigger")).toHaveAttribute("aria-expanded", "false");
     });
 
     it("trigger has aria-expanded=true when open", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("trigger")).toHaveAttribute("aria-expanded", "true");
     });
 
     it("dialog has role=dialog, aria-modal, aria-labelledby, aria-describedby", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       const dialog = screen.getByRole("dialog");
       expect(dialog).toHaveAttribute("aria-modal", "true");
@@ -88,38 +89,38 @@ describe("useDialog (Vue)", () => {
 
   describe("data attributes", () => {
     it("trigger has data-state=closed when dialog is closed", () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       expect(screen.getByTestId("trigger")).toHaveAttribute("data-state", "closed");
     });
 
     it("trigger has data-state=open when dialog is open", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("trigger")).toHaveAttribute("data-state", "open");
     });
 
     it("content has data-state=open when open", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");
     });
 
     it("trigger has data-forge-part=trigger", () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-part", "trigger");
     });
   });
 
   describe("keyboard interaction", () => {
     it("closes on Escape key by default", async () => {
-      render(makeDialogFixture({}));
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       await user.keyboard("{Escape}");
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
-    it("stays open on Escape when closeOnEscapeKey=false", async () => {
-      render(makeDialogFixture({ closeOnEscapeKey: false }));
+    it("stays open on Escape when onEscapeKeyDown calls e.preventDefault()", async () => {
+      render(makeDialogFixture({ onEscapeKeyDown: (e) => e.preventDefault() }));
       await user.click(screen.getByTestId("trigger"));
       await user.keyboard("{Escape}");
       expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -127,28 +128,35 @@ describe("useDialog (Vue)", () => {
   });
 
   describe("outside click", () => {
-    it("closes on backdrop click by default", async () => {
-      render(makeDialogFixture({}));
+    it("closes on overlay click by default", async () => {
+      render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
-      await user.click(screen.getByTestId("backdrop"));
+      await user.click(screen.getByTestId("overlay"));
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("stays open when onInteractOutside calls e.preventDefault()", async () => {
+      render(makeDialogFixture({ onInteractOutside: (e) => e.preventDefault() }));
+      await user.click(screen.getByTestId("trigger"));
+      await user.click(screen.getByTestId("overlay"));
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
   });
 
   describe("callbacks", () => {
-    it("calls onOpen when dialog opens", async () => {
-      const onOpen = vi.fn();
-      render(makeDialogFixture({ onOpen }));
+    it("calls onOpenChange(true) when dialog opens", async () => {
+      const onOpenChange = vi.fn();
+      render(makeDialogFixture({ onOpenChange }));
       await user.click(screen.getByTestId("trigger"));
-      expect(onOpen).toHaveBeenCalledOnce();
+      expect(onOpenChange).toHaveBeenCalledWith(true);
     });
 
-    it("calls onClose when dialog closes", async () => {
-      const onClose = vi.fn();
-      render(makeDialogFixture({ onClose }));
+    it("calls onOpenChange(false) when dialog closes", async () => {
+      const onOpenChange = vi.fn();
+      render(makeDialogFixture({ onOpenChange }));
       await user.click(screen.getByTestId("trigger"));
       await user.click(screen.getByTestId("close-btn"));
-      expect(onClose).toHaveBeenCalledOnce();
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
     });
   });
 
@@ -253,11 +261,30 @@ describe("useDialog (Vue)", () => {
       render(Fixture);
       expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-part", "trigger");
       await user.click(screen.getByTestId("trigger"));
-      expect(screen.getByTestId("overlay")).toHaveAttribute("data-forge-part", "backdrop");
+      expect(screen.getByTestId("overlay")).toHaveAttribute("data-forge-part", "overlay");
       expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
       expect(screen.getByTestId("title")).toHaveAttribute("data-forge-part", "title");
       expect(screen.getByTestId("desc")).toHaveAttribute("data-forge-part", "description");
       expect(screen.getByTestId("close")).toHaveAttribute("data-forge-part", "close");
+    });
+
+    it("compound parts have data-forge-scope=dialog", async () => {
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle, DialogClose },
+        template: `
+          <DialogRoot id="test-scope">
+            <DialogTrigger data-testid="trigger">Open</DialogTrigger>
+            <DialogContent data-testid="content">
+              <DialogTitle>T</DialogTitle>
+              <DialogClose data-testid="close">×</DialogClose>
+            </DialogContent>
+          </DialogRoot>
+        `,
+      });
+      render(Fixture);
+      expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-scope", "dialog");
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-scope", "dialog");
     });
   });
 

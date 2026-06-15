@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useLayoutEffect } from "react";
 import { DialogPortal } from "./DialogPortal.js";
 import { Slot } from "./Slot.js";
 import type { UseDialogOptions } from "./use-dialog.js";
@@ -24,12 +24,11 @@ export interface DialogRootProps extends UseDialogOptions {
 }
 
 function Root({ children, open: openProp, ...opts }: DialogRootProps) {
-  // Pass openProp for initial machine state; subsequent changes are synced below.
   const api = useDialog({ ...opts, ...(openProp !== undefined && { open: openProp }) });
 
-  // Controlled mode: external `open` prop drives the machine after mount.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: api.setOpen is recreated each render but is referentially stable in behaviour; adding it would cause infinite re-runs
-  useEffect(() => {
+  // Controlled mode: sync external `open` prop into the machine.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setOpen is stable in behaviour
+  useLayoutEffect(() => {
     if (openProp === undefined) return;
     api.setOpen(openProp);
   }, [openProp]);
@@ -59,24 +58,30 @@ function Trigger({ asChild, children, ...rest }: DialogTriggerProps) {
 export interface DialogPortalCompoundProps {
   children: ReactNode;
   container?: HTMLElement | null;
+  forceMount?: boolean;
 }
 
-function Portal({ children, container }: DialogPortalCompoundProps) {
+function Portal({ children, container, forceMount }: DialogPortalCompoundProps) {
+  const api = useCtx();
+  if (!forceMount && !api.isOpen) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
 // ---------------------------------------------------------------------------
-// Overlay (backdrop)
+// Overlay
 // ---------------------------------------------------------------------------
 
 export interface DialogOverlayProps extends HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
   forceMount?: boolean;
 }
 
-function Overlay({ forceMount, ...rest }: DialogOverlayProps) {
+function Overlay({ asChild, forceMount, children, ...rest }: DialogOverlayProps) {
   const api = useCtx();
   if (!forceMount && !api.isOpen) return null;
-  return <div {...api.getBackdropProps()} {...rest} />;
+  const props = { ...api.getOverlayProps(), ...rest };
+  if (asChild) return <Slot {...props}>{children}</Slot>;
+  return <div {...props} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -84,47 +89,59 @@ function Overlay({ forceMount, ...rest }: DialogOverlayProps) {
 // ---------------------------------------------------------------------------
 
 export interface DialogContentProps extends HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
   forceMount?: boolean;
 }
 
-function Content({ forceMount, children, ...rest }: DialogContentProps) {
+function Content({ asChild, forceMount, children, ...rest }: DialogContentProps) {
   const api = useCtx();
   if (!forceMount && !api.isOpen) return null;
-  return (
-    <div {...api.getContentProps()} {...rest}>
-      {children}
-    </div>
-  );
+  const props = { ...api.getContentProps(), ...rest };
+  if (asChild) return <Slot {...props}>{children}</Slot>;
+  return <div {...props}>{children}</div>;
 }
 
 // ---------------------------------------------------------------------------
-// Title
+// Title — registers itself in the machine on mount for presence detection.
 // ---------------------------------------------------------------------------
 
-export type DialogTitleProps = HTMLAttributes<HTMLHeadingElement>;
+export interface DialogTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  asChild?: boolean;
+}
 
-function Title({ children, ...rest }: DialogTitleProps) {
+function Title({ asChild, children, ...rest }: DialogTitleProps) {
   const api = useCtx();
-  return (
-    <h2 {...api.getTitleProps()} {...rest}>
-      {children}
-    </h2>
-  );
+
+  // send is a stable reference from machine.send — safe as useLayoutEffect dep.
+  useLayoutEffect(() => {
+    api.send("REGISTER_TITLE");
+    return () => api.send("UNREGISTER_TITLE");
+  }, [api.send]);
+
+  const props = { ...api.getTitleProps(), ...rest };
+  if (asChild) return <Slot {...props}>{children}</Slot>;
+  return <h2 {...props}>{children}</h2>;
 }
 
 // ---------------------------------------------------------------------------
 // Description
 // ---------------------------------------------------------------------------
 
-export type DialogDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+export interface DialogDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {
+  asChild?: boolean;
+}
 
-function Description({ children, ...rest }: DialogDescriptionProps) {
+function Description({ asChild, children, ...rest }: DialogDescriptionProps) {
   const api = useCtx();
-  return (
-    <p {...api.getDescriptionProps()} {...rest}>
-      {children}
-    </p>
-  );
+
+  useLayoutEffect(() => {
+    api.send("REGISTER_DESCRIPTION");
+    return () => api.send("UNREGISTER_DESCRIPTION");
+  }, [api.send]);
+
+  const props = { ...api.getDescriptionProps(), ...rest };
+  if (asChild) return <Slot {...props}>{children}</Slot>;
+  return <p {...props}>{children}</p>;
 }
 
 // ---------------------------------------------------------------------------

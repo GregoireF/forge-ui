@@ -24,13 +24,14 @@ export type GuardFn<TContext extends object, TEvent extends EventObject = EventO
 
 /**
  * Long-running effect tied to a machine state.
- * Receives the live mutable context (reads DOM refs set after activity start)
- * and a send function to dispatch events.
+ * Receives the live mutable context (reads DOM refs set after activity start),
+ * a send function to dispatch events, and a notify function to trigger a
+ * re-render without dispatching an event (used by compute-position activities).
  * Returns an optional cleanup called when the state is exited or machine stops.
  */
 export type ActivityFn<TContext extends object> = (
   ctx: TContext,
-  api: { send: (event: string) => void },
+  api: { send: (event: string) => void; notify: () => void },
 ) => (() => void) | undefined;
 
 export interface TransitionConfig<
@@ -56,6 +57,14 @@ export interface StateNodeConfig<
   tags?: string[];
   /** Names of activities (defined in MachineConfig.activities) to run while in this state. */
   activities?: string[];
+  /**
+   * Delayed auto-transitions fired after N ms in this state.
+   * The machine schedules a setTimeout on entry and clears it on exit.
+   * { [delayMs]: TransitionConfig }
+   */
+  after?: {
+    [delay: number]: TransitionConfig<TContext, TState, TEvent>;
+  };
 }
 
 export interface MachineConfig<

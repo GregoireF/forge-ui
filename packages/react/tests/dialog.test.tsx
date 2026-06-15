@@ -7,25 +7,22 @@ import { DialogPortal } from "../src/components/dialog/DialogPortal.js";
 import { useDialog } from "../src/components/dialog/use-dialog.js";
 
 // ---------------------------------------------------------------------------
-// Test component
+// Test component — uses useDialog() headless hook directly
 // ---------------------------------------------------------------------------
 function DialogFixture({
-  onOpen,
-  onClose,
-  closeOnEscapeKey,
-  closeOnInteractOutside,
+  onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
 }: {
-  onOpen?: () => void;
-  onClose?: () => void;
-  closeOnEscapeKey?: boolean;
-  closeOnInteractOutside?: boolean;
-}) {
+  onOpenChange?: (open: boolean) => void;
+  onEscapeKeyDown?: (e: KeyboardEvent) => void;
+  onInteractOutside?: (e: PointerEvent | FocusEvent) => void;
+} = {}) {
   const dialog = useDialog({
     id: "test-dialog",
-    onOpen,
-    onClose,
-    closeOnEscapeKey,
-    closeOnInteractOutside,
+    onOpenChange,
+    onEscapeKeyDown,
+    onInteractOutside,
   });
 
   return (
@@ -36,7 +33,7 @@ function DialogFixture({
 
       {dialog.isOpen && (
         <>
-          <div {...dialog.getBackdropProps()} data-testid="backdrop" />
+          <div {...dialog.getOverlayProps()} data-testid="overlay" />
           <div {...dialog.getContentProps()} data-testid="content">
             <h2 {...dialog.getTitleProps()}>Dialog Title</h2>
             <p {...dialog.getDescriptionProps()}>Description</p>
@@ -116,10 +113,10 @@ describe("useDialog (React)", () => {
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");
     });
 
-    it("backdrop has data-state=open when open", async () => {
+    it("overlay has data-state=open when open", async () => {
       render(<DialogFixture />);
       await user.click(screen.getByTestId("trigger"));
-      expect(screen.getByTestId("backdrop")).toHaveAttribute("data-state", "open");
+      expect(screen.getByTestId("overlay")).toHaveAttribute("data-state", "open");
     });
 
     it("trigger has data-forge-part=trigger", () => {
@@ -132,6 +129,11 @@ describe("useDialog (React)", () => {
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
     });
+
+    it("trigger has data-forge-scope=dialog", () => {
+      render(<DialogFixture />);
+      expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-scope", "dialog");
+    });
   });
 
   describe("keyboard interaction", () => {
@@ -142,8 +144,8 @@ describe("useDialog (React)", () => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
-    it("stays open on Escape when closeOnEscapeKey=false", async () => {
-      render(<DialogFixture closeOnEscapeKey={false} />);
+    it("stays open on Escape when onEscapeKeyDown calls e.preventDefault()", async () => {
+      render(<DialogFixture onEscapeKeyDown={(e) => e.preventDefault()} />);
       await user.click(screen.getByTestId("trigger"));
       await user.keyboard("{Escape}");
       expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -151,35 +153,35 @@ describe("useDialog (React)", () => {
   });
 
   describe("outside click", () => {
-    it("closes on backdrop click by default", async () => {
+    it("closes on overlay click by default", async () => {
       render(<DialogFixture />);
       await user.click(screen.getByTestId("trigger"));
-      await user.click(screen.getByTestId("backdrop"));
+      await user.click(screen.getByTestId("overlay"));
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
-    it("stays open when closeOnInteractOutside=false", async () => {
-      render(<DialogFixture closeOnInteractOutside={false} />);
+    it("stays open when onInteractOutside calls e.preventDefault()", async () => {
+      render(<DialogFixture onInteractOutside={(e) => e.preventDefault()} />);
       await user.click(screen.getByTestId("trigger"));
-      await user.click(screen.getByTestId("backdrop"));
+      await user.click(screen.getByTestId("overlay"));
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
   });
 
   describe("callbacks", () => {
-    it("calls onOpen when dialog opens", async () => {
-      const onOpen = vi.fn();
-      render(<DialogFixture onOpen={onOpen} />);
+    it("calls onOpenChange(true) when dialog opens", async () => {
+      const onOpenChange = vi.fn();
+      render(<DialogFixture onOpenChange={onOpenChange} />);
       await user.click(screen.getByTestId("trigger"));
-      expect(onOpen).toHaveBeenCalledOnce();
+      expect(onOpenChange).toHaveBeenCalledWith(true);
     });
 
-    it("calls onClose when dialog closes", async () => {
-      const onClose = vi.fn();
-      render(<DialogFixture onClose={onClose} />);
+    it("calls onOpenChange(false) when dialog closes", async () => {
+      const onOpenChange = vi.fn();
+      render(<DialogFixture onOpenChange={onOpenChange} />);
       await user.click(screen.getByTestId("trigger"));
       await user.click(screen.getByTestId("close-btn"));
-      expect(onClose).toHaveBeenCalledOnce();
+      expect(onOpenChange).toHaveBeenLastCalledWith(false);
     });
   });
 
@@ -210,7 +212,6 @@ describe("useDialog (React)", () => {
           </Dialog.Content>
         </Dialog.Root>,
       );
-      // Must be in DOM even before trigger click
       expect(screen.getByTestId("content")).toBeInTheDocument();
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "closed");
     });
@@ -230,12 +231,10 @@ describe("useDialog (React)", () => {
         </Dialog.Root>,
       );
       const link = screen.getByTestId("link-trigger");
-      // forge aria attributes merged onto <a>
       expect(link.tagName).toBe("A");
       expect(link).toHaveAttribute("aria-expanded", "false");
       expect(link).toHaveAttribute("aria-haspopup", "dialog");
       expect(link).toHaveAttribute("data-forge-part", "trigger");
-      // click still opens dialog
       await user.click(link);
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
@@ -277,7 +276,7 @@ describe("useDialog (React)", () => {
       );
       expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-part", "trigger");
       await user.click(screen.getByTestId("trigger"));
-      expect(screen.getByTestId("overlay")).toHaveAttribute("data-forge-part", "backdrop");
+      expect(screen.getByTestId("overlay")).toHaveAttribute("data-forge-part", "overlay");
       expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
       expect(screen.getByTestId("title")).toHaveAttribute("data-forge-part", "title");
       expect(screen.getByTestId("desc")).toHaveAttribute("data-forge-part", "description");
@@ -377,7 +376,6 @@ describe("useDialog (React)", () => {
         </Dialog.Root>,
       );
       await user.click(screen.getByTestId("trigger"));
-      // Focus last button, Tab should wrap to first
       screen.getByTestId("close").focus();
       await user.keyboard("{Tab}");
       expect(screen.getByRole("dialog")).toContainElement(document.activeElement as HTMLElement);
@@ -397,7 +395,6 @@ describe("useDialog (React)", () => {
         </Dialog.Root>,
       );
       await user.click(screen.getByTestId("trigger"));
-      // Focus first focusable inside content, Shift+Tab should wrap to last
       screen.getByTestId("btn-a").focus();
       await user.keyboard("{Shift>}{Tab}{/Shift}");
       expect(screen.getByRole("dialog")).toContainElement(document.activeElement as HTMLElement);
@@ -481,9 +478,7 @@ describe("useDialog (React)", () => {
           </DialogPortal>
         </div>,
       );
-      // The portal child must exist in the document
       expect(screen.getByTestId("portal-child")).toBeInTheDocument();
-      // But NOT inside #app-root — it was teleported to document.body
       const appRoot = baseElement.querySelector("#app-root");
       expect(appRoot?.querySelector("[data-testid='portal-child']")).toBeNull();
     });

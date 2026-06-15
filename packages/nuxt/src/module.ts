@@ -28,16 +28,18 @@ export default defineNuxtModule({
     // ---------------------------------------------------------------------------
     addImports([
       { name: "useDialog", from },
+      { name: "usePopover", from },
       { name: "useMachine", from },
     ]);
 
-    // The `Dialog` namespace object — enables <Dialog.Root> in templates
+    // Namespace objects — enable <Dialog.Root> / <Popover.Root> in templates
     addImports({ name: "Dialog", from });
+    addImports({ name: "Popover", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
     // ---------------------------------------------------------------------------
-    const components = [
+    const dialogComponents = [
       "DialogRoot",
       "DialogTrigger",
       "DialogOverlay",
@@ -48,7 +50,23 @@ export default defineNuxtModule({
       "DialogPortal",
     ] as const;
 
-    for (const name of components) {
+    for (const name of dialogComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const popoverComponents = [
+      "PopoverRoot",
+      "PopoverTrigger",
+      "PopoverAnchor",
+      "PopoverPortal",
+      "PopoverContent",
+      "PopoverArrow",
+      "PopoverClose",
+      "PopoverTitle",
+      "PopoverDescription",
+    ] as const;
+
+    for (const name of popoverComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },

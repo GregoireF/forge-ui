@@ -30,7 +30,8 @@
   },
   "dependencies": {
     "@forge-ui/core": "workspace:*",
-    "@forge-ui/dialog": "workspace:*"
+    "@forge-ui/dialog": "workspace:*",
+    "@forge-ui/popover": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^16.0.0",

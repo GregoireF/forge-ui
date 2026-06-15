@@ -16,20 +16,21 @@ export function useDialog(options: UseDialogOptions = {}) {
 
   const isOpen = computed(() => snapshot.value.matches("open"));
 
-  function getApi() {
-    return connectDialog(snapshot.value, send, machine);
-  }
+  // Single connectDialog instance per snapshot — avoids creating N instances
+  // per-render (one per getter call in the old pattern).
+  const api = computed(() => connectDialog(snapshot.value, send, machine));
 
   return {
     isOpen,
     snapshot,
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
-    getTriggerProps: () => getApi().getTriggerProps(),
-    getBackdropProps: () => getApi().getBackdropProps(),
-    getContentProps: () => getApi().getContentProps(),
-    getTitleProps: () => getApi().getTitleProps(),
-    getDescriptionProps: () => getApi().getDescriptionProps(),
-    getCloseProps: () => getApi().getCloseProps(),
+    getTriggerProps: () => api.value.getTriggerProps(),
+    getOverlayProps: () => api.value.getOverlayProps(),
+    getBackdropProps: () => api.value.getBackdropProps(),
+    getContentProps: () => api.value.getContentProps(),
+    getTitleProps: () => api.value.getTitleProps(),
+    getDescriptionProps: () => api.value.getDescriptionProps(),
+    getCloseProps: () => api.value.getCloseProps(),
   };
 }

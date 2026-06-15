@@ -1,4 +1,20 @@
 // Machine engine
+
+export type {
+  FocusActivityOptions,
+  HideBackgroundActivityOptions,
+  KeyboardActivityOptions,
+  LockScrollActivityOptions,
+  WatchOutsideActivityOptions,
+} from "./activities/index.js";
+// Activity factories
+export {
+  makeFocusActivity,
+  makeHideBackgroundActivity,
+  makeKeyboardActivity,
+  makeLockScrollActivity,
+  makeWatchOutsideActivity,
+} from "./activities/index.js";
 export { createMachine } from "./machine/machine.js";
 export type {
   ActionFn,

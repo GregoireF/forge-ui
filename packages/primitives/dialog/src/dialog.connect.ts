@@ -6,11 +6,10 @@ export type DialogApi = ReturnType<typeof connectDialog>;
 /**
  * Maps machine snapshot → framework-agnostic DOM props.
  *
- * Key differences from the old connect:
- * - getTriggerProps / getContentProps include a `ref` callback that sets
- *   ctx.triggerEl / ctx.contentEl on the machine (used by activities).
- * - No onKeyDown on content — Escape + Tab are handled by machine activities.
- * - No onClick on backdrop — interact-outside is handled by the watchOutside activity.
+ * - getTriggerProps / getContentProps include a `ref` callback to set DOM refs.
+ * - Escape + Tab + interact-outside are handled by machine activities.
+ * - data-forge-scope="dialog" on every part enables precise CSS scoping.
+ * - aria-labelledby / aria-describedby are conditional on presence registration.
  */
 export function connectDialog(
   snapshot: MachineSnapshot<DialogContext, DialogState>,
@@ -32,6 +31,7 @@ export function connectDialog(
         "aria-controls": context.contentId,
         "aria-haspopup": "dialog" as const,
         "data-state": state,
+        "data-forge-scope": "dialog",
         "data-forge-part": "trigger",
         ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
         onClick() {
@@ -40,41 +40,57 @@ export function connectDialog(
       };
     },
 
-    getBackdropProps() {
+    getOverlayProps() {
       return {
         "aria-hidden": true as const,
         tabIndex: -1,
         "data-state": state,
-        "data-forge-part": "backdrop",
+        "data-forge-scope": "dialog",
+        "data-forge-part": "overlay",
       };
+    },
+
+    /** @deprecated Use getOverlayProps() — renamed for consistency with compound parts */
+    getBackdropProps() {
+      return this.getOverlayProps();
     },
 
     getContentProps() {
       return {
         id: context.contentId,
-        role: "dialog" as const,
+        role: context.role,
         "aria-modal": context.modal,
         "aria-labelledby": context.titleId,
         "aria-describedby": context.descriptionId,
         tabIndex: -1,
         "data-state": state,
+        "data-forge-scope": "dialog",
         "data-forge-part": "content",
         ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
       };
     },
 
     getTitleProps() {
-      return { id: context.titleId, "data-forge-part": "title" };
+      return {
+        id: context.titleId,
+        "data-forge-scope": "dialog",
+        "data-forge-part": "title",
+      };
     },
 
     getDescriptionProps() {
-      return { id: context.descriptionId, "data-forge-part": "description" };
+      return {
+        id: context.descriptionId,
+        "data-forge-scope": "dialog",
+        "data-forge-part": "description",
+      };
     },
 
     getCloseProps() {
       return {
         type: "button" as const,
         "aria-label": "Close dialog",
+        "data-forge-scope": "dialog",
         "data-forge-part": "close",
         onClick() {
           send("CLOSE");

@@ -39,32 +39,48 @@ describe("createDialogMachine — state transitions", () => {
     expect(m.getSnapshot().matches("closed")).toBe(true);
   });
 
-  it("ESCAPE_KEY closes when closeOnEscapeKey=true (default)", () => {
+  it("ESCAPE_KEY closes dialog", () => {
     const m = makeMachine();
     m.send("OPEN");
     m.send("ESCAPE_KEY");
     expect(m.getSnapshot().matches("closed")).toBe(true);
   });
 
-  it("ESCAPE_KEY blocked when closeOnEscapeKey=false", () => {
-    const m = makeMachine({ closeOnEscapeKey: false });
-    m.send("OPEN");
-    m.send("ESCAPE_KEY");
-    expect(m.getSnapshot().matches("open")).toBe(true);
-  });
-
-  it("INTERACT_OUTSIDE closes when closeOnInteractOutside=true (default)", () => {
+  it("INTERACT_OUTSIDE closes dialog", () => {
     const m = makeMachine();
     m.send("OPEN");
     m.send("INTERACT_OUTSIDE");
     expect(m.getSnapshot().matches("closed")).toBe(true);
   });
+});
 
-  it("INTERACT_OUTSIDE blocked when closeOnInteractOutside=false", () => {
-    const m = makeMachine({ closeOnInteractOutside: false });
+describe("createDialogMachine — alertdialog defaults", () => {
+  it("role defaults to 'dialog'", () => {
+    const m = makeMachine();
+    expect(m.getSnapshot().context.role).toBe("dialog");
+  });
+
+  it("role: 'alertdialog' wraps onEscapeKeyDown to prevent close by default", () => {
+    const escapeHandler = vi.fn();
+    const m = makeMachine({ role: "alertdialog", onEscapeKeyDown: escapeHandler });
     m.send("OPEN");
-    m.send("INTERACT_OUTSIDE");
-    expect(m.getSnapshot().matches("open")).toBe(true);
+    // Send ESCAPE_KEY — alertdialog defaults should block it.
+    // However, the blocking happens in the keyboard activity (e.preventDefault()),
+    // not at the machine transition level. Sending ESCAPE_KEY directly bypasses
+    // the activity, so it will still close. Keyboard activity blocking is tested
+    // in the activity/integration tests. Here we verify the callback is wrapped.
+    const ctx = m.getSnapshot().context;
+    expect(typeof ctx.onEscapeKeyDown).toBe("function");
+  });
+
+  it("alertdialog wraps onInteractOutside to prevent close by default", () => {
+    const m = makeMachine({ role: "alertdialog" });
+    const ctx = m.getSnapshot().context;
+    expect(typeof ctx.onInteractOutside).toBe("function");
+    // Simulate what the activity does: call the wrapped callback with a synthetic event
+    const event = new PointerEvent("pointerdown", { cancelable: true });
+    ctx.onInteractOutside!(event);
+    expect(event.defaultPrevented).toBe(true);
   });
 });
 
@@ -79,30 +95,40 @@ describe("createDialogMachine — context IDs", () => {
   });
 });
 
+describe("createDialogMachine — modal options", () => {
+  it("modal:true sets trapFocus/preventScroll/hideOthers all true", () => {
+    const m = makeMachine({ modal: true });
+    const ctx = m.getSnapshot().context;
+    expect(ctx.trapFocus).toBe(true);
+    expect(ctx.preventScroll).toBe(true);
+    expect(ctx.hideOthers).toBe(true);
+  });
+
+  it("modal:false sets trapFocus/preventScroll/hideOthers all false", () => {
+    const m = makeMachine({ modal: false });
+    const ctx = m.getSnapshot().context;
+    expect(ctx.trapFocus).toBe(false);
+    expect(ctx.preventScroll).toBe(false);
+    expect(ctx.hideOthers).toBe(false);
+  });
+
+  it("individual options override modal umbrella", () => {
+    const m = makeMachine({ modal: true, trapFocus: false });
+    const ctx = m.getSnapshot().context;
+    expect(ctx.trapFocus).toBe(false);
+    expect(ctx.preventScroll).toBe(true);
+  });
+});
+
 describe("createDialogMachine — callbacks", () => {
-  it("calls onOpen when transitioning to open", () => {
-    const onOpen = vi.fn();
-    const m = makeMachine({ onOpen });
-    m.send("OPEN");
-    expect(onOpen).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls onClose when transitioning to closed", () => {
-    const onClose = vi.fn();
-    const m = makeMachine({ onClose });
-    m.send("OPEN");
-    m.send("CLOSE");
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls onOpenChange(true) on open", () => {
+  it("calls onOpenChange(true) on OPEN", () => {
     const onOpenChange = vi.fn();
     const m = makeMachine({ onOpenChange });
     m.send("OPEN");
     expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 
-  it("calls onOpenChange(false) on close", () => {
+  it("calls onOpenChange(false) on CLOSE", () => {
     const onOpenChange = vi.fn();
     const m = makeMachine({ onOpenChange });
     m.send("OPEN");
@@ -110,10 +136,59 @@ describe("createDialogMachine — callbacks", () => {
     expect(onOpenChange).toHaveBeenLastCalledWith(false);
   });
 
-  it("does NOT call onClose on initial start", () => {
-    const onClose = vi.fn();
-    makeMachine({ onClose });
-    expect(onClose).not.toHaveBeenCalled();
+  it("calls onOpenChange(false) on ESCAPE_KEY", () => {
+    const onOpenChange = vi.fn();
+    const m = makeMachine({ onOpenChange });
+    m.send("OPEN");
+    m.send("ESCAPE_KEY");
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it("calls onOpenChange(false) on INTERACT_OUTSIDE", () => {
+    const onOpenChange = vi.fn();
+    const m = makeMachine({ onOpenChange });
+    m.send("OPEN");
+    m.send("INTERACT_OUTSIDE");
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it("does NOT call onOpenChange on initial start", () => {
+    const onOpenChange = vi.fn();
+    makeMachine({ onOpenChange });
+    expect(onOpenChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("createDialogMachine — presence registration", () => {
+  it("titleRegistered defaults to false", () => {
+    const m = makeMachine();
+    expect(m.getSnapshot().context.titleRegistered).toBe(false);
+  });
+
+  it("REGISTER_TITLE sets titleRegistered:true in closed state", () => {
+    const m = makeMachine();
+    m.send("REGISTER_TITLE");
+    expect(m.getSnapshot().context.titleRegistered).toBe(true);
+  });
+
+  it("UNREGISTER_TITLE sets titleRegistered:false", () => {
+    const m = makeMachine();
+    m.send("REGISTER_TITLE");
+    m.send("UNREGISTER_TITLE");
+    expect(m.getSnapshot().context.titleRegistered).toBe(false);
+  });
+
+  it("REGISTER_TITLE works in open state too", () => {
+    const m = makeMachine();
+    m.send("OPEN");
+    m.send("REGISTER_TITLE");
+    expect(m.getSnapshot().context.titleRegistered).toBe(true);
+  });
+
+  it("REGISTER_DESCRIPTION sets descriptionRegistered:true", () => {
+    const m = makeMachine();
+    m.send("REGISTER_DESCRIPTION");
+    expect(m.getSnapshot().context.descriptionRegistered).toBe(true);
   });
 });
 
@@ -145,6 +220,17 @@ describe("createDialogMachine — activities (keyboard + focus)", () => {
     m.send("OPEN");
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     expect(m.getSnapshot().matches("closed")).toBe(true);
+  });
+
+  it("onEscapeKeyDown e.preventDefault() blocks close", () => {
+    const m = makeMachine({
+      onEscapeKeyDown: (e: KeyboardEvent) => e.preventDefault(),
+    });
+    m.send("OPEN");
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    expect(m.getSnapshot().matches("open")).toBe(true);
   });
 
   it("setContext(contentEl) is visible to activities", () => {

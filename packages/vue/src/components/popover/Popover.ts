@@ -1,15 +1,16 @@
+import type { PopoverPositioning } from "@forge-ui/popover";
 import type { PropType } from "vue";
 import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch } from "vue";
-import { DialogPortal } from "./DialogPortal.js";
-import { dialogKey } from "./dialog-context.js";
-import { Slot } from "./Slot.js";
-import { useDialog } from "./use-dialog.js";
+import { DialogPortal } from "../dialog/DialogPortal.js";
+import { Slot } from "../dialog/Slot.js";
+import { popoverKey } from "./popover-context.js";
+import { usePopover } from "./use-popover.js";
 
-type DialogApi = ReturnType<typeof useDialog>;
+type PopoverApi = ReturnType<typeof usePopover>;
 
-function useCtx(): DialogApi {
-  const ctx = inject(dialogKey);
-  if (!ctx) throw new Error("Dialog compound parts must be inside <Dialog.Root>");
+function useCtx(): PopoverApi {
+  const ctx = inject(popoverKey);
+  if (!ctx) throw new Error("Popover compound parts must be inside <Popover.Root>");
   return ctx;
 }
 
@@ -17,16 +18,16 @@ function useCtx(): DialogApi {
 // Root
 // ---------------------------------------------------------------------------
 
-const DialogRoot = defineComponent({
-  name: "ForgeDialogRoot",
+const PopoverRoot = defineComponent({
+  name: "ForgePopoverRoot",
   props: {
     open: { type: Boolean as PropType<boolean>, default: undefined },
     modal: { type: Boolean as PropType<boolean>, default: undefined },
-    role: { type: String as PropType<"dialog" | "alertdialog">, default: undefined },
     trapFocus: { type: Boolean as PropType<boolean>, default: undefined },
     preventScroll: { type: Boolean as PropType<boolean>, default: undefined },
     hideOthers: { type: Boolean as PropType<boolean>, default: undefined },
     id: { type: String, default: undefined },
+    positioning: { type: Object as PropType<PopoverPositioning>, default: undefined },
     onOpenChange: { type: Function as PropType<(open: boolean) => void>, default: undefined },
     onOpenAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
     onCloseAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
@@ -54,14 +55,14 @@ const DialogRoot = defineComponent({
   },
   emits: ["update:open"],
   setup(props, { slots, emit }) {
-    const api = useDialog({
+    const api = usePopover({
       ...(props.id !== undefined && { id: props.id }),
       ...(props.open !== undefined && { open: props.open }),
       ...(props.modal !== undefined && { modal: props.modal }),
-      ...(props.role !== undefined && { role: props.role }),
       ...(props.trapFocus !== undefined && { trapFocus: props.trapFocus }),
       ...(props.preventScroll !== undefined && { preventScroll: props.preventScroll }),
       ...(props.hideOthers !== undefined && { hideOthers: props.hideOthers }),
+      ...(props.positioning !== undefined && { positioning: props.positioning }),
       ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
       ...(props.onOpenAutoFocus !== undefined && { onOpenAutoFocus: props.onOpenAutoFocus }),
       ...(props.onCloseAutoFocus !== undefined && { onCloseAutoFocus: props.onCloseAutoFocus }),
@@ -76,9 +77,8 @@ const DialogRoot = defineComponent({
       ...(props.initialFocusEl !== undefined && { initialFocusEl: props.initialFocusEl }),
       ...(props.finalFocusEl !== undefined && { finalFocusEl: props.finalFocusEl }),
     });
-    provide(dialogKey, api);
+    provide(popoverKey, api);
 
-    // Controlled mode
     watch(
       () => props.open,
       (open) => {
@@ -87,10 +87,7 @@ const DialogRoot = defineComponent({
       },
     );
 
-    // v-model:open
-    watch(api.isOpen, (open) => {
-      emit("update:open", open);
-    });
+    watch(api.isOpen, (open) => emit("update:open", open));
 
     return () => slots.default?.();
   },
@@ -100,8 +97,8 @@ const DialogRoot = defineComponent({
 // Trigger
 // ---------------------------------------------------------------------------
 
-const DialogTrigger = defineComponent({
-  name: "ForgeDialogTrigger",
+const PopoverTrigger = defineComponent({
+  name: "ForgePopoverTrigger",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
@@ -114,11 +111,23 @@ const DialogTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// Anchor
+// ---------------------------------------------------------------------------
+
+const PopoverAnchor = defineComponent({
+  name: "ForgePopoverAnchor",
+  setup(_props, { slots }) {
+    const api = useCtx();
+    return () => h(Slot, api.getAnchorProps(), slots.default);
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Portal
 // ---------------------------------------------------------------------------
 
-const DialogPortalCompound = defineComponent({
-  name: "ForgeDialogPortal",
+const PopoverPortal = defineComponent({
+  name: "ForgePopoverPortal",
   props: {
     to: { type: [String, Object] as PropType<string | HTMLElement>, default: "body" },
     disabled: { type: Boolean, default: false },
@@ -134,32 +143,11 @@ const DialogPortalCompound = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Overlay
+// Content — hidden positioner div wraps actual content div internally.
 // ---------------------------------------------------------------------------
 
-const DialogOverlay = defineComponent({
-  name: "ForgeDialogOverlay",
-  props: {
-    forceMount: { type: Boolean, default: false },
-    asChild: { type: Boolean, default: false },
-  },
-  setup(props, { attrs, slots }) {
-    const api = useCtx();
-    return () => {
-      if (!props.forceMount && !api.isOpen.value) return null;
-      const overlayProps = { ...api.getOverlayProps(), ...attrs };
-      if (props.asChild) return h(Slot, overlayProps, slots.default);
-      return h("div", overlayProps);
-    };
-  },
-});
-
-// ---------------------------------------------------------------------------
-// Content
-// ---------------------------------------------------------------------------
-
-const DialogContent = defineComponent({
-  name: "ForgeDialogContent",
+const PopoverContent = defineComponent({
+  name: "ForgePopoverContent",
   props: {
     forceMount: { type: Boolean, default: false },
     asChild: { type: Boolean, default: false },
@@ -168,52 +156,25 @@ const DialogContent = defineComponent({
     const api = useCtx();
     return () => {
       if (!props.forceMount && !api.isOpen.value) return null;
+      const positionerProps = api.getPositionerProps();
       const contentProps = { ...api.getContentProps(), ...attrs };
-      if (props.asChild) return h(Slot, contentProps, slots.default);
-      return h("div", contentProps, slots.default?.());
+      if (props.asChild) {
+        return h("div", positionerProps, h(Slot, contentProps, slots.default));
+      }
+      return h("div", positionerProps, h("div", contentProps, slots.default?.()));
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// Title (with presence registration)
+// Arrow — renderless, always Slot.
 // ---------------------------------------------------------------------------
 
-const DialogTitle = defineComponent({
-  name: "ForgeDialogTitle",
-  props: { asChild: { type: Boolean, default: false } },
-  setup(props, { slots, attrs }) {
+const PopoverArrow = defineComponent({
+  name: "ForgePopoverArrow",
+  setup(_props, { slots }) {
     const api = useCtx();
-
-    onMounted(() => api.send("REGISTER_TITLE"));
-    onUnmounted(() => api.send("UNREGISTER_TITLE"));
-
-    return () => {
-      const titleProps = { ...api.getTitleProps(), ...attrs };
-      if (props.asChild) return h(Slot, titleProps, slots.default);
-      return h("h2", titleProps, slots.default?.());
-    };
-  },
-});
-
-// ---------------------------------------------------------------------------
-// Description (with presence registration)
-// ---------------------------------------------------------------------------
-
-const DialogDescription = defineComponent({
-  name: "ForgeDialogDescription",
-  props: { asChild: { type: Boolean, default: false } },
-  setup(props, { slots, attrs }) {
-    const api = useCtx();
-
-    onMounted(() => api.send("REGISTER_DESCRIPTION"));
-    onUnmounted(() => api.send("UNREGISTER_DESCRIPTION"));
-
-    return () => {
-      const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, descriptionProps, slots.default);
-      return h("p", descriptionProps, slots.default?.());
-    };
+    return () => h(Slot, api.getArrowProps(), slots.default);
   },
 });
 
@@ -221,8 +182,8 @@ const DialogDescription = defineComponent({
 // Close
 // ---------------------------------------------------------------------------
 
-const DialogClose = defineComponent({
-  name: "ForgeDialogClose",
+const PopoverClose = defineComponent({
+  name: "ForgePopoverClose",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
@@ -235,27 +196,67 @@ const DialogClose = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Namespace export — Dialog.Root, Dialog.Trigger, ...
+// Title
 // ---------------------------------------------------------------------------
 
-export const Dialog = {
-  Root: DialogRoot,
-  Trigger: DialogTrigger,
-  Portal: DialogPortalCompound,
-  Overlay: DialogOverlay,
-  Content: DialogContent,
-  Title: DialogTitle,
-  Description: DialogDescription,
-  Close: DialogClose,
+const PopoverTitle = defineComponent({
+  name: "ForgePopoverTitle",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    onMounted(() => api.send("REGISTER_TITLE"));
+    onUnmounted(() => api.send("UNREGISTER_TITLE"));
+    return () => {
+      const titleProps = { ...api.getTitleProps(), ...attrs };
+      if (props.asChild) return h(Slot, titleProps, slots.default);
+      return h("h2", titleProps, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// Description
+// ---------------------------------------------------------------------------
+
+const PopoverDescription = defineComponent({
+  name: "ForgePopoverDescription",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    onMounted(() => api.send("REGISTER_DESCRIPTION"));
+    onUnmounted(() => api.send("UNREGISTER_DESCRIPTION"));
+    return () => {
+      const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
+      if (props.asChild) return h(Slot, descriptionProps, slots.default);
+      return h("p", descriptionProps, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// Namespace export
+// ---------------------------------------------------------------------------
+
+export const Popover = {
+  Root: PopoverRoot,
+  Trigger: PopoverTrigger,
+  Anchor: PopoverAnchor,
+  Portal: PopoverPortal,
+  Content: PopoverContent,
+  Arrow: PopoverArrow,
+  Close: PopoverClose,
+  Title: PopoverTitle,
+  Description: PopoverDescription,
 } as const;
 
-// Named exports for consumers who prefer `import { DialogRoot } from '@forge-ui/vue'`
 export {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogRoot,
-  DialogTitle,
-  DialogTrigger,
+  PopoverAnchor,
+  PopoverArrow,
+  PopoverClose,
+  PopoverContent,
+  PopoverDescription,
+  PopoverPortal,
+  PopoverRoot,
+  PopoverTitle,
+  PopoverTrigger,
 };

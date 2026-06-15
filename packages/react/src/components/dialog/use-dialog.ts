@@ -16,6 +16,7 @@ export function useDialog(options: UseDialogOptions = {}) {
 
   return {
     ...connectDialog(snapshot, send, machine),
+    send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
   };
 }

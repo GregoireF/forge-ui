@@ -65,7 +65,7 @@ export function createMachine<
     for (const name of names) {
       const fn = config.activities?.[name];
       if (!fn) continue;
-      const cleanup = fn(context, { send: sendString });
+      const cleanup = fn(context, { send: sendString, notify: emit });
       if (cleanup) activeCleanups.set(name, cleanup);
     }
   }
@@ -75,6 +75,48 @@ export function createMachine<
     for (const name of names) {
       activeCleanups.get(name)?.();
       activeCleanups.delete(name);
+    }
+  }
+
+  function startAfterTimers(state: TState): void {
+    const after = config.states[state].after;
+    if (!after) return;
+    for (const [delayStr, transition] of Object.entries(after)) {
+      const delay = Number(delayStr);
+      const key = `@@after:${delay}`;
+      const timeoutId = setTimeout(() => {
+        activeCleanups.delete(key);
+        const t = transition as TransitionConfig<TContext, TState, TEvent>;
+        const event = { type: "@@AFTER" } as TEvent;
+        if (t.guard && !t.guard({ context, event })) return;
+        const prevState = currentState;
+        const nextState = t.target ?? currentState;
+        const isChanging = nextState !== prevState;
+        if (isChanging) {
+          stopAfterTimers(prevState);
+          stopActivities(prevState);
+        }
+        runActions(config.states[prevState].exit, event);
+        runActions(t.actions, event);
+        if (isChanging) currentState = nextState;
+        runActions(config.states[currentState].entry, event);
+        if (isChanging) {
+          startActivities(currentState);
+          startAfterTimers(currentState);
+        }
+        emit();
+      }, delay);
+      activeCleanups.set(key, () => clearTimeout(timeoutId));
+    }
+  }
+
+  function stopAfterTimers(state: TState): void {
+    const after = config.states[state].after;
+    if (!after) return;
+    for (const delayStr of Object.keys(after)) {
+      const key = `@@after:${delayStr}`;
+      activeCleanups.get(key)?.();
+      activeCleanups.delete(key);
     }
   }
 
@@ -112,8 +154,11 @@ export function createMachine<
     const nextState = transition.target ?? currentState;
     const isChanging = nextState !== prevState;
 
-    // Exit: stop activities + run exit actions of current state.
-    if (isChanging) stopActivities(prevState);
+    // Exit: stop after-timers + activities + run exit actions of current state.
+    if (isChanging) {
+      stopAfterTimers(prevState);
+      stopActivities(prevState);
+    }
     runActions(stateNode.exit, event);
 
     // Transition actions.
@@ -121,9 +166,12 @@ export function createMachine<
 
     if (isChanging) currentState = nextState;
 
-    // Entry: run entry actions + start activities of next state.
+    // Entry: run entry actions + start activities + start after-timers of next state.
     runActions(config.states[currentState].entry, event);
-    if (isChanging) startActivities(currentState);
+    if (isChanging) {
+      startActivities(currentState);
+      startAfterTimers(currentState);
+    }
 
     emit();
   }
@@ -138,6 +186,7 @@ export function createMachine<
     running = true;
     runActions(config.states[currentState].entry, { type: "@@INIT" } as TEvent);
     startActivities(currentState);
+    startAfterTimers(currentState);
     emit();
   }
 

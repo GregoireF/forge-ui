@@ -199,19 +199,16 @@ Chaque couche doit avoir ses propres tests. Pas de logique de comportement dans 
 
 ## Notes Windows
 
-Les hooks Git utilisent `sh`/`bash` via MSYS. Sur certaines configurations Windows, ils peuvent échouer avec `fork(): Resource temporarily unavailable`. Si c'est le cas, utiliser :
+Les hooks Git s'installent automatiquement via `bun install` (`scripts/setup-hooks.mjs`).
 
-```bash
-git -c core.hooksPath=.git/no-hooks commit -m "..."
-```
+**Sur Windows**, `lefthook` échoue systématiquement avec `fork(): Resource temporarily unavailable` — c'est un bug MSYS/Git-for-Windows non corrigeable depuis le contenu du script. Le script détecte automatiquement Windows et **désactive les hooks locaux** (`core.hooksPath → .git/no-hooks`).
 
-Ce flag pointe le chemin des hooks vers un dossier vide, les bypasse tous. Les validations (Biome, commitlint) doivent alors être faites manuellement avant de committer :
+Tu n'as rien à configurer manuellement. En échange :
 
-```bash
-bun run lint
-bun run typecheck
-# puis vérifier manuellement le format du commit message
-```
+- Lance `bun run lint && bun run typecheck` avant d'ouvrir une PR.
+- La CI (GitHub Actions, Linux) applique Biome + commitlint sur chaque push et bloque le merge si ça échoue.
+
+> Les hooks fonctionnent normalement sur macOS et Linux.
 
 ---
 

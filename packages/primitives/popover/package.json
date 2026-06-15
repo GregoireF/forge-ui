@@ -1,5 +1,5 @@
 {
-  "name": "@forge-ui/vue",
+  "name": "@forge-ui/popover",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -17,25 +17,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun run ../../tooling/scripts/build.ts",
+    "build": "bun run ../../../tooling/scripts/build.ts",
     "dev": "tsc --watch --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist coverage"
   },
-  "peerDependencies": {
-    "vue": ">=3.5.0"
-  },
   "dependencies": {
-    "@forge-ui/core": "workspace:*",
-    "@forge-ui/dialog": "workspace:*",
-    "@forge-ui/popover": "workspace:*"
+    "@floating-ui/dom": "^1.6.0",
+    "@forge-ui/core": "workspace:*"
   },
   "devDependencies": {
-    "@testing-library/vue": "^8.1.0",
-    "@vitejs/plugin-vue": "^5.1.0",
-    "typescript": "*",
-    "vue": "^3.5.0"
+    "typescript": "*"
   }
 }

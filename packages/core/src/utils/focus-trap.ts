@@ -40,6 +40,11 @@ export function trapFocus(container: HTMLElement, event: KeyboardEvent): void {
 
 export function focusFirst(container: HTMLElement): void {
   if (typeof document === "undefined") return;
+  const autofocused = container.querySelector<HTMLElement>("[autofocus]");
+  if (autofocused) {
+    autofocused.focus();
+    return;
+  }
   const elements = getFocusableElements(container);
   elements[0]?.focus();
 }

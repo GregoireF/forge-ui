@@ -1,0 +1,152 @@
+import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { PopoverContext, PopoverEvent, PopoverSend, PopoverState } from "./popover.types.js";
+
+export type PopoverApi = ReturnType<typeof connectPopover>;
+
+/**
+ * Maps machine snapshot → framework-agnostic DOM props.
+ *
+ * Positioner is INTERNAL — not exposed as a compound part. `getPositionerProps`
+ * is called inside the framework binding's Content component to wrap the
+ * actual content div with a positioning shim.
+ *
+ * Arrow is RENDERLESS — `getArrowProps` merges onto the consumer's child element.
+ * The framework binding's Arrow component is always a Slot.
+ */
+export function connectPopover(
+  snapshot: MachineSnapshot<PopoverContext, PopoverState>,
+  send: PopoverSend,
+  machine: Pick<MachineInstance<PopoverContext, PopoverState, PopoverEvent>, "setContext">,
+) {
+  const { context } = snapshot;
+  const isOpen = snapshot.matches("open");
+  const state = isOpen ? "open" : "closed";
+
+  // Derive data-side / data-align from currentPlacement for CSS convenience.
+  const [side, align = "center"] = context.currentPlacement.split("-") as [string, string?];
+
+  return {
+    isOpen,
+
+    getTriggerProps() {
+      return {
+        id: context.triggerId,
+        type: "button" as const,
+        "aria-expanded": isOpen,
+        "aria-controls": context.contentId,
+        "aria-haspopup": "dialog" as const,
+        "data-state": state,
+        "data-forge-scope": "popover",
+        "data-forge-part": "trigger",
+        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        onClick() {
+          send("TOGGLE");
+        },
+      };
+    },
+
+    getAnchorProps() {
+      return {
+        "data-forge-scope": "popover",
+        "data-forge-part": "anchor",
+        ref: (el: unknown) => machine.setContext({ anchorEl: el as HTMLElement | null }),
+      };
+    },
+
+    /** Internal — rendered inside Popover.Content, not exposed as a compound part. */
+    getPositionerProps() {
+      return {
+        style: {
+          position: context.positioning.strategy,
+          top: `${context.y}px`,
+          left: `${context.x}px`,
+          width: "max-content",
+        } as const,
+        "data-forge-scope": "popover",
+        "data-forge-part": "positioner",
+        "data-side": side,
+        "data-align": align,
+        "data-placement": context.currentPlacement,
+      };
+    },
+
+    getContentProps() {
+      return {
+        id: context.contentId,
+        role: "dialog" as const,
+        "aria-modal": context.modal,
+        "aria-labelledby": context.titleId,
+        "aria-describedby": context.descriptionId,
+        tabIndex: -1,
+        "data-state": state,
+        "data-forge-scope": "popover",
+        "data-forge-part": "content",
+        "data-side": side,
+        "data-align": align,
+        "data-placement": context.currentPlacement,
+        style: {
+          "--forge-popover-content-transform-origin": getTransformOrigin(side, align),
+        } as unknown as Record<string, string>,
+        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+      };
+    },
+
+    getArrowProps() {
+      return {
+        "data-forge-scope": "popover",
+        "data-forge-part": "arrow",
+        "data-side": side,
+        ref: (el: unknown) => machine.setContext({ arrowEl: el as HTMLElement | null }),
+      };
+    },
+
+    getArrowTipProps() {
+      return {
+        "data-forge-scope": "popover",
+        "data-forge-part": "arrow-tip",
+      };
+    },
+
+    getCloseProps() {
+      return {
+        type: "button" as const,
+        "aria-label": "Close popover",
+        "data-forge-scope": "popover",
+        "data-forge-part": "close",
+        onClick() {
+          send("CLOSE");
+        },
+      };
+    },
+
+    getTitleProps() {
+      return {
+        id: context.titleId,
+        "data-forge-scope": "popover",
+        "data-forge-part": "title",
+      };
+    },
+
+    getDescriptionProps() {
+      return {
+        id: context.descriptionId,
+        "data-forge-scope": "popover",
+        "data-forge-part": "description",
+      };
+    },
+  };
+}
+
+// Derive CSS transform-origin from resolved side + align.
+function getTransformOrigin(side: string, align: string): string {
+  const opposite: Record<string, string> = {
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left",
+  };
+  const origin = opposite[side] ?? "center";
+  if (align === "start") return `${origin} 0%`;
+  if (align === "end") return `${origin} 100%`;
+  return `${origin} 50%`;
+}
