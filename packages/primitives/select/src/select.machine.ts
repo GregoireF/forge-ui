@@ -188,6 +188,7 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
       labelId: `${id}-label`,
       triggerEl: null,
       contentEl: null,
+      arrowEl: null,
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
       ...(options.onHighlightChange !== undefined && { onHighlightChange: options.onHighlightChange }),

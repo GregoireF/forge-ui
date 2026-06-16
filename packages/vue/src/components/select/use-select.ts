@@ -1,13 +1,27 @@
-import type { CreateSelectMachineOptions } from "@forge-ui/select";
+import type { CreateSelectMachineOptions, SelectApi, SelectSend } from "@forge-ui/select";
 import { connectSelect, createSelectMachine } from "@forge-ui/select";
-import { computed, useId } from "vue";
+import { computed, type ComputedRef, useId } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseSelectOptions extends Omit<CreateSelectMachineOptions, "id"> {
   id?: string;
 }
 
-export function useSelect(options: UseSelectOptions = {}) {
+export interface UseSelectReturn {
+  isOpen: ComputedRef<boolean>;
+  send: SelectSend;
+  setOpen: (open: boolean) => void;
+  getValueLabel: () => string;
+  getPlaceholder: () => string;
+  getValue: () => string[];
+  getLabelProps: () => ReturnType<SelectApi["getLabelProps"]>;
+  getTriggerProps: () => ReturnType<SelectApi["getTriggerProps"]>;
+  getPositionerProps: () => ReturnType<SelectApi["getPositionerProps"]>;
+  getContentProps: () => ReturnType<SelectApi["getContentProps"]>;
+  getOptionProps: (option: { value: string; disabled?: boolean }) => ReturnType<SelectApi["getOptionProps"]>;
+}
+
+export function useSelect(options: UseSelectOptions = {}): UseSelectReturn {
   const vueId = useId();
   const id = options.id ?? vueId;
 
@@ -19,7 +33,6 @@ export function useSelect(options: UseSelectOptions = {}) {
 
   return {
     isOpen,
-    snapshot,
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
     getValueLabel: () => api.value.valueLabel,

@@ -62,7 +62,9 @@ export interface SelectTriggerProps extends ButtonHTMLAttributes<HTMLButtonEleme
 
 function Trigger({ asChild, children, ...rest }: SelectTriggerProps) {
   const api = useCtx();
-  const props = { ...api.getTriggerProps(), ...rest };
+  // Strip Vue-specific casing (onKeydown) — React uses onKeyDown only.
+  const { onKeydown: _kd, ...triggerProps } = api.getTriggerProps();
+  const props = { ...triggerProps, ...rest } as ButtonHTMLAttributes<HTMLButtonElement>;
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;
 }
@@ -169,8 +171,9 @@ function Item({ value, disabled = false, label, asChild, children, ...rest }: Se
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, resolvedLabel, disabled]);
 
-  const optionProps = api.getOptionProps({ value, disabled });
-  const props = { ...optionProps, ...rest };
+  // Strip Vue-specific casing (onMousemove / onMouseleave) — React uses camelCase.
+  const { onMousemove: _mm, onMouseleave: _ml, ...optionProps } = api.getOptionProps({ value, disabled });
+  const props = { ...optionProps, ...rest } as LiHTMLAttributes<HTMLLIElement>;
 
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <li {...props}>{children}</li>;

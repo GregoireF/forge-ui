@@ -46,6 +46,8 @@ export interface SelectContext {
   // DOM refs
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;
+  /** Required by FloatingContext — Select has no arrow, always null. */
+  arrowEl: HTMLElement | null;
   // Callbacks
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;
@@ -77,3 +79,12 @@ export type SelectEvent =
   | { type: "@@INIT" };
 
 export type SelectSend = (event: SelectEvent | SelectEvent["type"]) => void;
+
+/** Minimal keyboard event interface — compatible with DOM KeyboardEvent and React synthetic events. */
+export interface KeyEventLike {
+  key: string;
+  ctrlKey?: boolean;
+  altKey?: boolean;
+  metaKey?: boolean;
+  preventDefault(): void;
+}

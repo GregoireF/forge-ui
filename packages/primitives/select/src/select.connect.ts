@@ -5,7 +5,7 @@ import {
   getSideFromPlacement,
   getTransformOrigin,
 } from "@forge-ui/floating";
-import type { SelectContext, SelectEvent, SelectOption, SelectSend, SelectState } from "./select.types.js";
+import type { KeyEventLike, SelectContext, SelectEvent, SelectOption, SelectSend, SelectState } from "./select.types.js";
 
 export type SelectApi = ReturnType<typeof connectSelect>;
 
@@ -89,7 +89,7 @@ export function connectSelect(
     if (!context.multiple) send("CLOSE");
   }
 
-  function triggerKeyDown(event: KeyboardEvent) {
+  function triggerKeyDown(event: KeyEventLike) {
     const isDisabled = context.disabled;
     if (isDisabled) return;
 
