@@ -23,6 +23,17 @@
         "vitest": "^4.0.0",
       },
     },
+    "apps/playground-nuxt": {
+      "name": "playground-nuxt",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/nuxt": "workspace:*",
+        "nuxt": "^4.0.0",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "apps/playground-react": {
       "name": "playground-react",
       "version": "0.0.0",
@@ -68,6 +79,13 @@
         "typescript": "*",
       },
     },
+    "packages/field": {
+      "name": "@forge-ui/field",
+      "version": "0.0.0",
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/floating": {
       "name": "@forge-ui/floating",
       "version": "0.0.0",
@@ -95,6 +113,17 @@
         "nuxt": ">=4.0.0",
       },
     },
+    "packages/primitives/alert-dialog": {
+      "name": "@forge-ui/alert-dialog",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/dialog": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/dialog": {
       "name": "@forge-ui/dialog",
       "version": "0.0.0",
@@ -120,8 +149,10 @@
       "name": "@forge-ui/react",
       "version": "0.0.0",
       "dependencies": {
+        "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
+        "@forge-ui/field": "workspace:*",
         "@forge-ui/popover": "workspace:*",
       },
       "devDependencies": {
@@ -142,8 +173,10 @@
       "name": "@forge-ui/vue",
       "version": "0.0.0",
       "dependencies": {
+        "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
+        "@forge-ui/field": "workspace:*",
         "@forge-ui/popover": "workspace:*",
       },
       "devDependencies": {
@@ -388,9 +421,13 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
 
+    "@forge-ui/alert-dialog": ["@forge-ui/alert-dialog@workspace:packages/primitives/alert-dialog"],
+
     "@forge-ui/core": ["@forge-ui/core@workspace:packages/core"],
 
     "@forge-ui/dialog": ["@forge-ui/dialog@workspace:packages/primitives/dialog"],
+
+    "@forge-ui/field": ["@forge-ui/field@workspace:packages/field"],
 
     "@forge-ui/floating": ["@forge-ui/floating@workspace:packages/floating"],
 
@@ -1629,6 +1666,8 @@
     "pify": ["pify@4.0.1", "", {}, "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g=="],
 
     "pkg-types": ["pkg-types@2.3.1", "", { "dependencies": { "confbox": "^0.2.4", "exsolve": "^1.0.8", "pathe": "^2.0.3" } }, "sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg=="],
+
+    "playground-nuxt": ["playground-nuxt@workspace:apps/playground-nuxt"],
 
     "playground-react": ["playground-react@workspace:apps/playground-react"],
 

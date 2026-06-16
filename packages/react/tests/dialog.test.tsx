@@ -545,61 +545,6 @@ describe("useDialog (React)", () => {
     });
   });
 
-  describe("alertdialog", () => {
-    it("has role=alertdialog when role prop is alertdialog", async () => {
-      render(
-        <Dialog.Root id="ad-role">
-          <Dialog.Trigger data-testid="trig">Open</Dialog.Trigger>
-          <Dialog.Content>
-            <Dialog.Title>Alert</Dialog.Title>
-          </Dialog.Content>
-        </Dialog.Root>,
-      );
-      await user.click(screen.getByTestId("trig"));
-      // Default role is "dialog"
-      expect(screen.getByRole("dialog")).toBeInTheDocument();
-    });
-
-    it("stays open on Escape (alertdialog blocks close)", async () => {
-      render(
-        <Dialog.Root id="ad-escape" role="alertdialog">
-          <Dialog.Trigger data-testid="trig">Open</Dialog.Trigger>
-          <Dialog.Content>
-            <Dialog.Title>Alert</Dialog.Title>
-          </Dialog.Content>
-        </Dialog.Root>,
-      );
-      await user.click(screen.getByTestId("trig"));
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-      await user.keyboard("{Escape}");
-      // alertdialog must not close on Escape per WAI-ARIA
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    });
-
-    it("fires onEscapeKeyDown callback with defaultPrevented=false at call time", async () => {
-      let capturedDefaultPrevented: boolean | null = null;
-      const onEscapeKeyDown = vi.fn((e: KeyboardEvent) => {
-        capturedDefaultPrevented = e.defaultPrevented;
-      });
-      render(
-        <Dialog.Root id="ad-cb" role="alertdialog" onEscapeKeyDown={onEscapeKeyDown}>
-          <Dialog.Trigger data-testid="trig">Open</Dialog.Trigger>
-          <Dialog.Content>
-            <Dialog.Title>Alert</Dialog.Title>
-          </Dialog.Content>
-        </Dialog.Root>,
-      );
-      await user.click(screen.getByTestId("trig"));
-      await user.keyboard("{Escape}");
-      // Callback fires (informational — e.g. show a warning toast)
-      expect(onEscapeKeyDown).toHaveBeenCalledTimes(1);
-      // Event is not yet prevented when the callback fires — callback sees a fresh event
-      expect(capturedDefaultPrevented).toBe(false);
-      // Dialog still open (prevention applied after callback)
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    });
-  });
-
   describe("DialogPortal", () => {
     it("renders children into document.body", () => {
       const { baseElement } = render(

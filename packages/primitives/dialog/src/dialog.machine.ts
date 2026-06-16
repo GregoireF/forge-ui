@@ -32,34 +32,6 @@ export interface CreateDialogMachineOptions {
 }
 
 // ---------------------------------------------------------------------------
-// AlertDialog defaults: prevent close on outside interaction and Escape
-// per WAI-ARIA alertdialog spec.
-// ---------------------------------------------------------------------------
-
-function makeDefaultAlertOnEscapeKeyDown(
-  userCallback?: (e: KeyboardEvent) => void,
-): (e: KeyboardEvent) => void {
-  return (e) => {
-    // Fire the user callback first while e.defaultPrevented is still false — the
-    // callback is informational (e.g. show a warning toast on Escape attempt).
-    // We always prevent afterwards: alertdialog must never close on Escape per
-    // WAI-ARIA, regardless of what the callback does.
-    userCallback?.(e);
-    e.preventDefault();
-  };
-}
-
-function makeDefaultAlertOnInteractOutside(
-  userCallback?: (e: PointerEvent | FocusEvent) => void,
-): (e: PointerEvent | FocusEvent) => void {
-  return (e) => {
-    // Same rationale: callback first (informational), then unconditional prevent.
-    userCallback?.(e);
-    e.preventDefault();
-  };
-}
-
-// ---------------------------------------------------------------------------
 // Named actions
 // ---------------------------------------------------------------------------
 
@@ -138,16 +110,8 @@ const watchOutside = makeWatchOutsideActivity<DialogContext>({
 export function createDialogMachine(options: CreateDialogMachineOptions) {
   const { id } = options;
   const role = options.role ?? "dialog";
-  const isAlertDialog = role === "alertdialog";
   const modal = options.modal ?? true;
   const initialOpen = options.open ?? options.defaultOpen ?? false;
-
-  const onEscapeKeyDown = isAlertDialog
-    ? makeDefaultAlertOnEscapeKeyDown(options.onEscapeKeyDown)
-    : options.onEscapeKeyDown;
-  const onInteractOutside = isAlertDialog
-    ? makeDefaultAlertOnInteractOutside(options.onInteractOutside)
-    : options.onInteractOutside;
 
   return createMachine<DialogContext, DialogState, DialogEvent>({
     id: `forge-dialog:${id}`,
@@ -175,8 +139,8 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
         onPointerDownOutside: options.onPointerDownOutside,
       }),
       ...(options.onFocusOutside !== undefined && { onFocusOutside: options.onFocusOutside }),
-      ...(onInteractOutside !== undefined && { onInteractOutside }),
-      ...(onEscapeKeyDown !== undefined && { onEscapeKeyDown }),
+      ...(options.onInteractOutside !== undefined && { onInteractOutside: options.onInteractOutside }),
+      ...(options.onEscapeKeyDown !== undefined && { onEscapeKeyDown: options.onEscapeKeyDown }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
     },
     initial: initialOpen ? "open" : "closed",

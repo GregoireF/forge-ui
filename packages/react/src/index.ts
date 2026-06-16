@@ -1,4 +1,18 @@
 export type {
+  AlertDialogActionProps,
+  AlertDialogCancelProps,
+  AlertDialogContentProps,
+  AlertDialogDescriptionProps,
+  AlertDialogOverlayProps,
+  AlertDialogPortalProps,
+  AlertDialogRootProps,
+  AlertDialogTitleProps,
+  AlertDialogTriggerProps,
+} from "./components/alert-dialog/AlertDialog.js";
+export { AlertDialog } from "./components/alert-dialog/AlertDialog.js";
+export type { UseAlertDialogOptions } from "./components/alert-dialog/use-alert-dialog.js";
+export { useAlertDialog } from "./components/alert-dialog/use-alert-dialog.js";
+export type {
   DialogCloseProps,
   DialogContentProps,
   DialogDescriptionProps,

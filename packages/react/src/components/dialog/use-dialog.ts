@@ -3,7 +3,7 @@ import { connectDialog, createDialogMachine } from "@forge-ui/dialog";
 import { useId, useState } from "react";
 import { useMachine } from "../../use-machine.js";
 
-export interface UseDialogOptions extends Omit<CreateDialogMachineOptions, "id"> {
+export interface UseDialogOptions extends Omit<CreateDialogMachineOptions, "id" | "role"> {
   id?: string;
   /** Uncontrolled initial open state. Use instead of open when you don't need external state. */
   defaultOpen?: boolean;

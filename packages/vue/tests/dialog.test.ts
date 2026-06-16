@@ -611,64 +611,6 @@ describe("useDialog (Vue)", () => {
     });
   });
 
-  describe("alertdialog", () => {
-    const {
-      Root: DialogRoot,
-      Trigger: DialogTrigger,
-      Content: DialogContent,
-      Title: DialogTitle,
-    } = Dialog;
-
-    it("stays open on Escape (alertdialog blocks close)", async () => {
-      const Fixture = defineComponent({
-        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle },
-        template: `
-          <DialogRoot id="vue-ad-escape" role="alertdialog">
-            <DialogTrigger data-testid="trig">Open</DialogTrigger>
-            <DialogContent>
-              <DialogTitle>Alert</DialogTitle>
-            </DialogContent>
-          </DialogRoot>
-        `,
-      });
-      render(Fixture);
-      await user.click(screen.getByTestId("trig"));
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-      await user.keyboard("{Escape}");
-      // alertdialog must not close on Escape per WAI-ARIA
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    });
-
-    it("fires onEscapeKeyDown callback with defaultPrevented=false at call time", async () => {
-      let capturedDefaultPrevented: boolean | null = null;
-      const Fixture = defineComponent({
-        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle },
-        setup() {
-          return {
-            onEscapeKeyDown(e: KeyboardEvent) {
-              capturedDefaultPrevented = e.defaultPrevented;
-            },
-          };
-        },
-        template: `
-          <DialogRoot id="vue-ad-cb" role="alertdialog" :onEscapeKeyDown="onEscapeKeyDown">
-            <DialogTrigger data-testid="trig">Open</DialogTrigger>
-            <DialogContent>
-              <DialogTitle>Alert</DialogTitle>
-            </DialogContent>
-          </DialogRoot>
-        `,
-      });
-      render(Fixture);
-      await user.click(screen.getByTestId("trig"));
-      await user.keyboard("{Escape}");
-      // User callback sees a fresh, not-yet-prevented event
-      expect(capturedDefaultPrevented).toBe(false);
-      // Dialog still open (prevented after callback)
-      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    });
-  });
-
   describe("DialogPortal", () => {
     it("renders children via Teleport after mount", async () => {
       const Fixture = defineComponent({

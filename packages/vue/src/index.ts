@@ -1,4 +1,17 @@
 export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogOverlay,
+  AlertDialogRoot,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./components/alert-dialog/AlertDialog.js";
+export type { UseAlertDialogOptions } from "./components/alert-dialog/use-alert-dialog.js";
+export { useAlertDialog } from "./components/alert-dialog/use-alert-dialog.js";
+export {
   Dialog,
   DialogClose,
   DialogContent,

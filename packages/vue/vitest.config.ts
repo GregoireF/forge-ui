@@ -7,6 +7,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@forge-ui/core": fileURLToPath(new URL("../core/src/index.ts", import.meta.url)),
+      "@forge-ui/alert-dialog": fileURLToPath(
+        new URL("../primitives/alert-dialog/src/index.ts", import.meta.url),
+      ),
       "@forge-ui/dialog": fileURLToPath(
         new URL("../primitives/dialog/src/index.ts", import.meta.url),
       ),

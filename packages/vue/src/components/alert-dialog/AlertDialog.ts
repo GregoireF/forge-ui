@@ -1,16 +1,24 @@
 import type { ComponentPublicInstance, PropType } from "vue";
-import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch, watchEffect } from "vue";
+import {
+  defineComponent,
+  h,
+  inject,
+  onMounted,
+  onScopeDispose,
+  provide,
+  watchEffect,
+} from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
-import { DialogPortal } from "./DialogPortal.js";
-import { dialogKey } from "./dialog-context.js";
-import { Slot } from "./Slot.js";
-import { useDialog } from "./use-dialog.js";
+import { DialogPortal } from "../dialog/DialogPortal.js";
+import { Slot } from "../dialog/Slot.js";
+import { alertDialogKey } from "./alert-dialog-context.js";
+import { useAlertDialog } from "./use-alert-dialog.js";
 
-type DialogApi = ReturnType<typeof useDialog>;
+type AlertDialogApi = ReturnType<typeof useAlertDialog>;
 
-function useCtx(): DialogApi {
-  const ctx = inject(dialogKey);
-  if (!ctx) throw new Error("Dialog compound parts must be inside <Dialog.Root>");
+function useCtx(): AlertDialogApi {
+  const ctx = inject(alertDialogKey);
+  if (!ctx) throw new Error("AlertDialog compound parts must be inside <AlertDialog.Root>");
   return ctx;
 }
 
@@ -18,11 +26,10 @@ function useCtx(): DialogApi {
 // Root
 // ---------------------------------------------------------------------------
 
-const DialogRoot = defineComponent({
-  name: "ForgeDialogRoot",
+const AlertDialogRoot = defineComponent({
+  name: "ForgeAlertDialogRoot",
   props: {
     open: { type: Boolean as PropType<boolean>, default: undefined },
-    /** Uncontrolled initial open state. */
     defaultOpen: { type: Boolean as PropType<boolean>, default: undefined },
     modal: { type: Boolean as PropType<boolean>, default: undefined },
     trapFocus: { type: Boolean as PropType<boolean>, default: undefined },
@@ -32,31 +39,14 @@ const DialogRoot = defineComponent({
     onOpenChange: { type: Function as PropType<(open: boolean) => void>, default: undefined },
     onOpenAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
     onCloseAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
-    onPointerDownOutside: {
-      type: Function as PropType<(e: PointerEvent) => void>,
-      default: undefined,
-    },
-    onFocusOutside: { type: Function as PropType<(e: FocusEvent) => void>, default: undefined },
-    onInteractOutside: {
-      type: Function as PropType<(e: PointerEvent | FocusEvent) => void>,
-      default: undefined,
-    },
-    onEscapeKeyDown: {
-      type: Function as PropType<(e: KeyboardEvent) => void>,
-      default: undefined,
-    },
-    initialFocusEl: {
-      type: Function as PropType<() => HTMLElement | null>,
-      default: undefined,
-    },
-    finalFocusEl: {
-      type: Function as PropType<() => HTMLElement | null>,
-      default: undefined,
-    },
+    /** Informational — fires when Escape is pressed, but alertdialog never closes from it. */
+    onEscapeKeyDown: { type: Function as PropType<(e: KeyboardEvent) => void>, default: undefined },
+    initialFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
+    finalFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
   },
   emits: ["update:open"],
   setup(props, { slots, emit }) {
-    const api = useDialog({
+    const api = useAlertDialog({
       ...(props.id !== undefined && { id: props.id }),
       ...(props.defaultOpen !== undefined && { defaultOpen: props.defaultOpen }),
       ...(props.open !== undefined && { open: props.open }),
@@ -67,29 +57,19 @@ const DialogRoot = defineComponent({
       ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
       ...(props.onOpenAutoFocus !== undefined && { onOpenAutoFocus: props.onOpenAutoFocus }),
       ...(props.onCloseAutoFocus !== undefined && { onCloseAutoFocus: props.onCloseAutoFocus }),
-      ...(props.onPointerDownOutside !== undefined && {
-        onPointerDownOutside: props.onPointerDownOutside,
-      }),
-      ...(props.onFocusOutside !== undefined && { onFocusOutside: props.onFocusOutside }),
-      ...(props.onInteractOutside !== undefined && {
-        onInteractOutside: props.onInteractOutside,
-      }),
       ...(props.onEscapeKeyDown !== undefined && { onEscapeKeyDown: props.onEscapeKeyDown }),
       ...(props.initialFocusEl !== undefined && { initialFocusEl: props.initialFocusEl }),
       ...(props.finalFocusEl !== undefined && { finalFocusEl: props.finalFocusEl }),
     });
-    provide(dialogKey, api);
+    provide(alertDialogKey, api);
 
-    watch(
-      () => props.open,
-      (open) => {
-        if (open === undefined) return;
-        api.setOpen(open);
-      },
-    );
+    watchEffect(() => {
+      if (props.open === undefined) return;
+      api.setOpen(props.open);
+    });
 
-    watch(api.isOpen, (open) => {
-      emit("update:open", open);
+    watchEffect(() => {
+      emit("update:open", api.isOpen.value);
     });
 
     return () => slots.default?.();
@@ -100,8 +80,8 @@ const DialogRoot = defineComponent({
 // Trigger
 // ---------------------------------------------------------------------------
 
-const DialogTrigger = defineComponent({
-  name: "ForgeDialogTrigger",
+const AlertDialogTrigger = defineComponent({
+  name: "ForgeAlertDialogTrigger",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
@@ -117,8 +97,8 @@ const DialogTrigger = defineComponent({
 // Portal
 // ---------------------------------------------------------------------------
 
-const DialogPortalCompound = defineComponent({
-  name: "ForgeDialogPortal",
+const AlertDialogPortalCompound = defineComponent({
+  name: "ForgeAlertDialogPortal",
   props: {
     to: { type: [String, Object] as PropType<string | HTMLElement>, default: "body" },
     disabled: { type: Boolean, default: false },
@@ -134,11 +114,11 @@ const DialogPortalCompound = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Overlay — Presence-aware.
+// Overlay
 // ---------------------------------------------------------------------------
 
-const DialogOverlay = defineComponent({
-  name: "ForgeDialogOverlay",
+const AlertDialogOverlay = defineComponent({
+  name: "ForgeAlertDialogOverlay",
   props: {
     forceMount: { type: Boolean, default: false },
     asChild: { type: Boolean, default: false },
@@ -149,19 +129,11 @@ const DialogOverlay = defineComponent({
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
-
       const overlayProps = api.getOverlayProps();
       const closingProps = !api.isOpen.value
         ? { "aria-hidden": true, style: { pointerEvents: "none" } }
         : {};
-
-      const finalProps = {
-        ...overlayProps,
-        ...closingProps,
-        ...attrs,
-        ref: presenceRef,
-      };
-
+      const finalProps = { ...overlayProps, ...closingProps, ...attrs, ref: presenceRef };
       if (props.asChild) return h(Slot, finalProps, slots.default);
       return h("div", finalProps);
     };
@@ -169,48 +141,35 @@ const DialogOverlay = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware.
-// Accepts event callbacks that override Root-level ones when provided.
+// Content
+// Accepts onOpenAutoFocus / onCloseAutoFocus overrides only.
 // ---------------------------------------------------------------------------
 
-const DialogContent = defineComponent({
-  name: "ForgeDialogContent",
+const AlertDialogContent = defineComponent({
+  name: "ForgeAlertDialogContent",
   props: {
     forceMount: { type: Boolean, default: false },
     asChild: { type: Boolean, default: false },
     onOpenAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
     onCloseAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
-    onPointerDownOutside: {
-      type: Function as PropType<(e: PointerEvent) => void>,
-      default: undefined,
-    },
-    onFocusOutside: { type: Function as PropType<(e: FocusEvent) => void>, default: undefined },
-    onInteractOutside: {
-      type: Function as PropType<(e: PointerEvent | FocusEvent) => void>,
-      default: undefined,
-    },
-    onEscapeKeyDown: {
-      type: Function as PropType<(e: KeyboardEvent) => void>,
-      default: undefined,
-    },
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
     const { isPresent, presenceRef } = usePresence(api.isOpen);
 
-    // Dev-only: warn when the dialog opens without an accessible name or description.
+    // Dev-only a11y warnings.
     if (process.env.NODE_ENV !== "production") {
       watchEffect((onCleanup) => {
         if (!api.isOpen.value) return;
         const raf = requestAnimationFrame(() => {
           if (!api.titleRegistered.value && !attrs["aria-label"] && !attrs["aria-labelledby"]) {
             console.warn(
-              "[forge-ui/dialog] Missing accessible name: mount <Dialog.Title> inside <Dialog.Content>, or pass aria-label / aria-labelledby to <Dialog.Content>.",
+              "[forge-ui/alert-dialog] Missing accessible name: mount <AlertDialog.Title> inside <AlertDialog.Content>, or pass aria-label / aria-labelledby.",
             );
           }
           if (!api.descriptionRegistered.value && !attrs["aria-describedby"]) {
             console.warn(
-              "[forge-ui/dialog] Missing description: add <Dialog.Description> inside <Dialog.Content>, or pass aria-describedby. Descriptions help users understand the dialog's purpose.",
+              "[forge-ui/alert-dialog] Missing description: mount <AlertDialog.Description> inside <AlertDialog.Content>, or pass aria-describedby.",
             );
           }
         });
@@ -218,19 +177,14 @@ const DialogContent = defineComponent({
       });
     }
 
-    // Sync content-level callbacks into the machine whenever props change.
     watchEffect(() => {
       api.setContentCallbacks({
         onOpenAutoFocus: props.onOpenAutoFocus,
         onCloseAutoFocus: props.onCloseAutoFocus,
-        onPointerDownOutside: props.onPointerDownOutside,
-        onFocusOutside: props.onFocusOutside,
-        onInteractOutside: props.onInteractOutside,
-        onEscapeKeyDown: props.onEscapeKeyDown,
       });
     });
 
-    onUnmounted(() => api.setContentCallbacks({}));
+    onScopeDispose(() => api.setContentCallbacks({}));
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
@@ -259,18 +213,16 @@ const DialogContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Title (with presence registration)
+// Title
 // ---------------------------------------------------------------------------
 
-const DialogTitle = defineComponent({
-  name: "ForgeDialogTitle",
+const AlertDialogTitle = defineComponent({
+  name: "ForgeAlertDialogTitle",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-
     onMounted(() => api.send("REGISTER_TITLE"));
-    onUnmounted(() => api.send("UNREGISTER_TITLE"));
-
+    onScopeDispose(() => api.send("UNREGISTER_TITLE"));
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
       if (props.asChild) return h(Slot, titleProps, slots.default);
@@ -280,18 +232,16 @@ const DialogTitle = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Description (with presence registration)
+// Description
 // ---------------------------------------------------------------------------
 
-const DialogDescription = defineComponent({
-  name: "ForgeDialogDescription",
+const AlertDialogDescription = defineComponent({
+  name: "ForgeAlertDialogDescription",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-
     onMounted(() => api.send("REGISTER_DESCRIPTION"));
-    onUnmounted(() => api.send("UNREGISTER_DESCRIPTION"));
-
+    onScopeDispose(() => api.send("UNREGISTER_DESCRIPTION"));
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
       if (props.asChild) return h(Slot, descriptionProps, slots.default);
@@ -301,18 +251,35 @@ const DialogDescription = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Close
+// Cancel — dismisses without acting.
 // ---------------------------------------------------------------------------
 
-const DialogClose = defineComponent({
-  name: "ForgeDialogClose",
+const AlertDialogCancel = defineComponent({
+  name: "ForgeAlertDialogCancel",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const closeProps = { ...api.getCloseProps(), ...attrs };
-      if (props.asChild) return h(Slot, closeProps, slots.default);
-      return h("button", closeProps, slots.default?.());
+      const cancelProps = { ...api.getCancelProps(), ...attrs };
+      if (props.asChild) return h(Slot, cancelProps, slots.default);
+      return h("button", cancelProps, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// Action — destructive / confirm button. Does NOT auto-close.
+// ---------------------------------------------------------------------------
+
+const AlertDialogAction = defineComponent({
+  name: "ForgeAlertDialogAction",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      const actionProps = { ...api.getActionProps(), ...attrs };
+      if (props.asChild) return h(Slot, actionProps, slots.default);
+      return h("button", actionProps, slots.default?.());
     };
   },
 });
@@ -321,23 +288,25 @@ const DialogClose = defineComponent({
 // Namespace export
 // ---------------------------------------------------------------------------
 
-export const Dialog = {
-  Root: DialogRoot,
-  Trigger: DialogTrigger,
-  Portal: DialogPortalCompound,
-  Overlay: DialogOverlay,
-  Content: DialogContent,
-  Title: DialogTitle,
-  Description: DialogDescription,
-  Close: DialogClose,
+export const AlertDialog = {
+  Root: AlertDialogRoot,
+  Trigger: AlertDialogTrigger,
+  Portal: AlertDialogPortalCompound,
+  Overlay: AlertDialogOverlay,
+  Content: AlertDialogContent,
+  Title: AlertDialogTitle,
+  Description: AlertDialogDescription,
+  Cancel: AlertDialogCancel,
+  Action: AlertDialogAction,
 } as const;
 
 export {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogRoot,
-  DialogTitle,
-  DialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogOverlay,
+  AlertDialogRoot,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 };
