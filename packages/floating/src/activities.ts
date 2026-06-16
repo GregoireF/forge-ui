@@ -58,20 +58,26 @@ export function makeComputePositionActivity<
         placement,
         strategy,
         offset: offsetValue,
+        alignOffset,
         shiftPadding,
         sameWidth,
+        avoidCollisions,
         boundary,
         hideWhenDetached,
         middleware: extraMiddleware,
       } = ctx.positioning;
 
       const middleware = [
-        offset(offsetValue),
-        flip({ ...(boundary !== undefined && { boundary }) }),
-        shift({
-          padding: shiftPadding,
-          ...(boundary !== undefined && { boundary }),
-        }),
+        offset({ mainAxis: offsetValue, crossAxis: alignOffset }),
+        ...(avoidCollisions
+          ? [
+              flip({ ...(boundary !== undefined && { boundary }) }),
+              shift({
+                padding: shiftPadding,
+                ...(boundary !== undefined && { boundary }),
+              }),
+            ]
+          : []),
         // sameWidth: match floating width to reference width.
         ...(sameWidth
           ? [

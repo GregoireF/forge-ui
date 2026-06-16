@@ -54,6 +54,17 @@ const footer = { display: "flex", justifyContent: "flex-end", gap: "0.5rem" };
 const section = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
 const sectionTitle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
 const sectionDesc = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
+
+const btnDanger = { ...btn, background: "#dc2626" } as const;
+const alertConfirming = ref(false);
+function handleDeleteConfirm() {
+  alertConfirming.value = true;
+  // Simulate async operation.
+  setTimeout(() => {
+    alertConfirming.value = false;
+    console.log("[AlertDialog] delete confirmed");
+  }, 1200);
+}
 </script>
 
 <template>
@@ -168,6 +179,34 @@ const sectionDesc = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" }
           </div>
         </DialogPortal>
       </template>
+    </section>
+
+    <!-- ── AlertDialog ───────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">AlertDialog</h2>
+      <p :style="sectionDesc">
+        Destructive confirmation — Escape et outside-click bloqués par WAI-ARIA.
+        Cancel = ferme, Action = n'auto-ferme pas (caller décide).
+      </p>
+      <AlertDialog.Root :on-open-change="(o) => console.log('[AlertDialog] open:', o)">
+        <AlertDialog.Trigger :style="btnDanger">Supprimer le compte</AlertDialog.Trigger>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay :style="overlay" />
+          <AlertDialog.Content :style="panel">
+            <AlertDialog.Title :style="titleS">Supprimer définitivement ?</AlertDialog.Title>
+            <AlertDialog.Description :style="descS">
+              Cette action est irréversible. Toutes vos données seront supprimées.
+              Escape et click en dehors ne ferment pas ce dialog.
+            </AlertDialog.Description>
+            <div :style="footer">
+              <AlertDialog.Cancel :style="btnGhost">Annuler</AlertDialog.Cancel>
+              <AlertDialog.Action :style="btnDanger" @click="handleDeleteConfirm" :disabled="alertConfirming">
+                {{ alertConfirming ? 'Suppression…' : 'Supprimer' }}
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
     </section>
 
     <!-- ── Popover ────────────────────────────────────────────────────────── -->

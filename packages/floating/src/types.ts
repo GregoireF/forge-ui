@@ -9,12 +9,20 @@ export interface FloatingPositioning {
   placement?: Placement;
   /** "fixed" (default, safe for portaled content) or "absolute". */
   strategy?: Strategy;
-  /** Distance between reference and floating in px. Default: 4. */
+  /** Distance between reference and floating on the main axis in px. Default: 4. */
   offset?: number;
+  /** Distance between reference and floating on the cross axis in px. Default: 0. */
+  alignOffset?: number;
   /** Padding (px) to keep the floating element away from viewport edges. Default: 8. */
   shiftPadding?: number;
   /** Match the floating width to the reference element width. Default: false. */
   sameWidth?: boolean;
+  /**
+   * Whether to flip the floating element to the opposite side when it would
+   * overflow the boundary. When false, the floating element stays in place and
+   * may be clipped. Default: true.
+   */
+  avoidCollisions?: boolean;
   /** Clipping boundary for flip + shift. Default: "clippingAncestors". */
   boundary?: Element | Element[] | "clippingAncestors";
   /**
@@ -35,6 +43,14 @@ export type ResolvedFloatingPositioning = Required<
   boundary?: FloatingPositioning["boundary"];
   middleware?: FloatingPositioning["middleware"];
 };
+
+// Convenience helpers to build a placement string from separate side+align props.
+export function buildPlacement(
+  side: Side,
+  align: Align | "center",
+): Placement {
+  return align === "center" ? side : (`${side}-${align}` as Placement);
+}
 
 // ---------------------------------------------------------------------------
 // Helpers: extract side / align from a resolved placement

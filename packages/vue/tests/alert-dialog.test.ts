@@ -109,6 +109,14 @@ describe("useAlertDialog (Vue)", () => {
       expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     });
 
+    it("stays open when clicking outside (interact-outside is blocked)", async () => {
+      render(makeAlertDialogFixture());
+      await user.click(screen.getByTestId("trigger"));
+      // Click outside the alertdialog — should NOT close it.
+      await user.click(document.body);
+      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    });
+
     it("fires onOpenChange on open and cancel", async () => {
       const onOpenChange = vi.fn();
       render(makeAlertDialogFixture({ onOpenChange }));

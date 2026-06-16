@@ -150,6 +150,7 @@ const PopoverPortal = defineComponent({
 
 const PopoverContent = defineComponent({
   name: "ForgePopoverContent",
+  inheritAttrs: false,
   props: {
     forceMount: { type: Boolean, default: false },
     asChild: { type: Boolean, default: false },

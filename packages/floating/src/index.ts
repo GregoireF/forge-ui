@@ -7,6 +7,7 @@ export type {
   Side,
 } from "./types.js";
 export {
+  buildPlacement,
   getAlignFromPlacement,
   getSideFromPlacement,
   getTransformOrigin,

@@ -506,6 +506,27 @@ describe("useDialog (Vue)", () => {
       document.body.removeChild(background);
     });
 
+    it("does not set aria-hidden when modal=false", async () => {
+      const background = document.createElement("aside");
+      document.body.appendChild(background);
+
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle },
+        template: `
+          <DialogRoot id="test-aria-nonmodal" :modal="false">
+            <DialogTrigger data-testid="trigger">Open</DialogTrigger>
+            <DialogContent :forceMount="true">
+              <DialogTitle>T</DialogTitle>
+            </DialogContent>
+          </DialogRoot>
+        `,
+      });
+      render(Fixture);
+      await user.click(screen.getByTestId("trigger"));
+      expect(background.getAttribute("aria-hidden")).toBeNull();
+      document.body.removeChild(background);
+    });
+
     it("removes aria-hidden when the dialog closes", async () => {
       const background = document.createElement("section");
       document.body.appendChild(background);
