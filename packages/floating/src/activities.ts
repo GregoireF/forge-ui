@@ -47,10 +47,18 @@ export function makeComputePositionActivity<
   return (ctx, { notify }) => {
     if (typeof document === "undefined") return;
 
+    // Reset immediately so the positioner is opacity:0 on the very first
+    // render after open — happens before emit() so the snapshot is correct.
+    ctx.positioned = false;
+
     function getReference(): HTMLElement | null {
       return ctx.anchorEl ?? ctx.triggerEl ?? null;
     }
 
+    // Guards stale computePosition callbacks that outlive this activity.
+    // Without this, a promise from open#N can resolve after close and set
+    // ctx.positioned = true, so open#(N+1) renders without opacity:0 at (0,0).
+    let active = true;
     let positioned = false;
 
     function runUpdate(): void {
@@ -102,6 +110,8 @@ export function makeComputePositionActivity<
       ];
 
       computePosition(reference, floating, { placement, strategy, middleware }).then((result) => {
+        if (!active) return;
+
         ctx.x = result.x;
         ctx.y = result.y;
         ctx.currentPlacement = result.placement;
@@ -130,9 +140,6 @@ export function makeComputePositionActivity<
         floating.dataset.align = getAlignFromPlacement(result.placement);
         floating.dataset.placement = result.placement;
 
-        // Signal to connects/components that a real position is available.
-        // getPositionerProps() hides the positioner while !ctx.positioned so
-        // the first frame never shows the element at (0, 0).
         if (!positioned) {
           positioned = true;
           ctx.positioned = true;
@@ -151,6 +158,7 @@ export function makeComputePositionActivity<
     // The cleanup below always cancels the last scheduled rafId so we never leak.
     function scheduleSetup() {
       rafId = requestAnimationFrame(() => {
+        if (!active) return;
         const reference = getReference();
         const floating = ctx.contentEl;
         if (!reference || !floating) {
@@ -159,8 +167,8 @@ export function makeComputePositionActivity<
         }
 
         if (!ctx.positioning.disableAutoUpdate) {
+          // autoUpdate calls runUpdate immediately on setup — no second call needed.
           autoUpdateCleanup = autoUpdate(reference, floating, runUpdate);
-          runUpdate();
         } else {
           runUpdate();
         }
@@ -170,9 +178,9 @@ export function makeComputePositionActivity<
     scheduleSetup();
 
     return () => {
+      active = false;
       cancelAnimationFrame(rafId);
       autoUpdateCleanup?.();
-      // Reset so next open starts hidden again until position is computed.
       ctx.positioned = false;
     };
   };
