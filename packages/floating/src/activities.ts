@@ -143,6 +143,13 @@ export function makeComputePositionActivity<
         if (!positioned) {
           positioned = true;
           ctx.positioned = true;
+          // Reveal the positioner directly — bypasses React/Vue render timing.
+          // Position is now correct so removing opacity is safe here.
+          const positionerEl = floating.parentElement;
+          if (positionerEl) {
+            positionerEl.style.opacity = "";
+            positionerEl.style.pointerEvents = "";
+          }
         }
 
         notify();
@@ -164,6 +171,17 @@ export function makeComputePositionActivity<
         if (!reference || !floating) {
           scheduleSetup(); // contentEl not mounted yet — try next frame
           return;
+        }
+
+        // Hide the positioner directly before computePosition runs. This is
+        // synchronous and fires pre-paint (RAF is a pre-paint hook), so the
+        // element can never flash at (0,0) regardless of React/Vue render timing.
+        // The declarative opacity:0 in getPositionerProps is a belt-and-suspenders
+        // backup; this direct DOM write is the authoritative hide.
+        const positionerEl = floating.parentElement;
+        if (positionerEl) {
+          positionerEl.style.opacity = "0";
+          positionerEl.style.pointerEvents = "none";
         }
 
         if (!ctx.positioning.disableAutoUpdate) {
