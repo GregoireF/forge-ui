@@ -1,4 +1,4 @@
-import { Dialog, DialogPortal, Popover, useDialog } from "@forge-ui/react";
+import { AlertDialog, Dialog, DialogPortal, Popover, Select, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -28,8 +28,23 @@ export default function App() {
         <HookDemo />
       </Section>
 
+      <Section
+        title="AlertDialog"
+        description="Confirmation destructive — Escape et outside-click bloqués par WAI-ARIA."
+      >
+        <AlertDialogDemo />
+      </Section>
+
       <Section title="Popover" description="Floating, non-modal. Ferme sur outside-click.">
         <PopoverDemo />
+      </Section>
+
+      <Section title="Select" description="WAI-ARIA 1.2 Select-Only Combobox. Keyboard + typeahead.">
+        <SelectDemo />
+      </Section>
+
+      <Section title="Select multiple" description="Multi-sélection — reste ouvert après chaque choix.">
+        <SelectMultipleDemo />
       </Section>
 
       <Section title="asChild" description="Forge merge les props sur votre élément, sans wrapper.">
@@ -166,6 +181,46 @@ function HookDemo() {
   );
 }
 
+/* ── AlertDialog ────────────────────────────────────────────────────────────── */
+
+function AlertDialogDemo() {
+  const [confirming, setConfirming] = useState(false);
+
+  function handleConfirm() {
+    setConfirming(true);
+    setTimeout(() => {
+      setConfirming(false);
+      console.log("[AlertDialog] confirmed");
+    }, 1200);
+  }
+
+  return (
+    <AlertDialog.Root onOpenChange={(o) => console.log("[AlertDialog] open:", o)}>
+      <AlertDialog.Trigger style={btnDangerStyle}>Supprimer le compte</AlertDialog.Trigger>
+      <AlertDialog.Portal>
+        <AlertDialog.Overlay style={overlayStyle} />
+        <AlertDialog.Content style={contentStyle}>
+          <AlertDialog.Title style={titleStyle}>Supprimer définitivement ?</AlertDialog.Title>
+          <AlertDialog.Description style={descStyle}>
+            Cette action est irréversible. Toutes vos données seront supprimées.
+            Escape et click en dehors ne ferment <strong>pas</strong> ce dialog.
+          </AlertDialog.Description>
+          <div style={footerStyle}>
+            <AlertDialog.Cancel style={btnGhostStyle}>Annuler</AlertDialog.Cancel>
+            <AlertDialog.Action
+              style={btnDangerStyle}
+              onClick={handleConfirm}
+              disabled={confirming}
+            >
+              {confirming ? "Suppression…" : "Supprimer"}
+            </AlertDialog.Action>
+          </div>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+}
+
 /* ── Popover ────────────────────────────────────────────────────────────────── */
 
 function PopoverDemo() {
@@ -206,6 +261,108 @@ function PopoverDemo() {
           </Popover.Portal>
         </Popover.Root>
       </div>
+    </div>
+  );
+}
+
+/* ── Select ─────────────────────────────────────────────────────────────────── */
+
+function SelectDemo() {
+  const [value, setValue] = useState<string[]>([]);
+
+  return (
+    <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Select simple
+        </p>
+        <Select.Root onValueChange={setValue}>
+          <Select.Label style={labelStyle}>Framework</Select.Label>
+          <Select.Trigger style={selectTriggerStyle}>
+            <Select.Value placeholder="Choisir un framework…" />
+            <span style={{ marginLeft: "auto", opacity: 0.5 }}>▾</span>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content style={selectContentStyle}>
+              <Select.Item value="react" style={selectItemStyle}>React</Select.Item>
+              <Select.Item value="vue" style={selectItemStyle}>Vue</Select.Item>
+              <Select.Item value="angular" style={selectItemStyle}>Angular</Select.Item>
+              <Select.Separator style={separatorStyle} />
+              <Select.Item value="svelte" style={selectItemStyle}>Svelte</Select.Item>
+              <Select.Item value="solid" style={selectItemStyle}>Solid</Select.Item>
+              <Select.Item value="qwik" disabled style={{ ...selectItemStyle, opacity: 0.4 }}>
+                Qwik (désactivé)
+              </Select.Item>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>
+        {value.length > 0 && (
+          <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+            Valeur: <code>{value[0]}</code>
+          </p>
+        )}
+      </div>
+
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Avec groupes
+        </p>
+        <Select.Root>
+          <Select.Label style={labelStyle}>Langage</Select.Label>
+          <Select.Trigger style={selectTriggerStyle}>
+            <Select.Value placeholder="Choisir…" />
+            <span style={{ marginLeft: "auto", opacity: 0.5 }}>▾</span>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content style={selectContentStyle}>
+              <Select.Group>
+                <Select.GroupLabel style={groupLabelStyle}>Frontend</Select.GroupLabel>
+                <Select.Item value="ts" style={selectItemStyle}>TypeScript</Select.Item>
+                <Select.Item value="js" style={selectItemStyle}>JavaScript</Select.Item>
+              </Select.Group>
+              <Select.Separator style={separatorStyle} />
+              <Select.Group>
+                <Select.GroupLabel style={groupLabelStyle}>Backend</Select.GroupLabel>
+                <Select.Item value="go" style={selectItemStyle}>Go</Select.Item>
+                <Select.Item value="rust" style={selectItemStyle}>Rust</Select.Item>
+                <Select.Item value="python" style={selectItemStyle}>Python</Select.Item>
+              </Select.Group>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>
+      </div>
+    </div>
+  );
+}
+
+/* ── Select multiple ─────────────────────────────────────────────────────────── */
+
+function SelectMultipleDemo() {
+  const [values, setValues] = useState<string[]>([]);
+
+  return (
+    <div>
+      <Select.Root multiple onValueChange={setValues}>
+        <Select.Label style={labelStyle}>Intérêts</Select.Label>
+        <Select.Trigger style={selectTriggerStyle}>
+          <Select.Value placeholder="Sélectionner plusieurs…" />
+          <span style={{ marginLeft: "auto", opacity: 0.5 }}>▾</span>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content style={selectContentStyle}>
+            <Select.Item value="design" style={selectItemStyle}>Design</Select.Item>
+            <Select.Item value="dev" style={selectItemStyle}>Développement</Select.Item>
+            <Select.Item value="ux" style={selectItemStyle}>UX Research</Select.Item>
+            <Select.Item value="perf" style={selectItemStyle}>Performance</Select.Item>
+            <Select.Item value="a11y" style={selectItemStyle}>Accessibilité</Select.Item>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+      {values.length > 0 && (
+        <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+          Sélectionnés: <code>{values.join(", ")}</code>
+        </p>
+      )}
     </div>
   );
 }
@@ -303,6 +460,11 @@ const btnGhostStyle: React.CSSProperties = {
   border: "1px solid #cbd5e1",
 };
 
+const btnDangerStyle: React.CSSProperties = {
+  ...btnStyle,
+  background: "#dc2626",
+};
+
 const overlayStyle: React.CSSProperties = {
   position: "fixed",
   inset: 0,
@@ -350,4 +512,61 @@ const footerStyle: React.CSSProperties = {
   display: "flex",
   justifyContent: "flex-end",
   gap: "0.5rem",
+};
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: "0.8rem",
+  fontWeight: 500,
+  color: "#374151",
+  marginBottom: "0.35rem",
+};
+
+const selectTriggerStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+  padding: "0.5rem 0.75rem",
+  minWidth: "200px",
+  background: "#fff",
+  border: "1px solid #cbd5e1",
+  borderRadius: "6px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+};
+
+const selectContentStyle: React.CSSProperties = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none",
+  margin: 0,
+};
+
+const selectItemStyle: React.CSSProperties = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+};
+
+const separatorStyle: React.CSSProperties = {
+  height: "1px",
+  background: "#e2e8f0",
+  margin: "0.25rem 0",
+  listStyle: "none",
+};
+
+const groupLabelStyle: React.CSSProperties = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  listStyle: "none",
 };

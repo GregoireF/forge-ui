@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {
+  AlertDialog,
   Dialog,
   DialogPortal,
   Popover,
+  Select,
   useDialog,
 } from "@forge-ui/vue";
 import { ref } from "vue";
@@ -12,6 +14,17 @@ const hookDialog = useDialog({
 });
 
 const controlledOpen = ref(false);
+const selectedValue = ref<string[]>([]);
+const selectedMultiple = ref<string[]>([]);
+
+const alertConfirming = ref(false);
+function handleAlertConfirm() {
+  alertConfirming.value = true;
+  setTimeout(() => {
+    alertConfirming.value = false;
+    console.log("[AlertDialog] confirmed");
+  }, 1200);
+}
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -31,6 +44,8 @@ const btnGhostStyle = {
   color: "#1e293b",
   border: "1px solid #cbd5e1",
 } as const;
+
+const btnDangerStyle = { ...btnStyle, background: "#dc2626" } as const;
 
 const overlayStyle = {
   position: "fixed" as const,
@@ -65,6 +80,36 @@ const popoverStyle = {
 const titleStyle = { margin: "0 0 0.5rem", fontSize: "1.05rem", fontWeight: 600 };
 const descStyle = { color: "#64748b", marginBottom: "1.5rem", fontSize: "0.875rem", lineHeight: 1.5 };
 const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem" };
+const sectionStyle = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
+const sectionTitleStyle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
+const sectionDescStyle = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
+
+const labelStyle = { display: "block", fontSize: "0.8rem", fontWeight: 500, color: "#374151", marginBottom: "0.35rem" };
+const selectTriggerStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+  padding: "0.5rem 0.75rem",
+  minWidth: "200px",
+  background: "#fff",
+  border: "1px solid #cbd5e1",
+  borderRadius: "6px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+} as const;
+const selectContentStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none",
+  margin: 0,
+} as const;
+const selectItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
+const separatorStyle = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
+const groupLabelStyle = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
 </script>
 
 <template>
@@ -72,11 +117,9 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
     <h1 style="margin:0;font-size:1.5rem">forge-ui — Vue Playground</h1>
 
     <!-- ── Dialog standard ─────────────────────────────────────────────────── -->
-    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
-      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">Dialog</h2>
-      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">
-        Modal avec Escape + click outside pour fermer.
-      </p>
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Dialog</h2>
+      <p :style="sectionDescStyle">Modal avec Escape + click outside pour fermer.</p>
       <Dialog.Root :on-open-change="(o) => console.log('[Dialog] open:', o)">
         <Dialog.Trigger :style="btnStyle">Ouvrir le dialog</Dialog.Trigger>
         <Dialog.Portal>
@@ -96,11 +139,9 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
     </section>
 
     <!-- ── Dialog imbriqué ──────────────────────────────────────────────────── -->
-    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
-      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">Dialog imbriqué</h2>
-      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">
-        Stack registry — seule la couche supérieure capte Escape.
-      </p>
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Dialog imbriqué</h2>
+      <p :style="sectionDescStyle">Stack registry — seule la couche supérieure capte Escape.</p>
       <Dialog.Root>
         <Dialog.Trigger :style="btnStyle">Ouvrir dialog 1</Dialog.Trigger>
         <Dialog.Portal>
@@ -134,11 +175,9 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
     </section>
 
     <!-- ── Dialog contrôlé ──────────────────────────────────────────────────── -->
-    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
-      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">Dialog contrôlé</h2>
-      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">
-        open + onOpenChange — état géré à l'extérieur.
-      </p>
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Dialog contrôlé</h2>
+      <p :style="sectionDescStyle">open + onOpenChange — état géré à l'extérieur.</p>
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
         <button :style="btnStyle" type="button" @click="controlledOpen = true">
           Ouvrir depuis l'extérieur
@@ -164,11 +203,9 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
     </section>
 
     <!-- ── Hook API ──────────────────────────────────────────────────────────── -->
-    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
-      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">Hook API useDialog</h2>
-      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">
-        Prop-getters manuels sans composants.
-      </p>
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Hook API useDialog</h2>
+      <p :style="sectionDescStyle">Prop-getters manuels sans composants composés.</p>
       <button v-bind="hookDialog.getTriggerProps()" :style="btnStyle">Ouvrir (hook)</button>
       <template v-if="hookDialog.isOpen.value">
         <DialogPortal>
@@ -186,12 +223,40 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
       </template>
     </section>
 
-    <!-- ── Popover ────────────────────────────────────────────────────────────── -->
-    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
-      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">Popover</h2>
-      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">
-        Floating, non-modal. Ferme sur outside-click.
+    <!-- ── AlertDialog ───────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">AlertDialog</h2>
+      <p :style="sectionDescStyle">
+        Confirmation destructive — Escape et outside-click bloqués par WAI-ARIA.
       </p>
+      <AlertDialog.Root :on-open-change="(o) => console.log('[AlertDialog] open:', o)">
+        <AlertDialog.Trigger :style="btnDangerStyle">Supprimer le compte</AlertDialog.Trigger>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay :style="overlayStyle" />
+          <AlertDialog.Content :style="contentStyle">
+            <AlertDialog.Title :style="titleStyle">Supprimer définitivement ?</AlertDialog.Title>
+            <AlertDialog.Description :style="descStyle">
+              Cette action est irréversible. Escape et click en dehors ne ferment <strong>pas</strong> ce dialog.
+            </AlertDialog.Description>
+            <div :style="footerStyle">
+              <AlertDialog.Cancel :style="btnGhostStyle">Annuler</AlertDialog.Cancel>
+              <AlertDialog.Action
+                :style="btnDangerStyle"
+                @click="handleAlertConfirm"
+                :disabled="alertConfirming"
+              >
+                {{ alertConfirming ? 'Suppression…' : 'Supprimer' }}
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+    </section>
+
+    <!-- ── Popover ────────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Popover</h2>
+      <p :style="sectionDescStyle">Floating, non-modal. Ferme sur outside-click.</p>
       <div style="display:flex;gap:2rem;flex-wrap:wrap">
         <div>
           <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Placement: bottom (défaut)</p>
@@ -201,7 +266,7 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
               <Popover.Content :style="popoverStyle">
                 <Popover.Title :style="{ ...titleStyle, fontSize: '0.9rem' }">Popover title</Popover.Title>
                 <Popover.Description :style="descStyle">
-                  Non-modal — Echap et outside-click ferment.
+                  Non-modal — outside-click et Escape ferment.
                 </Popover.Description>
                 <Popover.Close :style="btnGhostStyle">×</Popover.Close>
               </Popover.Content>
@@ -224,12 +289,94 @@ const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem"
       </div>
     </section>
 
+    <!-- ── Select ─────────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Select</h2>
+      <p :style="sectionDescStyle">WAI-ARIA 1.2 Select-Only Combobox. Keyboard + typeahead.</p>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start">
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Select simple</p>
+          <Select.Root :on-value-change="(v) => selectedValue = v">
+            <Select.Label :style="labelStyle">Framework</Select.Label>
+            <Select.Trigger :style="selectTriggerStyle">
+              <Select.Value placeholder="Choisir un framework…" />
+              <span style="margin-left:auto;opacity:0.5">▾</span>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content :style="selectContentStyle">
+                <Select.Item value="react" :style="selectItemStyle">React</Select.Item>
+                <Select.Item value="vue" :style="selectItemStyle">Vue</Select.Item>
+                <Select.Item value="angular" :style="selectItemStyle">Angular</Select.Item>
+                <Select.Separator :style="separatorStyle" />
+                <Select.Item value="svelte" :style="selectItemStyle">Svelte</Select.Item>
+                <Select.Item value="solid" :style="selectItemStyle">Solid</Select.Item>
+                <Select.Item value="qwik" :disabled="true" :style="{ ...selectItemStyle, opacity: 0.4 }">Qwik (désactivé)</Select.Item>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+          <p v-if="selectedValue.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+            Valeur: <code>{{ selectedValue[0] }}</code>
+          </p>
+        </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Avec groupes</p>
+          <Select.Root>
+            <Select.Label :style="labelStyle">Langage</Select.Label>
+            <Select.Trigger :style="selectTriggerStyle">
+              <Select.Value placeholder="Choisir…" />
+              <span style="margin-left:auto;opacity:0.5">▾</span>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content :style="selectContentStyle">
+                <Select.Group>
+                  <Select.GroupLabel :style="groupLabelStyle">Frontend</Select.GroupLabel>
+                  <Select.Item value="ts" :style="selectItemStyle">TypeScript</Select.Item>
+                  <Select.Item value="js" :style="selectItemStyle">JavaScript</Select.Item>
+                </Select.Group>
+                <Select.Separator :style="separatorStyle" />
+                <Select.Group>
+                  <Select.GroupLabel :style="groupLabelStyle">Backend</Select.GroupLabel>
+                  <Select.Item value="go" :style="selectItemStyle">Go</Select.Item>
+                  <Select.Item value="rust" :style="selectItemStyle">Rust</Select.Item>
+                  <Select.Item value="python" :style="selectItemStyle">Python</Select.Item>
+                </Select.Group>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Select multiple ────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Select multiple</h2>
+      <p :style="sectionDescStyle">Multi-sélection — reste ouvert après chaque choix.</p>
+      <Select.Root :multiple="true" :on-value-change="(v) => selectedMultiple = v">
+        <Select.Label :style="labelStyle">Intérêts</Select.Label>
+        <Select.Trigger :style="selectTriggerStyle">
+          <Select.Value placeholder="Sélectionner plusieurs…" />
+          <span style="margin-left:auto;opacity:0.5">▾</span>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content :style="selectContentStyle">
+            <Select.Item value="design" :style="selectItemStyle">Design</Select.Item>
+            <Select.Item value="dev" :style="selectItemStyle">Développement</Select.Item>
+            <Select.Item value="ux" :style="selectItemStyle">UX Research</Select.Item>
+            <Select.Item value="perf" :style="selectItemStyle">Performance</Select.Item>
+            <Select.Item value="a11y" :style="selectItemStyle">Accessibilité</Select.Item>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+      <p v-if="selectedMultiple.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+        Sélectionnés: <code>{{ selectedMultiple.join(', ') }}</code>
+      </p>
+    </section>
+
     <!-- ── asChild ────────────────────────────────────────────────────────────── -->
     <section style="padding:1.5rem 0">
-      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">asChild</h2>
-      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">
-        Forge merge les props sur votre élément, sans wrapper.
-      </p>
+      <h2 :style="sectionTitleStyle">asChild</h2>
+      <p :style="sectionDescStyle">Forge merge les props sur votre élément, sans wrapper.</p>
       <Dialog.Root>
         <Dialog.Trigger :asChild="true">
           <a href="#" :style="{ ...btnStyle, display: 'inline-block', textDecoration: 'none' }">

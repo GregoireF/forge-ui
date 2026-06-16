@@ -1,12 +1,14 @@
 <script setup lang="ts">
 // Aucun import nécessaire — @forge-ui/nuxt auto-importe tout.
-// useDialog, AlertDialog, Dialog, Popover, etc. sont disponibles directement.
+// useDialog, AlertDialog, Dialog, Popover, Select, etc. sont disponibles directement.
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
 });
 
 const controlledOpen = ref(false);
+const selectedValue = ref<string[]>([]);
+const selectedMultiple = ref<string[]>([]);
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -47,6 +49,33 @@ const popoverPanel = {
   minWidth: "220px",
   boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
 };
+
+const labelS = { display: "block", fontSize: "0.8rem", fontWeight: 500, color: "#374151", marginBottom: "0.35rem" };
+const selectTrigger = {
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+  padding: "0.5rem 0.75rem",
+  minWidth: "200px",
+  background: "#fff",
+  border: "1px solid #cbd5e1",
+  borderRadius: "6px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+} as const;
+const selectContent = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none",
+  margin: 0,
+} as const;
+const selectItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
+const separatorS = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
+const groupLabelS = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
 
 const titleS = { margin: "0 0 0.5rem", fontSize: "1.05rem", fontWeight: 600 };
 const descS = { color: "#64748b", marginBottom: "1.5rem", fontSize: "0.875rem", lineHeight: 1.5 };
@@ -207,6 +236,89 @@ function handleDeleteConfirm() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
+    </section>
+
+    <!-- ── Select ───────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Select</h2>
+      <p :style="sectionDesc">WAI-ARIA 1.2 Select-Only Combobox. Keyboard + typeahead.</p>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start">
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Select simple</p>
+          <Select.Root :on-value-change="(v) => selectedValue = v">
+            <Select.Label :style="labelS">Framework</Select.Label>
+            <Select.Trigger :style="selectTrigger">
+              <Select.Value placeholder="Choisir un framework…" />
+              <span style="margin-left:auto;opacity:0.5">▾</span>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content :style="selectContent">
+                <Select.Item value="react" :style="selectItem">React</Select.Item>
+                <Select.Item value="vue" :style="selectItem">Vue</Select.Item>
+                <Select.Item value="angular" :style="selectItem">Angular</Select.Item>
+                <Select.Separator :style="separatorS" />
+                <Select.Item value="svelte" :style="selectItem">Svelte</Select.Item>
+                <Select.Item value="solid" :style="selectItem">Solid</Select.Item>
+                <Select.Item value="qwik" :disabled="true" :style="{ ...selectItem, opacity: 0.4 }">Qwik (désactivé)</Select.Item>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+          <p v-if="selectedValue.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+            Valeur: <code>{{ selectedValue[0] }}</code>
+          </p>
+        </div>
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Avec groupes</p>
+          <Select.Root>
+            <Select.Label :style="labelS">Langage</Select.Label>
+            <Select.Trigger :style="selectTrigger">
+              <Select.Value placeholder="Choisir…" />
+              <span style="margin-left:auto;opacity:0.5">▾</span>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content :style="selectContent">
+                <Select.Group>
+                  <Select.GroupLabel :style="groupLabelS">Frontend</Select.GroupLabel>
+                  <Select.Item value="ts" :style="selectItem">TypeScript</Select.Item>
+                  <Select.Item value="js" :style="selectItem">JavaScript</Select.Item>
+                </Select.Group>
+                <Select.Separator :style="separatorS" />
+                <Select.Group>
+                  <Select.GroupLabel :style="groupLabelS">Backend</Select.GroupLabel>
+                  <Select.Item value="go" :style="selectItem">Go</Select.Item>
+                  <Select.Item value="rust" :style="selectItem">Rust</Select.Item>
+                  <Select.Item value="python" :style="selectItem">Python</Select.Item>
+                </Select.Group>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Select multiple ───────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Select multiple</h2>
+      <p :style="sectionDesc">Multi-sélection — reste ouvert après chaque choix.</p>
+      <Select.Root :multiple="true" :on-value-change="(v) => selectedMultiple = v">
+        <Select.Label :style="labelS">Intérêts</Select.Label>
+        <Select.Trigger :style="selectTrigger">
+          <Select.Value placeholder="Sélectionner plusieurs…" />
+          <span style="margin-left:auto;opacity:0.5">▾</span>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content :style="selectContent">
+            <Select.Item value="design" :style="selectItem">Design</Select.Item>
+            <Select.Item value="dev" :style="selectItem">Développement</Select.Item>
+            <Select.Item value="ux" :style="selectItem">UX Research</Select.Item>
+            <Select.Item value="perf" :style="selectItem">Performance</Select.Item>
+            <Select.Item value="a11y" :style="selectItem">Accessibilité</Select.Item>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+      <p v-if="selectedMultiple.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+        Sélectionnés: <code>{{ selectedMultiple.join(', ') }}</code>
+      </p>
     </section>
 
     <!-- ── Popover ────────────────────────────────────────────────────────── -->
