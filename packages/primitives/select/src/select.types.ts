@@ -37,6 +37,7 @@ export interface SelectContext {
   // Floating positioning
   x: number;
   y: number;
+  positioned: boolean;
   currentPlacement: Placement;
   positioning: ResolvedFloatingPositioning;
   // IDs

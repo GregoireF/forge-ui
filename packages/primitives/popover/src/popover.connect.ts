@@ -67,7 +67,13 @@ export function connectPopover(
           top: `${context.y}px`,
           left: `${context.x}px`,
           width: "max-content",
-        } as const,
+          // Transparent until first computePosition resolves so the element never
+          // flashes at (0, 0). opacity:0 keeps the element in the a11y tree (unlike
+          // visibility:hidden) so tests can still query by role. The activity sets
+          // ctx.positioned = true and calls notify() → positioner becomes visible
+          // at the correct position simultaneously.
+          ...(!context.positioned && { opacity: 0, pointerEvents: "none" as const }),
+        },
         "data-forge-scope": "popover",
         "data-forge-part": "positioner",
         "data-side": side,

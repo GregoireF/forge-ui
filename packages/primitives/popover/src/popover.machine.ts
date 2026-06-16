@@ -134,6 +134,7 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
       arrowEl: null,
       x: 0,
       y: 0,
+      positioned: false,
       currentPlacement: pos.placement ?? "bottom",
       positioning: {
         placement: pos.placement ?? "bottom",

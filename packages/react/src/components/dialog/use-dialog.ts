@@ -1,6 +1,6 @@
 import type { CreateDialogMachineOptions } from "@forge-ui/dialog";
 import { connectDialog, createDialogMachine } from "@forge-ui/dialog";
-import { useId, useState } from "react";
+import { useId, useLayoutEffect, useState } from "react";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseDialogOptions extends Omit<CreateDialogMachineOptions, "id" | "role"> {
@@ -15,17 +15,14 @@ export function useDialog(options: UseDialogOptions = {}) {
 
   const [machine] = useState(() => createDialogMachine({ id, ...options }));
 
-  // Sync controlled open prop during render so useSyncExternalStore captures the
-  // correct state on the first render — no second render cycle per prop change.
-  // machine.start() must be called first (idempotent; also called in useMachine)
-  // because machine.send is a no-op while the machine is stopped.
-  machine.start();
-  if (options.open !== undefined) {
+  // Sync controlled `open` prop via layout effect — avoids "setState during render" warning.
+  // useLayoutEffect fires before paint so there is no visible flash.
+  const { open } = options;
+  useLayoutEffect(() => {
+    if (open === undefined) return;
     const machineIsOpen = machine.getSnapshot().matches("open");
-    if (options.open !== machineIsOpen) {
-      machine.send(options.open ? "OPEN" : "CLOSE");
-    }
-  }
+    if (open !== machineIsOpen) machine.send(open ? "OPEN" : "CLOSE");
+  }, [open, machine]);
 
   const [snapshot, send] = useMachine(machine);
 

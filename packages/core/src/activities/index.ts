@@ -83,7 +83,10 @@ export function makeWatchOutsideActivity<TContext extends object>(
 
     function isOutside(target: Node): boolean {
       const containers = opts.getContainers(ctx);
-      return !containers.some((c) => c?.contains(target));
+      // Guard with instanceof Node — prevents TypeError if a framework proxy
+      // (e.g., Vue reactive proxy or component instance) is stored instead of
+      // the real DOM element.
+      return !containers.some((c) => c instanceof Node && c.contains(target));
     }
 
     function handlePointerDown(e: PointerEvent): void {

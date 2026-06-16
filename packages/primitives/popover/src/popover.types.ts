@@ -27,6 +27,7 @@ export interface PopoverContext {
   arrowEl: HTMLElement | null;
   x: number;
   y: number;
+  positioned: boolean;
   currentPlacement: Placement;
   positioning: ResolvedFloatingPositioning;
   initialFocusEl?: () => HTMLElement | null;

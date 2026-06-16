@@ -169,6 +169,7 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
       disabled: options.disabled ?? false,
       x: 0,
       y: 0,
+      positioned: false,
       currentPlacement: pos.placement ?? "bottom",
       positioning: {
         placement: pos.placement ?? "bottom",

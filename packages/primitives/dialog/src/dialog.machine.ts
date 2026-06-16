@@ -113,6 +113,15 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
   const modal = options.modal ?? true;
   const initialOpen = options.open ?? options.defaultOpen ?? false;
 
+  // alertdialog must never close on outside interaction (WAI-ARIA 1.2 §3.2).
+  // Use a default handler that calls preventDefault; if the consumer also
+  // provides one, keep theirs (they can still call preventDefault themselves).
+  const onInteractOutside =
+    options.onInteractOutside ??
+    (role === "alertdialog"
+      ? (e: PointerEvent | FocusEvent) => e.preventDefault()
+      : undefined);
+
   return createMachine<DialogContext, DialogState, DialogEvent>({
     id: `forge-dialog:${id}`,
     context: {
@@ -139,7 +148,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
         onPointerDownOutside: options.onPointerDownOutside,
       }),
       ...(options.onFocusOutside !== undefined && { onFocusOutside: options.onFocusOutside }),
-      ...(options.onInteractOutside !== undefined && { onInteractOutside: options.onInteractOutside }),
+      ...(onInteractOutside !== undefined && { onInteractOutside }),
       ...(options.onEscapeKeyDown !== undefined && { onEscapeKeyDown: options.onEscapeKeyDown }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
     },

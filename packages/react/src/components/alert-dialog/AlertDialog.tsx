@@ -82,11 +82,15 @@ function Overlay({ asChild, forceMount, children, ...rest }: AlertDialogOverlayP
   if (!forceMount && !isPresent) return null;
 
   const overlayProps = api.getOverlayProps();
-  const closingProps = !api.isOpen
-    ? ({ "aria-hidden": true, style: { pointerEvents: "none" } } as const)
-    : {};
+  const { style: userStyle, ...restProps } = rest;
 
-  const props = { ...overlayProps, ...closingProps, ...rest, ref: presenceRef };
+  const props = {
+    ...overlayProps,
+    ...(!api.isOpen && { "aria-hidden": true }),
+    ...restProps,
+    style: api.isOpen ? userStyle : { ...userStyle, pointerEvents: "none" as const },
+    ref: presenceRef,
+  };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <div {...props} />;
 }
@@ -146,14 +150,13 @@ function Content({
   if (!forceMount && !isPresent) return null;
 
   const contentProps = api.getContentProps();
-  const closingProps = !api.isOpen
-    ? ({ "aria-hidden": true, style: { pointerEvents: "none" } } as const)
-    : {};
+  const { style: userStyle, ...restProps } = rest;
 
   const props = {
     ...contentProps,
-    ...closingProps,
-    ...rest,
+    ...(!api.isOpen && { "aria-hidden": true }),
+    ...restProps,
+    style: api.isOpen ? userStyle : { ...userStyle, pointerEvents: "none" as const },
     ref: mergeRefs(contentProps.ref, presenceRef),
   };
 

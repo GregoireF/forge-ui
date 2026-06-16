@@ -10,11 +10,18 @@ export function useMachine<
 ): [MachineSnapshot<TContext, TState>, (event: TEvent | TEvent["type"]) => void] {
   // Start synchronously so the machine is running when child useLayoutEffect hooks
   // fire (e.g., Dialog.Title sending REGISTER_TITLE). machine.start() is idempotent
-  // (guarded by `if (running) return`) so re-renders and Strict Mode double-invocation
-  // are safe. The effect below handles cleanup only.
+  // (guarded by `if (running) return`), so re-renders and Strict Mode double render
+  // are safe.
+  //
+  // React Strict Mode also simulates unmount→remount of *effects* (without a new
+  // render). The cleanup below calls machine.stop() (running = false). Because no
+  // render runs between cleanup and re-setup, the synchronous machine.start() in
+  // the render body is NOT called again. We therefore also call machine.start() in
+  // the effect setup so the machine is restarted after the Strict Mode simulation.
   machine.start();
 
   useEffect(() => {
+    machine.start(); // re-start after Strict Mode effect cleanup (idempotent if already running)
     return () => machine.stop();
   }, [machine]);
 

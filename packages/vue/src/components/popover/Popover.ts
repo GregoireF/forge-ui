@@ -164,15 +164,14 @@ const PopoverContent = defineComponent({
 
       const positionerProps = api.getPositionerProps();
       const contentProps = api.getContentProps();
-      const closingProps = !api.isOpen.value
-        ? { "aria-hidden": true, style: { pointerEvents: "none" } }
-        : {};
+      const isOpen = api.isOpen.value;
 
       const machineRef = contentProps.ref as (el: HTMLElement | null) => void;
       const finalContentProps = {
         ...contentProps,
-        ...closingProps,
+        ...(!isOpen && { "aria-hidden": true }),
         ...attrs,
+        ...(isOpen ? {} : { style: [attrs.style, { pointerEvents: "none" }] }),
         ref: (el: Element | ComponentPublicInstance | null) => {
           const htmlEl = el instanceof HTMLElement ? el : null;
           machineRef(htmlEl);

@@ -28,15 +28,19 @@ export default defineNuxtModule({
     // ---------------------------------------------------------------------------
     addImports([
       { name: "useDialog", from },
+      { name: "useAlertDialog", from },
       { name: "usePopover", from },
+      { name: "useSelect", from },
       { name: "useField", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
     ]);
 
-    // Namespace objects — enable <Dialog.Root> / <Popover.Root> / <Field.Root> in templates
+    // Namespace objects — enable <Dialog.Root> / <Popover.Root> / etc. in templates
     addImports({ name: "Dialog", from });
+    addImports({ name: "AlertDialog", from });
     addImports({ name: "Popover", from });
+    addImports({ name: "Select", from });
     addImports({ name: "Field", from });
 
     // ---------------------------------------------------------------------------
@@ -54,6 +58,41 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of dialogComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const alertDialogComponents = [
+      "AlertDialogRoot",
+      "AlertDialogTrigger",
+      "AlertDialogOverlay",
+      "AlertDialogContent",
+      "AlertDialogTitle",
+      "AlertDialogDescription",
+      "AlertDialogCancel",
+      "AlertDialogAction",
+      "AlertDialogPortal",
+    ] as const;
+
+    for (const name of alertDialogComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const selectComponents = [
+      "SelectRoot",
+      "SelectLabel",
+      "SelectTrigger",
+      "SelectValue",
+      "SelectPortal",
+      "SelectContent",
+      "SelectItem",
+      "SelectItemText",
+      "SelectItemIndicator",
+      "SelectSeparator",
+      "SelectGroup",
+      "SelectGroupLabel",
+    ] as const;
+
+    for (const name of selectComponents) {
       addComponent({ name, export: name, filePath: from });
     }
 

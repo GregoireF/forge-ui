@@ -1,6 +1,6 @@
 import type { CreateAlertDialogMachineOptions } from "@forge-ui/alert-dialog";
 import { connectAlertDialog, createAlertDialogMachine } from "@forge-ui/alert-dialog";
-import { useId, useState } from "react";
+import { useId, useLayoutEffect, useState } from "react";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseAlertDialogOptions extends Omit<CreateAlertDialogMachineOptions, "id"> {
@@ -14,14 +14,12 @@ export function useAlertDialog(options: UseAlertDialogOptions = {}) {
 
   const [machine] = useState(() => createAlertDialogMachine({ id, ...options }));
 
-  // Sync controlled open prop during render (same pattern as useDialog).
-  machine.start();
-  if (options.open !== undefined) {
+  const { open } = options;
+  useLayoutEffect(() => {
+    if (open === undefined) return;
     const machineIsOpen = machine.getSnapshot().matches("open");
-    if (options.open !== machineIsOpen) {
-      machine.send(options.open ? "OPEN" : "CLOSE");
-    }
-  }
+    if (open !== machineIsOpen) machine.send(open ? "OPEN" : "CLOSE");
+  }, [open, machine]);
 
   const [snapshot, send] = useMachine(machine);
 

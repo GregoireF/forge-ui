@@ -130,10 +130,14 @@ const AlertDialogOverlay = defineComponent({
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
       const overlayProps = api.getOverlayProps();
-      const closingProps = !api.isOpen.value
-        ? { "aria-hidden": true, style: { pointerEvents: "none" } }
-        : {};
-      const finalProps = { ...overlayProps, ...closingProps, ...attrs, ref: presenceRef };
+      const isOpen = api.isOpen.value;
+      const finalProps = {
+        ...overlayProps,
+        ...(!isOpen && { "aria-hidden": true }),
+        ...attrs,
+        ...(isOpen ? {} : { style: [attrs.style, { pointerEvents: "none" }] }),
+        ref: presenceRef,
+      };
       if (props.asChild) return h(Slot, finalProps, slots.default);
       return h("div", finalProps);
     };
@@ -190,15 +194,14 @@ const AlertDialogContent = defineComponent({
       if (!props.forceMount && !isPresent.value) return null;
 
       const contentProps = api.getContentProps();
-      const closingProps = !api.isOpen.value
-        ? { "aria-hidden": true, style: { pointerEvents: "none" } }
-        : {};
+      const isOpen = api.isOpen.value;
 
       const machineRef = contentProps.ref as (el: HTMLElement | null) => void;
       const finalProps = {
         ...contentProps,
-        ...closingProps,
+        ...(!isOpen && { "aria-hidden": true }),
         ...attrs,
+        ...(isOpen ? {} : { style: [attrs.style, { pointerEvents: "none" }] }),
         ref: (el: Element | ComponentPublicInstance | null) => {
           const htmlEl = el instanceof HTMLElement ? el : null;
           machineRef(htmlEl);
@@ -310,3 +313,4 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 };
+export { AlertDialogPortalCompound as AlertDialogPortal };

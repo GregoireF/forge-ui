@@ -101,18 +101,13 @@ function Content({ asChild, forceMount, children, ...rest }: PopoverContentProps
 
   const positionerProps = api.getPositionerProps();
   const contentProps = api.getContentProps();
-
-  const closingProps = !api.isOpen
-    ? ({
-        "aria-hidden": true,
-        style: { pointerEvents: "none" },
-      } as const)
-    : {};
+  const { style: userStyle, ...restProps } = rest;
 
   const mergedContentProps = {
     ...contentProps,
-    ...closingProps,
-    ...rest,
+    ...(!api.isOpen && { "aria-hidden": true }),
+    ...restProps,
+    style: api.isOpen ? userStyle : { ...userStyle, pointerEvents: "none" as const },
     ref: mergeRefs(contentProps.ref, presenceRef),
   };
 

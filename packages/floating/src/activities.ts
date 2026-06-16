@@ -21,6 +21,8 @@ import { getAlignFromPlacement, getSideFromPlacement, getTransformOrigin } from 
 export interface FloatingContext {
   x: number;
   y: number;
+  /** True after the first computePosition resolves. Used by connects to hide positioner until positioned. */
+  positioned: boolean;
   currentPlacement: import("@floating-ui/dom").Placement;
   positioning: ResolvedFloatingPositioning;
   contentEl: HTMLElement | null;
@@ -48,6 +50,8 @@ export function makeComputePositionActivity<
     function getReference(): HTMLElement | null {
       return ctx.anchorEl ?? ctx.triggerEl ?? null;
     }
+
+    let positioned = false;
 
     function runUpdate(): void {
       const reference = getReference();
@@ -126,6 +130,14 @@ export function makeComputePositionActivity<
         floating.dataset.align = getAlignFromPlacement(result.placement);
         floating.dataset.placement = result.placement;
 
+        // Signal to connects/components that a real position is available.
+        // getPositionerProps() hides the positioner while !ctx.positioned so
+        // the first frame never shows the element at (0, 0).
+        if (!positioned) {
+          positioned = true;
+          ctx.positioned = true;
+        }
+
         notify();
       });
     }
@@ -151,6 +163,8 @@ export function makeComputePositionActivity<
     return () => {
       cancelAnimationFrame(raf);
       autoUpdateCleanup?.();
+      // Reset so next open starts hidden again until position is computed.
+      ctx.positioned = false;
     };
   };
 }

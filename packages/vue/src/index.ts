@@ -5,6 +5,7 @@ export {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogOverlay,
+  AlertDialogPortal,
   AlertDialogRoot,
   AlertDialogTitle,
   AlertDialogTrigger,
