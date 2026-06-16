@@ -1,5 +1,5 @@
 {
-  "name": "@forge-ui/vue",
+  "name": "@forge-ui/select",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -17,28 +17,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun run ../../tooling/scripts/build.ts",
+    "build": "bun run ../../../tooling/scripts/build.ts",
     "dev": "tsc --watch --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist coverage"
   },
-  "peerDependencies": {
-    "vue": ">=3.5.0"
-  },
   "dependencies": {
-    "@forge-ui/alert-dialog": "workspace:*",
     "@forge-ui/core": "workspace:*",
-    "@forge-ui/dialog": "workspace:*",
-    "@forge-ui/field": "workspace:*",
-    "@forge-ui/popover": "workspace:*",
-    "@forge-ui/select": "workspace:*"
+    "@forge-ui/floating": "workspace:*"
   },
   "devDependencies": {
-    "@testing-library/vue": "^8.1.0",
-    "@vitejs/plugin-vue": "^5.1.0",
-    "typescript": "*",
-    "vue": "^3.5.0"
+    "typescript": "*"
   }
 }

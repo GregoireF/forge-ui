@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tooling/tsconfig/dom.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "paths": {
+      "@forge-ui/core": ["../../core/src/index.ts"],
+      "@forge-ui/floating": ["../../floating/src/index.ts"]
+    }
+  },
+  "references": [
+    { "path": "../../core" },
+    { "path": "../../floating" }
+  ],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "tests"]
+}

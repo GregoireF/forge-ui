@@ -18,6 +18,9 @@ export default defineConfig({
       "@forge-ui/popover": fileURLToPath(
         new URL("../primitives/popover/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/select": fileURLToPath(
+        new URL("../primitives/select/src/index.ts", import.meta.url),
+      ),
     },
   },
   test: {

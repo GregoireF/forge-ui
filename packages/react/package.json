@@ -33,7 +33,8 @@
     "@forge-ui/core": "workspace:*",
     "@forge-ui/dialog": "workspace:*",
     "@forge-ui/field": "workspace:*",
-    "@forge-ui/popover": "workspace:*"
+    "@forge-ui/popover": "workspace:*",
+    "@forge-ui/select": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^16.0.0",

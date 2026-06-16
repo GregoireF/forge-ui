@@ -48,5 +48,22 @@ export {
 } from "./components/popover/Popover.js";
 export type { UsePopoverOptions } from "./components/popover/use-popover.js";
 export { usePopover } from "./components/popover/use-popover.js";
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectGroupLabel,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectLabel,
+  SelectPortal,
+  SelectRoot,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./components/select/Select.js";
+export type { UseSelectOptions } from "./components/select/use-select.js";
+export { useSelect } from "./components/select/use-select.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";
