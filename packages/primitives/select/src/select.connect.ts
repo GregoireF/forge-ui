@@ -207,13 +207,14 @@ export function connectSelect(
 
     /** Internal — rendered inside Select.Content to position the listbox. */
     getPositionerProps() {
+      const notPositioned = !context.positioned;
       return {
         style: {
           position: context.positioning.strategy,
-          top: `${context.y}px`,
-          left: `${context.x}px`,
+          top: notPositioned ? "-9999px" : `${context.y}px`,
+          left: notPositioned ? "-9999px" : `${context.x}px`,
           width: context.positioning.sameWidth ? `${context.triggerEl?.offsetWidth ?? 0}px` : "max-content",
-          ...(!context.positioned && { opacity: 0, pointerEvents: "none" as const }),
+          ...(notPositioned && { pointerEvents: "none" as const }),
         },
         "data-forge-scope": "select",
         "data-forge-part": "positioner",

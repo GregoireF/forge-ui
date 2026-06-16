@@ -61,18 +61,19 @@ export function connectPopover(
 
     /** Internal — rendered inside Popover.Content, not exposed as a compound part. */
     getPositionerProps() {
+      const notPositioned = !context.positioned;
       return {
         style: {
           position: context.positioning.strategy,
-          top: `${context.y}px`,
-          left: `${context.x}px`,
+          // Before computePosition resolves, move far off-screen so the element
+          // is never visible at (0,0). Using top/left:-9999px instead of opacity:0
+          // because opacity relies on React/Vue timing; -9999px is unconditional.
+          // floating-ui's getElementRects starts from {x:0,y:0} regardless of the
+          // element's current DOM position, so computation is unaffected.
+          top: notPositioned ? "-9999px" : `${context.y}px`,
+          left: notPositioned ? "-9999px" : `${context.x}px`,
           width: "max-content",
-          // Transparent until first computePosition resolves so the element never
-          // flashes at (0, 0). opacity:0 keeps the element in the a11y tree (unlike
-          // visibility:hidden) so tests can still query by role. The activity sets
-          // ctx.positioned = true and calls notify() → positioner becomes visible
-          // at the correct position simultaneously.
-          ...(!context.positioned && { opacity: 0, pointerEvents: "none" as const }),
+          ...(notPositioned && { pointerEvents: "none" as const }),
         },
         "data-forge-scope": "popover",
         "data-forge-part": "positioner",
