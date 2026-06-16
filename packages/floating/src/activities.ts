@@ -143,25 +143,34 @@ export function makeComputePositionActivity<
     }
 
     let autoUpdateCleanup: (() => void) | undefined;
+    let rafId = -1;
 
-    // Defer setup until after the framework has rendered the floating element
-    // and the ref callback has fired (contentEl becomes non-null).
-    // This matches the pattern used by makeFocusActivity.
-    const raf = requestAnimationFrame(() => {
-      const reference = getReference();
-      const floating = ctx.contentEl;
-      if (!reference || !floating) return;
+    // Retry RAF: framework rendering (React Portal, Vue Teleport) may commit the
+    // floating element asynchronously after the machine transition. If contentEl
+    // is null on the first frame, keep retrying each frame until it appears.
+    // The cleanup below always cancels the last scheduled rafId so we never leak.
+    function scheduleSetup() {
+      rafId = requestAnimationFrame(() => {
+        const reference = getReference();
+        const floating = ctx.contentEl;
+        if (!reference || !floating) {
+          scheduleSetup(); // contentEl not mounted yet — try next frame
+          return;
+        }
 
-      if (!ctx.positioning.disableAutoUpdate) {
-        autoUpdateCleanup = autoUpdate(reference, floating, runUpdate);
-        runUpdate();
-      } else {
-        runUpdate();
-      }
-    });
+        if (!ctx.positioning.disableAutoUpdate) {
+          autoUpdateCleanup = autoUpdate(reference, floating, runUpdate);
+          runUpdate();
+        } else {
+          runUpdate();
+        }
+      });
+    }
+
+    scheduleSetup();
 
     return () => {
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(rafId);
       autoUpdateCleanup?.();
       // Reset so next open starts hidden again until position is computed.
       ctx.positioned = false;
