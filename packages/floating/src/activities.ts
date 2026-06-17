@@ -144,9 +144,12 @@ export function makeComputePositionActivity<
           positioned = true;
           ctx.positioned = true;
           // Reveal the positioner directly — bypasses React/Vue render timing.
-          // Position is now correct so removing opacity is safe here.
+          // Write top/left before clearing opacity so the element is never
+          // briefly visible at the stale coordinates from the previous render.
           const positionerEl = floating.parentElement;
           if (positionerEl) {
+            positionerEl.style.top = `${result.y}px`;
+            positionerEl.style.left = `${result.x}px`;
             positionerEl.style.opacity = "";
             positionerEl.style.pointerEvents = "";
           }
