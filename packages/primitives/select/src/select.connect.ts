@@ -213,7 +213,12 @@ export function connectSelect(
           top: `${context.y}px`,
           left: `${context.x}px`,
           width: context.positioning.sameWidth ? `${context.triggerEl?.offsetWidth ?? 0}px` : "max-content",
-          ...(!context.positioned && { opacity: 0, pointerEvents: "none" as const }),
+          // Opacity is driven by the CSS custom property --forge-revealed set
+          // directly on the DOM node by the floating activity. Using a CSS var
+          // here means React/Vue re-renders with positioned=false can never
+          // accidentally override the value written by direct DOM manipulation.
+          opacity: "var(--forge-revealed, 0)" as unknown as number,
+          ...(!context.positioned && { pointerEvents: "none" as const }),
         },
         "data-forge-scope": "select",
         "data-forge-part": "positioner",

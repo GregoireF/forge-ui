@@ -47,8 +47,8 @@ export function makeComputePositionActivity<
   return (ctx, { notify }) => {
     if (typeof document === "undefined") return;
 
-    // Reset immediately so the positioner is opacity:0 on the very first
-    // render after open — happens before emit() so the snapshot is correct.
+    // Reset immediately so the positioner is hidden on the very first render
+    // after open — happens before emit() so the snapshot is correct.
     ctx.positioned = false;
 
     function getReference(): HTMLElement | null {
@@ -57,14 +57,26 @@ export function makeComputePositionActivity<
 
     // Guards stale computePosition callbacks that outlive this activity.
     // Without this, a promise from open#N can resolve after close and set
-    // ctx.positioned = true, so open#(N+1) renders without opacity:0 at (0,0).
+    // ctx.positioned = true, so open#(N+1) renders with a visible positioner.
     let active = true;
     let positioned = false;
 
     function runUpdate(): void {
       const reference = getReference();
-      const floating = ctx.contentEl;
-      if (!reference || !floating) return;
+      const contentEl = ctx.contentEl;
+      if (!reference || !contentEl) return;
+
+      // computePosition must receive the *positioner* (position:fixed wrapper),
+      // NOT the inner content div. If we pass contentEl, floating-ui's
+      // getOffsetParent(contentEl) resolves to the positioner itself (its nearest
+      // positioned ancestor), so computePosition returns coordinates relative to
+      // the positioner rather than the viewport. On the second open the positioner
+      // is already at (171,380), so every result is offset by -(171,380) and lands
+      // at (0,0). Passing the positioner directly makes getOffsetParent resolve to
+      // window (fixed elements' containing block), giving stable viewport-relative
+      // coordinates regardless of the positioner's current position.
+      const positionerEl = contentEl.parentElement;
+      if (!positionerEl) return;
 
       const {
         placement,
@@ -90,7 +102,7 @@ export function makeComputePositionActivity<
               }),
             ]
           : []),
-        // sameWidth: match floating width to reference width.
+        // sameWidth: match positioner width to reference width.
         ...(sameWidth
           ? [
               size({
@@ -109,7 +121,7 @@ export function makeComputePositionActivity<
         ...(extraMiddleware ?? []),
       ];
 
-      computePosition(reference, floating, { placement, strategy, middleware }).then((result) => {
+      computePosition(reference, positionerEl, { placement, strategy, middleware }).then((result) => {
         if (!active) return;
 
         ctx.x = result.x;
@@ -123,36 +135,36 @@ export function makeComputePositionActivity<
           if (ay != null) ctx.arrowEl.style.top = `${ay}px`;
         }
 
-        // data-hidden for hideWhenDetached.
+        // data-hidden for hideWhenDetached (written on content div).
         if (hideWhenDetached) {
           const hidden = result.middlewareData.hide?.referenceHidden ?? false;
-          floating.dataset.hidden = String(hidden);
+          contentEl.dataset.hidden = String(hidden);
         }
 
-        // CSS var for transform-origin (animation anchor point).
-        floating.style.setProperty(
+        // CSS var for transform-origin and data-side/align/placement.
+        contentEl.style.setProperty(
           "--forge-floating-transform-origin",
           getTransformOrigin(result.placement),
         );
-
-        // data-side / data-align / data-placement.
-        floating.dataset.side = getSideFromPlacement(result.placement);
-        floating.dataset.align = getAlignFromPlacement(result.placement);
-        floating.dataset.placement = result.placement;
+        contentEl.dataset.side = getSideFromPlacement(result.placement);
+        contentEl.dataset.align = getAlignFromPlacement(result.placement);
+        contentEl.dataset.placement = result.placement;
 
         if (!positioned) {
           positioned = true;
           ctx.positioned = true;
-          // Reveal the positioner directly — bypasses React/Vue render timing.
-          // Write top/left before clearing opacity so the element is never
-          // briefly visible at the stale coordinates from the previous render.
-          const positionerEl = floating.parentElement;
-          if (positionerEl) {
-            positionerEl.style.top = `${result.y}px`;
-            positionerEl.style.left = `${result.x}px`;
-            positionerEl.style.opacity = "";
-            positionerEl.style.pointerEvents = "";
-          }
+          // Reveal the positioner via direct DOM writes that bypass React/Vue's
+          // render cycle entirely. Using a CSS custom property (--forge-revealed)
+          // decouples reveal from React/Vue inline-style reconciliation: even if
+          // a deferred React/Vue render with positioned=false runs AFTER this
+          // point, it only sets style.opacity="var(--forge-revealed,0)" which
+          // re-evaluates to 1 because --forge-revealed is already "1".
+          // Write top/left first so the element is never briefly visible at
+          // stale coordinates when the CSS variable is toggled on.
+          positionerEl.style.top = `${result.y}px`;
+          positionerEl.style.left = `${result.x}px`;
+          positionerEl.style.setProperty("--forge-revealed", "1");
+          positionerEl.style.pointerEvents = "";
         }
 
         notify();
@@ -170,25 +182,24 @@ export function makeComputePositionActivity<
       rafId = requestAnimationFrame(() => {
         if (!active) return;
         const reference = getReference();
-        const floating = ctx.contentEl;
-        if (!reference || !floating) {
+        const contentEl = ctx.contentEl;
+        if (!reference || !contentEl) {
           scheduleSetup(); // contentEl not mounted yet — try next frame
           return;
         }
 
-        // Hide the positioner directly before computePosition runs. This is
-        // synchronous and fires pre-paint (RAF is a pre-paint hook), so the
-        // element can never flash at (0,0) regardless of React/Vue render timing.
-        // The declarative opacity:0 in getPositionerProps is a belt-and-suspenders
-        // backup; this direct DOM write is the authoritative hide.
-        const positionerEl = floating.parentElement;
+        // Explicitly remove --forge-revealed before computePosition so the
+        // positioner stays hidden even if a prior render left it visible.
+        const positionerEl = contentEl.parentElement;
         if (positionerEl) {
-          positionerEl.style.opacity = "0";
+          positionerEl.style.removeProperty("--forge-revealed");
           positionerEl.style.pointerEvents = "none";
         }
 
         if (!ctx.positioning.disableAutoUpdate) {
-          // autoUpdate calls runUpdate immediately on setup — no second call needed.
+          // Pass positionerEl (not contentEl) so autoUpdate's ResizeObserver
+          // tracks the positioned element directly. See runUpdate comment above.
+          const floating = positionerEl ?? contentEl;
           autoUpdateCleanup = autoUpdate(reference, floating, runUpdate);
         } else {
           runUpdate();
@@ -203,6 +214,10 @@ export function makeComputePositionActivity<
       cancelAnimationFrame(rafId);
       autoUpdateCleanup?.();
       ctx.positioned = false;
+      // Clear the reveal flag synchronously while contentEl is still in DOM.
+      // This ensures the next open's initial render always starts hidden,
+      // even if the cleanup runs before the positioner unmounts.
+      ctx.contentEl?.parentElement?.style.removeProperty("--forge-revealed");
     };
   };
 }
