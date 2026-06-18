@@ -98,8 +98,8 @@ export function connectTooltip(
       return {
         style: {
           position: context.positioning.strategy,
-          top: "0px",
-          left: "0px",
+          top: `${context.y}px`,
+          left: `${context.x}px`,
           width: "max-content",
           opacity: "var(--forge-revealed, 0)" as unknown as number,
           pointerEvents: "none" as const,

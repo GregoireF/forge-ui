@@ -144,6 +144,7 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       contentEl: null,
       buttonEl: null,
       arrowEl: null,
+      selectedLabels: {},
       x: 0,
       y: 0,
       positioned: false,
@@ -184,7 +185,7 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
 
           CLEAR: {
             actions: [
-              ({ setContext }) => setContext({ value: [], inputValue: "", highlighted: null }),
+              ({ setContext }) => setContext({ value: [], inputValue: "", highlighted: null, selectedLabels: {} }),
               invokeOnValueChange,
             ],
           },
@@ -213,12 +214,17 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
             target: "closed",
             actions: [
               ({ context, setContext }) => {
-                // On close: in single-select mode, restore input to selected label (or clear).
                 if (!context.multiple) {
                   const selected = context.options.find((o) => o.value === context.value[0]);
                   setContext({ inputValue: selected?.label ?? "", highlighted: null });
                 } else {
-                  setContext({ highlighted: null });
+                  // Capture labels while options are still mounted (before portal unmounts items).
+                  const nextLabels: Record<string, string> = { ...context.selectedLabels };
+                  for (const v of context.value) {
+                    const opt = context.options.find((o) => o.value === v);
+                    if (opt) nextLabels[v] = opt.label;
+                  }
+                  setContext({ highlighted: null, inputValue: "", selectedLabels: nextLabels });
                 }
               },
               invokeOnOpenChange(false),
@@ -233,7 +239,12 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
                   const selected = context.options.find((o) => o.value === context.value[0]);
                   setContext({ inputValue: selected?.label ?? "", highlighted: null });
                 } else {
-                  setContext({ highlighted: null });
+                  const nextLabels: Record<string, string> = { ...context.selectedLabels };
+                  for (const v of context.value) {
+                    const opt = context.options.find((o) => o.value === v);
+                    if (opt) nextLabels[v] = opt.label;
+                  }
+                  setContext({ highlighted: null, inputValue: "", selectedLabels: nextLabels });
                 }
               },
               invokeOnOpenChange(false),
@@ -259,10 +270,14 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
                 const { value } = event;
                 const opt = context.options.find((o) => o.value === value);
                 if (context.multiple) {
-                  const next = context.value.includes(value)
+                  const isSelected = context.value.includes(value);
+                  const next = isSelected
                     ? context.value.filter((v) => v !== value)
                     : [...context.value, value];
-                  setContext({ value: next, highlighted: value });
+                  const nextLabels = { ...context.selectedLabels };
+                  if (isSelected) delete nextLabels[value];
+                  else nextLabels[value] = opt?.label ?? value;
+                  setContext({ value: next, highlighted: value, selectedLabels: nextLabels });
                 } else {
                   setContext({ value: [value], inputValue: opt?.label ?? value, highlighted: value });
                 }
@@ -280,10 +295,14 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
                 const value = context.highlighted;
                 const opt = context.options.find((o) => o.value === value);
                 if (context.multiple) {
-                  const next = context.value.includes(value)
+                  const isSelected = context.value.includes(value);
+                  const next = isSelected
                     ? context.value.filter((v) => v !== value)
                     : [...context.value, value];
-                  setContext({ value: next });
+                  const nextLabels = { ...context.selectedLabels };
+                  if (isSelected) delete nextLabels[value];
+                  else nextLabels[value] = opt?.label ?? value;
+                  setContext({ value: next, selectedLabels: nextLabels });
                 } else {
                   setContext({ value: [value], inputValue: opt?.label ?? value });
                 }

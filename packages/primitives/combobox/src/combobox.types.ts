@@ -25,6 +25,8 @@ export interface ComboboxContext {
   highlighted: string | null;
   /** All registered options (in DOM order). The connect filters these for rendering. */
   options: ComboboxOption[];
+  /** Labels of currently selected values — populated on close so they survive portal unmount. */
+  selectedLabels: Record<string, string>;
   disabled: boolean;
   readOnly: boolean;
   required: boolean;

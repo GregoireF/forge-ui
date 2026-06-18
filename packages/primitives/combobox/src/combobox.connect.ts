@@ -40,12 +40,17 @@ export function connectCombobox(
       ? ""
       : (effectiveBase.find((o) => o.value === context.value[0])?.label ?? context.value[0]);
 
+  const valueLabels: string[] = context.value.map(
+    (v) => context.selectedLabels[v] ?? context.options.find((o) => o.value === v)?.label ?? v,
+  );
+
   return {
     isOpen,
     state,
     inputValue: context.inputValue,
     value: context.value,
     valueLabel,
+    valueLabels,
     filteredOptions,
     isDisabled: context.disabled,
     isReadOnly: context.readOnly,
@@ -76,7 +81,9 @@ export function connectCombobox(
         "aria-autocomplete": (context.onInputChange ? "list" : "both") as "list" | "both",
         autocomplete: "off" as const,
         value: context.inputValue,
-        placeholder: context.placeholder,
+        placeholder: context.multiple && !isOpen && valueLabels.length > 0
+          ? valueLabels.join(", ")
+          : context.placeholder,
         disabled: context.disabled ? true : undefined,
         readOnly: context.readOnly ? true : undefined,
         "data-state": state,
@@ -138,8 +145,8 @@ export function connectCombobox(
       return {
         style: {
           position: context.positioning.strategy,
-          top: "0px",
-          left: "0px",
+          top: `${context.y}px`,
+          left: `${context.x}px`,
           width: "max-content",
           opacity: "var(--forge-revealed, 0)" as unknown as number,
         },

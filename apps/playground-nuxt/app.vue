@@ -138,7 +138,7 @@ function handleDeleteConfirm() {
     <section :style="section">
       <h2 :style="sectionTitle">Dialog</h2>
       <p :style="sectionDesc">Modal — Escape + click outside pour fermer.</p>
-      <Dialog.Root>
+      <dialog-root>
         <Dialog.Trigger :style="btn">Ouvrir le dialog</Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Overlay :style="overlay" />
@@ -153,7 +153,7 @@ function handleDeleteConfirm() {
             </div>
           </Dialog.Content>
         </Dialog.Portal>
-      </Dialog.Root>
+      </dialog-root>
     </section>
 
     <!-- ── Dialog imbriqué ────────────────────────────────────────────────── -->
@@ -281,7 +281,7 @@ function handleDeleteConfirm() {
             <Select.Trigger :style="selectTrigger">
               <!-- SelectPlaceholder : visible seulement quand aucune valeur n'est sélectionnée -->
               <Select.Value>
-                <SelectPlaceholder style="color:#94a3b8">Choisir un framework…</SelectPlaceholder>
+                <select-placeholder style="color:#94a3b8">Choisir un framework…</select-placeholder>
               </Select.Value>
               <span style="margin-left:auto;opacity:0.5">▾</span>
             </Select.Trigger>

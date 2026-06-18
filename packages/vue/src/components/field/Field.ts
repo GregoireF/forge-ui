@@ -3,7 +3,6 @@ import type { InjectionKey, PropType } from "vue";
 import { defineComponent, getCurrentInstance, h, inject, onMounted, onUnmounted, provide } from "vue";
 import { Slot } from "../dialog/Slot.js";
 import { fieldKey } from "./field-context.js";
-import type { CreateFieldOptions } from "./use-field.js";
 import { useField } from "./use-field.js";
 
 function useCtx(): FieldApi {
@@ -28,7 +27,14 @@ const FieldRoot = defineComponent({
   setup(props, { slots }) {
     // Pass the reactive props object so watchEffect in useField syncs
     // ctx.invalid/required/disabled/readOnly on every prop change.
-    const api = useField(props);
+    const { id, invalid, required, disabled, readOnly } = props;
+    const api = useField({
+      ...(id !== undefined && { id }),
+      ...(invalid !== undefined && { invalid }),
+      ...(required !== undefined && { required }),
+      ...(disabled !== undefined && { disabled }),
+      ...(readOnly !== undefined && { readOnly }),
+    });
     provide(fieldKey, api);
     return () => slots.default?.();
   },

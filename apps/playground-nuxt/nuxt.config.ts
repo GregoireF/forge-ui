@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 export default defineNuxtConfig({
   modules: ["@forge-ui/nuxt"],
   compatibilityDate: "2025-01-01",
+  devServer: { port: 3002 },
   vite: {
     resolve: {
       alias: {

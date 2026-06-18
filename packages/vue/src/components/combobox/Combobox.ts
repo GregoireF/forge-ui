@@ -1,5 +1,5 @@
 import type { ComboboxOption, ComboboxPositioning } from "@forge-ui/combobox";
-import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref, VNodeRef } from "vue";
 import {
   defineComponent,
   h,
@@ -8,7 +8,6 @@ import {
   onScopeDispose,
   provide,
 } from "vue";
-import { mergeRefs } from "@forge-ui/core";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
@@ -68,7 +67,7 @@ const ComboboxRoot = defineComponent({
     onHighlightedScroll: { type: Function as PropType<(value: string, index: number) => void>, default: undefined },
   },
   emits: ["update:value", "update:open"],
-  setup(props, { slots, emit }) {
+  setup(props, { slots }) {
     const opts: UseComboboxOptions = {
       ...(props.id !== undefined && { id: props.id }),
       ...(props.multiple !== undefined && { multiple: props.multiple }),
@@ -133,7 +132,7 @@ const ComboboxInput = defineComponent({
       const inputProps = {
         ...restProps,
         ...attrs,
-        ref: machineRef,
+        ...(machineRef != null && { ref: machineRef as VNodeRef }),
       };
       if (props.asChild) return h(Slot, inputProps, slots.default);
       return h("input", inputProps);

@@ -67,6 +67,7 @@ export default defineNuxtModule({
 
     for (const name of dialogComponents) {
       addComponent({ name, export: name, filePath: from });
+      resolveComponent({ name: name});
     }
 
     const alertDialogComponents = [

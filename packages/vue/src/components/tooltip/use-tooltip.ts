@@ -22,7 +22,7 @@ export function useTooltip(options: UseTooltipOptions = {}) {
     closeOnPointerDown: options.closeOnPointerDown ?? true,
     openDelay: options.openDelay ?? provider?.openDelay ?? 700,
     closeDelay: options.closeDelay ?? provider?.closeDelay ?? 300,
-    positioning: options.positioning,
+    ...(options.positioning !== undefined && { positioning: options.positioning }),
     ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
   });
 
@@ -33,9 +33,11 @@ export function useTooltip(options: UseTooltipOptions = {}) {
       interactive: options.interactive ?? provider?.interactive ?? false,
       openDelay: options.openDelay ?? provider?.openDelay ?? 700,
       closeDelay: options.closeDelay ?? provider?.closeDelay ?? 300,
-      _isInQuickSuccession: provider?.isInQuickSuccession,
-      _notifyOpen: provider?.notifyOpen,
-      _notifyClose: provider?.notifyClose,
+      ...(provider != null && {
+        _isInQuickSuccession: provider.isInQuickSuccession,
+        _notifyOpen: provider.notifyOpen,
+        _notifyClose: provider.notifyClose,
+      }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
     });
   });
