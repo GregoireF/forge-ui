@@ -12,7 +12,8 @@
       "@forge-ui/field": ["../primitives/field/src/index.ts"],
       "@forge-ui/popover": ["../primitives/popover/src/index.ts"],
       "@forge-ui/select": ["../primitives/select/src/index.ts"],
-      "@forge-ui/switch": ["../primitives/switch/src/index.ts"]
+      "@forge-ui/switch": ["../primitives/switch/src/index.ts"],
+      "@forge-ui/tooltip": ["../primitives/tooltip/src/index.ts"]
     }
   },
   "include": ["src"],
@@ -25,6 +26,7 @@
     { "path": "../primitives/field" },
     { "path": "../primitives/popover" },
     { "path": "../primitives/select" },
-    { "path": "../primitives/switch" }
+    { "path": "../primitives/switch" },
+    { "path": "../primitives/tooltip" }
   ]
 }

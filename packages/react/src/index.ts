@@ -89,5 +89,16 @@ export type {
 export { Select } from "./components/select/Select.js";
 export type { UseSelectOptions } from "./components/select/use-select.js";
 export { useSelect } from "./components/select/use-select.js";
+export type {
+  TooltipArrowProps,
+  TooltipContentProps,
+  TooltipPortalProps,
+  TooltipProviderProps,
+  TooltipRootProps,
+  TooltipTriggerProps,
+} from "./components/tooltip/Tooltip.js";
+export { Tooltip } from "./components/tooltip/Tooltip.js";
+export type { UseTooltipOptions } from "./components/tooltip/use-tooltip.js";
+export { useTooltip } from "./components/tooltip/use-tooltip.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

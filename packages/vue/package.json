@@ -35,7 +35,8 @@
     "@forge-ui/field": "workspace:*",
     "@forge-ui/popover": "workspace:*",
     "@forge-ui/select": "workspace:*",
-    "@forge-ui/switch": "workspace:*"
+    "@forge-ui/switch": "workspace:*",
+    "@forge-ui/tooltip": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/vue": "^8.1.0",

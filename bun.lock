@@ -177,6 +177,17 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/tooltip": {
+      "name": "@forge-ui/tooltip",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/floating": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/react": {
       "name": "@forge-ui/react",
       "version": "0.0.0",
@@ -189,6 +200,7 @@
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/select": "workspace:*",
         "@forge-ui/switch": "workspace:*",
+        "@forge-ui/tooltip": "workspace:*",
       },
       "devDependencies": {
         "@testing-library/jest-dom": "^6.0.0",
@@ -218,6 +230,7 @@
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/select": "workspace:*",
         "@forge-ui/switch": "workspace:*",
+        "@forge-ui/tooltip": "workspace:*",
       },
       "devDependencies": {
         "@testing-library/vue": "^8.1.0",
@@ -506,6 +519,8 @@
     "@forge-ui/select": ["@forge-ui/select@workspace:packages/primitives/select"],
 
     "@forge-ui/switch": ["@forge-ui/switch@workspace:packages/primitives/switch"],
+
+    "@forge-ui/tooltip": ["@forge-ui/tooltip@workspace:packages/primitives/tooltip"],
 
     "@forge-ui/vue": ["@forge-ui/vue@workspace:packages/vue"],
 
