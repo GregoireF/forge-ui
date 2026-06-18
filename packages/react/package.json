@@ -30,11 +30,13 @@
   },
   "dependencies": {
     "@forge-ui/alert-dialog": "workspace:*",
+    "@forge-ui/checkbox": "workspace:*",
     "@forge-ui/core": "workspace:*",
     "@forge-ui/dialog": "workspace:*",
     "@forge-ui/field": "workspace:*",
     "@forge-ui/popover": "workspace:*",
-    "@forge-ui/select": "workspace:*"
+    "@forge-ui/select": "workspace:*",
+    "@forge-ui/switch": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",

@@ -84,6 +84,18 @@ const section = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
 const sectionTitle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
 const sectionDesc = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
 
+const checkboxControl = { width: "18px", height: "18px", border: "2px solid #cbd5e1", borderRadius: "4px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 };
+const checkboxIndicator = { fontSize: "11px", fontWeight: 700, color: "#1e293b", lineHeight: 1 };
+const checkboxLabel = { fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" };
+const switchOff = { width: "44px", height: "24px", borderRadius: "12px", background: "#cbd5e1", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center", transition: "background 0.15s", flexShrink: 0 };
+const switchOn = { ...switchOff, background: "#1e293b" };
+const thumbOff = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
+const thumbOn = { ...thumbOff, transform: "translateX(20px)" };
+
+const checkboxControlled = ref<boolean | "indeterminate">("indeterminate");
+const groupValues = ref<string[]>(["react"]);
+const switchChecked = ref(false);
+
 const btnDanger = { ...btn, background: "#dc2626" } as const;
 const alertConfirming = ref(false);
 function handleDeleteConfirm() {
@@ -355,6 +367,79 @@ function handleDeleteConfirm() {
           </Popover.Root>
         </div>
       </div>
+    </section>
+
+    <!-- ── Checkbox ──────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Checkbox</h2>
+      <p :style="sectionDesc">Tri-state. Indicateur + Label associé. Auto-import Nuxt.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <CheckboxRoot :default-checked="true">
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <CheckboxControl :style="checkboxControl">
+              <CheckboxIndicator :style="checkboxIndicator">✓</CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabel">Accepter les CGU (uncontrolled)</CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+        <CheckboxRoot :checked="checkboxControlled" :on-checked-change="(v) => checkboxControlled = v">
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <CheckboxControl :style="checkboxControl">
+              <CheckboxIndicator :style="checkboxIndicator">
+                {{ checkboxControlled === 'indeterminate' ? '—' : '✓' }}
+              </CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabel">
+              Controlled — <code>{{ String(checkboxControlled) }}</code>
+            </CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+      </div>
+    </section>
+
+    <!-- ── Checkbox.Group ─────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Checkbox.Group + GroupAll</h2>
+      <p :style="sectionDesc">Select-all automatique. GroupAll dérive indeterminate natif.</p>
+      <CheckboxGroup v-model:value="groupValues">
+        <CheckboxGroupAll>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+            <CheckboxControl :style="{ ...checkboxControl, background: '#f1f5f9' }">
+              <CheckboxIndicator :style="checkboxIndicator">
+                {{ groupValues.length === 3 ? '✓' : '—' }}
+              </CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="{ ...checkboxLabel, fontWeight: 600 }">Tout sélectionner</CheckboxLabel>
+          </div>
+        </CheckboxGroupAll>
+        <CheckboxRoot v-for="item in [{ value: 'react', label: 'React' }, { value: 'vue', label: 'Vue' }, { value: 'angular', label: 'Angular' }]" :key="item.value" :value="item.value">
+          <div style="display:flex;align-items:center;gap:0.5rem;padding-left:1.25rem">
+            <CheckboxControl :style="checkboxControl">
+              <CheckboxIndicator :style="checkboxIndicator">✓</CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabel">{{ item.label }}</CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+      </CheckboxGroup>
+      <p style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+        Sélectionnés: <code>{{ groupValues.join(', ') || 'aucun' }}</code>
+      </p>
+    </section>
+
+    <!-- ── Switch ────────────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0">
+      <h2 :style="sectionTitle">Switch</h2>
+      <p :style="sectionDesc">Toggle binaire. role=switch. Auto-import Nuxt.</p>
+      <SwitchRoot :checked="switchChecked" :on-checked-change="(v) => switchChecked = v">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <SwitchControl :style="switchChecked ? switchOn : switchOff">
+            <SwitchThumb :style="switchChecked ? thumbOn : thumbOff" />
+          </SwitchControl>
+          <SwitchLabel :style="checkboxLabel">
+            Notifications — <code>{{ switchChecked ? 'activées' : 'désactivées' }}</code>
+          </SwitchLabel>
+        </div>
+      </SwitchRoot>
     </section>
   </main>
 </template>

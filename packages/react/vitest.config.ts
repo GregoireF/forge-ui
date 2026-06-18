@@ -21,6 +21,12 @@ export default defineConfig({
       "@forge-ui/select": fileURLToPath(
         new URL("../primitives/select/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/checkbox": fileURLToPath(
+        new URL("../primitives/checkbox/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/switch": fileURLToPath(
+        new URL("../primitives/switch/src/index.ts", import.meta.url),
+      ),
     },
   },
   test: {

@@ -6,11 +6,25 @@
     "composite": true,
     "paths": {
       "@forge-ui/core": ["../core/src/index.ts"],
+      "@forge-ui/alert-dialog": ["../primitives/alert-dialog/src/index.ts"],
+      "@forge-ui/checkbox": ["../primitives/checkbox/src/index.ts"],
       "@forge-ui/dialog": ["../primitives/dialog/src/index.ts"],
-      "@forge-ui/field": ["../field/src/index.ts"]
+      "@forge-ui/field": ["../field/src/index.ts"],
+      "@forge-ui/popover": ["../primitives/popover/src/index.ts"],
+      "@forge-ui/select": ["../primitives/select/src/index.ts"],
+      "@forge-ui/switch": ["../primitives/switch/src/index.ts"]
     }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tests"],
-  "references": [{ "path": "../core" }, { "path": "../primitives/dialog" }, { "path": "../field" }]
+  "references": [
+    { "path": "../core" },
+    { "path": "../primitives/alert-dialog" },
+    { "path": "../primitives/checkbox" },
+    { "path": "../primitives/dialog" },
+    { "path": "../field" },
+    { "path": "../primitives/popover" },
+    { "path": "../primitives/select" },
+    { "path": "../primitives/switch" }
+  ]
 }

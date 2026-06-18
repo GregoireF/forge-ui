@@ -1,4 +1,26 @@
 export type {
+  CheckboxControlProps,
+  CheckboxGroupAllProps,
+  CheckboxGroupProps,
+  CheckboxIndicatorProps,
+  CheckboxLabelProps,
+  CheckboxRootProps,
+} from "./components/checkbox/Checkbox.js";
+export { Checkbox } from "./components/checkbox/Checkbox.js";
+export type { UseCheckboxGroupOptions } from "./components/checkbox/use-checkbox-group.js";
+export { useCheckboxGroup } from "./components/checkbox/use-checkbox-group.js";
+export type { UseCheckboxOptions } from "./components/checkbox/use-checkbox.js";
+export { useCheckbox } from "./components/checkbox/use-checkbox.js";
+export type {
+  SwitchControlProps,
+  SwitchLabelProps,
+  SwitchRootProps,
+  SwitchThumbProps,
+} from "./components/switch/Switch.js";
+export { Switch } from "./components/switch/Switch.js";
+export type { UseSwitchOptions } from "./components/switch/use-switch.js";
+export { useSwitch } from "./components/switch/use-switch.js";
+export type {
   AlertDialogActionProps,
   AlertDialogCancelProps,
   AlertDialogContentProps,

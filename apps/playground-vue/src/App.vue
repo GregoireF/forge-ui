@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import {
   AlertDialog,
+  Checkbox,
+  CheckboxControl,
+  CheckboxGroup,
+  CheckboxGroupAll,
+  CheckboxIndicator,
+  CheckboxLabel,
+  CheckboxRoot,
   Dialog,
   DialogPortal,
   Popover,
   Select,
+  Switch,
+  SwitchControl,
+  SwitchLabel,
+  SwitchRoot,
+  SwitchThumb,
   useDialog,
 } from "@forge-ui/vue";
 import { ref } from "vue";
@@ -16,6 +28,9 @@ const hookDialog = useDialog({
 const controlledOpen = ref(false);
 const selectedValue = ref<string[]>([]);
 const selectedMultiple = ref<string[]>([]);
+const checkboxControlled = ref<boolean | "indeterminate">("indeterminate");
+const groupValues = ref<string[]>(["react"]);
+const switchOn = ref(false);
 
 const alertConfirming = ref(false);
 function handleAlertConfirm() {
@@ -110,6 +125,14 @@ const selectContentStyle = {
 const selectItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
 const separatorStyle = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
 const groupLabelStyle = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
+
+const checkboxControlStyle = { width: "18px", height: "18px", border: "2px solid #cbd5e1", borderRadius: "4px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 };
+const checkboxIndicatorStyle = { fontSize: "11px", fontWeight: 700, color: "#1e293b", lineHeight: 1 };
+const checkboxLabelStyle = { fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" };
+const switchOffStyle = { width: "44px", height: "24px", borderRadius: "12px", background: "#cbd5e1", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center", transition: "background 0.15s", flexShrink: 0 };
+const switchOnStyle = { ...switchOffStyle, background: "#1e293b" };
+const switchThumbOffStyle = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
+const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px)" };
 </script>
 
 <template>
@@ -371,6 +394,97 @@ const groupLabelStyle = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem"
       <p v-if="selectedMultiple.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
         Sélectionnés: <code>{{ selectedMultiple.join(', ') }}</code>
       </p>
+    </section>
+
+    <!-- ── Checkbox ──────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Checkbox</h2>
+      <p :style="sectionDescStyle">Tri-state (unchecked / indeterminate / checked). Indicateur + Label associé.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <CheckboxRoot :default-checked="true">
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <CheckboxControl :style="checkboxControlStyle">
+              <CheckboxIndicator :style="checkboxIndicatorStyle">✓</CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabelStyle">Accepter les CGU (uncontrolled)</CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+        <CheckboxRoot :checked="checkboxControlled" :on-checked-change="(v) => checkboxControlled = v">
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <CheckboxControl :style="checkboxControlStyle">
+              <CheckboxIndicator :style="checkboxIndicatorStyle">
+                {{ checkboxControlled === 'indeterminate' ? '—' : '✓' }}
+              </CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabelStyle">
+              Controlled — état: <code>{{ String(checkboxControlled) }}</code>
+            </CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+        <CheckboxRoot :disabled="true">
+          <div style="display:flex;align-items:center;gap:0.5rem;opacity:0.4">
+            <CheckboxControl :style="checkboxControlStyle">
+              <CheckboxIndicator :style="checkboxIndicatorStyle">✓</CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabelStyle">Désactivé</CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+      </div>
+    </section>
+
+    <!-- ── Checkbox.Group ─────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Checkbox.Group + GroupAll</h2>
+      <p :style="sectionDescStyle">Select-all natif. GroupAll dérive indeterminate automatiquement.</p>
+      <CheckboxGroup v-model:value="groupValues">
+        <CheckboxGroupAll>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+            <CheckboxControl :style="{ ...checkboxControlStyle, background: '#f1f5f9' }">
+              <CheckboxIndicator :style="checkboxIndicatorStyle">
+                {{ groupValues.length === 3 ? '✓' : '—' }}
+              </CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="{ ...checkboxLabelStyle, fontWeight: 600 }">Tout sélectionner</CheckboxLabel>
+          </div>
+        </CheckboxGroupAll>
+        <CheckboxRoot v-for="item in [{ value: 'react', label: 'React' }, { value: 'vue', label: 'Vue' }, { value: 'angular', label: 'Angular' }]" :key="item.value" :value="item.value">
+          <div style="display:flex;align-items:center;gap:0.5rem;padding-left:1.25rem">
+            <CheckboxControl :style="checkboxControlStyle">
+              <CheckboxIndicator :style="checkboxIndicatorStyle">✓</CheckboxIndicator>
+            </CheckboxControl>
+            <CheckboxLabel :style="checkboxLabelStyle">{{ item.label }}</CheckboxLabel>
+          </div>
+        </CheckboxRoot>
+      </CheckboxGroup>
+      <p style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+        Sélectionnés: <code>{{ groupValues.join(', ') || 'aucun' }}</code>
+      </p>
+    </section>
+
+    <!-- ── Switch ────────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Switch</h2>
+      <p :style="sectionDescStyle">Toggle binaire. role=switch, hidden input auto.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <SwitchRoot :checked="switchOn" :on-checked-change="(v) => switchOn = v">
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <SwitchControl :style="switchOn ? switchOnStyle : switchOffStyle">
+              <SwitchThumb :style="switchOn ? switchThumbOnStyle : switchThumbOffStyle" />
+            </SwitchControl>
+            <SwitchLabel :style="checkboxLabelStyle">
+              Notifications — <code>{{ switchOn ? 'activées' : 'désactivées' }}</code>
+            </SwitchLabel>
+          </div>
+        </SwitchRoot>
+        <SwitchRoot :default-checked="true" :disabled="true">
+          <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.4">
+            <SwitchControl :style="switchOnStyle">
+              <SwitchThumb :style="switchThumbOnStyle" />
+            </SwitchControl>
+            <SwitchLabel :style="checkboxLabelStyle">Désactivé (on)</SwitchLabel>
+          </div>
+        </SwitchRoot>
+      </div>
     </section>
 
     <!-- ── asChild ────────────────────────────────────────────────────────────── -->

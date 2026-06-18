@@ -1,4 +1,5 @@
-import { AlertDialog, Dialog, DialogPortal, Popover, Select, useDialog } from "@forge-ui/react";
+import type { CheckboxChecked } from "@forge-ui/react";
+import { AlertDialog, Checkbox, Dialog, DialogPortal, Popover, Select, Switch, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -45,6 +46,24 @@ export default function App() {
 
       <Section title="Select multiple" description="Multi-sélection — reste ouvert après chaque choix.">
         <SelectMultipleDemo />
+      </Section>
+
+      <Section
+        title="Checkbox"
+        description="Tri-state (unchecked / indeterminate / checked). Indicateur + Label associé."
+      >
+        <CheckboxDemo />
+      </Section>
+
+      <Section
+        title="Checkbox.Group + GroupAll"
+        description="Select-all natif. GroupAll dérive indeterminate automatiquement."
+      >
+        <CheckboxGroupDemo />
+      </Section>
+
+      <Section title="Switch" description="Toggle binaire. role=switch, hidden input auto.">
+        <SwitchDemo />
       </Section>
 
       <Section title="asChild" description="Forge merge les props sur votre élément, sans wrapper.">
@@ -367,6 +386,118 @@ function SelectMultipleDemo() {
   );
 }
 
+/* ── Checkbox ───────────────────────────────────────────────────────────────── */
+
+function CheckboxDemo() {
+  const [checked, setChecked] = useState<boolean | "indeterminate">("indeterminate");
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <Checkbox.Root defaultChecked>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <Checkbox.Control style={checkboxControlStyle}>
+            <Checkbox.Indicator style={checkboxIndicatorStyle}>✓</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label style={checkboxLabelStyle}>Accepter les CGU (uncontrolled)</Checkbox.Label>
+        </div>
+      </Checkbox.Root>
+
+      <Checkbox.Root checked={checked} onCheckedChange={setChecked}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <Checkbox.Control style={checkboxControlStyle}>
+            <Checkbox.Indicator style={checkboxIndicatorStyle}>
+              {checked === "indeterminate" ? "—" : "✓"}
+            </Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label style={checkboxLabelStyle}>
+            Controlled — état: <code>{String(checked)}</code>
+          </Checkbox.Label>
+        </div>
+      </Checkbox.Root>
+
+      <Checkbox.Root disabled>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <Checkbox.Control style={{ ...checkboxControlStyle, opacity: 0.4 }}>
+            <Checkbox.Indicator style={checkboxIndicatorStyle}>✓</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label style={{ ...checkboxLabelStyle, opacity: 0.4 }}>Désactivé</Checkbox.Label>
+        </div>
+      </Checkbox.Root>
+    </div>
+  );
+}
+
+/* ── Checkbox.Group ─────────────────────────────────────────────────────────── */
+
+function CheckboxGroupDemo() {
+  const [values, setValues] = useState<string[]>(["react"]);
+  const items = [
+    { value: "react", label: "React" },
+    { value: "vue", label: "Vue" },
+    { value: "angular", label: "Angular" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <Checkbox.Group value={values} onValueChange={setValues}>
+        <Checkbox.GroupAll>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+            <Checkbox.Control style={{ ...checkboxControlStyle, background: "#f1f5f9" }}>
+              <Checkbox.Indicator style={checkboxIndicatorStyle}>
+                {values.length === items.length ? "✓" : "—"}
+              </Checkbox.Indicator>
+            </Checkbox.Control>
+            <Checkbox.Label style={{ ...checkboxLabelStyle, fontWeight: 600 }}>
+              Tout sélectionner
+            </Checkbox.Label>
+          </div>
+        </Checkbox.GroupAll>
+        {items.map((item) => (
+          <Checkbox.Root key={item.value} value={item.value}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", paddingLeft: "1.25rem" }}>
+              <Checkbox.Control style={checkboxControlStyle}>
+                <Checkbox.Indicator style={checkboxIndicatorStyle}>✓</Checkbox.Indicator>
+              </Checkbox.Control>
+              <Checkbox.Label style={checkboxLabelStyle}>{item.label}</Checkbox.Label>
+            </div>
+          </Checkbox.Root>
+        ))}
+      </Checkbox.Group>
+      <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+        Sélectionnés: <code>{values.join(", ") || "aucun"}</code>
+      </p>
+    </div>
+  );
+}
+
+/* ── Switch ─────────────────────────────────────────────────────────────────── */
+
+function SwitchDemo() {
+  const [on, setOn] = useState(false);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <Switch.Root checked={on} onCheckedChange={setOn}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Switch.Control style={switchControlStyle(on)}>
+            <Switch.Thumb style={switchThumbStyle(on)} />
+          </Switch.Control>
+          <Switch.Label style={checkboxLabelStyle}>
+            Notifications — <code>{on ? "activées" : "désactivées"}</code>
+          </Switch.Label>
+        </div>
+      </Switch.Root>
+
+      <Switch.Root defaultChecked disabled>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", opacity: 0.4 }}>
+          <Switch.Control style={switchControlStyle(true)}>
+            <Switch.Thumb style={switchThumbStyle(true)} />
+          </Switch.Control>
+          <Switch.Label style={checkboxLabelStyle}>Désactivé (on)</Switch.Label>
+        </div>
+      </Switch.Root>
+    </div>
+  );
+}
+
 /* ── asChild ────────────────────────────────────────────────────────────────── */
 
 function AsChildDemo() {
@@ -570,3 +701,58 @@ const groupLabelStyle: React.CSSProperties = {
   letterSpacing: "0.05em",
   listStyle: "none",
 };
+
+const checkboxControlStyle: React.CSSProperties = {
+  width: "18px",
+  height: "18px",
+  border: "2px solid #cbd5e1",
+  borderRadius: "4px",
+  background: "#fff",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  flexShrink: 0,
+};
+
+const checkboxIndicatorStyle: React.CSSProperties = {
+  fontSize: "11px",
+  fontWeight: 700,
+  color: "#1e293b",
+  lineHeight: 1,
+};
+
+const checkboxLabelStyle: React.CSSProperties = {
+  fontSize: "0.875rem",
+  color: "#1e293b",
+  cursor: "pointer",
+};
+
+function switchControlStyle(on: boolean): React.CSSProperties {
+  return {
+    width: "44px",
+    height: "24px",
+    borderRadius: "12px",
+    background: on ? "#1e293b" : "#cbd5e1",
+    border: "none",
+    cursor: "pointer",
+    padding: "2px",
+    display: "flex",
+    alignItems: "center",
+    transition: "background 0.15s",
+    flexShrink: 0,
+  };
+}
+
+function switchThumbStyle(on: boolean): React.CSSProperties {
+  return {
+    width: "20px",
+    height: "20px",
+    borderRadius: "50%",
+    background: "#fff",
+    boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)",
+    transform: on ? "translateX(20px)" : "translateX(0)",
+    transition: "transform 0.15s",
+  };
+}

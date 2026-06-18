@@ -32,6 +32,8 @@ export default defineNuxtModule({
       { name: "usePopover", from },
       { name: "useSelect", from },
       { name: "useField", from },
+      { name: "useCheckbox", from },
+      { name: "useSwitch", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
     ]);
@@ -42,6 +44,8 @@ export default defineNuxtModule({
     addImports({ name: "Popover", from });
     addImports({ name: "Select", from });
     addImports({ name: "Field", from });
+    addImports({ name: "Checkbox", from });
+    addImports({ name: "Switch", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -121,6 +125,30 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of fieldComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const checkboxComponents = [
+      "CheckboxRoot",
+      "CheckboxControl",
+      "CheckboxIndicator",
+      "CheckboxLabel",
+      "CheckboxGroup",
+      "CheckboxGroupAll",
+    ] as const;
+
+    for (const name of checkboxComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const switchComponents = [
+      "SwitchRoot",
+      "SwitchControl",
+      "SwitchThumb",
+      "SwitchLabel",
+    ] as const;
+
+    for (const name of switchComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },
