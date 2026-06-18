@@ -117,6 +117,21 @@ const SelectValue = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// Placeholder — renders only when no value is selected.
+// ---------------------------------------------------------------------------
+
+const SelectPlaceholder = defineComponent({
+  name: "ForgeSelectPlaceholder",
+  setup(_props, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      if (api.getValueLabel()) return null;
+      return h("span", { "data-forge-part": "placeholder", ...attrs }, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Portal
 // ---------------------------------------------------------------------------
 
@@ -278,6 +293,7 @@ export const Select = {
   Label: SelectLabel,
   Trigger: SelectTrigger,
   Value: SelectValue,
+  Placeholder: SelectPlaceholder,
   Portal: SelectPortal,
   Content: SelectContent,
   Item: SelectItem,
@@ -296,6 +312,7 @@ export {
   SelectItemIndicator,
   SelectItemText,
   SelectLabel,
+  SelectPlaceholder,
   SelectPortal,
   SelectRoot,
   SelectSeparator,

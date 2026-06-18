@@ -86,6 +86,25 @@ function Value({ placeholder, children }: SelectValueProps) {
 }
 
 // ---------------------------------------------------------------------------
+// Placeholder — renders only when no value is selected.
+// Use inside Trigger instead of a static string to get data-placeholder styling hooks.
+// ---------------------------------------------------------------------------
+
+export interface SelectPlaceholderProps extends HTMLAttributes<HTMLSpanElement> {
+  children: ReactNode;
+}
+
+function Placeholder({ children, ...rest }: SelectPlaceholderProps) {
+  const api = useCtx();
+  if (api.valueLabel) return null;
+  return (
+    <span data-forge-part="placeholder" {...rest}>
+      {children}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Portal
 // ---------------------------------------------------------------------------
 
@@ -250,6 +269,7 @@ export const Select = {
   Label,
   Trigger,
   Value,
+  Placeholder,
   Portal,
   Content,
   Item,
