@@ -1,4 +1,19 @@
 export {
+  Combobox,
+  ComboboxClearTrigger,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxItemIndicator,
+  ComboboxItemText,
+  ComboboxLabel,
+  ComboboxPortal,
+  ComboboxRoot,
+  ComboboxTrigger,
+} from "./components/combobox/Combobox.js";
+export type { UseComboboxOptions } from "./components/combobox/use-combobox.js";
+export { useCombobox } from "./components/combobox/use-combobox.js";
+export {
   Checkbox,
   CheckboxControl,
   CheckboxGroup,
@@ -50,7 +65,10 @@ export {
   FieldControl,
   FieldDescription,
   FieldError,
+  FieldGroup,
+  FieldGroupLabel,
   FieldLabel,
+  FieldRequiredIndicator,
   FieldRoot,
 } from "./components/field/Field.js";
 export type { CreateFieldOptions } from "./components/field/use-field.js";
@@ -78,6 +96,7 @@ export {
   SelectItemIndicator,
   SelectItemText,
   SelectLabel,
+  SelectPlaceholder,
   SelectPortal,
   SelectRoot,
   SelectSeparator,
@@ -88,6 +107,7 @@ export type { UseSelectOptions } from "./components/select/use-select.js";
 export { useSelect } from "./components/select/use-select.js";
 export {
   Tooltip,
+  TooltipAnchor,
   TooltipArrow,
   TooltipContent,
   TooltipPortal,

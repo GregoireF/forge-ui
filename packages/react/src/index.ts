@@ -1,4 +1,19 @@
 export type {
+  ComboboxClearTriggerProps,
+  ComboboxContentProps,
+  ComboboxInputProps,
+  ComboboxItemIndicatorProps,
+  ComboboxItemProps,
+  ComboboxItemTextProps,
+  ComboboxLabelProps,
+  ComboboxPortalProps,
+  ComboboxRootProps,
+  ComboboxTriggerProps,
+} from "./components/combobox/Combobox.js";
+export { Combobox } from "./components/combobox/Combobox.js";
+export type { UseComboboxOptions } from "./components/combobox/use-combobox.js";
+export { useCombobox } from "./components/combobox/use-combobox.js";
+export type {
   CheckboxControlProps,
   CheckboxGroupAllProps,
   CheckboxGroupProps,
@@ -53,7 +68,10 @@ export type {
   FieldControlProps,
   FieldDescriptionProps,
   FieldErrorProps,
+  FieldGroupLabelProps,
+  FieldGroupProps,
   FieldLabelProps,
+  FieldRequiredIndicatorProps,
   FieldRootProps,
 } from "./components/field/Field.js";
 export { Field } from "./components/field/Field.js";
@@ -80,6 +98,7 @@ export type {
   SelectItemProps,
   SelectItemTextProps,
   SelectLabelProps,
+  SelectPlaceholderProps,
   SelectPortalProps,
   SelectRootProps,
   SelectSeparatorProps,
@@ -90,6 +109,7 @@ export { Select } from "./components/select/Select.js";
 export type { UseSelectOptions } from "./components/select/use-select.js";
 export { useSelect } from "./components/select/use-select.js";
 export type {
+  TooltipAnchorProps,
   TooltipArrowProps,
   TooltipContentProps,
   TooltipPortalProps,

@@ -1,0 +1,69 @@
+import type { Placement } from "@floating-ui/dom";
+import type { FloatingPositioning, ResolvedFloatingPositioning } from "@forge-ui/floating";
+
+export type { FloatingPositioning as ComboboxPositioning };
+
+export interface ComboboxOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+export type ComboboxState = "closed" | "open";
+
+export interface ComboboxContext {
+  id: string;
+  /** id of the <input role="combobox"> element. */
+  inputId: string;
+  /** id of the <ul role="listbox"> element. */
+  contentId: string;
+  labelId: string;
+  /** Current text in the input — drives client-side filtering when onInputChange is absent. */
+  inputValue: string;
+  /** Selected value(s). Always string[], normalized from string | string[]. */
+  value: string[];
+  highlighted: string | null;
+  /** All registered options (in DOM order). The connect filters these for rendering. */
+  options: ComboboxOption[];
+  disabled: boolean;
+  readOnly: boolean;
+  required: boolean;
+  invalid: boolean;
+  multiple: boolean;
+  placeholder: string | undefined;
+  /** When provided, internal filtering is skipped — the caller filters via onInputChange. */
+  onInputChange?: (value: string) => void;
+  onValueChange?: (value: string[]) => void;
+  onOpenChange?: (open: boolean) => void;
+  onHighlightChange?: (value: string | null) => void;
+  /** Custom client-side filter. Default: case-insensitive label substring match. */
+  filterFn?: (option: ComboboxOption, inputValue: string) => boolean;
+  // Floating — the input acts as reference (triggerEl), listbox as content (contentEl).
+  triggerEl: HTMLElement | null;
+  contentEl: HTMLElement | null;
+  arrowEl: HTMLElement | null;
+  x: number;
+  y: number;
+  positioned: boolean;
+  currentPlacement: Placement;
+  positioning: ResolvedFloatingPositioning;
+}
+
+export type ComboboxEvent =
+  | { type: "OPEN" }
+  | { type: "CLOSE" }
+  | { type: "INPUT_CHANGE"; value: string }
+  | { type: "SELECT_OPTION"; value: string }
+  | { type: "SELECT_HIGHLIGHTED" }
+  | { type: "HIGHLIGHT_OPTION"; value: string | null }
+  | { type: "HIGHLIGHT_NEXT" }
+  | { type: "HIGHLIGHT_PREV" }
+  | { type: "HIGHLIGHT_FIRST" }
+  | { type: "HIGHLIGHT_LAST" }
+  | { type: "CLEAR" }
+  | { type: "REGISTER_OPTION"; option: ComboboxOption }
+  | { type: "UNREGISTER_OPTION"; value: string }
+  | { type: "INTERACT_OUTSIDE" }
+  | { type: "@@INIT" };
+
+export type ComboboxSend = (event: ComboboxEvent | ComboboxEvent["type"]) => void;

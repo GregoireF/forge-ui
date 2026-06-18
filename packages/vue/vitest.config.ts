@@ -24,6 +24,9 @@ export default defineConfig({
       "@forge-ui/checkbox": fileURLToPath(
         new URL("../primitives/checkbox/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/combobox": fileURLToPath(
+        new URL("../primitives/combobox/src/index.ts", import.meta.url),
+      ),
       "@forge-ui/switch": fileURLToPath(
         new URL("../primitives/switch/src/index.ts", import.meta.url),
       ),
