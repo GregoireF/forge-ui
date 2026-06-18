@@ -109,9 +109,11 @@ const SelectValue = defineComponent({
   setup(props, { slots }) {
     const api = useCtx();
     return () => {
-      if (slots.default) return h("span", { "data-forge-part": "value" }, slots.default?.());
       const label = api.getValueLabel();
-      return h("span", { "data-forge-part": "value" }, label || props.placeholder);
+      // When a value is selected, always show the label — default slot acts as a placeholder slot.
+      if (label) return h("span", { "data-forge-part": "value" }, label);
+      if (slots.default) return h("span", { "data-forge-part": "value" }, slots.default?.());
+      return h("span", { "data-forge-part": "value" }, props.placeholder);
     };
   },
 });

@@ -81,8 +81,10 @@ export interface SelectValueProps {
 function Value({ placeholder, children }: SelectValueProps) {
   const api = useCtx();
   const label = api.valueLabel;
+  // When a value is selected, always show the label — children act as a placeholder slot.
+  if (label) return <span data-forge-part="value">{label}</span>;
   if (children !== undefined) return <>{children}</>;
-  return <span data-forge-part="value">{label || placeholder || api.placeholder}</span>;
+  return <span data-forge-part="value">{placeholder || api.placeholder}</span>;
 }
 
 // ---------------------------------------------------------------------------
