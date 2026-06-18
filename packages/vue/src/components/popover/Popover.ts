@@ -1,11 +1,17 @@
 import type { PopoverPositioning } from "@forge-ui/popover";
-import type { ComponentPublicInstance, PropType } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
 import { popoverKey } from "./popover-context.js";
 import { usePopover } from "./use-popover.js";
+
+type PopoverPresenceContext = {
+  isPresent: Ref<boolean>;
+  presenceRef: Ref<HTMLElement | null>;
+};
+const popoverPresenceKey: InjectionKey<PopoverPresenceContext> = Symbol("forge-popover-presence");
 
 type PopoverApi = ReturnType<typeof usePopover>;
 
@@ -80,6 +86,9 @@ const PopoverRoot = defineComponent({
     });
     provide(popoverKey, api);
 
+    const presence = usePresence(api.isOpen);
+    provide(popoverPresenceKey, presence);
+
     watch(
       () => props.open,
       (open) => {
@@ -136,8 +145,10 @@ const PopoverPortal = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
+    const presence = inject(popoverPresenceKey, null);
     return () => {
-      if (!props.forceMount && !api.isOpen.value) return null;
+      const isPresent = presence?.isPresent.value ?? api.isOpen.value;
+      if (!props.forceMount && !isPresent) return null;
       return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
@@ -157,7 +168,9 @@ const PopoverContent = defineComponent({
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    const injectedPresence = inject(popoverPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;

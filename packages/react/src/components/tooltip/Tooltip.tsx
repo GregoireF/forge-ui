@@ -13,6 +13,12 @@ type TooltipApiReturn = ReturnType<typeof useTooltip>;
 
 const TooltipCtx = createContext<TooltipApiReturn | null>(null);
 
+type TooltipPresenceContext = {
+  isPresent: boolean;
+  presenceRef: (el: HTMLElement | null) => void;
+};
+const TooltipPresenceCtx = createContext<TooltipPresenceContext | null>(null);
+
 function useCtx(): TooltipApiReturn {
   const ctx = useContext(TooltipCtx);
   if (!ctx) throw new Error("Tooltip compound parts must be used inside <Tooltip.Root>");
@@ -69,7 +75,14 @@ export interface TooltipRootProps extends UseTooltipOptions {
 
 function Root({ children, ...opts }: TooltipRootProps) {
   const api = useTooltip(opts);
-  return <TooltipCtx.Provider value={api}>{children}</TooltipCtx.Provider>;
+  const presence = usePresence(api.isOpen);
+  return (
+    <TooltipCtx.Provider value={api}>
+      <TooltipPresenceCtx.Provider value={presence}>
+        {children}
+      </TooltipPresenceCtx.Provider>
+    </TooltipCtx.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -99,7 +112,9 @@ export interface TooltipPortalProps {
 
 function Portal({ children, container, forceMount }: TooltipPortalProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const presence = useContext(TooltipPresenceCtx);
+  const isPresent = presence?.isPresent ?? api.isOpen;
+  if (!forceMount && !isPresent) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
@@ -117,7 +132,9 @@ export interface TooltipContentProps extends HTMLAttributes<HTMLDivElement> {
 
 function Content({ asChild, forceMount, children, ...rest }: TooltipContentProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const injectedPresence = useContext(TooltipPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   if (!forceMount && !isPresent) return null;
 

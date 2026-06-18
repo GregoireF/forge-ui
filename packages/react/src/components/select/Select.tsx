@@ -18,6 +18,12 @@ type SelectApiReturn = ReturnType<typeof useSelect>;
 
 const SelectCtx = createContext<SelectApiReturn | null>(null);
 
+type SelectPresenceContext = {
+  isPresent: boolean;
+  presenceRef: (el: HTMLElement | null) => void;
+};
+const SelectPresenceCtx = createContext<SelectPresenceContext | null>(null);
+
 function useCtx(): SelectApiReturn {
   const ctx = useContext(SelectCtx);
   if (!ctx) throw new Error("Select compound parts must be used inside <Select.Root>");
@@ -34,7 +40,14 @@ export interface SelectRootProps extends UseSelectOptions {
 
 function Root({ children, ...opts }: SelectRootProps) {
   const api = useSelect(opts);
-  return <SelectCtx.Provider value={api}>{children}</SelectCtx.Provider>;
+  const presence = usePresence(api.isOpen);
+  return (
+    <SelectCtx.Provider value={api}>
+      <SelectPresenceCtx.Provider value={presence}>
+        {children}
+      </SelectPresenceCtx.Provider>
+    </SelectCtx.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -118,7 +131,9 @@ export interface SelectPortalProps {
 
 function Portal({ children, container, forceMount }: SelectPortalProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const presence = useContext(SelectPresenceCtx);
+  const isPresent = presence?.isPresent ?? api.isOpen;
+  if (!forceMount && !isPresent) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
@@ -133,7 +148,9 @@ export interface SelectContentProps extends HTMLAttributes<HTMLUListElement> {
 
 function Content({ asChild, forceMount, children, ...rest }: SelectContentProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const injectedPresence = useContext(SelectPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   if (!forceMount && !isPresent) return null;
 

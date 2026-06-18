@@ -1,11 +1,17 @@
 import type { SelectPositioning } from "@forge-ui/select";
-import type { ComponentPublicInstance, PropType } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, onMounted, onScopeDispose, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
 import { selectKey } from "./select-context.js";
 import { useSelect } from "./use-select.js";
+
+type SelectPresenceContext = {
+  isPresent: Ref<boolean>;
+  presenceRef: Ref<HTMLElement | null>;
+};
+const selectPresenceKey: InjectionKey<SelectPresenceContext> = Symbol("forge-select-presence");
 
 type SelectApi = ReturnType<typeof useSelect>;
 
@@ -56,6 +62,9 @@ const SelectRoot = defineComponent({
     });
 
     provide(selectKey, api);
+
+    const presence = usePresence(api.isOpen);
+    provide(selectPresenceKey, presence);
 
     watch(api.isOpen, (open) => emit("update:open", open));
 
@@ -146,8 +155,10 @@ const SelectPortal = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
+    const presence = inject(selectPresenceKey, null);
     return () => {
-      if (!props.forceMount && !api.isOpen.value) return null;
+      const isPresent = presence?.isPresent.value ?? api.isOpen.value;
+      if (!props.forceMount && !isPresent) return null;
       return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
@@ -167,7 +178,9 @@ const SelectContent = defineComponent({
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    const injectedPresence = inject(selectPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;

@@ -11,6 +11,12 @@ type PopoverApiReturn = ReturnType<typeof usePopover>;
 
 const PopoverCtx = createContext<PopoverApiReturn | null>(null);
 
+type PopoverPresenceContext = {
+  isPresent: boolean;
+  presenceRef: (el: HTMLElement | null) => void;
+};
+const PopoverPresenceCtx = createContext<PopoverPresenceContext | null>(null);
+
 function useCtx(): PopoverApiReturn {
   const ctx = useContext(PopoverCtx);
   if (!ctx) throw new Error("Popover compound parts must be used inside <Popover.Root>");
@@ -34,7 +40,15 @@ function Root({ children, open: openProp, ...opts }: PopoverRootProps) {
     api.setOpen(openProp);
   }, [openProp]);
 
-  return <PopoverCtx.Provider value={api}>{children}</PopoverCtx.Provider>;
+  const presence = usePresence(api.isOpen);
+
+  return (
+    <PopoverCtx.Provider value={api}>
+      <PopoverPresenceCtx.Provider value={presence}>
+        {children}
+      </PopoverPresenceCtx.Provider>
+    </PopoverCtx.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -77,7 +91,9 @@ export interface PopoverPortalProps {
 
 function Portal({ children, container, forceMount }: PopoverPortalProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const presence = useContext(PopoverPresenceCtx);
+  const isPresent = presence?.isPresent ?? api.isOpen;
+  if (!forceMount && !isPresent) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
@@ -95,7 +111,9 @@ export interface PopoverContentProps extends HTMLAttributes<HTMLDivElement> {
 
 function Content({ asChild, forceMount, children, ...rest }: PopoverContentProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const injectedPresence = useContext(PopoverPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   if (!forceMount && !isPresent) return null;
 
