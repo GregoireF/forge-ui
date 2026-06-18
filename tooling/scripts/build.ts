@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { execSync } from "node:child_process";
-import { rmSync } from "node:fs";
+import { existsSync, readdirSync, rmSync } from "node:fs";
 import { build } from "bun";
 
 const cwd = process.cwd();
@@ -14,18 +14,31 @@ const external = [
 // Clean dist
 rmSync(`${cwd}/dist`, { recursive: true, force: true });
 
-// ESM
+// Discover sub-entries: src/*/index.ts
+const srcDir = `${cwd}/src`;
+const subEntries: string[] = [];
+if (existsSync(srcDir)) {
+  for (const dir of readdirSync(srcDir, { withFileTypes: true })) {
+    if (dir.isDirectory()) {
+      const entry = `${srcDir}/${dir.name}/index.ts`;
+      if (existsSync(entry)) subEntries.push(entry);
+    }
+  }
+}
+
+// ESM with splitting (enables shared chunks between subpaths)
 await build({
-  entrypoints: [`${cwd}/src/index.ts`],
+  entrypoints: [`${cwd}/src/index.ts`, ...subEntries],
   outdir: `${cwd}/dist`,
   format: "esm",
   target: "browser",
   external,
-  minify: false,
+  splitting: true,
+  minify: true,
   sourcemap: "external",
 });
 
-// CJS
+// CJS — main entry only (splitting not needed for CJS consumers)
 await build({
   entrypoints: [`${cwd}/src/index.ts`],
   outdir: `${cwd}/dist`,
@@ -33,7 +46,7 @@ await build({
   naming: { entry: "[dir]/[name].cjs" },
   target: "node",
   external,
-  minify: false,
+  minify: true,
   sourcemap: "external",
 });
 

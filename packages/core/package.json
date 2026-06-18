@@ -2,6 +2,7 @@
   "name": "@forge-ui/core",
   "version": "0.0.0",
   "private": false,
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
