@@ -1,5 +1,5 @@
 import type { ComboboxOption, ComboboxPositioning } from "@forge-ui/combobox";
-import type { ComponentPublicInstance, PropType } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import {
   defineComponent,
   h,
@@ -15,6 +15,12 @@ import { Slot } from "../dialog/Slot.js";
 import { comboboxKey } from "./combobox-context.js";
 import { useCombobox } from "./use-combobox.js";
 import type { UseComboboxOptions } from "./use-combobox.js";
+
+// Shared presence injection key so Portal and Content coordinate on the same presence instance.
+const comboboxPresenceKey: InjectionKey<{
+  isPresent: Ref<boolean>;
+  presenceRef: Ref<HTMLElement | null>;
+}> = Symbol("comboboxPresence");
 
 type ComboboxApi = ReturnType<typeof useCombobox>;
 
@@ -58,6 +64,8 @@ const ComboboxRoot = defineComponent({
     onValueChange: { type: Function as PropType<(v: string[]) => void>, default: undefined },
     onOpenChange: { type: Function as PropType<(v: boolean) => void>, default: undefined },
     onHighlightChange: { type: Function as PropType<(v: string | null) => void>, default: undefined },
+    options: { type: Array as PropType<ComboboxOption[]>, default: undefined },
+    onHighlightedScroll: { type: Function as PropType<(value: string, index: number) => void>, default: undefined },
   },
   emits: ["update:value", "update:open"],
   setup(props, { slots, emit }) {
@@ -76,10 +84,17 @@ const ComboboxRoot = defineComponent({
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
       ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
       ...(props.onHighlightChange !== undefined && { onHighlightChange: props.onHighlightChange }),
+      ...(props.options !== undefined && { options: props.options }),
+      ...(props.onHighlightedScroll !== undefined && { onHighlightedScroll: props.onHighlightedScroll }),
     };
 
     const api = useCombobox(opts);
     provide(comboboxKey, api);
+
+    // Provide shared presence so Portal and Content coordinate on the same presence instance.
+    const presence = usePresence(api.isOpen);
+    provide(comboboxPresenceKey, presence);
+
     return () => slots.default?.();
   },
 });
@@ -176,8 +191,10 @@ const ComboboxPortal = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
+    const presence = inject(comboboxPresenceKey, null);
     return () => {
-      if (!props.forceMount && !api.isOpen.value) return null;
+      const isPresent = presence?.isPresent.value ?? api.isOpen.value;
+      if (!props.forceMount && !isPresent) return null;
       return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
@@ -196,7 +213,9 @@ const ComboboxContent = defineComponent({
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    const sharedPresence = inject(comboboxPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = sharedPresence ?? ownPresence;
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;

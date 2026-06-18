@@ -1,6 +1,6 @@
 import type { ComboboxApi, ComboboxOption, ComboboxSend, CreateComboboxMachineOptions } from "@forge-ui/combobox";
 import { connectCombobox, createComboboxMachine } from "@forge-ui/combobox";
-import { computed, type ComputedRef, useId } from "vue";
+import { computed, type ComputedRef, useId, watchEffect } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseComboboxOptions extends Omit<CreateComboboxMachineOptions, "id"> {
@@ -30,6 +30,13 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
 
   const machine = createComboboxMachine({ id, ...options });
   const { snapshot, send } = useMachine(machine);
+
+  watchEffect(() => {
+    machine.setContext({
+      ...(options.options !== undefined && { allOptions: options.options }),
+      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+    });
+  });
 
   const isOpen = computed(() => snapshot.value.matches("open"));
   const api = computed(() => connectCombobox(snapshot.value, send, machine));

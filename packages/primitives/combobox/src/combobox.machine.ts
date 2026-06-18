@@ -11,6 +11,18 @@ function getEnabled(options: ComboboxOption[]): ComboboxOption[] {
   return options.filter((o) => !o.disabled);
 }
 
+const defaultFilterFn = (option: ComboboxOption, inputValue: string): boolean =>
+  option.label.toLowerCase().includes(inputValue.toLowerCase());
+
+// For navigation: when allOptions is provided, use it filtered by inputValue.
+// Otherwise, use the DOM-registered options.
+function getEffectiveOptions(context: ComboboxContext): ComboboxOption[] {
+  const base = context.allOptions ?? context.options;
+  if (context.onInputChange) return base; // server-side filtering: already filtered externally
+  const fn = context.filterFn ?? defaultFilterFn;
+  return base.filter((o) => fn(o, context.inputValue));
+}
+
 function getNextHighlighted(options: ComboboxOption[], current: string | null): string | null {
   const enabled = getEnabled(options);
   if (enabled.length === 0) return null;
@@ -43,6 +55,13 @@ function invokeOnValueChange({ context }: { context: ComboboxContext }) {
 
 function invokeOnHighlightChange({ context }: { context: ComboboxContext }) {
   context.onHighlightChange?.(context.highlighted);
+}
+
+function invokeOnHighlightedScroll({ context }: { context: ComboboxContext }) {
+  if (context.highlighted === null || !context.onHighlightedScroll) return;
+  const effectiveOpts = getEffectiveOptions(context);
+  const index = effectiveOpts.findIndex((o) => o.value === context.highlighted);
+  if (index >= 0) context.onHighlightedScroll(context.highlighted, index);
 }
 
 // ---------------------------------------------------------------------------
@@ -81,6 +100,8 @@ export interface CreateComboboxMachineOptions {
   onOpenChange?: (open: boolean) => void;
   onHighlightChange?: (value: string | null) => void;
   filterFn?: (option: { value: string; label: string; disabled?: boolean }, inputValue: string) => boolean;
+  options?: ComboboxOption[];
+  onHighlightedScroll?: (value: string, index: number) => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -117,6 +138,8 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
       ...(options.onHighlightChange !== undefined && { onHighlightChange: options.onHighlightChange }),
       ...(options.filterFn !== undefined && { filterFn: options.filterFn }),
+      ...(options.options !== undefined && { allOptions: options.options }),
+      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
       triggerEl: null,
       contentEl: null,
       buttonEl: null,
@@ -276,39 +299,44 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
                 setContext({ highlighted: event.value });
               },
               invokeOnHighlightChange,
+              invokeOnHighlightedScroll,
             ],
           },
           HIGHLIGHT_NEXT: {
             actions: [
               ({ context, setContext }) => {
-                setContext({ highlighted: getNextHighlighted(context.options, context.highlighted) });
+                setContext({ highlighted: getNextHighlighted(getEffectiveOptions(context), context.highlighted) });
               },
               invokeOnHighlightChange,
+              invokeOnHighlightedScroll,
             ],
           },
           HIGHLIGHT_PREV: {
             actions: [
               ({ context, setContext }) => {
-                setContext({ highlighted: getPrevHighlighted(context.options, context.highlighted) });
+                setContext({ highlighted: getPrevHighlighted(getEffectiveOptions(context), context.highlighted) });
               },
               invokeOnHighlightChange,
+              invokeOnHighlightedScroll,
             ],
           },
           HIGHLIGHT_FIRST: {
             actions: [
               ({ context, setContext }) => {
-                setContext({ highlighted: getEnabled(context.options)[0]?.value ?? null });
+                setContext({ highlighted: getEnabled(getEffectiveOptions(context))[0]?.value ?? null });
               },
               invokeOnHighlightChange,
+              invokeOnHighlightedScroll,
             ],
           },
           HIGHLIGHT_LAST: {
             actions: [
               ({ context, setContext }) => {
-                const enabled = getEnabled(context.options);
+                const enabled = getEnabled(getEffectiveOptions(context));
                 setContext({ highlighted: enabled[enabled.length - 1]?.value ?? null });
               },
               invokeOnHighlightChange,
+              invokeOnHighlightedScroll,
             ],
           },
 

@@ -38,6 +38,10 @@ export interface ComboboxContext {
   onHighlightChange?: (value: string | null) => void;
   /** Custom client-side filter. Default: case-insensitive label substring match. */
   filterFn?: (option: ComboboxOption, inputValue: string) => boolean;
+  /** Static options list (bypasses DOM REGISTER/UNREGISTER). Required for virtual scrolling. */
+  allOptions?: ComboboxOption[];
+  /** Called after every highlighted change — user scrolls their virtualizer to the given index. */
+  onHighlightedScroll?: (value: string, index: number) => void;
   // Floating — the input acts as reference (triggerEl), listbox as content (contentEl).
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;

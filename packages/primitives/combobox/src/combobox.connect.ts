@@ -20,9 +20,11 @@ export function connectCombobox(
   const align = getAlignFromPlacement(context.currentPlacement);
 
   // Client-side filter — skipped when caller provides onInputChange (async mode).
+  // When allOptions is provided (virtual scrolling), use it as the base list.
+  const effectiveBase = context.allOptions ?? context.options;
   const filteredOptions: ComboboxOption[] = context.onInputChange
-    ? context.options
-    : context.options.filter((o) => {
+    ? effectiveBase
+    : effectiveBase.filter((o) => {
         const fn = context.filterFn ?? defaultFilterFn;
         return fn(o, context.inputValue);
       });
@@ -36,7 +38,7 @@ export function connectCombobox(
   const valueLabel: string =
     context.value.length === 0
       ? ""
-      : (context.options.find((o) => o.value === context.value[0])?.label ?? context.value[0]);
+      : (effectiveBase.find((o) => o.value === context.value[0])?.label ?? context.value[0]);
 
   return {
     isOpen,

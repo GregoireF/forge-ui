@@ -17,6 +17,9 @@ function useCtx(): ComboboxApiReturn {
   return ctx;
 }
 
+// Shared presence context so Portal and Content coordinate on the same presence instance.
+const ComboboxPresenceCtx = createContext<ReturnType<typeof usePresence> | null>(null);
+
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
@@ -27,7 +30,14 @@ export interface ComboboxRootProps extends UseComboboxOptions {
 
 function Root({ children, ...opts }: ComboboxRootProps) {
   const api = useCombobox(opts);
-  return <ComboboxCtx.Provider value={api}>{children}</ComboboxCtx.Provider>;
+  const presence = usePresence(api.isOpen);
+  return (
+    <ComboboxCtx.Provider value={api}>
+      <ComboboxPresenceCtx.Provider value={presence}>
+        {children}
+      </ComboboxPresenceCtx.Provider>
+    </ComboboxCtx.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -123,7 +133,9 @@ export interface ComboboxPortalProps {
 
 function Portal({ children, container, forceMount }: ComboboxPortalProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const presence = useContext(ComboboxPresenceCtx);
+  const isPresent = presence?.isPresent ?? api.isOpen;
+  if (!forceMount && !isPresent) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
@@ -138,7 +150,9 @@ export interface ComboboxContentProps extends HTMLAttributes<HTMLUListElement> {
 
 function Content({ asChild, forceMount, children, ...rest }: ComboboxContentProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const sharedPresence = useContext(ComboboxPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = sharedPresence ?? ownPresence;
 
   if (!forceMount && !isPresent) return null;
 
