@@ -21,12 +21,15 @@ export function connectSwitch(
     isDisabled: context.disabled,
     isRequired: context.required,
     isReadOnly: context.readOnly,
+    isInvalid: context.invalid,
 
     getRootProps() {
       return {
         "data-state": dataState,
         "data-disabled": context.disabled ? "" : undefined,
         "data-required": context.required ? "" : undefined,
+        "data-readonly": context.readOnly ? "" : undefined,
+        "data-invalid": context.invalid ? "" : undefined,
         "data-forge-scope": "switch",
         "data-forge-part": "root",
         ref: (el: unknown) => machine.setContext({ rootEl: el as HTMLElement | null }),
@@ -41,9 +44,13 @@ export function connectSwitch(
         "aria-checked": isChecked,
         "aria-required": context.required ? true : undefined,
         "aria-disabled": context.disabled ? true : undefined,
+        "aria-readonly": context.readOnly ? true : undefined,
+        "aria-invalid": context.invalid ? true : undefined,
         "aria-labelledby": labelId,
         "data-state": dataState,
         "data-disabled": context.disabled ? "" : undefined,
+        "data-readonly": context.readOnly ? "" : undefined,
+        "data-invalid": context.invalid ? "" : undefined,
         "data-forge-scope": "switch",
         "data-forge-part": "control",
         tabIndex: context.disabled ? -1 : 0,
@@ -60,6 +67,8 @@ export function connectSwitch(
         "aria-hidden": true as const,
         "data-state": dataState,
         "data-disabled": context.disabled ? "" : undefined,
+        "data-readonly": context.readOnly ? "" : undefined,
+        "data-invalid": context.invalid ? "" : undefined,
         "data-forge-scope": "switch",
         "data-forge-part": "thumb",
       };
@@ -70,6 +79,8 @@ export function connectSwitch(
         id: labelId,
         htmlFor: controlId,
         "data-disabled": context.disabled ? "" : undefined,
+        "data-readonly": context.readOnly ? "" : undefined,
+        "data-invalid": context.invalid ? "" : undefined,
         "data-forge-scope": "switch",
         "data-forge-part": "label",
       };

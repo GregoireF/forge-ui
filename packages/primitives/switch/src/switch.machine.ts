@@ -10,6 +10,7 @@ export interface CreateSwitchMachineOptions {
   disabled?: boolean;
   required?: boolean;
   readOnly?: boolean;
+  invalid?: boolean;
   /** Native form field name. Auto-renders a hidden <input type="checkbox"> when set. */
   name?: string;
   /** Submitted value when on. Defaults to "on". */
@@ -35,6 +36,7 @@ export function createSwitchMachine(options: CreateSwitchMachineOptions) {
       disabled: options.disabled ?? false,
       required: options.required ?? false,
       readOnly: options.readOnly ?? false,
+      invalid: options.invalid ?? false,
       name: options.name,
       value: options.value ?? "on",
       form: options.form,

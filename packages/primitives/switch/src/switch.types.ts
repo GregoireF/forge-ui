@@ -5,6 +5,7 @@ export interface SwitchContext {
   disabled: boolean;
   required: boolean;
   readOnly: boolean;
+  invalid: boolean;
   name: string | undefined;
   value: string;
   form: string | undefined;
