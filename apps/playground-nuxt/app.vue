@@ -98,6 +98,24 @@ const switchChecked = ref(false);
 
 const tooltipS = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
 const btnDanger = { ...btn, background: "#dc2626" } as const;
+
+const comboboxContent = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
+const comboboxItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
+
+const fieldInvalid = ref(false);
+const fieldEmail = ref("");
+
+const languages = [
+  { value: "ts", label: "TypeScript" },
+  { value: "js", label: "JavaScript" },
+  { value: "py", label: "Python" },
+  { value: "rs", label: "Rust" },
+  { value: "go", label: "Go" },
+  { value: "java", label: "Java" },
+  { value: "cpp", label: "C++" },
+  { value: "cs", label: "C#" },
+];
+const cbSelected = ref<string[]>([]);
 const alertConfirming = ref(false);
 function handleDeleteConfirm() {
   alertConfirming.value = true;
@@ -481,6 +499,88 @@ function handleDeleteConfirm() {
           </TooltipRoot>
         </div>
       </TooltipProvider>
+    </section>
+
+    <!-- ── Field ────────────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Field</h2>
+      <p :style="sectionDesc">Champ accessible — aucun import requis, auto-importé par @forge-ui/nuxt.</p>
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        <Field.Root :invalid="fieldInvalid" :required="true">
+          <Field.Label :style="labelS">
+            Email <FieldRequiredIndicator style="color:#dc2626;margin-left:0.15rem" />
+          </Field.Label>
+          <Field.Control>
+            <input
+              v-model="fieldEmail"
+              type="email"
+              placeholder="vous@exemple.fr"
+              style="padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:220px"
+              @blur="fieldInvalid = fieldEmail.length > 0 && !fieldEmail.includes('@')"
+            />
+          </Field.Control>
+          <Field.Description style="font-size:0.75rem;color:#64748b">Entrez votre adresse e-mail.</Field.Description>
+          <Field.Error style="font-size:0.75rem;color:#dc2626">Adresse e-mail invalide.</Field.Error>
+        </Field.Root>
+
+        <FieldGroup>
+          <FieldGroupLabel style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;display:block">
+            Préférences de notification
+          </FieldGroupLabel>
+          <div style="display:flex;flex-direction:column;gap:0.35rem">
+            <label style="font-size:0.875rem"><input type="checkbox" /> Email</label>
+            <label style="font-size:0.875rem"><input type="checkbox" /> SMS</label>
+            <label style="font-size:0.875rem"><input type="checkbox" /> Push</label>
+          </div>
+        </FieldGroup>
+      </div>
+    </section>
+
+    <!-- ── Combobox ──────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Combobox</h2>
+      <p :style="sectionDesc">WAI-ARIA 1.2 — auto-importé par @forge-ui/nuxt.</p>
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Single-select</p>
+          <Combobox.Root :on-value-change="(v) => cbSelected = v">
+            <Combobox.Label :style="labelS">Langage préféré</Combobox.Label>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhost">▾</Combobox.Trigger>
+              <Combobox.ClearTrigger :style="btnGhost">✕</Combobox.ClearTrigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContent">
+                <Combobox.Item v-for="l in languages" :key="l.value" :value="l.value" :label="l.label" :style="comboboxItem">
+                  <Combobox.ItemIndicator :value="l.value">✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{{ l.label }}</Combobox.ItemText>
+                </Combobox.Item>
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+          <p v-if="cbSelected.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">Sélectionné : {{ cbSelected.join(', ') }}</p>
+        </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Multi-select</p>
+          <Combobox.Root :multiple="true">
+            <Combobox.Label :style="labelS">Langages maîtrisés</Combobox.Label>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhost">▾</Combobox.Trigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContent">
+                <Combobox.Item v-for="l in languages" :key="l.value" :value="l.value" :label="l.label" :style="comboboxItem">
+                  <Combobox.ItemIndicator :value="l.value">✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{{ l.label }}</Combobox.ItemText>
+                </Combobox.Item>
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+        </div>
+      </div>
     </section>
   </main>
 </template>

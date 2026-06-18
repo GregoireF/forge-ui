@@ -1,5 +1,5 @@
 import type { CheckboxChecked } from "@forge-ui/react";
-import { AlertDialog, Checkbox, Dialog, DialogPortal, Popover, Select, Switch, Tooltip, useDialog } from "@forge-ui/react";
+import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, Popover, Select, Switch, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -71,6 +71,20 @@ export default function App() {
         description="Survol/focus pour info contextuelle. Provider avec skip-delay SSR-safe."
       >
         <TooltipDemo />
+      </Section>
+
+      <Section
+        title="Field"
+        description="Champ accessible : Label + RequiredIndicator + Description + Error + Group."
+      >
+        <FieldDemo />
+      </Section>
+
+      <Section
+        title="Combobox"
+        description="WAI-ARIA 1.2 Combobox. Filtre client-side, multi-select, mode async."
+      >
+        <ComboboxDemo />
       </Section>
 
       <Section title="asChild" description="Forge merge les props sur votre élément, sans wrapper.">
@@ -568,6 +582,137 @@ const tooltipStyle: React.CSSProperties = {
   fontSize: "0.8rem",
   boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
   maxWidth: "240px",
+};
+
+/* ── Field ──────────────────────────────────────────────────────────────────── */
+
+function FieldDemo() {
+  const [invalid, setInvalid] = useState(false);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <Field.Root invalid={invalid} required>
+        <Field.Label style={labelStyle}>
+          Email <Field.RequiredIndicator style={{ color: "#dc2626", marginLeft: "0.15rem" }} />
+        </Field.Label>
+        <Field.Control>
+          <input
+            type="email"
+            placeholder="vous@exemple.fr"
+            style={{ padding: "0.5rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "220px" }}
+            onBlur={(e) => setInvalid(e.target.value.length > 0 && !e.target.value.includes("@"))}
+          />
+        </Field.Control>
+        <Field.Description style={{ fontSize: "0.75rem", color: "#64748b" }}>
+          Entrez votre adresse e-mail.
+        </Field.Description>
+        <Field.Error style={{ fontSize: "0.75rem", color: "#dc2626" }}>
+          Adresse e-mail invalide.
+        </Field.Error>
+      </Field.Root>
+
+      <Field.Group>
+        <Field.GroupLabel style={{ fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", display: "block" }}>
+          Préférences de notification
+        </Field.GroupLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          <label style={{ fontSize: "0.875rem" }}><input type="checkbox" /> Email</label>
+          <label style={{ fontSize: "0.875rem" }}><input type="checkbox" /> SMS</label>
+          <label style={{ fontSize: "0.875rem" }}><input type="checkbox" /> Push</label>
+        </div>
+      </Field.Group>
+    </div>
+  );
+}
+
+/* ── Combobox ───────────────────────────────────────────────────────────────── */
+
+const languages = [
+  { value: "ts", label: "TypeScript" },
+  { value: "js", label: "JavaScript" },
+  { value: "py", label: "Python" },
+  { value: "rs", label: "Rust" },
+  { value: "go", label: "Go" },
+  { value: "java", label: "Java" },
+  { value: "cpp", label: "C++" },
+  { value: "cs", label: "C#" },
+];
+
+function ComboboxDemo() {
+  const [selected, setSelected] = useState<string[]>([]);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Single-select (filtre client-side)</p>
+        <Combobox.Root onValueChange={setSelected}>
+          <Combobox.Label style={labelStyle}>Langage préféré</Combobox.Label>
+          <div style={{ display: "flex", gap: "0.25rem" }}>
+            <Combobox.Input
+              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+            />
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
+            <Combobox.ClearTrigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>✕</Combobox.ClearTrigger>
+          </div>
+          <Combobox.Portal>
+            <Combobox.Content style={comboboxContentStyle}>
+              {languages.map((l) => (
+                <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                  <Combobox.ItemIndicator value={l.value}>✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{l.label}</Combobox.ItemText>
+                </Combobox.Item>
+              ))}
+            </Combobox.Content>
+          </Combobox.Portal>
+        </Combobox.Root>
+        {selected.length > 0 && <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#64748b" }}>Sélectionné : {selected.join(", ")}</p>}
+      </div>
+
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Multi-select</p>
+        <Combobox.Root multiple>
+          <Combobox.Label style={labelStyle}>Langages maîtrisés</Combobox.Label>
+          <div style={{ display: "flex", gap: "0.25rem" }}>
+            <Combobox.Input
+              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+            />
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
+          </div>
+          <Combobox.Portal>
+            <Combobox.Content style={comboboxContentStyle}>
+              {languages.map((l) => (
+                <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                  <Combobox.ItemIndicator value={l.value}>✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{l.label}</Combobox.ItemText>
+                </Combobox.Item>
+              ))}
+            </Combobox.Content>
+          </Combobox.Portal>
+        </Combobox.Root>
+      </div>
+    </div>
+  );
+}
+
+const comboboxContentStyle: React.CSSProperties = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none",
+  margin: 0,
+  maxHeight: "200px",
+  overflowY: "auto",
+};
+
+const comboboxItemStyle: React.CSSProperties = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+  display: "flex",
+  alignItems: "center",
+  gap: "0.25rem",
 };
 
 /* ── asChild ────────────────────────────────────────────────────────────────── */

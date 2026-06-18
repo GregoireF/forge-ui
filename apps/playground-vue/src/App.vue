@@ -8,8 +8,13 @@ import {
   CheckboxIndicator,
   CheckboxLabel,
   CheckboxRoot,
+  Combobox,
   Dialog,
   DialogPortal,
+  Field,
+  FieldGroup,
+  FieldGroupLabel,
+  FieldRequiredIndicator,
   Popover,
   Select,
   Switch,
@@ -140,6 +145,24 @@ const switchOffStyle = { width: "44px", height: "24px", borderRadius: "12px", ba
 const switchOnStyle = { ...switchOffStyle, background: "#1e293b" };
 const switchThumbOffStyle = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
 const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px)" };
+
+const comboboxContentStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
+const comboboxItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
+
+const fieldInvalid = ref(false);
+const fieldEmail = ref("");
+
+const languages = [
+  { value: "ts", label: "TypeScript" },
+  { value: "js", label: "JavaScript" },
+  { value: "py", label: "Python" },
+  { value: "rs", label: "Rust" },
+  { value: "go", label: "Go" },
+  { value: "java", label: "Java" },
+  { value: "cpp", label: "C++" },
+  { value: "cs", label: "C#" },
+];
+const comboboxSelected = ref<string[]>([]);
 </script>
 
 <template>
@@ -532,6 +555,102 @@ const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px
           </TooltipRoot>
         </div>
       </TooltipProvider>
+    </section>
+
+    <!-- ── Field ────────────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Field</h2>
+      <p :style="sectionDescStyle">Champ accessible : Label + RequiredIndicator + Description + Error + Group.</p>
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        <Field.Root :invalid="fieldInvalid" :required="true">
+          <Field.Label :style="labelStyle">
+            Email <FieldRequiredIndicator style="color:#dc2626;margin-left:0.15rem" />
+          </Field.Label>
+          <Field.Control>
+            <input
+              v-model="fieldEmail"
+              type="email"
+              placeholder="vous@exemple.fr"
+              style="padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:220px"
+              @blur="fieldInvalid = fieldEmail.length > 0 && !fieldEmail.includes('@')"
+            />
+          </Field.Control>
+          <Field.Description style="font-size:0.75rem;color:#64748b">Entrez votre adresse e-mail.</Field.Description>
+          <Field.Error style="font-size:0.75rem;color:#dc2626">Adresse e-mail invalide.</Field.Error>
+        </Field.Root>
+
+        <FieldGroup>
+          <FieldGroupLabel style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;display:block">
+            Préférences de notification
+          </FieldGroupLabel>
+          <div style="display:flex;flex-direction:column;gap:0.35rem">
+            <label style="font-size:0.875rem"><input type="checkbox" /> Email</label>
+            <label style="font-size:0.875rem"><input type="checkbox" /> SMS</label>
+            <label style="font-size:0.875rem"><input type="checkbox" /> Push</label>
+          </div>
+        </FieldGroup>
+      </div>
+    </section>
+
+    <!-- ── Combobox ──────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Combobox</h2>
+      <p :style="sectionDescStyle">WAI-ARIA 1.2 Combobox. Filtre client-side, multi-select.</p>
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Single-select (filtre client-side)</p>
+          <Combobox.Root :on-value-change="(v) => comboboxSelected = v">
+            <Combobox.Label :style="labelStyle">Langage préféré</Combobox.Label>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhostStyle">▾</Combobox.Trigger>
+              <Combobox.ClearTrigger :style="btnGhostStyle">✕</Combobox.ClearTrigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContentStyle">
+                <Combobox.Item
+                  v-for="l in languages"
+                  :key="l.value"
+                  :value="l.value"
+                  :label="l.label"
+                  :style="comboboxItemStyle"
+                >
+                  <Combobox.ItemIndicator :value="l.value">✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{{ l.label }}</Combobox.ItemText>
+                </Combobox.Item>
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+          <p v-if="comboboxSelected.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+            Sélectionné : {{ comboboxSelected.join(', ') }}
+          </p>
+        </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Multi-select</p>
+          <Combobox.Root :multiple="true">
+            <Combobox.Label :style="labelStyle">Langages maîtrisés</Combobox.Label>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhostStyle">▾</Combobox.Trigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContentStyle">
+                <Combobox.Item
+                  v-for="l in languages"
+                  :key="l.value"
+                  :value="l.value"
+                  :label="l.label"
+                  :style="comboboxItemStyle"
+                >
+                  <Combobox.ItemIndicator :value="l.value">✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{{ l.label }}</Combobox.ItemText>
+                </Combobox.Item>
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+        </div>
+      </div>
     </section>
 
     <!-- ── asChild ────────────────────────────────────────────────────────────── -->

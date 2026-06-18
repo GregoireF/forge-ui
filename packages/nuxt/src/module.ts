@@ -35,6 +35,7 @@ export default defineNuxtModule({
       { name: "useCheckbox", from },
       { name: "useSwitch", from },
       { name: "useTooltip", from },
+      { name: "useCombobox", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
     ]);
@@ -48,6 +49,7 @@ export default defineNuxtModule({
     addImports({ name: "Checkbox", from });
     addImports({ name: "Switch", from });
     addImports({ name: "Tooltip", from });
+    addImports({ name: "Combobox", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -88,6 +90,7 @@ export default defineNuxtModule({
       "SelectLabel",
       "SelectTrigger",
       "SelectValue",
+      "SelectPlaceholder",
       "SelectPortal",
       "SelectContent",
       "SelectItem",
@@ -121,9 +124,12 @@ export default defineNuxtModule({
     const fieldComponents = [
       "FieldRoot",
       "FieldLabel",
+      "FieldRequiredIndicator",
       "FieldControl",
       "FieldDescription",
       "FieldError",
+      "FieldGroup",
+      "FieldGroupLabel",
     ] as const;
 
     for (const name of fieldComponents) {
@@ -158,12 +164,30 @@ export default defineNuxtModule({
       "TooltipProvider",
       "TooltipRoot",
       "TooltipTrigger",
+      "TooltipAnchor",
       "TooltipPortal",
       "TooltipContent",
       "TooltipArrow",
     ] as const;
 
+    const comboboxComponents = [
+      "ComboboxRoot",
+      "ComboboxLabel",
+      "ComboboxInput",
+      "ComboboxTrigger",
+      "ComboboxClearTrigger",
+      "ComboboxPortal",
+      "ComboboxContent",
+      "ComboboxItem",
+      "ComboboxItemText",
+      "ComboboxItemIndicator",
+    ] as const;
+
     for (const name of tooltipComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    for (const name of comboboxComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },
