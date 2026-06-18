@@ -149,6 +149,21 @@ function Content({ asChild, forceMount, children, ...rest }: TooltipContentProps
 }
 
 // ---------------------------------------------------------------------------
+// Anchor — makes computePosition use this element as reference instead of trigger.
+// ---------------------------------------------------------------------------
+
+export interface TooltipAnchorProps extends HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
+}
+
+function Anchor({ asChild, children, ...rest }: TooltipAnchorProps) {
+  const api = useCtx();
+  const props = { ...api.getAnchorProps(), ...rest };
+  if (asChild) return <Slot {...props}>{children}</Slot>;
+  return <div {...props}>{children}</div>;
+}
+
+// ---------------------------------------------------------------------------
 // Arrow — renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
@@ -169,6 +184,7 @@ export const Tooltip = {
   Provider,
   Root,
   Trigger,
+  Anchor,
   Portal,
   Content,
   Arrow,

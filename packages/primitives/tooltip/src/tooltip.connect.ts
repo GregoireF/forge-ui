@@ -134,6 +134,16 @@ export function connectTooltip(
       };
     },
 
+    /** Positions the tooltip relative to a different element than the trigger.
+     *  When rendered, computePosition uses anchorEl as the reference instead of triggerEl. */
+    getAnchorProps() {
+      return {
+        "data-forge-scope": "tooltip",
+        "data-forge-part": "anchor",
+        ref: (el: unknown) => machine.setContext({ anchorEl: el as HTMLElement | null }),
+      };
+    },
+
     getArrowProps() {
       return {
         "data-forge-scope": "tooltip",

@@ -205,6 +205,23 @@ const TooltipContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// Anchor — makes computePosition use this element as reference instead of trigger.
+// ---------------------------------------------------------------------------
+
+const TooltipAnchor = defineComponent({
+  name: "ForgeTooltipAnchor",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      const anchorProps = { ...api.getAnchorProps(), ...attrs };
+      if (props.asChild) return h(Slot, anchorProps, slots.default);
+      return h("div", anchorProps, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Arrow — renderless, always Slot.
 // ---------------------------------------------------------------------------
 
@@ -224,12 +241,14 @@ export const Tooltip = {
   Provider: TooltipProvider,
   Root: TooltipRoot,
   Trigger: TooltipTrigger,
+  Anchor: TooltipAnchor,
   Portal: TooltipPortal,
   Content: TooltipContent,
   Arrow: TooltipArrow,
 } as const;
 
 export {
+  TooltipAnchor,
   TooltipArrow,
   TooltipContent,
   TooltipPortal,
