@@ -301,6 +301,34 @@ function PopoverDemo() {
           </Popover.Portal>
         </Popover.Root>
       </div>
+
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Avec Popover.Arrow
+        </p>
+        <Popover.Root>
+          <Popover.Trigger style={btnStyle}>Arrow popover</Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content style={{ ...popoverStyle, position: "relative" }}>
+              {/* Arrow — Floating UI centre left/top via JS; data-side allows CSS rotation */}
+              <Popover.Arrow>
+                <svg
+                  width="12"
+                  height="6"
+                  viewBox="0 0 12 6"
+                  style={{ position: "absolute", top: "-6px" }}
+                  aria-hidden="true"
+                >
+                  <path d="M0,6 L6,0 L12,6 Z" fill="#fff" stroke="#e2e8f0" strokeWidth="1" strokeLinejoin="round" />
+                </svg>
+              </Popover.Arrow>
+              <Popover.Description style={{ ...descStyle, marginBottom: 0 }}>
+                La flèche est centrée par Floating UI. Utilisez <code>data-side</code> pour la rotation CSS.
+              </Popover.Description>
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
+      </div>
     </div>
   );
 }
@@ -319,7 +347,10 @@ function SelectDemo() {
         <Select.Root onValueChange={setValue}>
           <Select.Label style={labelStyle}>Framework</Select.Label>
           <Select.Trigger style={selectTriggerStyle}>
-            <Select.Value placeholder="Choisir un framework…" />
+            <Select.Value>
+              {/* Select.Placeholder : visible seulement quand aucune valeur n'est sélectionnée */}
+              <Select.Placeholder style={{ color: "#94a3b8" }}>Choisir un framework…</Select.Placeholder>
+            </Select.Value>
             <span style={{ marginLeft: "auto", opacity: 0.5 }}>▾</span>
           </Select.Trigger>
           <Select.Portal>
@@ -515,6 +546,17 @@ function SwitchDemo() {
           <Switch.Label style={checkboxLabelStyle}>Désactivé (on)</Switch.Label>
         </div>
       </Switch.Root>
+
+      <Switch.Root invalid>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Switch.Control style={{ ...switchControlStyle(false), borderColor: "#dc2626", outline: "1px solid #dc2626" }}>
+            <Switch.Thumb style={switchThumbStyle(false)} />
+          </Switch.Control>
+          <Switch.Label style={{ ...checkboxLabelStyle, color: "#dc2626" }}>
+            État invalide (data-invalid + aria-invalid)
+          </Switch.Label>
+        </div>
+      </Switch.Root>
     </div>
   );
 }
@@ -567,6 +609,17 @@ function TooltipDemo() {
           <Tooltip.Trigger style={btnGhostStyle}>Placement bas</Tooltip.Trigger>
           <Tooltip.Portal>
             <Tooltip.Content style={tooltipStyle}>placement=&quot;bottom&quot;</Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+
+        <Tooltip.Root>
+          <Tooltip.Trigger style={btnGhostStyle}>Anchor demo</Tooltip.Trigger>
+          {/* Tooltip.Anchor redirige le positioner vers cet élément au lieu du trigger */}
+          <Tooltip.Anchor>
+            <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "#f59e0b", marginLeft: "0.5rem", verticalAlign: "middle" }} />
+          </Tooltip.Anchor>
+          <Tooltip.Portal>
+            <Tooltip.Content style={tooltipStyle}>Positionné sur le point orange ↑</Tooltip.Content>
           </Tooltip.Portal>
         </Tooltip.Root>
       </div>

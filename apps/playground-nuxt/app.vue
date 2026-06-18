@@ -279,7 +279,10 @@ function handleDeleteConfirm() {
           <Select.Root :on-value-change="(v) => selectedValue = v">
             <Select.Label :style="labelS">Framework</Select.Label>
             <Select.Trigger :style="selectTrigger">
-              <Select.Value placeholder="Choisir un framework…" />
+              <!-- SelectPlaceholder : visible seulement quand aucune valeur n'est sélectionnée -->
+              <Select.Value>
+                <SelectPlaceholder style="color:#94a3b8">Choisir un framework…</SelectPlaceholder>
+              </Select.Value>
               <span style="margin-left:auto;opacity:0.5">▾</span>
             </Select.Trigger>
             <Select.Portal>
@@ -385,6 +388,31 @@ function handleDeleteConfirm() {
             </Popover.Portal>
           </Popover.Root>
         </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Avec Popover.Arrow</p>
+          <Popover.Root>
+            <Popover.Trigger :style="btn">Arrow popover</Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content :style="{ ...popoverPanel, position: 'relative' }">
+                <Popover.Arrow>
+                  <svg
+                    width="12"
+                    height="6"
+                    viewBox="0 0 12 6"
+                    style="position:absolute;top:-6px"
+                    aria-hidden="true"
+                  >
+                    <path d="M0,6 L6,0 L12,6 Z" fill="#fff" stroke="#e2e8f0" stroke-width="1" stroke-linejoin="round" />
+                  </svg>
+                </Popover.Arrow>
+                <Popover.Description :style="{ ...descS, marginBottom: 0 }">
+                  Flèche centrée par Floating UI. <code>data-side</code> pour rotation CSS.
+                </Popover.Description>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
       </div>
     </section>
 
@@ -449,16 +477,38 @@ function handleDeleteConfirm() {
     <section :style="section">
       <h2 :style="sectionTitle">Switch</h2>
       <p :style="sectionDesc">Toggle binaire. role=switch. Auto-import Nuxt.</p>
-      <SwitchRoot :checked="switchChecked" :on-checked-change="(v) => switchChecked = v">
-        <div style="display:flex;align-items:center;gap:0.75rem">
-          <SwitchControl :style="switchChecked ? switchOn : switchOff">
-            <SwitchThumb :style="switchChecked ? thumbOn : thumbOff" />
-          </SwitchControl>
-          <SwitchLabel :style="checkboxLabel">
-            Notifications — <code>{{ switchChecked ? 'activées' : 'désactivées' }}</code>
-          </SwitchLabel>
-        </div>
-      </SwitchRoot>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <SwitchRoot :checked="switchChecked" :on-checked-change="(v) => switchChecked = v">
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <SwitchControl :style="switchChecked ? switchOn : switchOff">
+              <SwitchThumb :style="switchChecked ? thumbOn : thumbOff" />
+            </SwitchControl>
+            <SwitchLabel :style="checkboxLabel">
+              Notifications — <code>{{ switchChecked ? 'activées' : 'désactivées' }}</code>
+            </SwitchLabel>
+          </div>
+        </SwitchRoot>
+
+        <SwitchRoot :default-checked="true" :disabled="true">
+          <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.4">
+            <SwitchControl :style="switchOn">
+              <SwitchThumb :style="thumbOn" />
+            </SwitchControl>
+            <SwitchLabel :style="checkboxLabel">Désactivé (on)</SwitchLabel>
+          </div>
+        </SwitchRoot>
+
+        <SwitchRoot :invalid="true">
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <SwitchControl :style="{ ...switchOff, borderColor: '#dc2626', outline: '1px solid #dc2626' }">
+              <SwitchThumb :style="thumbOff" />
+            </SwitchControl>
+            <SwitchLabel style="font-size:0.875rem;color:#dc2626;cursor:pointer">
+              État invalide (data-invalid + aria-invalid)
+            </SwitchLabel>
+          </div>
+        </SwitchRoot>
+      </div>
     </section>
 
     <!-- ── Tooltip ───────────────────────────────────────────────────────────── -->
@@ -495,6 +545,16 @@ function handleDeleteConfirm() {
             <TooltipTrigger :style="btnGhost">Placement bas</TooltipTrigger>
             <TooltipPortal>
               <TooltipContent :style="tooltipS">placement="bottom"</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot>
+            <TooltipTrigger :style="btnGhost">Anchor demo</TooltipTrigger>
+            <TooltipAnchor>
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-left:0.5rem;vertical-align:middle" />
+            </TooltipAnchor>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipS">Positionné sur le point orange ↑</TooltipContent>
             </TooltipPortal>
           </TooltipRoot>
         </div>

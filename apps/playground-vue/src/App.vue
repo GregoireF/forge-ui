@@ -23,6 +23,7 @@ import {
   SwitchRoot,
   SwitchThumb,
   Tooltip,
+  TooltipAnchor,
   TooltipContent,
   TooltipPortal,
   TooltipProvider,
@@ -339,6 +340,31 @@ const comboboxSelected = ref<string[]>([]);
             </Popover.Portal>
           </Popover.Root>
         </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Avec Popover.Arrow</p>
+          <Popover.Root>
+            <Popover.Trigger :style="btnStyle">Arrow popover</Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content :style="{ ...popoverStyle, position: 'relative' }">
+                <Popover.Arrow>
+                  <svg
+                    width="12"
+                    height="6"
+                    viewBox="0 0 12 6"
+                    style="position:absolute;top:-6px"
+                    aria-hidden="true"
+                  >
+                    <path d="M0,6 L6,0 L12,6 Z" fill="#fff" stroke="#e2e8f0" stroke-width="1" stroke-linejoin="round" />
+                  </svg>
+                </Popover.Arrow>
+                <Popover.Description :style="{ ...descStyle, marginBottom: 0 }">
+                  Flèche centrée par Floating UI. Utilisez <code>data-side</code> pour la rotation CSS.
+                </Popover.Description>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
       </div>
     </section>
 
@@ -352,7 +378,10 @@ const comboboxSelected = ref<string[]>([]);
           <Select.Root :on-value-change="(v) => selectedValue = v">
             <Select.Label :style="labelStyle">Framework</Select.Label>
             <Select.Trigger :style="selectTriggerStyle">
-              <Select.Value placeholder="Choisir un framework…" />
+              <!-- Select.Placeholder : visible seulement quand aucune valeur n'est sélectionnée -->
+              <Select.Value>
+                <Select.Placeholder style="color:#94a3b8">Choisir un framework…</Select.Placeholder>
+              </Select.Value>
               <span style="margin-left:auto;opacity:0.5">▾</span>
             </Select.Trigger>
             <Select.Portal>
@@ -514,6 +543,17 @@ const comboboxSelected = ref<string[]>([]);
             <SwitchLabel :style="checkboxLabelStyle">Désactivé (on)</SwitchLabel>
           </div>
         </SwitchRoot>
+
+        <SwitchRoot :invalid="true">
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <SwitchControl :style="{ ...switchOffStyle, borderColor: '#dc2626', outline: '1px solid #dc2626' }">
+              <SwitchThumb :style="switchThumbOffStyle" />
+            </SwitchControl>
+            <SwitchLabel :style="{ ...checkboxLabelStyle, color: '#dc2626' }">
+              État invalide (data-invalid + aria-invalid)
+            </SwitchLabel>
+          </div>
+        </SwitchRoot>
       </div>
     </section>
 
@@ -551,6 +591,17 @@ const comboboxSelected = ref<string[]>([]);
             <TooltipTrigger :style="btnGhostStyle">Placement bas</TooltipTrigger>
             <TooltipPortal>
               <TooltipContent :style="tooltipStyle">placement="bottom"</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot>
+            <TooltipTrigger :style="btnGhostStyle">Anchor demo</TooltipTrigger>
+            <!-- TooltipAnchor redirige le positioner vers cet élément -->
+            <TooltipAnchor>
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-left:0.5rem;vertical-align:middle" />
+            </TooltipAnchor>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipStyle">Positionné sur le point orange ↑</TooltipContent>
             </TooltipPortal>
           </TooltipRoot>
         </div>
