@@ -96,6 +96,7 @@ const checkboxControlled = ref<boolean | "indeterminate">("indeterminate");
 const groupValues = ref<string[]>(["react"]);
 const switchChecked = ref(false);
 
+const tooltipS = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
 const btnDanger = { ...btn, background: "#dc2626" } as const;
 const alertConfirming = ref(false);
 function handleDeleteConfirm() {
@@ -427,7 +428,7 @@ function handleDeleteConfirm() {
     </section>
 
     <!-- ── Switch ────────────────────────────────────────────────────────────── -->
-    <section style="padding:1.5rem 0">
+    <section :style="section">
       <h2 :style="sectionTitle">Switch</h2>
       <p :style="sectionDesc">Toggle binaire. role=switch. Auto-import Nuxt.</p>
       <SwitchRoot :checked="switchChecked" :on-checked-change="(v) => switchChecked = v">
@@ -440,6 +441,46 @@ function handleDeleteConfirm() {
           </SwitchLabel>
         </div>
       </SwitchRoot>
+    </section>
+
+    <!-- ── Tooltip ───────────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0">
+      <h2 :style="sectionTitle">Tooltip</h2>
+      <p :style="sectionDesc">Survol/focus. Provider skip-delay SSR-safe. Auto-import Nuxt.</p>
+      <TooltipProvider :open-delay="400" :close-delay="200" :skip-delay="300">
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+          <TooltipRoot>
+            <TooltipTrigger :style="btn">Survol (400ms)</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipS">Ouvre après 400ms — délai Provider</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot>
+            <TooltipTrigger :style="btn">Skip-delay</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipS">Instantané si un tooltip vient de fermer</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot :interactive="true">
+            <TooltipTrigger :style="btn">Interactive</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="{ ...tooltipS, padding: '0.5rem 0.75rem' }">
+                <p style="margin:0 0 0.25rem;font-size:0.8rem">Cliquez le lien ↓</p>
+                <a href="#" style="color:#38bdf8;font-size:0.8rem">Lien dans le tooltip</a>
+              </TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot :positioning="{ placement: 'bottom' }">
+            <TooltipTrigger :style="btnGhost">Placement bas</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipS">placement="bottom"</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+        </div>
+      </TooltipProvider>
     </section>
   </main>
 </template>

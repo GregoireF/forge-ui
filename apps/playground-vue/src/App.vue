@@ -17,6 +17,12 @@ import {
   SwitchLabel,
   SwitchRoot,
   SwitchThumb,
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
   useDialog,
 } from "@forge-ui/vue";
 import { ref } from "vue";
@@ -61,6 +67,7 @@ const btnGhostStyle = {
 } as const;
 
 const btnDangerStyle = { ...btnStyle, background: "#dc2626" } as const;
+const tooltipStyle = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
 
 const overlayStyle = {
   position: "fixed" as const,
@@ -485,6 +492,46 @@ const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px
           </div>
         </SwitchRoot>
       </div>
+    </section>
+
+    <!-- ── Tooltip ───────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Tooltip</h2>
+      <p :style="sectionDescStyle">Survol/focus. Provider skip-delay SSR-safe.</p>
+      <TooltipProvider :open-delay="400" :close-delay="200" :skip-delay="300">
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+          <TooltipRoot>
+            <TooltipTrigger :style="btnStyle">Survol (400ms)</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipStyle">Ouvre après 400ms — délai Provider</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot>
+            <TooltipTrigger :style="btnStyle">Skip-delay</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipStyle">Instantané si un tooltip vient de fermer</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot :interactive="true">
+            <TooltipTrigger :style="btnStyle">Interactive</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="{ ...tooltipStyle, padding: '0.5rem 0.75rem' }">
+                <p style="margin:0 0 0.25rem;font-size:0.8rem">Cliquez le lien ↓</p>
+                <a href="#" style="color:#38bdf8;font-size:0.8rem">Lien dans le tooltip</a>
+              </TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
+          <TooltipRoot :positioning="{ placement: 'bottom' }">
+            <TooltipTrigger :style="btnGhostStyle">Placement bas</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipStyle">placement="bottom"</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+        </div>
+      </TooltipProvider>
     </section>
 
     <!-- ── asChild ────────────────────────────────────────────────────────────── -->

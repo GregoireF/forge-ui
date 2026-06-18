@@ -1,5 +1,5 @@
 import type { CheckboxChecked } from "@forge-ui/react";
-import { AlertDialog, Checkbox, Dialog, DialogPortal, Popover, Select, Switch, useDialog } from "@forge-ui/react";
+import { AlertDialog, Checkbox, Dialog, DialogPortal, Popover, Select, Switch, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -64,6 +64,13 @@ export default function App() {
 
       <Section title="Switch" description="Toggle binaire. role=switch, hidden input auto.">
         <SwitchDemo />
+      </Section>
+
+      <Section
+        title="Tooltip"
+        description="Survol/focus pour info contextuelle. Provider avec skip-delay SSR-safe."
+      >
+        <TooltipDemo />
       </Section>
 
       <Section title="asChild" description="Forge merge les props sur votre élément, sans wrapper.">
@@ -497,6 +504,71 @@ function SwitchDemo() {
     </div>
   );
 }
+
+/* ── Tooltip ────────────────────────────────────────────────────────────────── */
+
+function TooltipDemo() {
+  return (
+    <Tooltip.Provider openDelay={400} closeDelay={200} skipDelay={300}>
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
+        <Tooltip.Root>
+          <Tooltip.Trigger style={btnStyle}>Survol (400ms)</Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content style={tooltipStyle}>
+              Ouvre après 400ms — délai Provider
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+
+        <Tooltip.Root>
+          <Tooltip.Trigger style={btnStyle}>Skip-delay</Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content style={tooltipStyle}>
+              S'ouvre instantanément si un tooltip vient de fermer
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+
+        <Tooltip.Root interactive>
+          <Tooltip.Trigger style={btnStyle}>Interactive</Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content style={{ ...tooltipStyle, padding: "0.5rem 0.75rem" }}>
+              <p style={{ margin: 0, marginBottom: "0.25rem", fontSize: "0.8rem" }}>Cliquez le lien ↓</p>
+              {/* biome-ignore lint/a11y/useValidAnchor: demo interactive */}
+              <a href="#" style={{ color: "#38bdf8", fontSize: "0.8rem" }}>Lien dans le tooltip</a>
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+
+        <Tooltip.Root disabled>
+          <Tooltip.Trigger style={{ ...btnStyle, opacity: 0.5 }} disabled>
+            Désactivé
+          </Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content style={tooltipStyle}>Ne s'affiche pas</Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+
+        <Tooltip.Root positioning={{ placement: "bottom" }}>
+          <Tooltip.Trigger style={btnGhostStyle}>Placement bas</Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content style={tooltipStyle}>placement=&quot;bottom&quot;</Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+      </div>
+    </Tooltip.Provider>
+  );
+}
+
+const tooltipStyle: React.CSSProperties = {
+  background: "#1e293b",
+  color: "#f1f5f9",
+  borderRadius: "6px",
+  padding: "0.35rem 0.6rem",
+  fontSize: "0.8rem",
+  boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
+  maxWidth: "240px",
+};
 
 /* ── asChild ────────────────────────────────────────────────────────────────── */
 

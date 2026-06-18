@@ -34,6 +34,7 @@ export default defineNuxtModule({
       { name: "useField", from },
       { name: "useCheckbox", from },
       { name: "useSwitch", from },
+      { name: "useTooltip", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
     ]);
@@ -46,6 +47,7 @@ export default defineNuxtModule({
     addImports({ name: "Field", from });
     addImports({ name: "Checkbox", from });
     addImports({ name: "Switch", from });
+    addImports({ name: "Tooltip", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -149,6 +151,19 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of switchComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const tooltipComponents = [
+      "TooltipProvider",
+      "TooltipRoot",
+      "TooltipTrigger",
+      "TooltipPortal",
+      "TooltipContent",
+      "TooltipArrow",
+    ] as const;
+
+    for (const name of tooltipComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },

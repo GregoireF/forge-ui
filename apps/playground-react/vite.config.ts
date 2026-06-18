@@ -15,6 +15,7 @@ export default defineConfig({
       "@forge-ui/popover": fileURLToPath(new URL("../../packages/primitives/popover/src/index.ts", import.meta.url)),
       "@forge-ui/select": fileURLToPath(new URL("../../packages/primitives/select/src/index.ts", import.meta.url)),
       "@forge-ui/field": fileURLToPath(new URL("../../packages/field/src/index.ts", import.meta.url)),
+      "@forge-ui/tooltip": fileURLToPath(new URL("../../packages/primitives/tooltip/src/index.ts", import.meta.url)),
       "@forge-ui/floating": fileURLToPath(new URL("../../packages/floating/src/index.ts", import.meta.url)),
     },
   },
