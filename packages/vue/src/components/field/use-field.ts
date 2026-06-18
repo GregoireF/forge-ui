@@ -1,6 +1,6 @@
 import type { CreateFieldOptions, FieldApi } from "@forge-ui/field";
 import { connectField, createFieldIds } from "@forge-ui/field";
-import { reactive, watchEffect } from "vue";
+import { getCurrentInstance, reactive, watchEffect } from "vue";
 
 export type { CreateFieldOptions };
 
@@ -13,7 +13,11 @@ export type { CreateFieldOptions };
 // function, Vue automatically tracks ctx.hasDescription / ctx.hasError as
 // reactive deps and re-renders the consumer on change.
 export function useField(options: CreateFieldOptions = {}): FieldApi {
-  const ids = createFieldIds(options.id);
+  // getCurrentInstance().uid is stable within a single render pass on both
+  // server and client (Vue resets the counter per SSR request, same order →
+  // same values). Provides SSR-safe IDs without a module-level singleton.
+  const uid = getCurrentInstance()?.uid;
+  const ids = createFieldIds(options.id ?? (uid !== undefined ? `forge-field-${uid}` : undefined));
 
   const ctx = reactive({
     ...ids,
@@ -39,17 +43,9 @@ export function useField(options: CreateFieldOptions = {}): FieldApi {
 
   return {
     ...connect,
-    registerDescription() {
-      ctx.hasDescription = true;
-    },
-    unregisterDescription() {
-      ctx.hasDescription = false;
-    },
-    registerError() {
-      ctx.hasError = true;
-    },
-    unregisterError() {
-      ctx.hasError = false;
-    },
+    registerDescription() { ctx.hasDescription = true; },
+    unregisterDescription() { ctx.hasDescription = false; },
+    registerError() { ctx.hasError = true; },
+    unregisterError() { ctx.hasError = false; },
   };
 }

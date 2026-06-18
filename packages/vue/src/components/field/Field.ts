@@ -1,6 +1,6 @@
 import type { FieldApi } from "@forge-ui/field";
-import type { PropType } from "vue";
-import { defineComponent, h, inject, onMounted, onUnmounted, provide } from "vue";
+import type { InjectionKey, PropType } from "vue";
+import { defineComponent, getCurrentInstance, h, inject, onMounted, onUnmounted, provide } from "vue";
 import { Slot } from "../dialog/Slot.js";
 import { fieldKey } from "./field-context.js";
 import type { CreateFieldOptions } from "./use-field.js";
@@ -47,6 +47,24 @@ const FieldLabel = defineComponent({
       const labelProps = { ...api.getLabelProps(), ...attrs };
       if (props.asChild) return h(Slot, labelProps, slots.default);
       return h("label", labelProps, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// RequiredIndicator — visual marker (*) hidden from screen readers.
+// ---------------------------------------------------------------------------
+
+const FieldRequiredIndicator = defineComponent({
+  name: "ForgeFieldRequiredIndicator",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      if (!api.context.required) return null;
+      const indicatorProps = { ...api.getRequiredIndicatorProps(), ...attrs };
+      if (props.asChild) return h(Slot, indicatorProps, slots.default);
+      return h("span", indicatorProps, slots.default?.() ?? ["*"]);
     };
   },
 });
@@ -108,15 +126,64 @@ const FieldError = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// Group — wraps checkboxes / radios with role="group" + aria-labelledby.
+// Generates a stable label ID from the component instance UID (SSR-safe).
+// ---------------------------------------------------------------------------
+
+interface FieldGroupContext { labelId: string }
+const fieldGroupKey: InjectionKey<FieldGroupContext> = Symbol("forge-field-group");
+
+const FieldGroup = defineComponent({
+  name: "ForgeFieldGroup",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const uid = getCurrentInstance()!.uid;
+    const labelId = `forge-field-group-${uid}-label`;
+    provide(fieldGroupKey, { labelId });
+    return () => {
+      const groupProps = { role: "group" as const, "aria-labelledby": labelId, ...attrs };
+      if (props.asChild) return h(Slot, groupProps, slots.default);
+      return h("div", groupProps, slots.default?.());
+    };
+  },
+});
+
+const FieldGroupLabel = defineComponent({
+  name: "ForgeFieldGroupLabel",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const ctx = inject(fieldGroupKey);
+    if (!ctx) throw new globalThis.Error("Field.GroupLabel must be inside <Field.Group>");
+    return () => {
+      const labelProps = { id: ctx.labelId, ...attrs };
+      if (props.asChild) return h(Slot, labelProps, slots.default);
+      return h("p", labelProps, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
 
 export const Field = {
   Root: FieldRoot,
   Label: FieldLabel,
+  RequiredIndicator: FieldRequiredIndicator,
   Control: FieldControl,
   Description: FieldDescription,
   Error: FieldError,
+  Group: FieldGroup,
+  GroupLabel: FieldGroupLabel,
 } as const;
 
-export { FieldControl, FieldDescription, FieldError, FieldLabel, FieldRoot };
+export {
+  FieldControl,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldGroupLabel,
+  FieldLabel,
+  FieldRequiredIndicator,
+  FieldRoot,
+};

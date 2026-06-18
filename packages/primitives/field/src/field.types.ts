@@ -40,7 +40,10 @@ export interface FieldConnectReturn {
     readOnly: true | undefined;
   };
   getDescriptionProps(): { id: string };
-  getErrorProps(): { id: string; role: "alert"; "aria-live": "polite" };
+  getErrorProps(): { id: string; role: "alert"; "aria-live": "assertive" };
+  /** Wraps the required indicator (* or custom) with aria-hidden so screen readers skip it.
+   *  Screen readers already get the required status from aria-required on the control. */
+  getRequiredIndicatorProps(): { "aria-hidden": true };
 }
 
 // Full API returned by framework hooks — extends connect with reactive register/unregister.

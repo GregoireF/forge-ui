@@ -1,9 +1,9 @@
 import type { FieldConnectReturn, FieldContext, FieldIds } from "./field.types.js";
 
-let counter = 0;
+let _counter = 0;
 
 export function createFieldIds(id?: string): FieldIds {
-  const base = id ?? `forge-field-${++counter}`;
+  const base = id ?? `forge-field-${++_counter}`;
   return {
     controlId: base,
     labelId: `${base}-label`,
@@ -54,8 +54,16 @@ export function connectField(context: FieldContext): FieldConnectReturn {
       return {
         id: context.errorId,
         role: "alert" as const,
-        "aria-live": "polite" as const,
+        // "assertive" interrupts the screen reader immediately — correct for
+        // inline form errors that appear after user interaction (blur/submit).
+        "aria-live": "assertive" as const,
       };
+    },
+
+    getRequiredIndicatorProps() {
+      // aria-hidden so screen readers don't announce the visual "*".
+      // The required status is already communicated via aria-required on the control.
+      return { "aria-hidden": true as const };
     },
   };
 }
