@@ -209,6 +209,9 @@ export function connectCombobox(
 
     getTriggerProps() {
       // Optional toggle button (chevron icon). Opens/closes the dropdown.
+      // ref registers buttonEl so watchOutside (capture-phase) excludes it from
+      // INTERACT_OUTSIDE — without this, clicking the button fires INTERACT_OUTSIDE
+      // first, then onClick re-opens, leaving the dropdown perpetually open.
       return {
         type: "button" as const,
         tabIndex: -1 as const,
@@ -216,6 +219,7 @@ export function connectCombobox(
         "data-state": state,
         "data-forge-scope": "combobox",
         "data-forge-part": "trigger",
+        ref: (el: unknown) => machine.setContext({ buttonEl: el as HTMLElement | null }),
         onClick() {
           if (!context.disabled && !context.readOnly) {
             send(isOpen ? "CLOSE" : "OPEN");

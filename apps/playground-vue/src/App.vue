@@ -630,16 +630,6 @@ const comboboxSelected = ref<string[]>([]);
           <Field.Error style="font-size:0.75rem;color:#dc2626">Adresse e-mail invalide.</Field.Error>
         </Field.Root>
 
-        <FieldGroup>
-          <FieldGroupLabel style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;display:block">
-            Préférences de notification
-          </FieldGroupLabel>
-          <div style="display:flex;flex-direction:column;gap:0.35rem">
-            <label style="font-size:0.875rem"><input type="checkbox" /> Email</label>
-            <label style="font-size:0.875rem"><input type="checkbox" /> SMS</label>
-            <label style="font-size:0.875rem"><input type="checkbox" /> Push</label>
-          </div>
-        </FieldGroup>
       </div>
     </section>
 

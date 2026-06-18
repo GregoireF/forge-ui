@@ -50,6 +50,7 @@ export function useTooltip(options: UseTooltipOptions = {}) {
     getTriggerProps: () => api.value.getTriggerProps(),
     getPositionerProps: () => api.value.getPositionerProps(),
     getContentProps: () => api.value.getContentProps(),
+    getAnchorProps: () => api.value.getAnchorProps(),
     getArrowProps: () => api.value.getArrowProps(),
     getArrowTipProps: () => api.value.getArrowTipProps(),
   };

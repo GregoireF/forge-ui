@@ -54,8 +54,10 @@ const computePosition = makeComputePositionActivity<ComboboxContext>();
 
 const watchOutside = makeWatchOutsideActivity<ComboboxContext>({
   getId: (ctx) => ctx.id,
-  // Clicking inside the input or the listbox should NOT close.
-  getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl],
+  // Clicking inside the input, the listbox, or the toggle button should NOT close.
+  // buttonEl is included because the listener runs in capture phase — without it,
+  // INTERACT_OUTSIDE fires before the button's onClick, causing a reopen race.
+  getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl, ctx.buttonEl],
   sendClose: "INTERACT_OUTSIDE",
 });
 
@@ -117,6 +119,7 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       ...(options.filterFn !== undefined && { filterFn: options.filterFn }),
       triggerEl: null,
       contentEl: null,
+      buttonEl: null,
       arrowEl: null,
       x: 0,
       y: 0,

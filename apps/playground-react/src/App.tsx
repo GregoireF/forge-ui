@@ -663,16 +663,6 @@ function FieldDemo() {
         </Field.Error>
       </Field.Root>
 
-      <Field.Group>
-        <Field.GroupLabel style={{ fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", display: "block" }}>
-          Préférences de notification
-        </Field.GroupLabel>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-          <label style={{ fontSize: "0.875rem" }}><input type="checkbox" /> Email</label>
-          <label style={{ fontSize: "0.875rem" }}><input type="checkbox" /> SMS</label>
-          <label style={{ fontSize: "0.875rem" }}><input type="checkbox" /> Push</label>
-        </div>
-      </Field.Group>
     </div>
   );
 }

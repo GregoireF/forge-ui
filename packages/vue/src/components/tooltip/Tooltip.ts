@@ -70,6 +70,7 @@ const TooltipRoot = defineComponent({
     openDelay: { type: Number, default: undefined },
     closeDelay: { type: Number, default: undefined },
     id: { type: String, default: undefined },
+    positioning: { type: Object as PropType<import("@forge-ui/tooltip").TooltipPositioning>, default: undefined },
     onOpenChange: { type: Function as PropType<(open: boolean) => void>, default: undefined },
   },
   emits: ["update:open"],
@@ -84,6 +85,7 @@ const TooltipRoot = defineComponent({
       }),
       ...(props.openDelay !== undefined && { openDelay: props.openDelay }),
       ...(props.closeDelay !== undefined && { closeDelay: props.closeDelay }),
+      ...(props.positioning !== undefined && { positioning: props.positioning }),
       ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
     });
 

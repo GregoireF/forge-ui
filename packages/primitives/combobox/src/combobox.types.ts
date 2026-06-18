@@ -41,6 +41,8 @@ export interface ComboboxContext {
   // Floating — the input acts as reference (triggerEl), listbox as content (contentEl).
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;
+  /** The optional ▾ toggle button — added to watchOutside containers so clicking it doesn't race with INTERACT_OUTSIDE. */
+  buttonEl: HTMLElement | null;
   arrowEl: HTMLElement | null;
   x: number;
   y: number;
