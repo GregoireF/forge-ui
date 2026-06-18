@@ -80,13 +80,6 @@
         "typescript": "*",
       },
     },
-    "packages/field": {
-      "name": "@forge-ui/field",
-      "version": "0.0.0",
-      "devDependencies": {
-        "typescript": "*",
-      },
-    },
     "packages/floating": {
       "name": "@forge-ui/floating",
       "version": "0.0.0",
@@ -141,6 +134,13 @@
       "dependencies": {
         "@forge-ui/core": "workspace:*",
       },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/field": {
+      "name": "@forge-ui/field",
+      "version": "0.0.0",
       "devDependencies": {
         "typescript": "*",
       },
@@ -493,7 +493,7 @@
 
     "@forge-ui/dialog": ["@forge-ui/dialog@workspace:packages/primitives/dialog"],
 
-    "@forge-ui/field": ["@forge-ui/field@workspace:packages/field"],
+    "@forge-ui/field": ["@forge-ui/field@workspace:packages/primitives/field"],
 
     "@forge-ui/floating": ["@forge-ui/floating@workspace:packages/floating"],
 

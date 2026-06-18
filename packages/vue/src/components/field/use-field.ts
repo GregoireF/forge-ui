@@ -1,32 +1,22 @@
-import type { CreateFieldOptions, FieldApi, FieldContext } from "@forge-ui/field";
-import { reactive } from "vue";
+import type { CreateFieldOptions, FieldApi } from "@forge-ui/field";
+import { connectField, createFieldIds } from "@forge-ui/field";
+import { reactive, watchEffect } from "vue";
 
 export type { CreateFieldOptions };
 
-let counter = 0;
-function generateId(): string {
-  return `forge-field-${++counter}`;
-}
-
-/**
- * Vue composable wrapping @forge-ui/field.
- *
- * Unlike React (which re-creates the api on every render), Vue needs a reactive
- * context object so that register/unregister mutations (hasDescription, hasError)
- * automatically trigger re-renders in the Field.Control's aria-describedby.
- *
- * We replicate the context creation here using Vue's reactive() so mutations go
- * through the Vue reactivity proxy and all render functions that read the
- * context are notified correctly.
- */
+// Unlike React (which re-creates context on every render), Vue needs a reactive
+// context object so that hasDescription/hasError mutations propagate through
+// Vue's reactivity system and re-render any template that reads them.
+//
+// connectField(ctx) receives the reactive proxy. Its returned getter functions
+// (getControlProps etc.) close over ctx — when called inside a Vue render
+// function, Vue automatically tracks ctx.hasDescription / ctx.hasError as
+// reactive deps and re-renders the consumer on change.
 export function useField(options: CreateFieldOptions = {}): FieldApi {
-  const id = options.id ?? generateId();
+  const ids = createFieldIds(options.id);
 
-  const ctx: FieldContext = reactive({
-    controlId: id,
-    labelId: `${id}-label`,
-    descriptionId: `${id}-description`,
-    errorId: `${id}-error`,
+  const ctx = reactive({
+    ...ids,
     invalid: options.invalid ?? false,
     required: options.required ?? false,
     disabled: options.disabled ?? false,
@@ -35,47 +25,20 @@ export function useField(options: CreateFieldOptions = {}): FieldApi {
     hasError: false,
   });
 
-  function buildAriaDescribedBy(): string | undefined {
-    const parts: string[] = [];
-    if (ctx.hasDescription) parts.push(ctx.descriptionId);
-    if (ctx.hasError) parts.push(ctx.errorId);
-    return parts.length > 0 ? parts.join(" ") : undefined;
-  }
+  // When `options` is a Vue reactive props object (passed from FieldRoot),
+  // watchEffect re-syncs ctx on every prop change. When it's a plain object,
+  // this runs once on mount only.
+  watchEffect(() => {
+    ctx.invalid = options.invalid ?? false;
+    ctx.required = options.required ?? false;
+    ctx.disabled = options.disabled ?? false;
+    ctx.readOnly = options.readOnly ?? false;
+  });
+
+  const connect = connectField(ctx);
 
   return {
-    context: ctx,
-
-    getLabelProps() {
-      return { id: ctx.labelId, htmlFor: ctx.controlId };
-    },
-
-    getControlProps() {
-      return {
-        id: ctx.controlId,
-        "aria-labelledby": ctx.labelId,
-        "aria-describedby": buildAriaDescribedBy(),
-        "aria-invalid": ctx.invalid ? true : undefined,
-        "aria-required": ctx.required ? true : undefined,
-        "aria-disabled": ctx.disabled ? true : undefined,
-        "aria-readonly": ctx.readOnly ? true : undefined,
-        required: ctx.required || undefined,
-        disabled: ctx.disabled || undefined,
-        readOnly: ctx.readOnly || undefined,
-      };
-    },
-
-    getDescriptionProps() {
-      return { id: ctx.descriptionId };
-    },
-
-    getErrorProps() {
-      return {
-        id: ctx.errorId,
-        role: "alert" as const,
-        "aria-live": "polite" as const,
-      };
-    },
-
+    ...connect,
     registerDescription() {
       ctx.hasDescription = true;
     },

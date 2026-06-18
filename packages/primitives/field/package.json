@@ -17,7 +17,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun run ../../tooling/scripts/build.ts",
+    "build": "bun run ../../../tooling/scripts/build.ts",
     "dev": "tsc --watch --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

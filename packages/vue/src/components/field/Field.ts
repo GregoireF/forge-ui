@@ -26,14 +26,9 @@ const FieldRoot = defineComponent({
     readOnly: { type: Boolean as PropType<boolean>, default: undefined },
   },
   setup(props, { slots }) {
-    const options: CreateFieldOptions = {};
-    if (props.id !== undefined) options.id = props.id;
-    if (props.invalid !== undefined) options.invalid = props.invalid;
-    if (props.required !== undefined) options.required = props.required;
-    if (props.disabled !== undefined) options.disabled = props.disabled;
-    if (props.readOnly !== undefined) options.readOnly = props.readOnly;
-
-    const api = useField(options);
+    // Pass the reactive props object so watchEffect in useField syncs
+    // ctx.invalid/required/disabled/readOnly on every prop change.
+    const api = useField(props);
     provide(fieldKey, api);
     return () => slots.default?.();
   },
