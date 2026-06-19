@@ -18,6 +18,8 @@ export default defineConfig({
       "@forge-ui/combobox": fileURLToPath(new URL("../../packages/primitives/combobox/src/index.ts", import.meta.url)),
       "@forge-ui/tooltip": fileURLToPath(new URL("../../packages/primitives/tooltip/src/index.ts", import.meta.url)),
       "@forge-ui/floating": fileURLToPath(new URL("../../packages/floating/src/index.ts", import.meta.url)),
+      "@forge-ui/hover-card": fileURLToPath(new URL("../../packages/primitives/hover-card/src/index.ts", import.meta.url)),
+      "@forge-ui/tags-input": fileURLToPath(new URL("../../packages/primitives/tags-input/src/index.ts", import.meta.url)),
     },
   },
   server: {

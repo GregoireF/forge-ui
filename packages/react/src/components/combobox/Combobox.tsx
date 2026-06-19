@@ -68,12 +68,14 @@ function Input({ asChild, ...rest }: ComboboxInputProps) {
   const api = useCtx();
   // React uses onChange / onKeyDown (camelCase). The connect emits onInput/onKeydown.
   // Strip connect's onInput/onKeydown and wire them up correctly for React.
-  const { onInput, onKeydown, ref: machineRef, ...inputProps } = api.getInputProps() as ReturnType<typeof api.getInputProps> & {
+  const { onInput, onKeydown, ref: machineRef, autocomplete, ...inputProps } = api.getInputProps() as ReturnType<typeof api.getInputProps> & {
     onInput?: (e: Event) => void;
     onKeydown?: (e: KeyboardEvent) => void;
     ref?: (el: HTMLInputElement | null) => void;
+    autocomplete?: string;
   };
   const props = {
+    ...(autocomplete !== undefined && { autoComplete: autocomplete }),
     ...inputProps,
     ...rest,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
