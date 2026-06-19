@@ -149,7 +149,7 @@ export function connectTooltip(
         "data-forge-scope": "tooltip",
         "data-forge-part": "arrow",
         "data-side": side,
-        ref: (el: unknown) => machine.setContext({ arrowEl: el as HTMLElement | null }),
+        ref: (el: unknown) => machine.setContext({ arrowEl: el as Element | null }),
       };
     },
 

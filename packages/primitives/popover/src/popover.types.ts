@@ -24,7 +24,7 @@ export interface PopoverContext {
   triggerEl: HTMLElement | null;
   anchorEl: HTMLElement | null;
   contentEl: HTMLElement | null;
-  arrowEl: HTMLElement | null;
+  arrowEl: Element | null;
   x: number;
   y: number;
   positioned: boolean;

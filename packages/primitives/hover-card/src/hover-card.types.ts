@@ -16,7 +16,7 @@ export interface HoverCardContext {
   // FloatingContext-compatible fields required by makeComputePositionActivity
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;
-  arrowEl: HTMLElement | null;
+  arrowEl: Element | null;
   x: number;
   y: number;
   positioned: boolean;

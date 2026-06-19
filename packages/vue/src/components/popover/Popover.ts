@@ -225,7 +225,7 @@ const PopoverArrow = defineComponent({
         child,
         mergeProps(child.props ?? {}, arrowAttrs, {
           ref: (el: Element | ComponentPublicInstance | null) => {
-            machineRef?.(el instanceof HTMLElement ? el : null);
+            machineRef?.(el instanceof Element ? (el as HTMLElement) : null);
           },
         }),
       );

@@ -127,7 +127,7 @@ export function connectHoverCard(
         "data-forge-scope": "hover-card",
         "data-forge-part": "arrow",
         "data-side": side,
-        ref: (el: unknown) => machine.setContext({ arrowEl: el as HTMLElement | null }),
+        ref: (el: unknown) => machine.setContext({ arrowEl: el as Element | null }),
       };
     },
   };

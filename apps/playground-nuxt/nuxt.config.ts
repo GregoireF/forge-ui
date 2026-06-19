@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
-  modules: ["@forge-ui/nuxt"],
+  modules: [fileURLToPath(new URL("../../packages/nuxt/src/module.ts", import.meta.url))],
   compatibilityDate: "2025-01-01",
   devServer: { port: 3002 },
   vite: {

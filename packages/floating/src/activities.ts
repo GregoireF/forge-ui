@@ -26,7 +26,7 @@ export interface FloatingContext {
   currentPlacement: import("@floating-ui/dom").Placement;
   positioning: ResolvedFloatingPositioning;
   contentEl: HTMLElement | null;
-  arrowEl: HTMLElement | null;
+  arrowEl: Element | null;
   /** Primary reference element (anchor override when provided). */
   anchorEl?: HTMLElement | null;
   /** Fallback reference (trigger). */
@@ -131,8 +131,8 @@ export function makeComputePositionActivity<
         // Arrow position.
         if (ctx.arrowEl && result.middlewareData.arrow) {
           const { x: ax, y: ay } = result.middlewareData.arrow;
-          if (ax != null) ctx.arrowEl.style.left = `${ax}px`;
-          if (ay != null) ctx.arrowEl.style.top = `${ay}px`;
+          if (ax != null) (ctx.arrowEl as HTMLElement).style.left = `${ax}px`;
+          if (ay != null) (ctx.arrowEl as HTMLElement).style.top = `${ay}px`;
         }
 
         // data-hidden for hideWhenDetached (written on content div).

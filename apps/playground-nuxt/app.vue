@@ -1,6 +1,8 @@
 <script setup lang="ts">
-// Aucun import nécessaire — @forge-ui/nuxt auto-importe tout.
-// useDialog, AlertDialog, Dialog, Popover, Select, etc. sont disponibles directement.
+// Explicit imports for dot-notation namespaces used in templates.
+// Without these, the Vue template compiler emits resolveComponent("HoverCard.Root")
+// which fails in SSR because no component is registered under that dot-notation name.
+import { Combobox, HoverCard, TagsInput } from "@forge-ui/vue";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),

@@ -48,7 +48,7 @@ export interface SelectContext {
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;
   /** Required by FloatingContext — Select has no arrow, always null. */
-  arrowEl: HTMLElement | null;
+  arrowEl: Element | null;
   // Callbacks
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;

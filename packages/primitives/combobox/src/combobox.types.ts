@@ -51,7 +51,7 @@ export interface ComboboxContext {
   contentEl: HTMLElement | null;
   /** The optional ▾ toggle button — added to watchOutside containers so clicking it doesn't race with INTERACT_OUTSIDE. */
   buttonEl: HTMLElement | null;
-  arrowEl: HTMLElement | null;
+  arrowEl: Element | null;
   x: number;
   y: number;
   positioned: boolean;

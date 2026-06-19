@@ -14,7 +14,7 @@ export interface TooltipContext {
   contentId: string;
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;
-  arrowEl: HTMLElement | null;
+  arrowEl: Element | null;
   anchorEl?: HTMLElement | null;
   x: number;
   y: number;

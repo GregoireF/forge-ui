@@ -86,9 +86,36 @@ const HoverCardTrigger = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const triggerProps = { ...patchVueEvents(api.getTriggerProps()), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots.default);
-      return h("a", triggerProps, slots.default?.());
+      const rawProps = api.getTriggerProps() as Record<string, unknown> & {
+        ref?: (el: HTMLElement | null) => void;
+      };
+      const { ref: machineRef, ...triggerAttrs } = rawProps;
+      const patchedAttrs = { ...patchVueEvents(triggerAttrs), ...attrs };
+
+      if (props.asChild) {
+        const children = slots.default?.();
+        if (!children?.length) return null;
+        const child = children[0];
+        return cloneVNode(
+          child,
+          mergeProps(child.props ?? {}, patchedAttrs, {
+            ref: (el: Element | ComponentPublicInstance | null) => {
+              machineRef?.(el instanceof Element ? (el as HTMLElement) : null);
+            },
+          }),
+        );
+      }
+
+      return h(
+        "a",
+        {
+          ...patchedAttrs,
+          ref: (el: Element | ComponentPublicInstance | null) => {
+            machineRef?.(el instanceof Element ? (el as HTMLElement) : null);
+          },
+        },
+        slots.default?.(),
+      );
     };
   },
 });
@@ -185,7 +212,7 @@ const HoverCardArrow = defineComponent({
         child,
         mergeProps(child.props ?? {}, arrowAttrs, {
           ref: (el: Element | ComponentPublicInstance | null) => {
-            machineRef?.(el instanceof HTMLElement ? el : null);
+            machineRef?.(el instanceof Element ? (el as HTMLElement) : null);
           },
         }),
       );

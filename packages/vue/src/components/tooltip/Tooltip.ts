@@ -1,5 +1,5 @@
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
-import { defineComponent, h, inject, provide, reactive, ref, watch } from "vue";
+import { cloneVNode, defineComponent, h, inject, mergeProps, provide, reactive, ref, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
@@ -244,7 +244,23 @@ const TooltipArrow = defineComponent({
   name: "ForgeTooltipArrow",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h(Slot, api.getArrowProps(), slots.default);
+    return () => {
+      const rawProps = api.getArrowProps() as Record<string, unknown> & {
+        ref?: (el: Element | null) => void;
+      };
+      const { ref: machineRef, ...arrowAttrs } = rawProps;
+      const children = slots.default?.();
+      if (!children?.length) return null;
+      const child = children[0];
+      return cloneVNode(
+        child,
+        mergeProps(child.props ?? {}, arrowAttrs, {
+          ref: (el: Element | ComponentPublicInstance | null) => {
+            machineRef?.(el instanceof Element ? (el as HTMLElement) : null);
+          },
+        }),
+      );
+    };
   },
 });
 
