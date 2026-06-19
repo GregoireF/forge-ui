@@ -84,7 +84,10 @@ export function connectHoverCard(
           left: `${context.x}px`,
           width: "max-content",
           opacity: "var(--forge-revealed, 0)" as unknown as number,
-          pointerEvents: "none" as const,
+          // Only block pointer events when card is fully closed.
+          // During open/closing the positioner must be interactive so
+          // hover-on-content can cancel the close timer.
+          ...(!isOpen && { pointerEvents: "none" as const }),
         },
         "data-forge-scope": "hover-card",
         "data-forge-part": "positioner",

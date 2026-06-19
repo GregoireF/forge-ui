@@ -1,6 +1,6 @@
 import type { HoverCardPositioning } from "@forge-ui/hover-card";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
-import { defineComponent, h, inject, provide, watch } from "vue";
+import { cloneVNode, defineComponent, h, inject, mergeProps, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
@@ -173,7 +173,23 @@ const HoverCardArrow = defineComponent({
   name: "ForgeHoverCardArrow",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h(Slot, api.getArrowProps(), slots.default);
+    return () => {
+      const rawProps = api.getArrowProps() as Record<string, unknown> & {
+        ref?: (el: HTMLElement | null) => void;
+      };
+      const { ref: machineRef, ...arrowAttrs } = rawProps;
+      const children = slots.default?.();
+      if (!children?.length) return null;
+      const child = children[0];
+      return cloneVNode(
+        child,
+        mergeProps(child.props ?? {}, arrowAttrs, {
+          ref: (el: Element | ComponentPublicInstance | null) => {
+            machineRef?.(el instanceof HTMLElement ? el : null);
+          },
+        }),
+      );
+    };
   },
 });
 

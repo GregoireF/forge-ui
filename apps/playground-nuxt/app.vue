@@ -789,13 +789,13 @@ function handleDeleteConfirm() {
  */
 
 @keyframes forge-fade-scale-in {
-  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; scale: 0.97; translate: 0 -6px; }
+  to   { opacity: 1; scale: 1;    translate: none; }
 }
 
 @keyframes forge-fade-scale-out {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  from { opacity: 1; scale: 1;    translate: none; }
+  to   { opacity: 0; scale: 0.97; translate: 0 6px; }
 }
 
 @keyframes forge-overlay-in {

@@ -1,6 +1,6 @@
 import type { PopoverPositioning } from "@forge-ui/popover";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
-import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch } from "vue";
+import { cloneVNode, defineComponent, h, inject, mergeProps, onMounted, onUnmounted, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../dialog/Slot.js";
@@ -208,7 +208,28 @@ const PopoverArrow = defineComponent({
   name: "ForgePopoverArrow",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h(Slot, api.getArrowProps(), slots.default);
+    return () => {
+      // Must clone the child directly and attach ref on the DOM element.
+      // h(Slot, { ref }, slots) attaches the ref to the Slot component
+      // instance (a Vue proxy), not the underlying DOM node. Floating UI's
+      // arrow() middleware then receives the proxy and getBoundingClientRect
+      // is undefined → arrow never positioned.
+      const rawProps = api.getArrowProps() as Record<string, unknown> & {
+        ref?: (el: HTMLElement | null) => void;
+      };
+      const { ref: machineRef, ...arrowAttrs } = rawProps;
+      const children = slots.default?.();
+      if (!children?.length) return null;
+      const child = children[0];
+      return cloneVNode(
+        child,
+        mergeProps(child.props ?? {}, arrowAttrs, {
+          ref: (el: Element | ComponentPublicInstance | null) => {
+            machineRef?.(el instanceof HTMLElement ? el : null);
+          },
+        }),
+      );
+    };
   },
 });
 
