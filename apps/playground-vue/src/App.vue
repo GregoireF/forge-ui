@@ -15,6 +15,12 @@ import {
   FieldGroup,
   FieldGroupLabel,
   FieldRequiredIndicator,
+  HoverCard,
+  HoverCardArrow,
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardRoot,
+  HoverCardTrigger,
   Popover,
   Select,
   Switch,
@@ -149,6 +155,10 @@ const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px
 
 const comboboxContentStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
 const comboboxItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
+
+const hoverCardStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", minWidth: "260px", maxWidth: "320px", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)" } as const;
+const hoverCardAvatarStyle = { width: "40px", height: "40px", borderRadius: "50%", background: "#6366f1", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1.1rem", flexShrink: 0 } as const;
+const hoverCardLinkStyle = { color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline", cursor: "pointer" } as const;
 
 const fieldInvalid = ref(false);
 const fieldEmail = ref("");
@@ -630,6 +640,50 @@ const comboboxSelected = ref<string[]>([]);
           </TooltipRoot>
         </div>
       </TooltipProvider>
+    </section>
+
+    <!-- ── HoverCard ─────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">HoverCard</h2>
+      <p :style="sectionDescStyle">Aperçu au survol. openDelay=700ms, closeDelay=300ms. Contenu interactif possible.</p>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start">
+        <HoverCardRoot>
+          <HoverCardTrigger :asChild="true">
+            <a :style="hoverCardLinkStyle" href="#" @click.prevent>@forge-ui</a>
+          </HoverCardTrigger>
+          <HoverCardPortal>
+            <HoverCardContent :style="hoverCardStyle">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">
+                <div :style="hoverCardAvatarStyle">F</div>
+                <div>
+                  <p style="margin:0;font-weight:600;font-size:0.9rem">forge-ui</p>
+                  <p style="margin:0;font-size:0.75rem;color:#64748b">@forge-ui · headless UI</p>
+                </div>
+              </div>
+              <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#374151;line-height:1.5">
+                Bibliothèque de primitives UI headless. Architecture 3 niveaux : machine → connect → bindings.
+              </p>
+              <div style="display:flex;gap:1rem;font-size:0.75rem;color:#64748b">
+                <span><strong style="color:#1e293b">142</strong> Following</span>
+                <span><strong style="color:#1e293b">2.4k</strong> Followers</span>
+              </div>
+            </HoverCardContent>
+          </HoverCardPortal>
+        </HoverCardRoot>
+
+        <HoverCard.Root :positioning="{ placement: 'bottom' }">
+          <HoverCard.Trigger :asChild="true">
+            <a :style="hoverCardLinkStyle" href="#" @click.prevent>Placement bottom</a>
+          </HoverCard.Trigger>
+          <HoverCard.Portal>
+            <HoverCard.Content :style="hoverCardStyle">
+              <p style="margin:0;font-size:0.85rem;color:#374151">
+                HoverCard positionné en dessous. Survolez le contenu pour maintenir l'ouverture.
+              </p>
+            </HoverCard.Content>
+          </HoverCard.Portal>
+        </HoverCard.Root>
+      </div>
     </section>
 
     <!-- ── Field ────────────────────────────────────────────────────────────────── -->

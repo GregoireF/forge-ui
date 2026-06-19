@@ -35,6 +35,7 @@ export default defineNuxtModule({
       { name: "useCheckbox", from },
       { name: "useSwitch", from },
       { name: "useTooltip", from },
+      { name: "useHoverCard", from },
       { name: "useCombobox", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
@@ -49,6 +50,7 @@ export default defineNuxtModule({
     addImports({ name: "Checkbox", from });
     addImports({ name: "Switch", from });
     addImports({ name: "Tooltip", from });
+    addImports({ name: "HoverCard", from });
     addImports({ name: "Combobox", from });
 
     // ---------------------------------------------------------------------------
@@ -170,6 +172,18 @@ export default defineNuxtModule({
       "TooltipContent",
       "TooltipArrow",
     ] as const;
+
+    const hoverCardComponents = [
+      "HoverCardRoot",
+      "HoverCardTrigger",
+      "HoverCardPortal",
+      "HoverCardContent",
+      "HoverCardArrow",
+    ] as const;
+
+    for (const name of hoverCardComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
 
     const comboboxComponents = [
       "ComboboxRoot",

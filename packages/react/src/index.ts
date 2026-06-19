@@ -120,5 +120,15 @@ export type {
 export { Tooltip } from "./components/tooltip/Tooltip.js";
 export type { UseTooltipOptions } from "./components/tooltip/use-tooltip.js";
 export { useTooltip } from "./components/tooltip/use-tooltip.js";
+export type {
+  HoverCardArrowProps,
+  HoverCardContentProps,
+  HoverCardPortalProps,
+  HoverCardRootProps,
+  HoverCardTriggerProps,
+} from "./components/hover-card/HoverCard.js";
+export { HoverCard } from "./components/hover-card/HoverCard.js";
+export type { UseHoverCardOptions } from "./components/hover-card/use-hover-card.js";
+export { useHoverCard } from "./components/hover-card/use-hover-card.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

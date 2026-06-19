@@ -42,6 +42,10 @@
       "types": "./dist/tooltip/index.d.ts",
       "import": "./dist/tooltip/index.js"
     },
+    "./hover-card": {
+      "types": "./dist/hover-card/index.d.ts",
+      "import": "./dist/hover-card/index.js"
+    },
     "./field": {
       "types": "./dist/field/index.d.ts",
       "import": "./dist/field/index.js"
@@ -74,6 +78,7 @@
     "@forge-ui/popover": "workspace:*",
     "@forge-ui/select": "workspace:*",
     "@forge-ui/switch": "workspace:*",
+    "@forge-ui/hover-card": "workspace:*",
     "@forge-ui/tooltip": "workspace:*"
   },
   "devDependencies": {

@@ -6,6 +6,7 @@
     "composite": true,
     "paths": {
       "@forge-ui/core": ["../core/src/index.ts"],
+      "@forge-ui/floating": ["../floating/src/index.ts"],
       "@forge-ui/alert-dialog": ["../primitives/alert-dialog/src/index.ts"],
       "@forge-ui/checkbox": ["../primitives/checkbox/src/index.ts"],
       "@forge-ui/combobox": ["../primitives/combobox/src/index.ts"],
@@ -14,6 +15,7 @@
       "@forge-ui/popover": ["../primitives/popover/src/index.ts"],
       "@forge-ui/select": ["../primitives/select/src/index.ts"],
       "@forge-ui/switch": ["../primitives/switch/src/index.ts"],
+      "@forge-ui/hover-card": ["../primitives/hover-card/src/index.ts"],
       "@forge-ui/tooltip": ["../primitives/tooltip/src/index.ts"]
     }
   },
@@ -21,11 +23,13 @@
   "exclude": ["node_modules", "dist", "tests"],
   "references": [
     { "path": "../core" },
+    { "path": "../floating" },
     { "path": "../primitives/alert-dialog" },
     { "path": "../primitives/checkbox" },
     { "path": "../primitives/combobox" },
     { "path": "../primitives/dialog" },
     { "path": "../primitives/field" },
+    { "path": "../primitives/hover-card" },
     { "path": "../primitives/popover" },
     { "path": "../primitives/select" },
     { "path": "../primitives/switch" },

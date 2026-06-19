@@ -131,6 +131,17 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/combobox": {
+      "name": "@forge-ui/combobox",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/floating": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/dialog": {
       "name": "@forge-ui/dialog",
       "version": "0.0.0",
@@ -146,6 +157,17 @@
       "version": "0.0.0",
       "devDependencies": {
         "typescript": "*",
+      },
+    },
+    "packages/primitives/hover-card": {
+      "name": "@forge-ui/hover-card",
+      "version": "0.0.1",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/floating": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.8.3",
       },
     },
     "packages/primitives/popover": {
@@ -197,9 +219,11 @@
       "dependencies": {
         "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
+        "@forge-ui/combobox": "workspace:*",
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
+        "@forge-ui/hover-card": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/select": "workspace:*",
         "@forge-ui/switch": "workspace:*",
@@ -227,9 +251,11 @@
       "dependencies": {
         "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
+        "@forge-ui/combobox": "workspace:*",
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
+        "@forge-ui/hover-card": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/select": "workspace:*",
         "@forge-ui/switch": "workspace:*",
@@ -507,6 +533,8 @@
 
     "@forge-ui/checkbox": ["@forge-ui/checkbox@workspace:packages/primitives/checkbox"],
 
+    "@forge-ui/combobox": ["@forge-ui/combobox@workspace:packages/primitives/combobox"],
+
     "@forge-ui/core": ["@forge-ui/core@workspace:packages/core"],
 
     "@forge-ui/dialog": ["@forge-ui/dialog@workspace:packages/primitives/dialog"],
@@ -514,6 +542,8 @@
     "@forge-ui/field": ["@forge-ui/field@workspace:packages/primitives/field"],
 
     "@forge-ui/floating": ["@forge-ui/floating@workspace:packages/floating"],
+
+    "@forge-ui/hover-card": ["@forge-ui/hover-card@workspace:packages/primitives/hover-card"],
 
     "@forge-ui/nuxt": ["@forge-ui/nuxt@workspace:packages/nuxt"],
 

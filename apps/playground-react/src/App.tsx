@@ -1,5 +1,5 @@
 import type { CheckboxChecked } from "@forge-ui/react";
-import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, Popover, Select, Switch, Tooltip, useDialog } from "@forge-ui/react";
+import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Select, Switch, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -78,6 +78,13 @@ export default function App() {
         description="Survol/focus pour info contextuelle. Provider avec skip-delay SSR-safe."
       >
         <TooltipDemo />
+      </Section>
+
+      <Section
+        title="HoverCard"
+        description="Aperçu au survol. openDelay=700ms, closeDelay=300ms. Contenu interactif possible."
+      >
+        <HoverCardDemo />
       </Section>
 
       <Section
@@ -669,6 +676,89 @@ const tooltipStyle: React.CSSProperties = {
   fontSize: "0.8rem",
   boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
   maxWidth: "240px",
+};
+
+/* ── HoverCard ──────────────────────────────────────────────────────────────── */
+
+function HoverCardDemo() {
+  return (
+    <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
+      <HoverCard.Root>
+        {/* biome-ignore lint/a11y/useValidAnchor: demo */}
+        <HoverCard.Trigger asChild>
+          <a
+            href="#"
+            style={{ color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" }}
+            onClick={(e) => e.preventDefault()}
+          >
+            @forge-ui
+          </a>
+        </HoverCard.Trigger>
+        <HoverCard.Portal>
+          <HoverCard.Content style={hoverCardStyle}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+              <div style={avatarStyle}>F</div>
+              <div>
+                <p style={{ margin: 0, fontWeight: 600, fontSize: "0.9rem" }}>forge-ui</p>
+                <p style={{ margin: 0, fontSize: "0.75rem", color: "#64748b" }}>@forge-ui · headless UI</p>
+              </div>
+            </div>
+            <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#374151", lineHeight: 1.5 }}>
+              Bibliothèque de primitives UI headless. Architecture 3 niveaux : machine → connect → bindings.
+            </p>
+            <div style={{ display: "flex", gap: "1rem", fontSize: "0.75rem", color: "#64748b" }}>
+              <span><strong style={{ color: "#1e293b" }}>142</strong> Following</span>
+              <span><strong style={{ color: "#1e293b" }}>2.4k</strong> Followers</span>
+            </div>
+          </HoverCard.Content>
+        </HoverCard.Portal>
+      </HoverCard.Root>
+
+      <HoverCard.Root positioning={{ placement: "bottom" }}>
+        {/* biome-ignore lint/a11y/useValidAnchor: demo */}
+        <HoverCard.Trigger asChild>
+          <a
+            href="#"
+            style={{ color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" }}
+            onClick={(e) => e.preventDefault()}
+          >
+            Placement bottom
+          </a>
+        </HoverCard.Trigger>
+        <HoverCard.Portal>
+          <HoverCard.Content style={hoverCardStyle}>
+            <p style={{ margin: 0, fontSize: "0.85rem", color: "#374151" }}>
+              HoverCard positionné en dessous. Survolez le contenu pour maintenir l'ouverture.
+            </p>
+          </HoverCard.Content>
+        </HoverCard.Portal>
+      </HoverCard.Root>
+    </div>
+  );
+}
+
+const hoverCardStyle: React.CSSProperties = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "10px",
+  padding: "1rem",
+  minWidth: "260px",
+  maxWidth: "320px",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+};
+
+const avatarStyle: React.CSSProperties = {
+  width: "40px",
+  height: "40px",
+  borderRadius: "50%",
+  background: "#6366f1",
+  color: "#fff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontWeight: 700,
+  fontSize: "1.1rem",
+  flexShrink: 0,
 };
 
 /* ── Field ──────────────────────────────────────────────────────────────────── */
