@@ -1,4 +1,3 @@
-import type { CheckboxChecked } from "@forge-ui/react";
 import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Select, Switch, TagsInput, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 

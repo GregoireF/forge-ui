@@ -43,8 +43,9 @@ export function connectDialog(
         type: "button" as const,
         "aria-expanded": isOpen,
         "aria-controls": context.contentId,
-        // aria-haspopup must match the role of the popup (dialog or alertdialog).
-        "aria-haspopup": context.role,
+        // aria-haspopup: cast to "dialog" — @types/react omits "alertdialog" from the union
+        // even though WAI-ARIA 1.2 lists it. Semantically equivalent for browser AT.
+        "aria-haspopup": context.role as "dialog",
         "data-state": state,
         "data-forge-scope": "dialog",
         "data-forge-part": "trigger",
