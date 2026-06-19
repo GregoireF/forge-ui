@@ -49,6 +49,10 @@
     "./field": {
       "types": "./dist/field/index.d.ts",
       "import": "./dist/field/index.js"
+    },
+    "./tags-input": {
+      "types": "./dist/tags-input/index.d.ts",
+      "import": "./dist/tags-input/index.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -80,6 +84,7 @@
     "@forge-ui/select": "workspace:*",
     "@forge-ui/switch": "workspace:*",
     "@forge-ui/hover-card": "workspace:*",
+    "@forge-ui/tags-input": "workspace:*",
     "@forge-ui/tooltip": "workspace:*"
   },
   "devDependencies": {

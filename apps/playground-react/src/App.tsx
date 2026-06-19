@@ -1,5 +1,5 @@
 import type { CheckboxChecked } from "@forge-ui/react";
-import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Select, Switch, Tooltip, useDialog } from "@forge-ui/react";
+import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Select, Switch, TagsInput, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -103,6 +103,10 @@ export default function App() {
 
       <Section title="asChild" description="Forge merge les props sur votre élément, sans wrapper.">
         <AsChildDemo />
+      </Section>
+
+      <Section title="TagsInput" description="Saisie libre de tags. Enter=ajouter, Backspace=supprimer dernier.">
+        <TagsInputDemo />
       </Section>
     </main>
   );
@@ -968,6 +972,81 @@ function AsChildDemo() {
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+/* ── TagsInput ──────────────────────────────────────────────────────────────── */
+
+function TagsInputDemo() {
+  const [tags, setTags] = useState<string[]>(["TypeScript", "React"]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <TagsInput.Root
+        value={tags}
+        onValueChange={setTags}
+        style={{
+          border: "1px solid #cbd5e1",
+          borderRadius: "8px",
+          padding: "0.375rem 0.5rem",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "0.375rem",
+          alignItems: "center",
+          background: "#fff",
+          cursor: "text",
+          minWidth: "280px",
+        }}
+      >
+        {tags.map((tag) => (
+          <TagsInput.Tag
+            key={tag}
+            value={tag}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.25rem",
+              background: "#e2e8f0",
+              borderRadius: "4px",
+              padding: "0.15rem 0.375rem 0.15rem 0.5rem",
+              fontSize: "0.875rem",
+              color: "#1e293b",
+            }}
+          >
+            {tag}
+            <TagsInput.TagDelete
+              value={tag}
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                color: "#64748b",
+                padding: "0 0.1rem",
+                lineHeight: 1,
+                fontSize: "1rem",
+              }}
+            />
+          </TagsInput.Tag>
+        ))}
+        <TagsInput.Input
+          style={{
+            border: "none",
+            outline: "none",
+            fontSize: "0.875rem",
+            minWidth: "120px",
+            flex: 1,
+            background: "transparent",
+            padding: "0.15rem 0",
+          }}
+          placeholder="Ajouter un tag…"
+        />
+      </TagsInput.Root>
+      {tags.length > 0 && (
+        <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
+          Tags : {tags.join(", ")}
+        </p>
+      )}
+    </div>
   );
 }
 

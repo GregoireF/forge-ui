@@ -119,6 +119,7 @@ const languages = [
   { value: "cs", label: "C#" },
 ];
 const cbSelected = ref<string[]>([]);
+const tagsInputTags = ref<string[]>(["TypeScript", "Nuxt"]);
 const alertConfirming = ref(false);
 function handleDeleteConfirm() {
   alertConfirming.value = true;
@@ -747,6 +748,37 @@ function handleDeleteConfirm() {
           </HoverCard.Portal>
         </HoverCard.Root>
       </div>
+    </section>
+
+    <!-- ── TagsInput ─────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">TagsInput</h2>
+      <p :style="sectionDesc">Saisie libre de tags. Enter=ajouter, Backspace=supprimer dernier.</p>
+      <TagsInput.Root
+        :value="tagsInputTags"
+        :on-value-change="(v) => tagsInputTags = v"
+        style="border:1px solid #cbd5e1;border-radius:8px;padding:0.375rem 0.5rem;display:flex;flex-wrap:wrap;gap:0.375rem;align-items:center;background:#fff;cursor:text;min-width:280px"
+      >
+        <TagsInput.Tag
+          v-for="tag in tagsInputTags"
+          :key="tag"
+          :value="tag"
+          style="display:flex;align-items:center;gap:0.25rem;background:#e2e8f0;border-radius:4px;padding:0.15rem 0.375rem 0.15rem 0.5rem;font-size:0.875rem;color:#1e293b"
+        >
+          {{ tag }}
+          <TagsInput.TagDelete
+            :value="tag"
+            style="border:none;background:none;cursor:pointer;color:#64748b;padding:0 0.1rem;line-height:1;font-size:1rem"
+          />
+        </TagsInput.Tag>
+        <TagsInput.Input
+          style="border:none;outline:none;font-size:0.875rem;min-width:120px;flex:1;background:transparent;padding:0.15rem 0"
+          placeholder="Ajouter un tag…"
+        />
+      </TagsInput.Root>
+      <p v-if="tagsInputTags.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
+        Tags : {{ tagsInputTags.join(', ') }}
+      </p>
     </section>
   </main>
 </template>

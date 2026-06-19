@@ -130,5 +130,24 @@ export type {
 export { HoverCard } from "./components/hover-card/HoverCard.js";
 export type { UseHoverCardOptions } from "./components/hover-card/use-hover-card.js";
 export { useHoverCard } from "./components/hover-card/use-hover-card.js";
+export type {
+  TagsInputHiddenInputProps,
+  TagsInputInputProps,
+  TagsInputLabelProps,
+  TagsInputRootProps,
+  TagsInputTagDeleteProps,
+  TagsInputTagProps,
+} from "./components/tags-input/TagsInput.js";
+export {
+  TagsInput,
+  TagsInputHiddenInput,
+  TagsInputInput,
+  TagsInputLabel,
+  TagsInputRoot,
+  TagsInputTag,
+  TagsInputTagDelete,
+} from "./components/tags-input/TagsInput.js";
+export type { UseTagsInputOptions } from "./components/tags-input/use-tags-input.js";
+export { useTagsInput } from "./components/tags-input/use-tags-input.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

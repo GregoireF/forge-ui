@@ -39,6 +39,7 @@ export default defineNuxtModule({
       { name: "useCombobox", from },
       { name: "useMachine", from },
       { name: "usePresence", from },
+      { name: "useTagsInput", from },
     ]);
 
     // Namespace objects — enable <Dialog.Root> / <Popover.Root> / etc. in templates
@@ -52,6 +53,7 @@ export default defineNuxtModule({
     addImports({ name: "Tooltip", from });
     addImports({ name: "HoverCard", from });
     addImports({ name: "Combobox", from });
+    addImports({ name: "TagsInput", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -206,6 +208,19 @@ export default defineNuxtModule({
     }
 
     for (const name of comboboxComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const tagsInputComponents = [
+      "TagsInputRoot",
+      "TagsInputLabel",
+      "TagsInputInput",
+      "TagsInputTag",
+      "TagsInputTagDelete",
+      "TagsInputHiddenInput",
+    ] as const;
+
+    for (const name of tagsInputComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },

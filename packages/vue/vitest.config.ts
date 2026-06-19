@@ -30,6 +30,9 @@ export default defineConfig({
       "@forge-ui/switch": fileURLToPath(
         new URL("../primitives/switch/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/tags-input": fileURLToPath(
+        new URL("../primitives/tags-input/src/index.ts", import.meta.url),
+      ),
       "@forge-ui/tooltip": fileURLToPath(
         new URL("../primitives/tooltip/src/index.ts", import.meta.url),
       ),
