@@ -170,6 +170,30 @@ const comboboxSelected = ref<string[]>([]);
   <main style="display:flex;flex-direction:column;gap:0;padding:2rem;max-width:680px;margin:0 auto;font-family:system-ui,sans-serif">
     <h1 style="margin:0;font-size:1.5rem">forge-ui — Vue Playground</h1>
 
+    <!-- ── Animations CSS (data-state) ──────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Animations CSS (data-state)</h2>
+      <p :style="sectionDescStyle">Transitions d'entrée/sortie CSS-only via data-state. Aucune librairie externe.</p>
+      <!-- Le CSS data-state fait le travail — watchPresence maintient le composant monté jusqu'à animationend -->
+      <Dialog.Root :on-open-change="(o) => console.log('[AnimatedDialog] open:', o)">
+        <Dialog.Trigger :style="btnStyle">Dialog avec animation</Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay :style="overlayStyle" />
+          <Dialog.Content :style="contentStyle">
+            <Dialog.Title :style="titleStyle">Dialog animé</Dialog.Title>
+            <Dialog.Description :style="descStyle">
+              Le CSS <code>data-state</code> fait le travail — aucune prop <code>forceMount</code> nécessaire.
+              <code>watchPresence</code> maintient le composant monté jusqu'à <code>animationend</code>.
+            </Dialog.Description>
+            <div :style="footerStyle">
+              <Dialog.Close :style="btnGhostStyle">Annuler</Dialog.Close>
+              <Dialog.Close :style="btnStyle">Fermer</Dialog.Close>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </section>
+
     <!-- ── Dialog standard ─────────────────────────────────────────────────── -->
     <section :style="sectionStyle">
       <h2 :style="sectionTitleStyle">Dialog</h2>
@@ -720,3 +744,76 @@ const comboboxSelected = ref<string[]>([]);
     </section>
   </main>
 </template>
+
+<style>
+/* forge-ui — CSS data-state animations
+ * watchPresence maintient le composant monté jusqu'à la fin de l'animation.
+ */
+
+@keyframes forge-fade-scale-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes forge-fade-scale-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-6px) scale(0.97); }
+}
+
+@keyframes forge-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes forge-overlay-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Dialog */
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 150ms ease forwards;
+}
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 120ms ease forwards;
+}
+
+[data-forge-scope="dialog"][data-forge-part="overlay"][data-state="open"] {
+  animation: forge-overlay-in 150ms ease forwards;
+}
+[data-forge-scope="dialog"][data-forge-part="overlay"][data-state="closed"] {
+  animation: forge-overlay-out 120ms ease forwards;
+}
+
+/* Select dropdown */
+[data-forge-scope="select"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 120ms ease forwards;
+}
+[data-forge-scope="select"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 100ms ease forwards;
+}
+
+/* Combobox dropdown */
+[data-forge-scope="combobox"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 120ms ease forwards;
+}
+[data-forge-scope="combobox"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 100ms ease forwards;
+}
+
+/* Popover */
+[data-forge-scope="popover"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 120ms ease forwards;
+}
+[data-forge-scope="popover"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 100ms ease forwards;
+}
+
+/* Tooltip */
+[data-forge-scope="tooltip"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 100ms ease forwards;
+}
+[data-forge-scope="tooltip"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 80ms ease forwards;
+}
+</style>

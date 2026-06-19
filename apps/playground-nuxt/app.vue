@@ -134,6 +134,30 @@ function handleDeleteConfirm() {
       Aucun import — <code>@forge-ui/nuxt</code> auto-importe tout.
     </p>
 
+    <!-- ── Animations CSS (data-state) ──────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Animations CSS (data-state)</h2>
+      <p :style="sectionDesc">Transitions d'entrée/sortie CSS-only via data-state. Aucune librairie externe.</p>
+      <!-- Le CSS data-state fait le travail — watchPresence maintient le composant monté jusqu'à animationend -->
+      <Dialog.Root :on-open-change="(o) => console.log('[AnimatedDialog] open:', o)">
+        <Dialog.Trigger :style="btn">Dialog avec animation</Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay :style="overlay" />
+          <Dialog.Content :style="panel">
+            <Dialog.Title :style="titleS">Dialog animé</Dialog.Title>
+            <Dialog.Description :style="descS">
+              Le CSS <code>data-state</code> fait le travail — aucune prop <code>forceMount</code> nécessaire.
+              <code>watchPresence</code> maintient le composant monté jusqu'à <code>animationend</code>.
+            </Dialog.Description>
+            <div :style="footer">
+              <Dialog.Close :style="btnGhost">Annuler</Dialog.Close>
+              <Dialog.Close :style="btn">Fermer</Dialog.Close>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </section>
+
     <!-- ── Dialog ─────────────────────────────────────────────────────────── -->
     <section :style="section">
       <h2 :style="sectionTitle">Dialog</h2>
@@ -634,3 +658,76 @@ function handleDeleteConfirm() {
     </section>
   </main>
 </template>
+
+<style>
+/* forge-ui — CSS data-state animations
+ * watchPresence keeps the component mounted until the animation ends.
+ */
+
+@keyframes forge-fade-scale-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes forge-fade-scale-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-6px) scale(0.97); }
+}
+
+@keyframes forge-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes forge-overlay-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Dialog */
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 150ms ease forwards;
+}
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 120ms ease forwards;
+}
+
+[data-forge-scope="dialog"][data-forge-part="overlay"][data-state="open"] {
+  animation: forge-overlay-in 150ms ease forwards;
+}
+[data-forge-scope="dialog"][data-forge-part="overlay"][data-state="closed"] {
+  animation: forge-overlay-out 120ms ease forwards;
+}
+
+/* Select dropdown */
+[data-forge-scope="select"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 120ms ease forwards;
+}
+[data-forge-scope="select"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 100ms ease forwards;
+}
+
+/* Combobox dropdown */
+[data-forge-scope="combobox"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 120ms ease forwards;
+}
+[data-forge-scope="combobox"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 100ms ease forwards;
+}
+
+/* Popover */
+[data-forge-scope="popover"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 120ms ease forwards;
+}
+[data-forge-scope="popover"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 100ms ease forwards;
+}
+
+/* Tooltip */
+[data-forge-scope="tooltip"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-scale-in 100ms ease forwards;
+}
+[data-forge-scope="tooltip"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-scale-out 80ms ease forwards;
+}
+</style>

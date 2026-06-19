@@ -12,6 +12,13 @@ export default function App() {
       </Section>
 
       <Section
+        title="Animations CSS (data-state)"
+        description="Transitions d'entrée/sortie CSS-only via data-state. Aucune librairie externe."
+      >
+        <AnimatedDialogDemo />
+      </Section>
+
+      <Section
         title="Dialog imbriqué"
         description="Stack registry — seule la couche supérieure capte Escape."
       >
@@ -111,6 +118,33 @@ function DialogDemo() {
           <div style={footerStyle}>
             <Dialog.Close style={btnGhostStyle}>Annuler</Dialog.Close>
             <Dialog.Close style={btnStyle}>Sauvegarder</Dialog.Close>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+/* ── Dialog animé (CSS data-state) ─────────────────────────────────────────── */
+// Les animations sont définies dans animations.css via les sélecteurs data-forge-scope/part/state.
+// watchPresence maintient le composant monté jusqu'à la fin de l'animation de sortie.
+
+function AnimatedDialogDemo() {
+  return (
+    <Dialog.Root onOpenChange={(o) => console.log("[AnimatedDialog] open:", o)}>
+      <Dialog.Trigger style={btnStyle}>Dialog avec animation</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay style={overlayStyle} />
+        <Dialog.Content style={contentStyle}>
+          <Dialog.Title style={titleStyle}>Dialog animé</Dialog.Title>
+          <Dialog.Description style={descStyle}>
+            Le CSS <code>data-state</code> fait le travail — aucune prop <code>forceMount</code> nécessaire.
+            Le système <code>watchPresence</code> lit <code>animationDuration</code> et maintient le composant
+            monté jusqu'à <code>animationend</code>.
+          </Dialog.Description>
+          <div style={footerStyle}>
+            <Dialog.Close style={btnGhostStyle}>Annuler</Dialog.Close>
+            <Dialog.Close style={btnStyle}>Fermer</Dialog.Close>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
