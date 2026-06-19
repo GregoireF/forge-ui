@@ -38,6 +38,19 @@ export function watchPresence(
     return () => {};
   }
 
+  // If the element has no running animation or transition (e.g. jsdom, no CSS applied),
+  // unmount immediately — no point waiting for events that will never fire.
+  const win = el.ownerDocument?.defaultView;
+  if (win) {
+    const style = win.getComputedStyle(el);
+    const animDuration = parseFloat(style.animationDuration) || 0;
+    const transDuration = parseFloat(style.transitionDuration) || 0;
+    if (animDuration === 0 && transDuration === 0) {
+      onUnmount();
+      return () => {};
+    }
+  }
+
   let settled = false;
 
   function finish(): void {
