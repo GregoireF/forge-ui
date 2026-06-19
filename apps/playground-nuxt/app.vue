@@ -101,6 +101,9 @@ const btnDanger = { ...btn, background: "#dc2626" } as const;
 
 const comboboxContent = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
 const comboboxItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
+const groupLabel = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
+const hoverCardStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", minWidth: "260px", maxWidth: "320px", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)" } as const;
+const hoverCardLink = { color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" as const, cursor: "pointer" } as const;
 
 const fieldInvalid = ref(false);
 const fieldEmail = ref("");
@@ -654,6 +657,95 @@ function handleDeleteConfirm() {
             </Combobox.Portal>
           </Combobox.Root>
         </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Avec groupes</p>
+          <Combobox.Root>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhost">▾</Combobox.Trigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContent">
+                <Combobox.Group>
+                  <Combobox.GroupLabel :style="groupLabel">Frontend</Combobox.GroupLabel>
+                  <Combobox.Item value="ts" label="TypeScript" :style="comboboxItem"><Combobox.ItemText>TypeScript</Combobox.ItemText></Combobox.Item>
+                  <Combobox.Item value="js" label="JavaScript" :style="comboboxItem"><Combobox.ItemText>JavaScript</Combobox.ItemText></Combobox.Item>
+                </Combobox.Group>
+                <Combobox.Group>
+                  <Combobox.GroupLabel :style="groupLabel">Backend</Combobox.GroupLabel>
+                  <Combobox.Item value="py" label="Python" :style="comboboxItem"><Combobox.ItemText>Python</Combobox.ItemText></Combobox.Item>
+                  <Combobox.Item value="rs" label="Rust" :style="comboboxItem"><Combobox.ItemText>Rust</Combobox.ItemText></Combobox.Item>
+                  <Combobox.Item value="go" label="Go" :style="comboboxItem"><Combobox.ItemText>Go</Combobox.ItemText></Combobox.Item>
+                </Combobox.Group>
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+        </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Creatable — crée une option absente</p>
+          <Combobox.Root :on-create-option="(v) => console.log('Créer:', v)">
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhost">▾</Combobox.Trigger>
+              <Combobox.ClearTrigger :style="btnGhost">✕</Combobox.ClearTrigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContent">
+                <Combobox.Item v-for="l in languages" :key="l.value" :value="l.value" :label="l.label" :style="comboboxItem">
+                  <Combobox.ItemIndicator :value="l.value">✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{{ l.label }}</Combobox.ItemText>
+                </Combobox.Item>
+                <Combobox.CreateOption :style="{ ...comboboxItem, fontStyle: 'italic', color: '#6366f1' }" />
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HoverCard ─────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">HoverCard</h2>
+      <p :style="sectionDesc">Aperçu au survol. openDelay=700ms, closeDelay=300ms. Contenu interactif possible.</p>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start">
+        <HoverCard.Root>
+          <HoverCard.Trigger :asChild="true">
+            <a :style="hoverCardLink" href="#" @click.prevent>@forge-ui</a>
+          </HoverCard.Trigger>
+          <HoverCard.Portal>
+            <HoverCard.Content :style="hoverCardStyle">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">
+                <div style="width:40px;height:40px;border-radius:50%;background:#6366f1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem">F</div>
+                <div>
+                  <p style="margin:0;font-weight:600;color:#1e293b">forge-ui</p>
+                  <p style="margin:0;font-size:0.8rem;color:#64748b">@forge-ui</p>
+                </div>
+              </div>
+              <p style="margin:0 0 0.75rem;font-size:0.85rem;color:#374151">
+                Primitives UI headless — accessibles, légers, sans style imposé.
+              </p>
+              <div style="display:flex;gap:1rem;font-size:0.8rem;color:#64748b">
+                <span><strong style="color:#1e293b">142</strong> Following</span>
+                <span><strong style="color:#1e293b">2.4k</strong> Followers</span>
+              </div>
+            </HoverCard.Content>
+          </HoverCard.Portal>
+        </HoverCard.Root>
+
+        <HoverCard.Root :positioning="{ placement: 'bottom' }">
+          <HoverCard.Trigger :asChild="true">
+            <a :style="hoverCardLink" href="#" @click.prevent>Placement bottom</a>
+          </HoverCard.Trigger>
+          <HoverCard.Portal>
+            <HoverCard.Content :style="hoverCardStyle">
+              <p style="margin:0;font-size:0.85rem;color:#374151">
+                HoverCard positionné en dessous. Survolez le contenu pour maintenir l'ouverture.
+              </p>
+            </HoverCard.Content>
+          </HoverCard.Portal>
+        </HoverCard.Root>
       </div>
     </section>
   </main>

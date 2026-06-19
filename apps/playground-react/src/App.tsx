@@ -858,6 +858,41 @@ function ComboboxDemo() {
 
       <div>
         <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Avec groupes
+        </p>
+        <Combobox.Root>
+          <Combobox.Label style={labelStyle}>Langage</Combobox.Label>
+          <div style={{ display: "flex", gap: "0.25rem" }}>
+            <Combobox.Input
+              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+            />
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
+          </div>
+          <Combobox.Portal>
+            <Combobox.Content style={comboboxContentStyle}>
+              <Combobox.Group>
+                <Combobox.GroupLabel style={groupLabelStyle}>Frontend</Combobox.GroupLabel>
+                {[{ value: "ts", label: "TypeScript" }, { value: "js", label: "JavaScript" }].map((l) => (
+                  <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                    <Combobox.ItemText>{l.label}</Combobox.ItemText>
+                  </Combobox.Item>
+                ))}
+              </Combobox.Group>
+              <Combobox.Group>
+                <Combobox.GroupLabel style={groupLabelStyle}>Backend</Combobox.GroupLabel>
+                {[{ value: "py", label: "Python" }, { value: "rs", label: "Rust" }, { value: "go", label: "Go" }].map((l) => (
+                  <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                    <Combobox.ItemText>{l.label}</Combobox.ItemText>
+                  </Combobox.Item>
+                ))}
+              </Combobox.Group>
+            </Combobox.Content>
+          </Combobox.Portal>
+        </Combobox.Root>
+      </div>
+
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
           Creatable — crée une option absente
         </p>
         <Combobox.Root onCreateOption={(v) => console.log("Créer:", v)}>

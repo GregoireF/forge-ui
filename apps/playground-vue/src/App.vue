@@ -769,6 +769,53 @@ const comboboxSelected = ref<string[]>([]);
             </Combobox.Portal>
           </Combobox.Root>
         </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Avec groupes</p>
+          <Combobox.Root>
+            <Combobox.Label :style="labelStyle">Langage</Combobox.Label>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhostStyle">▾</Combobox.Trigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContentStyle">
+                <Combobox.Group>
+                  <Combobox.GroupLabel :style="groupLabelStyle">Frontend</Combobox.GroupLabel>
+                  <Combobox.Item value="ts" label="TypeScript" :style="comboboxItemStyle"><Combobox.ItemText>TypeScript</Combobox.ItemText></Combobox.Item>
+                  <Combobox.Item value="js" label="JavaScript" :style="comboboxItemStyle"><Combobox.ItemText>JavaScript</Combobox.ItemText></Combobox.Item>
+                </Combobox.Group>
+                <Combobox.Group>
+                  <Combobox.GroupLabel :style="groupLabelStyle">Backend</Combobox.GroupLabel>
+                  <Combobox.Item value="py" label="Python" :style="comboboxItemStyle"><Combobox.ItemText>Python</Combobox.ItemText></Combobox.Item>
+                  <Combobox.Item value="rs" label="Rust" :style="comboboxItemStyle"><Combobox.ItemText>Rust</Combobox.ItemText></Combobox.Item>
+                  <Combobox.Item value="go" label="Go" :style="comboboxItemStyle"><Combobox.ItemText>Go</Combobox.ItemText></Combobox.Item>
+                </Combobox.Group>
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+        </div>
+
+        <div>
+          <p style="margin:0 0 0.5rem;font-size:0.8rem;color:#64748b">Creatable — crée une option absente</p>
+          <Combobox.Root :on-create-option="(v) => console.log('Créer:', v)">
+            <Combobox.Label :style="labelStyle">Langage personnalisé</Combobox.Label>
+            <div style="display:flex;gap:0.25rem">
+              <Combobox.Input style="padding:0.45rem 0.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem;width:200px" />
+              <Combobox.Trigger :style="btnGhostStyle">▾</Combobox.Trigger>
+              <Combobox.ClearTrigger :style="btnGhostStyle">✕</Combobox.ClearTrigger>
+            </div>
+            <Combobox.Portal>
+              <Combobox.Content :style="comboboxContentStyle">
+                <Combobox.Item v-for="l in languages" :key="l.value" :value="l.value" :label="l.label" :style="comboboxItemStyle">
+                  <Combobox.ItemIndicator :value="l.value">✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{{ l.label }}</Combobox.ItemText>
+                </Combobox.Item>
+                <Combobox.CreateOption :style="{ ...comboboxItemStyle, fontStyle: 'italic', color: '#6366f1' }" />
+              </Combobox.Content>
+            </Combobox.Portal>
+          </Combobox.Root>
+        </div>
       </div>
     </section>
 
