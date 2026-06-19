@@ -1,6 +1,6 @@
 import type { CreateFieldOptions, FieldApi } from "@forge-ui/field";
 import { connectField, createFieldIds } from "@forge-ui/field";
-import { getCurrentInstance, reactive, watchEffect } from "vue";
+import { reactive, useId, watchEffect } from "vue";
 
 export type { CreateFieldOptions };
 
@@ -13,11 +13,12 @@ export type { CreateFieldOptions };
 // function, Vue automatically tracks ctx.hasDescription / ctx.hasError as
 // reactive deps and re-renders the consumer on change.
 export function useField(options: CreateFieldOptions = {}): FieldApi {
-  // getCurrentInstance().uid is stable within a single render pass on both
-  // server and client (Vue resets the counter per SSR request, same order →
-  // same values). Provides SSR-safe IDs without a module-level singleton.
-  const uid = getCurrentInstance()?.uid;
-  const ids = createFieldIds(options.id ?? (uid !== undefined ? `forge-field-${uid}` : undefined));
+  // useId() from Vue 3.5 uses a hierarchical tree-based ID that is more stable
+  // across SSR+hydration than instance.uid (which is a global sequential counter
+  // that diverges between server and client when the host framework creates
+  // different numbers of internal components). An explicit options.id always wins.
+  const vueId = useId();
+  const ids = createFieldIds(options.id ?? `forge-field-${vueId}`);
 
   const ctx = reactive({
     ...ids,
