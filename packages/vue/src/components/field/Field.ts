@@ -25,16 +25,11 @@ const FieldRoot = defineComponent({
     readOnly: { type: Boolean as PropType<boolean>, default: undefined },
   },
   setup(props, { slots }) {
-    // Pass the reactive props object so watchEffect in useField syncs
-    // ctx.invalid/required/disabled/readOnly on every prop change.
-    const { id, invalid, required, disabled, readOnly } = props;
-    const api = useField({
-      ...(id !== undefined && { id }),
-      ...(invalid !== undefined && { invalid }),
-      ...(required !== undefined && { required }),
-      ...(disabled !== undefined && { disabled }),
-      ...(readOnly !== undefined && { readOnly }),
-    });
+    // Pass the reactive props proxy directly so watchEffect in useField
+    // tracks props.invalid / props.required / etc. as reactive deps and
+    // re-syncs ctx on every parent update. Destructuring to a plain object
+    // would freeze the values at setup time and break reactivity.
+    const api = useField(props);
     provide(fieldKey, api);
     return () => slots.default?.();
   },
