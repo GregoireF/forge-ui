@@ -693,7 +693,7 @@ const tagsInputTags = ref<string[]>(["TypeScript", "Vue"]);
       <h2 :style="sectionTitleStyle">Field</h2>
       <p :style="sectionDescStyle">Champ accessible : Label + RequiredIndicator + Description + Error + Group.</p>
       <div style="display:flex;flex-direction:column;gap:1.5rem">
-        <Field.Root :invalid="fieldInvalid" :required="true">
+        <Field.Root id="vue-field-email" :invalid="fieldInvalid" :required="true">
           <Field.Label :style="labelStyle">
             Email <FieldRequiredIndicator style="color:#dc2626;margin-left:0.15rem" />
           </Field.Label>

@@ -596,7 +596,7 @@ function handleDeleteConfirm() {
       <h2 :style="sectionTitle">Field</h2>
       <p :style="sectionDesc">Champ accessible — aucun import requis, auto-importé par @forge-ui/nuxt.</p>
       <div style="display:flex;flex-direction:column;gap:1.5rem">
-        <Field.Root :invalid="fieldInvalid" :required="true">
+        <Field.Root id="nuxt-field-email" :invalid="fieldInvalid" :required="true">
           <Field.Label :style="labelS">
             Email <FieldRequiredIndicator style="color:#dc2626;margin-left:0.15rem" />
           </Field.Label>
