@@ -65,6 +65,7 @@ const ComboboxRoot = defineComponent({
     onHighlightChange: { type: Function as PropType<(v: string | null) => void>, default: undefined },
     options: { type: Array as PropType<ComboboxOption[]>, default: undefined },
     onHighlightedScroll: { type: Function as PropType<(value: string, index: number) => void>, default: undefined },
+    onCreateOption: { type: Function as PropType<(value: string) => void>, default: undefined },
   },
   emits: ["update:value", "update:open"],
   setup(props, { slots }) {
@@ -85,6 +86,7 @@ const ComboboxRoot = defineComponent({
       ...(props.onHighlightChange !== undefined && { onHighlightChange: props.onHighlightChange }),
       ...(props.options !== undefined && { options: props.options }),
       ...(props.onHighlightedScroll !== undefined && { onHighlightedScroll: props.onHighlightedScroll }),
+      ...(props.onCreateOption !== undefined && { onCreateOption: props.onCreateOption }),
     };
 
     const api = useCombobox(opts);
@@ -313,6 +315,44 @@ const ComboboxItemIndicator = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// Group + GroupLabel
+// ---------------------------------------------------------------------------
+
+const ComboboxGroup = defineComponent({
+  name: "ForgeComboboxGroup",
+  setup(_props, { slots, attrs }) {
+    return () => h("ul", { role: "group", "data-forge-scope": "combobox", "data-forge-part": "group", ...attrs }, slots.default?.());
+  },
+});
+
+const ComboboxGroupLabel = defineComponent({
+  name: "ForgeComboboxGroupLabel",
+  setup(_props, { slots, attrs }) {
+    return () => h("li", { role: "presentation", "data-forge-scope": "combobox", "data-forge-part": "group-label", ...attrs }, slots.default?.());
+  },
+});
+
+// ---------------------------------------------------------------------------
+// CreateOption
+// ---------------------------------------------------------------------------
+
+const ComboboxCreateOption = defineComponent({
+  name: "ForgeComboboxCreateOption",
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      if (!api.hasCreateOption.value) return null;
+      const label = api.createOptionLabel.value;
+      const createProps = { ...api.getCreateOptionProps(), ...attrs };
+      if (props.asChild) return h(Slot, createProps, slots.default);
+      const content = slots.default?.() ?? [`Créer "${label}"`];
+      return h("li", createProps, content);
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
 
@@ -327,11 +367,17 @@ export const Combobox = {
   Item: ComboboxItem,
   ItemText: ComboboxItemText,
   ItemIndicator: ComboboxItemIndicator,
+  Group: ComboboxGroup,
+  GroupLabel: ComboboxGroupLabel,
+  CreateOption: ComboboxCreateOption,
 } as const;
 
 export {
   ComboboxClearTrigger,
   ComboboxContent,
+  ComboboxCreateOption,
+  ComboboxGroup,
+  ComboboxGroupLabel,
   ComboboxInput,
   ComboboxItem,
   ComboboxItemIndicator,

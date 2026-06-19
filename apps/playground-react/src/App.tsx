@@ -765,6 +765,33 @@ function ComboboxDemo() {
           </Combobox.Portal>
         </Combobox.Root>
       </div>
+
+      <div>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Creatable — crée une option absente
+        </p>
+        <Combobox.Root onCreateOption={(v) => console.log("Créer:", v)}>
+          <Combobox.Label style={labelStyle}>Langage personnalisé</Combobox.Label>
+          <div style={{ display: "flex", gap: "0.25rem" }}>
+            <Combobox.Input
+              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+            />
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
+            <Combobox.ClearTrigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>✕</Combobox.ClearTrigger>
+          </div>
+          <Combobox.Portal>
+            <Combobox.Content style={comboboxContentStyle}>
+              {languages.map((l) => (
+                <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                  <Combobox.ItemIndicator value={l.value}>✓ </Combobox.ItemIndicator>
+                  <Combobox.ItemText>{l.label}</Combobox.ItemText>
+                </Combobox.Item>
+              ))}
+              <Combobox.CreateOption style={{ ...comboboxItemStyle, fontStyle: "italic", color: "#6366f1" }} />
+            </Combobox.Content>
+          </Combobox.Portal>
+        </Combobox.Root>
+      </div>
     </div>
   );
 }

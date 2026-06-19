@@ -1,5 +1,5 @@
 import { mergeRefs } from "@forge-ui/core";
-import type { HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
@@ -255,6 +255,56 @@ function ItemIndicator({ value, children }: ComboboxItemIndicatorProps) {
 }
 
 // ---------------------------------------------------------------------------
+// Group + GroupLabel
+// ---------------------------------------------------------------------------
+
+export interface ComboboxGroupProps extends HTMLAttributes<HTMLUListElement> {
+  children: ReactNode;
+}
+
+function ComboboxGroupComp({ children, ...rest }: ComboboxGroupProps) {
+  return (
+    <ul role="group" data-forge-scope="combobox" data-forge-part="group" {...rest}>
+      {children}
+    </ul>
+  );
+}
+
+export interface ComboboxGroupLabelProps extends HTMLAttributes<HTMLLIElement> {
+  children: ReactNode;
+}
+
+function ComboboxGroupLabelComp({ children, ...rest }: ComboboxGroupLabelProps) {
+  return (
+    <li role="presentation" data-forge-scope="combobox" data-forge-part="group-label" {...rest}>
+      {children}
+    </li>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// CreateOption
+// ---------------------------------------------------------------------------
+
+export interface ComboboxCreateOptionProps {
+  children?: ReactNode | ((label: string) => ReactNode);
+  style?: CSSProperties;
+  className?: string;
+}
+
+function CreateOption({ children, ...rest }: ComboboxCreateOptionProps) {
+  const api = useCtx();
+  if (!api.hasCreateOption) return null;
+  const label = api.createOptionLabel;
+  const content = typeof children === "function" ? children(label) : (children ?? `Créer "${label}"`);
+  return (
+    <li {...api.getCreateOptionProps()} {...rest}>
+      {content}
+    </li>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
 
@@ -269,4 +319,9 @@ export const Combobox = {
   Item,
   ItemText,
   ItemIndicator,
+  Group: ComboboxGroupComp,
+  GroupLabel: ComboboxGroupLabelComp,
+  CreateOption,
 } as const;
+
+export { ComboboxGroupComp as ComboboxGroup, ComboboxGroupLabelComp as ComboboxGroupLabel, CreateOption as ComboboxCreateOption };

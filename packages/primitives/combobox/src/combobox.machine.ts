@@ -102,6 +102,7 @@ export interface CreateComboboxMachineOptions {
   filterFn?: (option: { value: string; label: string; disabled?: boolean }, inputValue: string) => boolean;
   options?: ComboboxOption[];
   onHighlightedScroll?: (value: string, index: number) => void;
+  onCreateOption?: (value: string) => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -140,6 +141,7 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       ...(options.filterFn !== undefined && { filterFn: options.filterFn }),
       ...(options.options !== undefined && { allOptions: options.options }),
       ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
       triggerEl: null,
       contentEl: null,
       buttonEl: null,
@@ -363,6 +365,16 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
             actions: [
               ({ setContext }) => setContext({ value: [], inputValue: "", highlighted: null }),
               invokeOnValueChange,
+            ],
+            target: "closed",
+          },
+
+          CREATE_OPTION: {
+            actions: [
+              ({ context }: { context: ComboboxContext }) => {
+                context.onCreateOption?.(context.inputValue);
+              },
+              invokeOnOpenChange(false),
             ],
             target: "closed",
           },

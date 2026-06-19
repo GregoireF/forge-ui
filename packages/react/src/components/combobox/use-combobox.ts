@@ -23,9 +23,10 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
     machine.setContext({
       ...(options.options !== undefined && { allOptions: options.options }),
       ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.options, options.onHighlightedScroll]);
+  }, [options.options, options.onHighlightedScroll, options.onCreateOption]);
 
   return {
     ...connectCombobox(snapshot, send, machine),

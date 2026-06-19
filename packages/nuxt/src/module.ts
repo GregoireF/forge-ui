@@ -182,6 +182,9 @@ export default defineNuxtModule({
       "ComboboxItem",
       "ComboboxItemText",
       "ComboboxItemIndicator",
+      "ComboboxGroup",
+      "ComboboxGroupLabel",
+      "ComboboxCreateOption",
     ] as const;
 
     for (const name of tooltipComponents) {

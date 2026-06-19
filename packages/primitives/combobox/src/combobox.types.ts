@@ -44,6 +44,8 @@ export interface ComboboxContext {
   allOptions?: ComboboxOption[];
   /** Called after every highlighted change — user scrolls their virtualizer to the given index. */
   onHighlightedScroll?: (value: string, index: number) => void;
+  /** Called when user wants to create a new option. Receives the current input value. */
+  onCreateOption?: (value: string) => void;
   // Floating — the input acts as reference (triggerEl), listbox as content (contentEl).
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;
@@ -72,6 +74,7 @@ export type ComboboxEvent =
   | { type: "REGISTER_OPTION"; option: ComboboxOption }
   | { type: "UNREGISTER_OPTION"; value: string }
   | { type: "INTERACT_OUTSIDE" }
+  | { type: "CREATE_OPTION" }
   | { type: "@@INIT" };
 
 export type ComboboxSend = (event: ComboboxEvent | ComboboxEvent["type"]) => void;

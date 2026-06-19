@@ -29,6 +29,12 @@ export function connectCombobox(
         return fn(o, context.inputValue);
       });
 
+  // Creatable: show "create" option when inputValue is non-empty and no exact match exists
+  const hasCreateOption =
+    !!context.onCreateOption &&
+    context.inputValue.trim().length > 0 &&
+    !filteredOptions.some((o) => o.label.toLowerCase() === context.inputValue.toLowerCase());
+
   const highlightedId =
     context.highlighted !== null
       ? `${context.contentId}-option-${context.highlighted}`
@@ -52,6 +58,8 @@ export function connectCombobox(
     valueLabel,
     valueLabels,
     filteredOptions,
+    hasCreateOption,
+    createOptionLabel: context.inputValue,
     isDisabled: context.disabled,
     isReadOnly: context.readOnly,
     isRequired: context.required,
@@ -234,6 +242,16 @@ export function connectCombobox(
             send(isOpen ? "CLOSE" : "OPEN");
           }
         },
+      };
+    },
+
+    getCreateOptionProps() {
+      return {
+        role: "option" as const,
+        "data-forge-scope": "combobox",
+        "data-forge-part": "create-option",
+        "aria-selected": false as const,
+        onClick: () => send({ type: "CREATE_OPTION" }),
       };
     },
   };

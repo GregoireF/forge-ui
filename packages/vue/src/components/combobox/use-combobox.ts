@@ -15,6 +15,8 @@ export interface UseComboboxReturn {
   getValue: () => string[];
   getValueLabel: () => string;
   getFilteredOptions: () => ComboboxOption[];
+  hasCreateOption: ComputedRef<boolean>;
+  createOptionLabel: ComputedRef<string>;
   getLabelProps: () => ReturnType<ComboboxApi["getLabelProps"]>;
   getInputProps: () => ReturnType<ComboboxApi["getInputProps"]>;
   getTriggerProps: () => ReturnType<ComboboxApi["getTriggerProps"]>;
@@ -22,6 +24,7 @@ export interface UseComboboxReturn {
   getPositionerProps: () => ReturnType<ComboboxApi["getPositionerProps"]>;
   getContentProps: () => ReturnType<ComboboxApi["getContentProps"]>;
   getOptionProps: (option: { value: string; disabled?: boolean }) => ReturnType<ComboboxApi["getOptionProps"]>;
+  getCreateOptionProps: () => ReturnType<ComboboxApi["getCreateOptionProps"]>;
 }
 
 export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn {
@@ -35,6 +38,7 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
     machine.setContext({
       ...(options.options !== undefined && { allOptions: options.options }),
       ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
     });
   });
 
@@ -49,6 +53,8 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
     getValue: () => api.value.value,
     getValueLabel: () => api.value.valueLabel,
     getFilteredOptions: () => api.value.filteredOptions,
+    hasCreateOption: computed(() => api.value.hasCreateOption),
+    createOptionLabel: computed(() => api.value.createOptionLabel),
     getLabelProps: () => api.value.getLabelProps(),
     getInputProps: () => api.value.getInputProps(),
     getTriggerProps: () => api.value.getTriggerProps(),
@@ -57,5 +63,6 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
     getContentProps: () => api.value.getContentProps(),
     getOptionProps: (option: { value: string; disabled?: boolean }) =>
       api.value.getOptionProps({ value: option.value, disabled: option.disabled ?? false }),
+    getCreateOptionProps: () => api.value.getCreateOptionProps(),
   };
 }
