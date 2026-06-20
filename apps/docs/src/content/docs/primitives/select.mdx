@@ -1,0 +1,189 @@
+---
+title: Select
+description: A dropdown listbox that allows the user to choose one value from a list of options.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+A **Select** renders a button trigger that opens a floating listbox of options. It follows the [WAI-ARIA Listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Select } from "@forge-ui/react";
+
+    const fruits = ["Apple", "Banana", "Cherry", "Mango", "Orange"];
+
+    export function FruitSelect() {
+      return (
+        <Select.Root>
+          <Select.Trigger>
+            <Select.Value placeholder="Pick a fruit" />
+            <Select.Indicator>▾</Select.Indicator>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner>
+              <Select.Content>
+                {fruits.map((fruit) => (
+                  <Select.Item key={fruit} value={fruit}>
+                    <Select.ItemText>{fruit}</Select.ItemText>
+                    <Select.ItemIndicator>✓</Select.ItemIndicator>
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      SelectRoot, SelectTrigger, SelectValue, SelectIndicator,
+      SelectPortal, SelectContent, SelectItem, SelectItemText,
+      SelectItemIndicator,
+    } from "@forge-ui/vue";
+
+    const fruits = ["Apple", "Banana", "Cherry", "Mango", "Orange"];
+    </script>
+
+    <template>
+      <SelectRoot>
+        <SelectTrigger>
+          <SelectValue placeholder="Pick a fruit" />
+          <SelectIndicator>▾</SelectIndicator>
+        </SelectTrigger>
+        <SelectPortal>
+          <SelectContent>
+            <SelectItem v-for="fruit in fruits" :key="fruit" :value="fruit">
+              <SelectItemText>{{ fruit }}</SelectItemText>
+              <SelectItemIndicator>✓</SelectItemIndicator>
+            </SelectItem>
+          </SelectContent>
+        </SelectPortal>
+      </SelectRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled value
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    const [value, setValue] = useState("");
+
+    <Select.Root value={value} onValueChange={setValue}>
+      ...
+    </Select.Root>
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <SelectRoot v-model:value="value">...</SelectRoot>
+    ```
+  </TabItem>
+</Tabs>
+
+## Groups
+
+```tsx
+<Select.Content>
+  <Select.Group>
+    <Select.GroupLabel>Citrus</Select.GroupLabel>
+    <Select.Item value="lemon"><Select.ItemText>Lemon</Select.ItemText></Select.Item>
+    <Select.Item value="orange"><Select.ItemText>Orange</Select.ItemText></Select.Item>
+  </Select.Group>
+</Select.Content>
+```
+
+## Styling
+
+```css
+[data-forge-scope="select"][data-forge-part="trigger"] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+[data-forge-scope="select"][data-forge-part="content"] {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.25rem;
+  opacity: var(--forge-revealed, 0);
+  transform-origin: var(--forge-select-content-transform-origin);
+  transition: opacity 0.15s ease;
+}
+
+[data-forge-scope="select"][data-forge-part="option"][data-highlighted="true"] {
+  background: #3b82f6;
+  color: white;
+}
+
+[data-forge-scope="select"][data-forge-part="option"][data-selected="true"]::before {
+  content: "✓ ";
+}
+```
+
+## API Reference
+
+### Select.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | Controlled selected value |
+| `defaultValue` | `string` | — | Uncontrolled initial value |
+| `onValueChange` | `(value: string) => void` | — | Fires when value changes |
+| `open` | `boolean` | — | Controlled open state |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires when open changes |
+| `disabled` | `boolean` | `false` | Disable the select |
+| `placement` | `Placement` | `"bottom-start"` | Floating placement |
+
+### Select.Item
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Option value |
+| `disabled` | `boolean` | `false` | Disable this option |
+| `asChild` | `boolean` | `false` | Merge props onto child |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"select"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"value-text"` \| `"indicator"` \| `"positioner"` \| `"content"` \| `"option"` \| `"option-text"` \| `"group"` \| `"group-label"` \| `"separator"` |
+| `data-state` | `trigger`, `content` | `"open"` \| `"closed"` |
+| `data-highlighted` | `option` | `"true"` when keyboard-focused |
+| `data-selected` | `option` | `"true"` when chosen |
+| `data-disabled` | `option`, `trigger` | `"true"` |
+
+## CSS variables
+
+| Variable | Description |
+|----------|-------------|
+| `--forge-select-content-transform-origin` | Origin for scale animation on content |
+| `--forge-revealed` | `1` when positioned and ready |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` / `Enter` | Open listbox / select option |
+| `↑` / `↓` | Navigate options |
+| `Home` / `End` | Jump to first / last option |
+| `Escape` | Close without selecting |
+| `Tab` | Close and move focus forward |
+| Printable chars | Type-ahead selection |

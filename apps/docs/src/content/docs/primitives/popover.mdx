@@ -1,0 +1,122 @@
+---
+title: Popover
+description: A floating panel anchored to a trigger element, for non-modal rich content.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+A **Popover** displays rich floating content anchored to a trigger. Unlike Dialog, it is non-modal: clicking outside closes it. It uses the floating positioning engine built into forge-ui.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Popover } from "@forge-ui/react";
+
+    export function MyPopover() {
+      return (
+        <Popover.Root>
+          <Popover.Trigger>Settings</Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Positioner>
+              <Popover.Content>
+                <Popover.Title>Appearance</Popover.Title>
+                <Popover.Description>Customise your interface.</Popover.Description>
+                <Popover.Close>×</Popover.Close>
+              </Popover.Content>
+            </Popover.Positioner>
+          </Popover.Portal>
+        </Popover.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      PopoverRoot, PopoverTrigger, PopoverPortal,
+      PopoverContent, PopoverTitle, PopoverDescription,
+      PopoverClose,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <PopoverRoot>
+        <PopoverTrigger>Settings</PopoverTrigger>
+        <PopoverPortal>
+          <PopoverContent>
+            <PopoverTitle>Appearance</PopoverTitle>
+            <PopoverDescription>Customise your interface.</PopoverDescription>
+            <PopoverClose>×</PopoverClose>
+          </PopoverContent>
+        </PopoverPortal>
+      </PopoverRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Placement
+
+```tsx
+<Popover.Root placement="bottom-start">...</Popover.Root>
+```
+
+Available placements: `top`, `top-start`, `top-end`, `bottom` (default), `bottom-start`, `bottom-end`, `left`, `left-start`, `left-end`, `right`, `right-start`, `right-end`.
+
+## Styling
+
+```css
+[data-forge-scope="popover"][data-forge-part="content"] {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0 0 0 / 0.15);
+
+  /* Fade in when positioned */
+  opacity: var(--forge-revealed, 0);
+  transition: opacity 0.15s ease;
+}
+```
+
+## API Reference
+
+### Popover.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Initial open state (uncontrolled) |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires on state change |
+| `placement` | `Placement` | `"bottom"` | Floating placement |
+| `offset` | `number` | `8` | Distance from anchor in px |
+| `modal` | `boolean` | `false` | Enable modal behaviour |
+| `onPointerDownOutside` | `(e: PointerEvent) => void` | — | Pointer down outside |
+| `onEscapeKeyDown` | `(e: KeyboardEvent) => void` | — | Escape key |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"popover"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"positioner"` \| `"content"` \| `"title"` \| `"description"` \| `"close"` \| `"arrow"` |
+| `data-state` | `content` | `"open"` \| `"closed"` |
+| `data-side` | `content` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` |
+| `data-placement` | `positioner` | Full placement string |
+
+## CSS variables
+
+| Variable | Description |
+|----------|-------------|
+| `--forge-popover-content-transform-origin` | Computed transform origin for scale animations |
+| `--forge-revealed` | `1` when positioned and ready to show |
+
+## Accessibility
+
+- `Popover.Content` renders with `role="dialog"` when modal, otherwise no role
+- `Popover.Trigger` gets `aria-expanded` and `aria-haspopup="dialog"`
+- Focus moves inside on open; returns to trigger on close
+- `Escape` closes the popover

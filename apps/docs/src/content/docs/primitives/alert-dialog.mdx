@@ -1,0 +1,129 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content requiring an explicit acknowledgement.
+---
+
+import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+
+An **Alert Dialog** is a specialised dialog that conveys urgent information and requires the user to explicitly confirm or dismiss. It renders with `role="alertdialog"` and disables closing by clicking outside.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { AlertDialog } from "@forge-ui/react";
+
+    export function DeleteAlert() {
+      return (
+        <AlertDialog.Root>
+          <AlertDialog.Trigger>Delete account</AlertDialog.Trigger>
+          <AlertDialog.Portal>
+            <AlertDialog.Overlay />
+            <AlertDialog.Content>
+              <AlertDialog.Title>Are you sure?</AlertDialog.Title>
+              <AlertDialog.Description>
+                This action cannot be undone. Your account and all associated
+                data will be permanently deleted.
+              </AlertDialog.Description>
+              <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+              <AlertDialog.Action>Yes, delete account</AlertDialog.Action>
+            </AlertDialog.Content>
+          </AlertDialog.Portal>
+        </AlertDialog.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      AlertDialogRoot, AlertDialogTrigger, AlertDialogPortal,
+      AlertDialogOverlay, AlertDialogContent, AlertDialogTitle,
+      AlertDialogDescription, AlertDialogCancel, AlertDialogAction,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <AlertDialogRoot>
+        <AlertDialogTrigger>Delete account</AlertDialogTrigger>
+        <AlertDialogPortal>
+          <AlertDialogOverlay />
+          <AlertDialogContent>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Your account and all associated
+              data will be permanently deleted.
+            </AlertDialogDescription>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Yes, delete account</AlertDialogAction>
+          </AlertDialogContent>
+        </AlertDialogPortal>
+      </AlertDialogRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Styling
+
+```css
+[data-forge-scope="alert-dialog"][data-forge-part="overlay"] {
+  position: fixed;
+  inset: 0;
+  background: rgba(0 0 0 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-forge-scope="alert-dialog"][data-forge-part="content"] {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  min-width: 340px;
+}
+
+[data-forge-scope="alert-dialog"][data-forge-part="action"] {
+  background: red;
+  color: white;
+}
+```
+
+## API Reference
+
+### AlertDialog.Root
+
+Accepts the same props as [Dialog.Root](/primitives/dialog#dialogroot), minus `modal` (Alert Dialog is always modal) and interaction-outside callbacks (outside clicks are ignored).
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Initial open state (uncontrolled) |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires when open state changes |
+
+### AlertDialog.Cancel / AlertDialog.Action
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"alert-dialog"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"overlay"` \| `"content"` \| `"title"` \| `"description"` \| `"cancel"` \| `"action"` |
+| `data-state` | `overlay`, `content` | `"open"` \| `"closed"` |
+
+## Accessibility
+
+- Renders with `role="alertdialog"` (screen readers announce it immediately)
+- `AlertDialog.Title` and `AlertDialog.Description` are both required
+- Clicking outside does **not** close the dialog — the user must choose an action
+- `Escape` is also disabled by default to force an explicit choice
+
+<Aside type="tip">
+  Use `AlertDialog.Cancel` for the safe action and `AlertDialog.Action` for the destructive one. This distinction is semantic — style them differently with `data-forge-part`.
+</Aside>

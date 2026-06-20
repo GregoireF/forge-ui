@@ -1,0 +1,146 @@
+---
+title: Checkbox
+description: A binary or tri-state toggle control with keyboard and screen reader support.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+A **Checkbox** is an interactive control that can be checked, unchecked, or indeterminate. It renders a visually styled box backed by a hidden native `<input type="checkbox">` for form and accessibility compatibility.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Checkbox } from "@forge-ui/react";
+
+    export function AgreeCheckbox() {
+      return (
+        <Checkbox.Root>
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>I agree to the terms and conditions</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      CheckboxRoot, CheckboxControl, CheckboxIndicator,
+      CheckboxLabel, CheckboxHiddenInput,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <CheckboxRoot>
+        <CheckboxControl>
+          <CheckboxIndicator>✓</CheckboxIndicator>
+        </CheckboxControl>
+        <CheckboxLabel>I agree to the terms and conditions</CheckboxLabel>
+        <CheckboxHiddenInput />
+      </CheckboxRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled state
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    const [checked, setChecked] = useState(false);
+
+    <Checkbox.Root checked={checked} onCheckedChange={setChecked}>
+      ...
+    </Checkbox.Root>
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <CheckboxRoot v-model:checked="checked">...</CheckboxRoot>
+    ```
+  </TabItem>
+</Tabs>
+
+## Indeterminate state
+
+```tsx
+<Checkbox.Root checked="indeterminate">
+  <Checkbox.Control>
+    <Checkbox.Indicator>—</Checkbox.Indicator>
+  </Checkbox.Control>
+</Checkbox.Root>
+```
+
+## Checkbox groups
+
+Use `Checkbox.Group` to manage a set of checkboxes as a unit.
+
+```tsx
+<Checkbox.Group value={selected} onValueChange={setSelected}>
+  <Checkbox.Root value="react">...</Checkbox.Root>
+  <Checkbox.Root value="vue">...</Checkbox.Root>
+  <Checkbox.GroupAll>Select all</Checkbox.GroupAll>
+</Checkbox.Group>
+```
+
+## Styling
+
+```css
+[data-forge-scope="checkbox"][data-forge-part="control"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+[data-forge-scope="checkbox"][data-forge-part="control"][data-state="checked"] {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+[data-forge-scope="checkbox"][data-forge-part="indicator"] {
+  color: white;
+  font-size: 0.8rem;
+}
+```
+
+## API Reference
+
+### Checkbox.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean \| "indeterminate"` | — | Controlled checked state |
+| `defaultChecked` | `boolean` | `false` | Uncontrolled initial state |
+| `onCheckedChange` | `(checked: boolean \| "indeterminate") => void` | — | Fires on state change |
+| `disabled` | `boolean` | `false` | Disable the checkbox |
+| `required` | `boolean` | `false` | Mark as required |
+| `name` | `string` | — | Form field name |
+| `value` | `string` | `"on"` | Form field value |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"checkbox"` |
+| `data-forge-part` | All parts | `"root"` \| `"control"` \| `"indicator"` \| `"label"` \| `"hidden-input"` |
+| `data-state` | `root`, `control` | `"checked"` \| `"unchecked"` \| `"indeterminate"` |
+| `data-disabled` | `root`, `control` | `"true"` |
+| `data-required` | `root`, `control` | `"true"` |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggle checked state |

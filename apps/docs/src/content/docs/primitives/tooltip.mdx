@@ -1,0 +1,125 @@
+---
+title: Tooltip
+description: A floating label that appears on hover or focus to describe an element.
+---
+
+import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+
+A **Tooltip** shows a short label when the trigger is hovered or focused. It is purely informational and should not contain interactive content.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Tooltip } from "@forge-ui/react";
+
+    export function MyTooltip() {
+      return (
+        <Tooltip.Provider>
+          <Tooltip.Root>
+            <Tooltip.Trigger>Hover me</Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Positioner>
+                <Tooltip.Content>This is a tooltip</Tooltip.Content>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        </Tooltip.Provider>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      TooltipProvider, TooltipRoot, TooltipTrigger,
+      TooltipPortal, TooltipContent,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <TooltipProvider>
+        <TooltipRoot>
+          <TooltipTrigger>Hover me</TooltipTrigger>
+          <TooltipPortal>
+            <TooltipContent>This is a tooltip</TooltipContent>
+          </TooltipPortal>
+        </TooltipRoot>
+      </TooltipProvider>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Tooltip.Provider
+
+Wrap your application (or section) in `Tooltip.Provider` to share delay configuration across multiple tooltips. This prevents a staggered "popcorn" effect when moving between adjacent triggers.
+
+```tsx
+<Tooltip.Provider delayDuration={400} skipDelayDuration={200}>
+  {/* multiple Tooltip.Root instances */}
+</Tooltip.Provider>
+```
+
+## Styling
+
+```css
+[data-forge-scope="tooltip"][data-forge-part="content"] {
+  background: #1e293b;
+  color: white;
+  border-radius: 4px;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+
+  opacity: var(--forge-revealed, 0);
+  transition: opacity 0.1s ease;
+}
+```
+
+## API Reference
+
+### Tooltip.Provider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `delayDuration` | `number` | `700` | Ms before tooltip opens |
+| `skipDelayDuration` | `number` | `300` | Ms within which a second tooltip opens instantly |
+| `disableHoverableContent` | `boolean` | `false` | Prevent hovering into the tooltip content |
+
+### Tooltip.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Initial open state |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires on state change |
+| `delayDuration` | `number` | — | Override Provider delay per tooltip |
+| `placement` | `Placement` | `"top"` | Floating placement |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"tooltip"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"positioner"` \| `"content"` \| `"arrow"` |
+| `data-state` | `content` | `"open"` \| `"closed"` |
+| `data-side` | `content` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` |
+
+## CSS variables
+
+| Variable | Description |
+|----------|-------------|
+| `--forge-revealed` | `1` when positioned and ready to display |
+
+## Accessibility
+
+- Tooltip content has `role="tooltip"` and is wired to the trigger via `aria-describedby`
+- The trigger is keyboard focusable — tooltip appears on focus, closes on blur
+- Tooltip content is not interactive (links/buttons inside tooltips violate WCAG)
+
+<Aside type="tip">
+  Use `Tooltip.Provider` at the app root to share delay settings across all tooltips. Without it, each `Tooltip.Root` manages its own delay independently.
+</Aside>

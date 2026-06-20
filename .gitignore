@@ -14,3 +14,10 @@ coverage/
 # Playwright
 playwright-report/
 test-results/
+
+# Nuxt build artifacts
+.nuxt/
+.output/
+
+# Astro build artifacts
+.astro/

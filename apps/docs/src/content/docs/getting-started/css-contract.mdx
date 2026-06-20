@@ -1,0 +1,199 @@
+---
+title: CSS Contract
+description: How to style forge-ui components using data-forge-scope and data-forge-part.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+forge-ui is headless — it ships zero styles. Instead of class names, it exposes a **CSS contract** via HTML data attributes that every component writes to the DOM. This gives you a predictable, collision-free way to style any part of any primitive.
+
+## The two attributes
+
+Every rendered element from forge-ui has two attributes:
+
+| Attribute | Value | Description |
+|-----------|-------|-------------|
+| `data-forge-scope` | `"dialog"`, `"popover"`, … | Which primitive this element belongs to |
+| `data-forge-part` | `"trigger"`, `"content"`, … | Which part of that primitive |
+
+**CSS selector pattern:**
+
+```css
+[data-forge-scope="<scope>"][data-forge-part="<part>"] {
+  /* your styles */
+}
+```
+
+## State attributes
+
+In addition to `data-forge-scope` and `data-forge-part`, forge-ui writes **state** onto relevant elements:
+
+| Attribute | Values | Applies to |
+|-----------|--------|------------|
+| `data-state` | `"open"` \| `"closed"` | Dialog, Popover, Tooltip, HoverCard, Select, Combobox |
+| `data-highlighted` | `"true"` | Select/Combobox options (keyboard focus) |
+| `data-selected` | `"true"` | Select/Combobox options (chosen value) |
+| `data-disabled` | `"true"` | Checkbox, Switch, Tags Input root |
+| `data-required` | `"true"` | Checkbox root |
+| `data-checked` | `"true"` | Checkbox, Switch control |
+| `data-invalid` | `"true"` | Field root |
+| `data-focused` | `"true"` | Tags Input root |
+| `data-value` | tag value | Tags Input individual tag |
+
+## CSS variables
+
+Floating components (Popover, Tooltip, HoverCard, Select, Combobox) expose CSS variables:
+
+| Variable | Description |
+|----------|-------------|
+| `--forge-revealed` | `1` when the floating is positioned and ready to display. Use it to fade in. |
+| `--forge-select-content-transform-origin` | Origin for scale animations on Select content. |
+| `--forge-popover-content-transform-origin` | Origin for scale animations on Popover content. |
+
+```css
+/* Fade-in on reveal */
+[data-forge-scope="popover"][data-forge-part="content"] {
+  opacity: var(--forge-revealed, 0);
+  transition: opacity 0.15s ease;
+}
+
+/* Scale animation using the computed origin */
+[data-forge-scope="select"][data-forge-part="content"] {
+  transform-origin: var(--forge-select-content-transform-origin);
+  transform: scale(var(--forge-revealed, 0.95));
+  opacity: var(--forge-revealed, 0);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+```
+
+## forceMount
+
+Dialog and HoverCard support a `forceMount` prop. When enabled, the content stays in the DOM even when closed — `data-state` will be `"closed"` instead. This lets you animate exit transitions:
+
+```css
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="closed"] {
+  animation: fadeOut 0.2s ease forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: scale(0.95); }
+}
+```
+
+## Complete scope/part reference
+
+### Dialog
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `trigger` | `dialog` | Button that opens the dialog |
+| `overlay` | `dialog` | Background dimmer (renders in portal) |
+| `content` | `dialog` | The dialog panel |
+| `title` | `dialog` | The `<h2>` heading inside content |
+| `description` | `dialog` | Supporting text, wired to aria-describedby |
+| `close` | `dialog` | Close button inside content |
+
+### Alert Dialog
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `trigger` | `alert-dialog` | Button that opens |
+| `overlay` | `alert-dialog` | Background dimmer |
+| `content` | `alert-dialog` | The alert panel (role="alertdialog") |
+| `title` | `alert-dialog` | Required heading |
+| `description` | `alert-dialog` | Required description |
+| `cancel` | `alert-dialog` | Safe / dismiss action |
+| `action` | `alert-dialog` | Destructive / confirm action |
+
+### Popover
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `trigger` | `popover` | Anchor element |
+| `positioner` | `popover` | Absolute/fixed wrapper for positioning |
+| `content` | `popover` | Visible panel |
+| `arrow` | `popover` | SVG arrow |
+
+### Tooltip
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `trigger` | `tooltip` | Anchor element |
+| `positioner` | `tooltip` | Positioning wrapper |
+| `content` | `tooltip` | Tooltip bubble |
+| `arrow` | `tooltip` | SVG arrow |
+
+### Hover Card
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `trigger` | `hover-card` | Anchor element |
+| `positioner` | `hover-card` | Positioning wrapper |
+| `content` | `hover-card` | Card panel |
+| `arrow` | `hover-card` | SVG arrow |
+
+### Select
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `trigger` | `select` | Button that opens the listbox |
+| `value-text` | `select` | Displays the current selection |
+| `indicator` | `select` | Chevron or open indicator |
+| `positioner` | `select` | Positioning wrapper |
+| `content` | `select` | Listbox container |
+| `option` | `select` | Individual option |
+| `option-text` | `select` | Text label of the option |
+
+### Combobox
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `input` | `combobox` | Text input |
+| `trigger` | `combobox` | Optional toggle button |
+| `positioner` | `combobox` | Positioning wrapper |
+| `content` | `combobox` | Listbox container |
+| `option` | `combobox` | Individual option |
+
+### Checkbox
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `root` | `checkbox` | Container (label element) |
+| `control` | `checkbox` | Visual checkbox box |
+| `indicator` | `checkbox` | Checkmark or custom icon |
+| `label` | `checkbox` | Text label |
+| `hidden-input` | `checkbox` | Native `<input type="checkbox">` (sr-only) |
+
+### Switch
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `root` | `switch` | Container (label element) |
+| `control` | `switch` | Track of the switch |
+| `thumb` | `switch` | Moving circle |
+| `label` | `switch` | Text label |
+| `hidden-input` | `switch` | Native `<input type="checkbox">` (sr-only) |
+
+### Field
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `label` | `field` | `<label>` wired via `htmlFor` |
+| `control` | `field` | Any form control child |
+| `description` | `field` | Hint text (added to aria-describedby) |
+| `error` | `field` | Error message (role=alert, renders only when invalid) |
+| `required-indicator` | `field` | Visual `*` (aria-hidden) |
+
+### Tags Input
+
+| Part | Scope | Description |
+|------|-------|-------------|
+| `root` | `tags-input` | Wrapper container |
+| `tag` | `tags-input` | Individual tag chip |
+| `tag-text` | `tags-input` | Text inside tag |
+| `tag-delete-trigger` | `tags-input` | Remove button on tag |
+| `input` | `tags-input` | Text input for new tags |
+
+<Aside type="tip">
+  You never need to add `data-forge-scope` or `data-forge-part` yourself — forge-ui writes them automatically. Just write the CSS selectors.
+</Aside>

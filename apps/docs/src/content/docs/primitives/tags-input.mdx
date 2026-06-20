@@ -1,0 +1,183 @@
+---
+title: Tags Input
+description: An input that allows the user to enter and manage a list of tags.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+**Tags Input** lets users type values and convert them into removable tag chips. Pressing `Enter` or `,` adds a tag; clicking the delete trigger or pressing `Backspace` removes one.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { TagsInput } from "@forge-ui/react";
+
+    export function SkillsTags() {
+      return (
+        <TagsInput.Root>
+          {({ tags }) =>
+            tags.map((tag) => (
+              <TagsInput.Tag key={tag.id} tag={tag}>
+                <TagsInput.TagText>{tag.value}</TagsInput.TagText>
+                <TagsInput.TagDelete tag={tag}>×</TagsInput.TagDelete>
+              </TagsInput.Tag>
+            ))
+          }
+          <TagsInput.Input placeholder="Add skill..." />
+          <TagsInput.HiddenInput />
+        </TagsInput.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      TagsInputRoot, TagsInputTag, TagsInputTagText,
+      TagsInputTagDelete, TagsInputInput, TagsInputHiddenInput,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <TagsInputRoot v-slot="{ tags }">
+        <TagsInputTag v-for="tag in tags" :key="tag.id" :tag="tag">
+          <TagsInputTagText>{{ tag.value }}</TagsInputTagText>
+          <TagsInputTagDelete :tag="tag">×</TagsInputTagDelete>
+        </TagsInputTag>
+        <TagsInputInput placeholder="Add skill..." />
+        <TagsInputHiddenInput />
+      </TagsInputRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled value
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    const [tags, setTags] = useState(["React", "TypeScript"]);
+
+    <TagsInput.Root value={tags} onValueChange={setTags}>
+      ...
+    </TagsInput.Root>
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <TagsInputRoot v-model:value="tags">...</TagsInputRoot>
+    ```
+  </TabItem>
+</Tabs>
+
+## Validation
+
+```tsx
+// Prevent duplicates
+<TagsInput.Root validate={(value, tags) => !tags.some((t) => t.value === value)}>
+
+// Max tags
+<TagsInput.Root max={5}>
+
+// Custom delimiter
+<TagsInput.Root delimiter={[",", " "]}>
+```
+
+## Styling
+
+```css
+[data-forge-scope="tags-input"][data-forge-part="root"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.375rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  align-items: center;
+}
+
+[data-forge-scope="tags-input"][data-forge-part="root"]:focus-within {
+  border-color: #3b82f6;
+}
+
+[data-forge-scope="tags-input"][data-forge-part="tag"] {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: #3b82f6;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+[data-forge-scope="tags-input"][data-forge-part="tag-delete-trigger"] {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+}
+
+[data-forge-scope="tags-input"][data-forge-part="input"] {
+  flex: 1;
+  min-width: 120px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.875rem;
+}
+```
+
+## API Reference
+
+### TagsInput.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string[]` | — | Controlled tags array |
+| `defaultValue` | `string[]` | `[]` | Uncontrolled initial tags |
+| `onValueChange` | `(tags: string[]) => void` | — | Fires when tags change |
+| `max` | `number` | — | Maximum number of tags |
+| `disabled` | `boolean` | `false` | Disable all interaction |
+| `readOnly` | `boolean` | `false` | Prevent tag changes |
+| `delimiter` | `string \| string[]` | `[","]` | Characters that trigger tag creation |
+| `validate` | `(value: string, tags: Tag[]) => boolean` | — | Custom validation per tag |
+| `name` | `string` | — | Hidden input field name |
+
+### TagsInput.Tag
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `Tag` | ✅ | Tag object from the render slot |
+
+### TagsInput.TagDelete
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `Tag` | ✅ | Tag object to delete |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"tags-input"` |
+| `data-forge-part` | All parts | `"root"` \| `"tag"` \| `"tag-text"` \| `"tag-delete-trigger"` \| `"input"` \| `"hidden-input"` \| `"label"` |
+| `data-focused` | `root` | `"true"` when input is focused |
+| `data-disabled` | `root`, `tag` | `"true"` |
+| `data-readonly` | `root` | `"true"` |
+| `data-value` | `tag` | The tag's string value |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Enter` | Add current input as tag |
+| `,` (or custom delimiter) | Add current input as tag |
+| `Backspace` | Remove last tag when input is empty |
+| `←` / `→` | Navigate between tags when input is empty |
+| `Delete` | Remove currently focused tag |

@@ -1,0 +1,161 @@
+---
+title: Field
+description: A compound component that wires accessibility attributes across a label, control, description, and error.
+---
+
+import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+
+**Field** is a layout-agnostic wiring primitive. It associates a label with a control via `htmlFor`/`id`, propagates `aria-describedby` from description and error elements, and conditionally renders error messages when `invalid` is true.
+
+<Aside type="note">
+  Field does not render any HTML element itself. It only manages IDs and ARIA wiring. You choose every element and layout.
+</Aside>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Field } from "@forge-ui/react";
+
+    export function EmailField() {
+      return (
+        <Field.Root id="email">
+          <Field.Label>
+            Email address <Field.RequiredIndicator>*</Field.RequiredIndicator>
+          </Field.Label>
+          <Field.Control>
+            <input type="email" placeholder="you@example.com" />
+          </Field.Control>
+          <Field.Description>We'll never share your email.</Field.Description>
+          <Field.Error>Please enter a valid email address.</Field.Error>
+        </Field.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      FieldRoot, FieldLabel, FieldRequiredIndicator,
+      FieldControl, FieldDescription, FieldError,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <FieldRoot id="email" :required="true">
+        <FieldLabel>
+          Email address <FieldRequiredIndicator>*</FieldRequiredIndicator>
+        </FieldLabel>
+        <FieldControl>
+          <input type="email" placeholder="you@example.com" />
+        </FieldControl>
+        <FieldDescription>We'll never share your email.</FieldDescription>
+        <FieldError>Please enter a valid email address.</FieldError>
+      </FieldRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Validation states
+
+```tsx
+// Invalid — shows Field.Error, adds aria-invalid to control
+<Field.Root id="email" invalid>
+  ...
+  <Field.Error>Please enter a valid email.</Field.Error>
+</Field.Root>
+
+// Required — shows Field.RequiredIndicator, adds aria-required to control
+<Field.Root id="name" required>
+  ...
+  <Field.Label>Name <Field.RequiredIndicator>*</Field.RequiredIndicator></Field.Label>
+</Field.Root>
+
+// Disabled — adds aria-disabled to control
+<Field.Root id="bio" disabled>...</Field.Root>
+```
+
+## Field Group
+
+Use `Field.Group` + `Field.GroupLabel` to group related controls (e.g. radio buttons) under a single accessible label.
+
+```tsx
+<Field.Root id="plan">
+  <Field.Group>
+    <Field.GroupLabel>Billing plan</Field.GroupLabel>
+    <label><input type="radio" name="plan" value="monthly" /> Monthly</label>
+    <label><input type="radio" name="plan" value="annual" /> Annual</label>
+  </Field.Group>
+</Field.Root>
+```
+
+## Styling
+
+```css
+[data-forge-scope="field"][data-forge-part="label"] {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+}
+
+[data-forge-scope="field"][data-forge-part="description"] {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+[data-forge-scope="field"][data-forge-part="error"] {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin-top: 0.25rem;
+}
+
+[data-forge-scope="field"][data-forge-part="required-indicator"] {
+  color: #dc2626;
+  margin-left: 0.125rem;
+}
+```
+
+## API Reference
+
+### Field.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `string` | auto | Base ID for derived aria IDs |
+| `invalid` | `boolean` | `false` | Marks field as invalid; shows Error |
+| `required` | `boolean` | `false` | Marks field as required |
+| `disabled` | `boolean` | `false` | Marks field as disabled |
+| `readOnly` | `boolean` | `false` | Marks field as read-only |
+
+### Field.Label / Field.Control / Field.Description / Field.Error
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+
+### Field.Error
+
+Renders only when `Field.Root` has `invalid={true}`. Has `role="alert"` and `aria-live="assertive"`.
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"field"` |
+| `data-forge-part` | All parts | `"label"` \| `"control"` \| `"description"` \| `"error"` \| `"required-indicator"` |
+
+## ARIA wiring
+
+| Connection | How |
+|-----------|-----|
+| Label → Control | `label[for]` matches `control[id]` |
+| Description → Control | `control[aria-describedby]` includes `description[id]` |
+| Error → Control | `control[aria-describedby]` includes `error[id]`; `error[role="alert"]` |
+| Required → Control | `control[aria-required="true"]`; `control[required]` |
+| Invalid → Control | `control[aria-invalid="true"]` |
+| Disabled → Control | `control[aria-disabled="true"]`; `control[disabled]` |

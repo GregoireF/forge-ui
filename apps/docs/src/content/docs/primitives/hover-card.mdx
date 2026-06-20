@@ -1,0 +1,144 @@
+---
+title: Hover Card
+description: A floating card with rich content that opens when the user hovers over a link or element.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+A **Hover Card** is a non-modal floating panel with a delay. Unlike a Tooltip, it can contain interactive content (buttons, links). Intended for "preview" UX — e.g. hovering a user mention to see their profile.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { HoverCard } from "@forge-ui/react";
+
+    export function UserCard() {
+      return (
+        <HoverCard.Root>
+          <HoverCard.Trigger asChild>
+            <a href="/profile">@janedoe</a>
+          </HoverCard.Trigger>
+          <HoverCard.Portal>
+            <HoverCard.Content>
+              <p><strong>Jane Doe</strong></p>
+              <p>Full-stack engineer. Building things.</p>
+              <p>Joined January 2022</p>
+            </HoverCard.Content>
+          </HoverCard.Portal>
+        </HoverCard.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      HoverCardRoot, HoverCardTrigger, HoverCardPortal, HoverCardContent,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <HoverCardRoot>
+        <HoverCardTrigger as-child>
+          <a href="/profile">@janedoe</a>
+        </HoverCardTrigger>
+        <HoverCardPortal>
+          <HoverCardContent>
+            <p><strong>Jane Doe</strong></p>
+            <p>Full-stack engineer. Building things.</p>
+            <p>Joined January 2022</p>
+          </HoverCardContent>
+        </HoverCardPortal>
+      </HoverCardRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Delays
+
+```tsx
+<HoverCard.Root openDelay={300} closeDelay={150}>
+  ...
+</HoverCard.Root>
+```
+
+The `closeDelay` gives users time to move their cursor from the trigger into the card content without it closing.
+
+## Exit animations with forceMount
+
+```tsx
+<HoverCard.Portal forceMount>
+  <HoverCard.Content>...</HoverCard.Content>
+</HoverCard.Portal>
+```
+
+```css
+[data-forge-scope="hover-card"][data-forge-part="content"][data-state="closed"] {
+  animation: fadeOut 0.15s ease forwards;
+}
+```
+
+## Styling
+
+```css
+[data-forge-scope="hover-card"][data-forge-part="content"] {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+  min-width: 240px;
+  box-shadow: 0 10px 30px rgba(0 0 0 / 0.15);
+  opacity: var(--forge-revealed, 0);
+  transition: opacity 0.2s ease;
+}
+```
+
+## API Reference
+
+### HoverCard.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Initial open state |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires on state change |
+| `openDelay` | `number` | `700` | Ms before opening |
+| `closeDelay` | `number` | `300` | Ms before closing |
+| `placement` | `Placement` | `"bottom"` | Floating placement |
+
+### HoverCard.Portal
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep content in DOM when closed |
+
+### HoverCard.Trigger
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"hover-card"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"positioner"` \| `"content"` \| `"arrow"` |
+| `data-state` | `content` | `"open"` \| `"closed"` |
+| `data-side` | `content` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` |
+
+## CSS variables
+
+| Variable | Description |
+|----------|-------------|
+| `--forge-revealed` | `1` when positioned and ready to display |
+
+## Accessibility
+
+- `HoverCard.Content` renders with `role="dialog"` and `aria-haspopup="dialog"` on the trigger
+- Unlike Tooltip, content may contain interactive elements
+- The card stays open while the cursor is inside the content (grace period for movement)

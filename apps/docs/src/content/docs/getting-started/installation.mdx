@@ -1,0 +1,117 @@
+---
+title: Installation
+description: Install forge-ui in your React or Vue project.
+---
+
+import { Tabs, TabItem, Code } from "@astrojs/starlight/components";
+
+## Requirements
+
+- **React** 19+ or **Vue** 3.5+
+- **Node.js** 18+ / **Bun** 1.1+
+
+## Install
+
+<Tabs>
+  <TabItem label="React">
+    ```bash
+    # npm
+    npm install @forge-ui/react
+
+    # bun
+    bun add @forge-ui/react
+
+    # pnpm
+    pnpm add @forge-ui/react
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```bash
+    # npm
+    npm install @forge-ui/vue
+
+    # bun
+    bun add @forge-ui/vue
+
+    # pnpm
+    pnpm add @forge-ui/vue
+    ```
+  </TabItem>
+</Tabs>
+
+## Basic usage
+
+All primitives are exported as a namespace object (e.g. `Dialog`) and as individual named components (Vue only).
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Dialog } from "@forge-ui/react";
+
+    export function MyDialog() {
+      return (
+        <Dialog.Root>
+          <Dialog.Trigger>Open</Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay />
+            <Dialog.Content>
+              <Dialog.Title>Hello</Dialog.Title>
+              <Dialog.Close>Close</Dialog.Close>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      DialogRoot,
+      DialogTrigger,
+      DialogPortal,
+      DialogOverlay,
+      DialogContent,
+      DialogTitle,
+      DialogClose,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <DialogRoot>
+        <DialogTrigger>Open</DialogTrigger>
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogContent>
+            <DialogTitle>Hello</DialogTitle>
+            <DialogClose>Close</DialogClose>
+          </DialogContent>
+        </DialogPortal>
+      </DialogRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Styling
+
+forge-ui ships **zero styles**. Add your own CSS using the `data-forge-scope` and `data-forge-part` attributes that every part exposes.
+
+```css
+/* Target the dialog overlay */
+[data-forge-scope="dialog"][data-forge-part="overlay"] {
+  position: fixed;
+  inset: 0;
+  background: rgba(0 0 0 / 0.5);
+}
+
+/* Target the dialog content panel */
+[data-forge-scope="dialog"][data-forge-part="content"] {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+}
+```
+
+See the [CSS Contract](/getting-started/css-contract) page for the full reference.

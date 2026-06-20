@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "astro.config.mjs", ".astro/types.d.ts"]
+}

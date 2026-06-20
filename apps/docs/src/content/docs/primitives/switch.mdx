@@ -1,0 +1,130 @@
+---
+title: Switch
+description: A toggle control that switches between on and off states.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+A **Switch** is a binary toggle that represents an on/off state. It is backed by a hidden native `<input type="checkbox">` with `role="switch"`.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Switch } from "@forge-ui/react";
+
+    export function NotificationSwitch() {
+      return (
+        <Switch.Root>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Email notifications</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      SwitchRoot, SwitchControl, SwitchThumb, SwitchLabel,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <SwitchRoot>
+        <SwitchControl>
+          <SwitchThumb />
+        </SwitchControl>
+        <SwitchLabel>Email notifications</SwitchLabel>
+      </SwitchRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled state
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    const [checked, setChecked] = useState(false);
+
+    <Switch.Root checked={checked} onCheckedChange={setChecked}>
+      ...
+    </Switch.Root>
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <SwitchRoot v-model:checked="checked">...</SwitchRoot>
+    ```
+  </TabItem>
+</Tabs>
+
+## Styling
+
+```css
+[data-forge-scope="switch"][data-forge-part="control"] {
+  width: 2.75rem;
+  height: 1.5rem;
+  background: #d1d5db;
+  border-radius: 9999px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+[data-forge-scope="switch"][data-forge-part="control"][data-state="checked"] {
+  background: #3b82f6;
+}
+
+[data-forge-scope="switch"][data-forge-part="thumb"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  background: white;
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgba(0 0 0 / 0.3);
+  transition: transform 0.2s;
+}
+
+[data-forge-scope="switch"][data-forge-part="control"][data-state="checked"]
+[data-forge-part="thumb"] {
+  transform: translateX(1.25rem);
+}
+```
+
+## API Reference
+
+### Switch.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | — | Controlled checked state |
+| `defaultChecked` | `boolean` | `false` | Uncontrolled initial state |
+| `onCheckedChange` | `(checked: boolean) => void` | — | Fires on state change |
+| `disabled` | `boolean` | `false` | Disable the switch |
+| `required` | `boolean` | `false` | Mark as required |
+| `name` | `string` | — | Form field name |
+| `value` | `string` | `"on"` | Form field value |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"switch"` |
+| `data-forge-part` | All parts | `"root"` \| `"control"` \| `"thumb"` \| `"label"` \| `"hidden-input"` |
+| `data-state` | `root`, `control` | `"checked"` \| `"unchecked"` |
+| `data-disabled` | `root`, `control` | `"true"` |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggle checked state |

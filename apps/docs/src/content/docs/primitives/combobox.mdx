@@ -1,0 +1,150 @@
+---
+title: Combobox
+description: A filterable dropdown that combines a text input with a listbox of options.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+A **Combobox** is a text input paired with a filterable listbox. The user can type to filter options and select one from the list.
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { useState } from "react";
+    import { Combobox } from "@forge-ui/react";
+
+    const countries = ["France", "Germany", "Italy", "Spain", "United Kingdom"];
+
+    export function CountryCombobox() {
+      const [query, setQuery] = useState("");
+
+      const filtered = countries.filter((c) =>
+        c.toLowerCase().includes(query.toLowerCase())
+      );
+
+      return (
+        <Combobox.Root onInputChange={setQuery}>
+          <Combobox.Input placeholder="Search country..." />
+          <Combobox.Portal>
+            <Combobox.Positioner>
+              <Combobox.Content>
+                {filtered.map((country) => (
+                  <Combobox.Item key={country} value={country}>
+                    <Combobox.ItemText>{country}</Combobox.ItemText>
+                  </Combobox.Item>
+                ))}
+              </Combobox.Content>
+            </Combobox.Positioner>
+          </Combobox.Portal>
+        </Combobox.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      ComboboxRoot, ComboboxInput, ComboboxPortal,
+      ComboboxContent, ComboboxItem, ComboboxItemText,
+    } from "@forge-ui/vue";
+    import { ref, computed } from "vue";
+
+    const countries = ["France", "Germany", "Italy", "Spain", "United Kingdom"];
+    const query = ref("");
+
+    const filtered = computed(() =>
+      countries.filter((c) => c.toLowerCase().includes(query.value.toLowerCase()))
+    );
+    </script>
+
+    <template>
+      <ComboboxRoot @input-change="query = $event">
+        <ComboboxInput placeholder="Search country..." />
+        <ComboboxPortal>
+          <ComboboxContent>
+            <ComboboxItem v-for="country in filtered" :key="country" :value="country">
+              <ComboboxItemText>{{ country }}</ComboboxItemText>
+            </ComboboxItem>
+          </ComboboxContent>
+        </ComboboxPortal>
+      </ComboboxRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Styling
+
+```css
+[data-forge-scope="combobox"][data-forge-part="input"] {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  width: 220px;
+  outline: none;
+}
+
+[data-forge-scope="combobox"][data-forge-part="input"]:focus {
+  border-color: #3b82f6;
+}
+
+[data-forge-scope="combobox"][data-forge-part="content"] {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.25rem;
+  opacity: var(--forge-revealed, 0);
+  transition: opacity 0.15s ease;
+}
+
+[data-forge-scope="combobox"][data-forge-part="option"][data-highlighted="true"] {
+  background: #3b82f6;
+  color: white;
+}
+```
+
+## API Reference
+
+### Combobox.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | Controlled selected value |
+| `defaultValue` | `string` | — | Uncontrolled initial value |
+| `onValueChange` | `(value: string) => void` | — | Fires when value changes |
+| `inputValue` | `string` | — | Controlled input text |
+| `onInputChange` | `(value: string) => void` | — | Fires on input text change |
+| `open` | `boolean` | — | Controlled open state |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires when open changes |
+| `disabled` | `boolean` | `false` | Disable the combobox |
+| `autoComplete` | `"none"` \| `"list"` \| `"inline"` \| `"both"` | `"none"` | Input autocomplete behaviour |
+
+### Combobox.Item
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Option value |
+| `disabled` | `boolean` | `false` | Disable this option |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"combobox"` |
+| `data-forge-part` | All parts | `"input"` \| `"trigger"` \| `"positioner"` \| `"content"` \| `"option"` \| `"option-text"` \| `"group"` \| `"group-label"` |
+| `data-state` | `content` | `"open"` \| `"closed"` |
+| `data-highlighted` | `option` | `"true"` when keyboard-focused |
+| `data-selected` | `option` | `"true"` when chosen |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `↓` | Open list / move to next option |
+| `↑` | Move to previous option |
+| `Enter` | Select highlighted option |
+| `Escape` | Close list |
+| `Tab` | Close and move focus |

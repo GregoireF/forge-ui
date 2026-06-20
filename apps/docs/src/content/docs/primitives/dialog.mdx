@@ -1,0 +1,223 @@
+---
+title: Dialog
+description: A modal window that interrupts the user with important content, requiring interaction before continuing.
+---
+
+import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+import { DialogDemoReact } from "../../../components/examples/dialog/DialogDemoReact.tsx";
+import DialogDemoVue from "../../../components/examples/dialog/DialogDemoVue.vue";
+
+A **Dialog** renders a modal panel inside a portal, with focus trapping, scroll locking, and pointer-outside detection. It follows the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/).
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <DialogDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <DialogDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Dialog } from "@forge-ui/react";
+
+    export function MyDialog() {
+      return (
+        <Dialog.Root>
+          <Dialog.Trigger>Open Dialog</Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay />
+            <Dialog.Content>
+              <Dialog.Title>Edit profile</Dialog.Title>
+              <Dialog.Description>
+                Update your display name and manage your account settings.
+              </Dialog.Description>
+              <Dialog.Close>Cancel</Dialog.Close>
+              <Dialog.Close>Save changes</Dialog.Close>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      DialogRoot, DialogTrigger, DialogPortal,
+      DialogOverlay, DialogContent, DialogTitle,
+      DialogDescription, DialogClose,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <DialogRoot>
+        <DialogTrigger>Open Dialog</DialogTrigger>
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogContent>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Update your display name and manage your account settings.
+            </DialogDescription>
+            <DialogClose>Cancel</DialogClose>
+            <DialogClose>Save changes</DialogClose>
+          </DialogContent>
+        </DialogPortal>
+      </DialogRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled state
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    const [open, setOpen] = useState(false);
+
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      ...
+    </Dialog.Root>
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    const open = ref(false);
+    </script>
+
+    <template>
+      <DialogRoot v-model:open="open">...</DialogRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Exit animations with forceMount
+
+Pass `forceMount` to `Dialog.Portal` to keep the content in the DOM when closed. The `data-state` attribute becomes `"closed"` instead of unmounting.
+
+```tsx
+<Dialog.Portal forceMount>
+  <Dialog.Overlay />
+  <Dialog.Content>...</Dialog.Content>
+</Dialog.Portal>
+```
+
+```css
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="closed"] {
+  animation: fadeOut 0.2s ease forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: scale(0.95); }
+}
+```
+
+## Styling
+
+```css
+[data-forge-scope="dialog"][data-forge-part="overlay"] {
+  position: fixed;
+  inset: 0;
+  background: rgba(0 0 0 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-forge-scope="dialog"][data-forge-part="content"] {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  min-width: 340px;
+}
+
+[data-forge-scope="dialog"][data-forge-part="title"] {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+```
+
+## API Reference
+
+### Dialog.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Initial open state (uncontrolled) |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires when open state changes |
+| `modal` | `boolean` | `true` | Enables focus trap and scroll lock |
+| `trapFocus` | `boolean` | `true` | Enable/disable focus trapping |
+| `preventScroll` | `boolean` | `true` | Enable/disable scroll lock |
+| `hideOthers` | `boolean` | `true` | Hide background from assistive tech |
+| `initialFocusEl` | `() => HTMLElement \| null` | — | Element to focus on open |
+| `finalFocusEl` | `() => HTMLElement \| null` | — | Element to focus on close |
+| `onOpenAutoFocus` | `(e: Event) => void` | — | Before first element is focused on open |
+| `onCloseAutoFocus` | `(e: Event) => void` | — | Before focus is restored on close |
+| `onEscapeKeyDown` | `(e: KeyboardEvent) => void` | — | Escape key inside dialog |
+| `onPointerDownOutside` | `(e: PointerEvent) => void` | — | Pointer down outside content |
+| `onInteractOutside` | `(e: PointerEvent \| FocusEvent) => void` | — | Any interaction outside |
+
+### Dialog.Portal
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `container` | `HTMLElement \| null` | `document.body` | Custom portal container |
+| `forceMount` | `boolean` | `false` | Keep children in DOM when closed |
+
+### Dialog.Trigger / Dialog.Close
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+
+### Dialog.Content / Dialog.Overlay
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed |
+
+Content also accepts per-instance overrides of all interaction callbacks from `Dialog.Root`.
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"dialog"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"overlay"` \| `"content"` \| `"title"` \| `"description"` \| `"close"` |
+| `data-state` | `overlay`, `content` | `"open"` \| `"closed"` |
+
+## Accessibility
+
+- `Dialog.Content` renders with `role="dialog"` and `aria-modal="true"`
+- `Dialog.Title` is wired to `aria-labelledby` on content
+- `Dialog.Description` is wired to `aria-describedby` on content
+- Focus is trapped inside the dialog while open
+- `Escape` closes the dialog
+- Focus returns to the trigger on close
+- Background content is hidden from screen readers via `aria-hidden`
+
+<Aside type="caution">
+  `Dialog.Title` is required for accessibility. A dev-mode warning will fire if the dialog opens without a title or an `aria-label`.
+</Aside>
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `Space` | Opens dialog when trigger is focused |
+| `Escape` | Closes the dialog |
+| `Tab` | Cycle focus within the dialog |
+| `Shift + Tab` | Reverse-cycle focus within the dialog |

@@ -1,0 +1,58 @@
+---
+title: Introduction
+description: forge-ui — Headless, accessible UI primitives for React and Vue, built on a 3-tier architecture.
+template: splash
+hero:
+  tagline: Headless UI primitives for React and Vue. Unstyled, accessible, built on a strict CSS contract.
+  actions:
+    - text: Get started
+      link: /getting-started/installation
+      icon: right-arrow
+      variant: primary
+    - text: Browse primitives
+      link: /primitives/dialog
+      icon: open-book
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+## Why forge-ui?
+
+forge-ui is a headless component library that owns the **behaviour** and **accessibility** of UI primitives so you own the **look**. It ships zero styles. Instead it exposes a predictable CSS contract via `data-forge-scope` and `data-forge-part` attributes — the same API across React and Vue.
+
+<CardGrid>
+  <Card title="Headless" icon="puzzle">
+    Zero default styles. Ship your design system, not ours.
+  </Card>
+  <Card title="CSS contract" icon="pencil">
+    Target every part via `[data-forge-scope="dialog"][data-forge-part="overlay"]`. No class name coupling.
+  </Card>
+  <Card title="React & Vue" icon="laptop">
+    Identical API surface for both frameworks. One page, two tabs.
+  </Card>
+  <Card title="Accessible" icon="approve-check-circle">
+    WAI-ARIA patterns, keyboard navigation, and focus management built in.
+  </Card>
+  <Card title="3-tier architecture" icon="setting">
+    Machine → connect → framework. Logic lives in plain TypeScript; frameworks are thin wrappers.
+  </Card>
+  <Card title="Tested" icon="magnifier">
+    Every primitive has unit and interaction tests for both React and Vue.
+  </Card>
+</CardGrid>
+
+## Available primitives
+
+| Primitive | Status | React | Vue |
+|-----------|--------|-------|-----|
+| [Dialog](/primitives/dialog) | ✅ Stable | ✅ | ✅ |
+| [Alert Dialog](/primitives/alert-dialog) | ✅ Stable | ✅ | ✅ |
+| [Popover](/primitives/popover) | ✅ Stable | ✅ | ✅ |
+| [Tooltip](/primitives/tooltip) | ✅ Stable | ✅ | ✅ |
+| [Hover Card](/primitives/hover-card) | ✅ Stable | ✅ | ✅ |
+| [Select](/primitives/select) | ✅ Stable | ✅ | ✅ |
+| [Combobox](/primitives/combobox) | ✅ Stable | ✅ | ✅ |
+| [Checkbox](/primitives/checkbox) | ✅ Stable | ✅ | ✅ |
+| [Switch](/primitives/switch) | ✅ Stable | ✅ | ✅ |
+| [Field](/primitives/field) | ✅ Stable | ✅ | ✅ |
+| [Tags Input](/primitives/tags-input) | ✅ Stable | ✅ | ✅ |
