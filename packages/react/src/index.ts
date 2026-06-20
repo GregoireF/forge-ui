@@ -25,6 +25,16 @@ export { RadioGroup } from "./components/radio-group/RadioGroup.js";
 export type { UseRadioGroupOptions } from "./components/radio-group/use-radio-group.js";
 export { useRadioGroup } from "./components/radio-group/use-radio-group.js";
 export type {
+  SliderHiddenInputProps,
+  SliderRangeProps,
+  SliderRootProps,
+  SliderThumbProps,
+  SliderTrackProps,
+} from "./components/slider/Slider.js";
+export { Slider } from "./components/slider/Slider.js";
+export type { UseSliderOptions } from "./components/slider/use-slider.js";
+export { useSlider } from "./components/slider/use-slider.js";
+export type {
   TabsListProps,
   TabsPanelProps,
   TabsRootProps,

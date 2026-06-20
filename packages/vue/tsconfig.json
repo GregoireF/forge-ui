@@ -21,6 +21,7 @@
       "@forge-ui/switch": ["../primitives/switch/src/index.ts"],
       "@forge-ui/hover-card": ["../primitives/hover-card/src/index.ts"],
       "@forge-ui/tags-input": ["../primitives/tags-input/src/index.ts"],
+      "@forge-ui/slider": ["../primitives/slider/src/index.ts"],
       "@forge-ui/tooltip": ["../primitives/tooltip/src/index.ts"]
     }
   },
@@ -43,6 +44,7 @@
     { "path": "../primitives/select" },
     { "path": "../primitives/switch" },
     { "path": "../primitives/tags-input" },
+    { "path": "../primitives/slider" },
     { "path": "../primitives/tooltip" }
   ]
 }
