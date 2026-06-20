@@ -1,0 +1,121 @@
+---
+title: Tabs
+description: A set of layered panels activated by tab triggers, with full keyboard navigation and ARIA support.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { TabsDemoReact } from "../../../components/examples/tabs/TabsDemoReact.tsx";
+import TabsDemoVue from "../../../components/examples/tabs/TabsDemoVue.vue";
+
+**Tabs** organize content into panels that are revealed one at a time. Supports automatic (focus) or manual (click) activation modes, horizontal and vertical orientation, and roving tabIndex keyboard navigation.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <TabsDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <TabsDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Tabs } from "@forge-ui/react";
+
+    export function MyTabs() {
+      return (
+        <Tabs.Root defaultValue="tab1">
+          <Tabs.List>
+            <Tabs.Trigger value="tab1">Overview</Tabs.Trigger>
+            <Tabs.Trigger value="tab2">Details</Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Panel value="tab1">Overview content</Tabs.Panel>
+          <Tabs.Panel value="tab2">Details content</Tabs.Panel>
+        </Tabs.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import { TabsRoot, TabsList, TabsTrigger, TabsPanel } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <TabsRoot default-value="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Overview</TabsTrigger>
+          <TabsTrigger value="tab2">Details</TabsTrigger>
+        </TabsList>
+        <TabsPanel value="tab1">Overview content</TabsPanel>
+        <TabsPanel value="tab2">Details content</TabsPanel>
+      </TabsRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled
+
+```tsx
+const [tab, setTab] = useState("overview");
+<Tabs.Root value={tab} onValueChange={setTab}>...</Tabs.Root>
+```
+
+## Styling
+
+```css
+[data-forge-scope="tabs"][data-forge-part="trigger"] {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+[data-forge-scope="tabs"][data-forge-part="trigger"][data-state="active"] {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+[data-forge-scope="tabs"][data-forge-part="panel"] {
+  padding: 1rem 0;
+}
+```
+
+## API Reference
+
+### Tabs.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | Controlled active tab |
+| `defaultValue` | `string` | — | Uncontrolled initial tab |
+| `activationMode` | `"automatic" \| "manual"` | `"automatic"` | Auto-select on focus or require click |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Direction of the tablist |
+| `onValueChange` | `(value: string) => void` | — | Fires on tab change |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"tabs"` |
+| `data-forge-part` | All parts | `"root"` \| `"list"` \| `"trigger"` \| `"panel"` |
+| `data-state` | `trigger`, `panel` | `"active"` \| `"inactive"` |
+| `data-orientation` | `root`, `list`, `trigger` | `"horizontal"` \| `"vertical"` |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `ArrowRight` / `ArrowDown` | Move focus to next tab |
+| `ArrowLeft` / `ArrowUp` | Move focus to previous tab |
+| `Home` | Move focus to first tab |
+| `End` | Move focus to last tab |
+| `Enter` / `Space` | Activate focused tab (manual mode) |

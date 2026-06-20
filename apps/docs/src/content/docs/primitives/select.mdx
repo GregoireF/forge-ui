@@ -4,8 +4,21 @@ description: A dropdown listbox that allows the user to choose one value from a 
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { SelectDemoReact } from "../../../components/examples/select/SelectDemoReact.tsx";
+import SelectDemoVue from "../../../components/examples/select/SelectDemoVue.vue";
 
 A **Select** renders a button trigger that opens a floating listbox of options. It follows the [WAI-ARIA Listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <SelectDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <SelectDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

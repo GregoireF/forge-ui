@@ -1,0 +1,125 @@
+---
+title: Progress
+description: A visual indicator of task completion with accessible ARIA attributes and indeterminate state support.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { ProgressDemoReact } from "../../../components/examples/progress/ProgressDemoReact.tsx";
+import ProgressDemoVue from "../../../components/examples/progress/ProgressDemoVue.vue";
+
+**Progress** communicates the completion status of a task. It supports determinate (0–max) and indeterminate (`null`) states, and exposes `role="progressbar"` with appropriate ARIA attributes.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <ProgressDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <ProgressDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Progress } from "@forge-ui/react";
+
+    export function UploadProgress({ value }: { value: number | null }) {
+      return (
+        <Progress.Root value={value}>
+          <Progress.Label>Uploading…</Progress.Label>
+          <Progress.Track>
+            <Progress.Fill />
+          </Progress.Track>
+          <Progress.ValueText />
+        </Progress.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import { ProgressRoot, ProgressTrack, ProgressFill, ProgressValueText } from "@forge-ui/vue";
+    defineProps<{ value: number | null }>();
+    </script>
+
+    <template>
+      <ProgressRoot :value="value">
+        <ProgressTrack :value="value">
+          <ProgressFill :value="value" />
+        </ProgressTrack>
+        <ProgressValueText :value="value" />
+      </ProgressRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Indeterminate state
+
+Pass `value={null}` to render an indeterminate spinner. `aria-valuetext` becomes `"loading"`.
+
+```tsx
+<Progress.Root value={null}>
+  <Progress.Track>
+    <Progress.Fill />
+  </Progress.Track>
+</Progress.Root>
+```
+
+## Custom range
+
+```tsx
+<Progress.Root value={150} min={100} max={200}>
+  <Progress.Track>
+    <Progress.Fill />
+  </Progress.Track>
+  <Progress.ValueText /> {/* renders "50%" */}
+</Progress.Root>
+```
+
+## Styling
+
+```css
+[data-forge-scope="progress"][data-forge-part="track"] {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+[data-forge-scope="progress"][data-forge-part="fill"] {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+[data-forge-scope="progress"][data-forge-part="root"][data-state="indeterminate"]
+  [data-forge-part="fill"] {
+  animation: indeterminate 1.5s infinite;
+}
+```
+
+## API Reference
+
+Progress is a **stateless connect** — each part receives the same props individually.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number \| null` | — | Current value (`null` = indeterminate) |
+| `min` | `number` | `0` | Minimum value |
+| `max` | `number` | `100` | Maximum value |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"progress"` |
+| `data-forge-part` | All parts | `"root"` \| `"track"` \| `"fill"` \| `"label"` \| `"value-text"` |
+| `data-state` | `root` | `"indeterminate"` \| `"loading"` \| `"complete"` |
+| `data-value` | `root` | Current numeric value |

@@ -4,12 +4,25 @@ description: A compound component that wires accessibility attributes across a l
 ---
 
 import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+import { FieldDemoReact } from "../../../components/examples/field/FieldDemoReact.tsx";
+import FieldDemoVue from "../../../components/examples/field/FieldDemoVue.vue";
 
 **Field** is a layout-agnostic wiring primitive. It associates a label with a control via `htmlFor`/`id`, propagates `aria-describedby` from description and error elements, and conditionally renders error messages when `invalid` is true.
 
 <Aside type="note">
   Field does not render any HTML element itself. It only manages IDs and ARIA wiring. You choose every element and layout.
 </Aside>
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <FieldDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <FieldDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

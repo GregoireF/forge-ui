@@ -4,8 +4,21 @@ description: A binary or tri-state toggle control with keyboard and screen reade
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { CheckboxDemoReact } from "../../../components/examples/checkbox/CheckboxDemoReact.tsx";
+import CheckboxDemoVue from "../../../components/examples/checkbox/CheckboxDemoVue.vue";
 
 A **Checkbox** is an interactive control that can be checked, unchecked, or indeterminate. It renders a visually styled box backed by a hidden native `<input type="checkbox">` for form and accessibility compatibility.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <CheckboxDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <CheckboxDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

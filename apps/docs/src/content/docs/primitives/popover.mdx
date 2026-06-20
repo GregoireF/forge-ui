@@ -4,8 +4,21 @@ description: A floating panel anchored to a trigger element, for non-modal rich 
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { PopoverDemoReact } from "../../../components/examples/popover/PopoverDemoReact.tsx";
+import PopoverDemoVue from "../../../components/examples/popover/PopoverDemoVue.vue";
 
 A **Popover** displays rich floating content anchored to a trigger. Unlike Dialog, it is non-modal: clicking outside closes it. It uses the floating positioning engine built into forge-ui.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <PopoverDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <PopoverDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

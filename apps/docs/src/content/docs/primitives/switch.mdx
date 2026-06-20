@@ -4,8 +4,21 @@ description: A toggle control that switches between on and off states.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { SwitchDemoReact } from "../../../components/examples/switch/SwitchDemoReact.tsx";
+import SwitchDemoVue from "../../../components/examples/switch/SwitchDemoVue.vue";
 
 A **Switch** is a binary toggle that represents an on/off state. It is backed by a hidden native `<input type="checkbox">` with `role="switch"`.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <SwitchDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <SwitchDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

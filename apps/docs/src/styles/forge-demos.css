@@ -398,6 +398,160 @@
   padding: 0.25rem;
 }
 
+/* ── Accordion ── */
+[data-forge-scope="accordion"][data-forge-part="trigger"] {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--sl-color-hairline);
+  color: var(--sl-color-white);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: inherit;
+}
+
+[data-forge-scope="accordion"][data-forge-part="trigger"]:hover {
+  color: var(--sl-color-accent);
+}
+
+[data-forge-scope="accordion"][data-forge-part="content"][data-state="closed"] {
+  display: none;
+}
+
+[data-forge-scope="accordion"][data-forge-part="content"] {
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+/* ── Tabs ── */
+[data-forge-scope="tabs"][data-forge-part="list"] {
+  display: flex;
+  border-bottom: 1px solid var(--sl-color-hairline);
+  margin-bottom: 1rem;
+}
+
+[data-forge-scope="tabs"][data-forge-part="trigger"] {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+[data-forge-scope="tabs"][data-forge-part="trigger"][data-state="active"] {
+  color: var(--sl-color-accent);
+  border-bottom-color: var(--sl-color-accent);
+}
+
+[data-forge-scope="tabs"][data-forge-part="panel"] {
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+  line-height: 1.6;
+}
+
+/* ── Radio Group ── */
+[data-forge-scope="radio-group"][data-forge-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+[data-forge-scope="radio-group"][data-forge-part="item"] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+[data-forge-scope="radio-group"][data-forge-part="radio"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--sl-color-hairline);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+[data-forge-scope="radio-group"][data-forge-part="radio"][data-state="checked"] {
+  border-color: var(--sl-color-accent);
+}
+
+[data-forge-scope="radio-group"][data-forge-part="radio"][data-state="checked"]::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--sl-color-accent);
+  border-radius: 50%;
+}
+
+[data-forge-scope="radio-group"][data-forge-part="label"] {
+  font-size: 0.875rem;
+  color: var(--sl-color-white);
+  cursor: pointer;
+}
+
+/* ── Slider ── */
+[data-forge-scope="slider"][data-forge-part="root"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  height: 20px;
+}
+
+[data-forge-scope="slider"][data-forge-part="track"] {
+  flex: 1;
+  height: 6px;
+  background: var(--sl-color-gray-6);
+  border-radius: 999px;
+  position: relative;
+  overflow: visible;
+  cursor: pointer;
+}
+
+[data-forge-scope="slider"][data-forge-part="range"] {
+  position: absolute;
+  height: 100%;
+  background: var(--sl-color-accent);
+  border-radius: 999px;
+}
+
+[data-forge-scope="slider"][data-forge-part="thumb"] {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  outline: none;
+  transition: box-shadow 0.15s;
+}
+
+[data-forge-scope="slider"][data-forge-part="thumb"]:focus-visible {
+  box-shadow: 0 0 0 3px var(--sl-color-accent);
+}
+
 /* ── Field ── */
 .forge-field-demo {
   display: flex;

@@ -4,8 +4,21 @@ description: A filterable dropdown that combines a text input with a listbox of 
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { ComboboxDemoReact } from "../../../components/examples/combobox/ComboboxDemoReact.tsx";
+import ComboboxDemoVue from "../../../components/examples/combobox/ComboboxDemoVue.vue";
 
 A **Combobox** is a text input paired with a filterable listbox. The user can type to filter options and select one from the list.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <ComboboxDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <ComboboxDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

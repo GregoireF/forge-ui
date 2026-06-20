@@ -4,8 +4,21 @@ description: A modal dialog that interrupts the user with important content requ
 ---
 
 import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+import { AlertDialogDemoReact } from "../../../components/examples/alert-dialog/AlertDialogDemoReact.tsx";
+import AlertDialogDemoVue from "../../../components/examples/alert-dialog/AlertDialogDemoVue.vue";
 
 An **Alert Dialog** is a specialised dialog that conveys urgent information and requires the user to explicitly confirm or dismiss. It renders with `role="alertdialog"` and disables closing by clicking outside.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <AlertDialogDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <AlertDialogDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

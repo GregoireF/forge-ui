@@ -4,8 +4,21 @@ description: A floating card with rich content that opens when the user hovers o
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { HoverCardDemoReact } from "../../../components/examples/hover-card/HoverCardDemoReact.tsx";
+import HoverCardDemoVue from "../../../components/examples/hover-card/HoverCardDemoVue.vue";
 
 A **Hover Card** is a non-modal floating panel with a delay. Unlike a Tooltip, it can contain interactive content (buttons, links). Intended for "preview" UX — e.g. hovering a user mention to see their profile.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <HoverCardDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <HoverCardDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

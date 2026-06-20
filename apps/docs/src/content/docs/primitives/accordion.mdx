@@ -1,0 +1,128 @@
+---
+title: Accordion
+description: A vertically stacked set of collapsible sections with keyboard navigation and ARIA support.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { AccordionDemoReact } from "../../../components/examples/accordion/AccordionDemoReact.tsx";
+import AccordionDemoVue from "../../../components/examples/accordion/AccordionDemoVue.vue";
+
+An **Accordion** renders a series of items each with a toggleable content panel. Supports single or multiple open items, collapsible mode, and full keyboard navigation.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <AccordionDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <AccordionDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Accordion } from "@forge-ui/react";
+
+    export function MyAccordion() {
+      return (
+        <Accordion.Root type="single" collapsible>
+          <Accordion.Item value="item-1">
+            <Accordion.Header>
+              <Accordion.Trigger>Section 1</Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content>Content for section 1</Accordion.Content>
+          </Accordion.Item>
+          <Accordion.Item value="item-2">
+            <Accordion.Header>
+              <Accordion.Trigger>Section 2</Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content>Content for section 2</Accordion.Content>
+          </Accordion.Item>
+        </Accordion.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      AccordionRoot, AccordionItem, AccordionHeader,
+      AccordionTrigger, AccordionContent,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <AccordionRoot type="single" :collapsible="true">
+        <AccordionItem value="item-1">
+          <AccordionHeader>
+            <AccordionTrigger>Section 1</AccordionTrigger>
+          </AccordionHeader>
+          <AccordionContent>Content for section 1</AccordionContent>
+        </AccordionItem>
+      </AccordionRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Multiple open items
+
+```tsx
+<Accordion.Root type="multiple" defaultValue={["item-1", "item-2"]}>
+  ...
+</Accordion.Root>
+```
+
+## Styling
+
+```css
+[data-forge-scope="accordion"][data-forge-part="trigger"] {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+[data-forge-scope="accordion"][data-forge-part="content"][data-state="closed"] {
+  display: none;
+}
+
+[data-forge-scope="accordion"][data-forge-part="trigger"][data-state="open"] {
+  color: var(--accent);
+}
+```
+
+## API Reference
+
+### Accordion.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `"single" \| "multiple"` | `"single"` | Single or multiple open items |
+| `value` | `string \| string[]` | — | Controlled open item(s) |
+| `defaultValue` | `string \| string[]` | — | Initial open item(s) |
+| `collapsible` | `boolean` | `false` | Allow closing the open item (single mode) |
+| `disabled` | `boolean` | `false` | Disable all items |
+| `onValueChange` | `(value: string[]) => void` | — | Fires on open/close |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"accordion"` |
+| `data-forge-part` | All parts | `"root"` \| `"item"` \| `"header"` \| `"trigger"` \| `"content"` |
+| `data-state` | `trigger`, `content` | `"open"` \| `"closed"` |
+| `data-disabled` | `root`, `item`, `trigger` | `""` |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `Space` | Toggle the focused item |
+| `Tab` | Move focus to next interactive element |

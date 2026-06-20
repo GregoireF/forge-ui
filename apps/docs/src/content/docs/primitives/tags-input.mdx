@@ -4,8 +4,21 @@ description: An input that allows the user to enter and manage a list of tags.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { TagsInputDemoReact } from "../../../components/examples/tags-input/TagsInputDemoReact.tsx";
+import TagsInputDemoVue from "../../../components/examples/tags-input/TagsInputDemoVue.vue";
 
 **Tags Input** lets users type values and convert them into removable tag chips. Pressing `Enter` or `,` adds a tag; clicking the delete trigger or pressing `Backspace` removes one.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <TagsInputDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <TagsInputDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 

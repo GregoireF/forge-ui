@@ -1,0 +1,161 @@
+---
+title: Slider
+description: A draggable range input with keyboard navigation, custom step, and ARIA slider role.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { SliderDemoReact } from "../../../components/examples/slider/SliderDemoReact.tsx";
+import SliderDemoVue from "../../../components/examples/slider/SliderDemoVue.vue";
+
+A **Slider** is an input that lets users select a value from a continuous or stepped range. It supports pointer drag, keyboard navigation, custom min/max/step, and renders `role="slider"` with full ARIA attributes.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <SliderDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <SliderDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Slider } from "@forge-ui/react";
+
+    export function VolumeSlider() {
+      return (
+        <Slider.Root defaultValue={50} min={0} max={100}>
+          <Slider.Track>
+            <Slider.Range />
+          </Slider.Track>
+          <Slider.Thumb aria-label="Volume" />
+          <Slider.HiddenInput name="volume" />
+        </Slider.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import { SliderRoot, SliderTrack, SliderRange, SliderThumb } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <SliderRoot :default-value="50" :min="0" :max="100">
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb aria-label="Volume" />
+      </SliderRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled
+
+```tsx
+const [volume, setVolume] = useState(50);
+
+<Slider.Root value={volume} onValueChange={setVolume}>
+  ...
+</Slider.Root>
+```
+
+## Custom step
+
+```tsx
+<Slider.Root defaultValue={0} min={0} max={1} step={0.01}>
+  <Slider.Track><Slider.Range /></Slider.Track>
+  <Slider.Thumb />
+</Slider.Root>
+```
+
+## Vertical orientation
+
+```tsx
+<Slider.Root orientation="vertical" defaultValue={50}>
+  <Slider.Track>
+    <Slider.Range />
+  </Slider.Track>
+  <Slider.Thumb />
+</Slider.Root>
+```
+
+## Styling
+
+```css
+[data-forge-scope="slider"][data-forge-part="track"] {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  position: relative;
+  flex: 1;
+}
+
+[data-forge-scope="slider"][data-forge-part="range"] {
+  position: absolute;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+[data-forge-scope="slider"][data-forge-part="thumb"] {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  cursor: pointer;
+}
+
+[data-forge-scope="slider"][data-forge-part="thumb"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+```
+
+## API Reference
+
+### Slider.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | — | Controlled value |
+| `defaultValue` | `number` | `min` | Uncontrolled initial value |
+| `min` | `number` | `0` | Minimum value |
+| `max` | `number` | `100` | Maximum value |
+| `step` | `number` | `1` | Step increment |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Slider direction |
+| `disabled` | `boolean` | `false` | Disable interaction |
+| `onValueChange` | `(value: number) => void` | — | Fires on every change |
+| `onValueCommit` | `(value: number) => void` | — | Fires on pointerup / keyboard commit |
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"slider"` |
+| `data-forge-part` | All parts | `"root"` \| `"track"` \| `"range"` \| `"thumb"` |
+| `data-orientation` | All parts | `"horizontal"` \| `"vertical"` |
+| `data-disabled` | All parts | `""` |
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `ArrowRight` / `ArrowUp` | Increment by step |
+| `ArrowLeft` / `ArrowDown` | Decrement by step |
+| `PageUp` | Increment by 10% of range |
+| `PageDown` | Decrement by 10% of range |
+| `Home` | Set to minimum |
+| `End` | Set to maximum |

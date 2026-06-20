@@ -4,8 +4,21 @@ description: A floating label that appears on hover or focus to describe an elem
 ---
 
 import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+import { TooltipDemoReact } from "../../../components/examples/tooltip/TooltipDemoReact.tsx";
+import TooltipDemoVue from "../../../components/examples/tooltip/TooltipDemoVue.vue";
 
 A **Tooltip** shows a short label when the trigger is hovered or focused. It is purely informational and should not contain interactive content.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <TooltipDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <TooltipDemoVue client:visible />
+  </TabItem>
+</Tabs>
 
 ## Usage
 
