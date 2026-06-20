@@ -9,6 +9,15 @@ export { Accordion } from "./components/accordion/Accordion.js";
 export type { UseAccordionOptions } from "./components/accordion/use-accordion.js";
 export { useAccordion } from "./components/accordion/use-accordion.js";
 export type {
+  RadioGroupItemProps,
+  RadioGroupLabelProps,
+  RadioGroupRadioProps,
+  RadioGroupRootProps,
+} from "./components/radio-group/RadioGroup.js";
+export { RadioGroup } from "./components/radio-group/RadioGroup.js";
+export type { UseRadioGroupOptions } from "./components/radio-group/use-radio-group.js";
+export { useRadioGroup } from "./components/radio-group/use-radio-group.js";
+export type {
   TabsListProps,
   TabsPanelProps,
   TabsRootProps,

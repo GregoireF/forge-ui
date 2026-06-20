@@ -10,6 +10,9 @@ export default defineConfig({
       "@forge-ui/accordion": fileURLToPath(
         new URL("../primitives/accordion/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/radio-group": fileURLToPath(
+        new URL("../primitives/radio-group/src/index.ts", import.meta.url),
+      ),
       "@forge-ui/tabs": fileURLToPath(
         new URL("../primitives/tabs/src/index.ts", import.meta.url),
       ),
