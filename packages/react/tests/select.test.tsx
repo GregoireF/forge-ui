@@ -263,4 +263,105 @@ describe("Select (React)", () => {
       expect(screen.getByRole("option", { name: "Apple" })).toBeInTheDocument();
     });
   });
+
+  describe("CSS contract", () => {
+    it("trigger has data-forge-scope=select and data-forge-part=trigger", () => {
+      render(makeFixture());
+      const trigger = screen.getByTestId("trigger");
+      expect(trigger).toHaveAttribute("data-forge-scope", "select");
+      expect(trigger).toHaveAttribute("data-forge-part", "trigger");
+    });
+
+    it("content has data-forge-scope=select and data-forge-part=content", async () => {
+      render(makeFixture());
+      await user.click(screen.getByTestId("trigger"));
+      const content = screen.getByTestId("content");
+      expect(content).toHaveAttribute("data-forge-scope", "select");
+      expect(content).toHaveAttribute("data-forge-part", "content");
+    });
+
+    it("option has data-forge-scope=select and data-forge-part=option", async () => {
+      render(makeFixture());
+      await user.click(screen.getByTestId("trigger"));
+      const apple = screen.getByRole("option", { name: "Apple" });
+      expect(apple).toHaveAttribute("data-forge-scope", "select");
+      expect(apple).toHaveAttribute("data-forge-part", "option");
+    });
+
+    it("Value span has data-forge-scope=select", () => {
+      render(makeFixture());
+      const valueSpan = document.querySelector('[data-forge-scope="select"][data-forge-part="value"]');
+      expect(valueSpan).toBeInTheDocument();
+    });
+
+    it("Placeholder span has data-forge-scope=select", () => {
+      render(
+        <Select.Root>
+          <Select.Trigger data-testid="trigger">
+            <Select.Placeholder>Pick a fruit</Select.Placeholder>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content>
+              <Select.Item value="apple">Apple</Select.Item>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>,
+      );
+      const placeholder = document.querySelector('[data-forge-scope="select"][data-forge-part="placeholder"]');
+      expect(placeholder).toBeInTheDocument();
+    });
+
+    it("ItemText has data-forge-scope=select", async () => {
+      render(
+        <Select.Root>
+          <Select.Trigger data-testid="trigger"><Select.Value placeholder="Pick" /></Select.Trigger>
+          <Select.Portal>
+            <Select.Content>
+              <Select.Item value="apple"><Select.ItemText>Apple</Select.ItemText></Select.Item>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>,
+      );
+      await user.click(screen.getByTestId("trigger"));
+      const itemText = document.querySelector('[data-forge-scope="select"][data-forge-part="item-text"]');
+      expect(itemText).toBeInTheDocument();
+    });
+
+    it("Separator has data-forge-scope=select", async () => {
+      render(
+        <Select.Root>
+          <Select.Trigger data-testid="trigger"><Select.Value placeholder="Pick" /></Select.Trigger>
+          <Select.Portal>
+            <Select.Content>
+              <Select.Item value="a">A</Select.Item>
+              <Select.Separator />
+              <Select.Item value="b">B</Select.Item>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>,
+      );
+      await user.click(screen.getByTestId("trigger"));
+      const separator = document.querySelector('[data-forge-scope="select"][data-forge-part="separator"]');
+      expect(separator).toBeInTheDocument();
+    });
+
+    it("Group and GroupLabel have data-forge-scope=select", async () => {
+      render(
+        <Select.Root>
+          <Select.Trigger data-testid="trigger"><Select.Value placeholder="Pick" /></Select.Trigger>
+          <Select.Portal>
+            <Select.Content>
+              <Select.Group>
+                <Select.GroupLabel>Fruits</Select.GroupLabel>
+                <Select.Item value="apple">Apple</Select.Item>
+              </Select.Group>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>,
+      );
+      await user.click(screen.getByTestId("trigger"));
+      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group"]')).toBeInTheDocument();
+      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]')).toBeInTheDocument();
+    });
+  });
 });

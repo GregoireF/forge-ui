@@ -238,7 +238,7 @@ function Item({ value, label, disabled = false, asChild, children, ...rest }: Co
 export interface ComboboxItemTextProps { children: ReactNode }
 
 function ItemText({ children }: ComboboxItemTextProps) {
-  return <span data-forge-part="item-text">{children}</span>;
+  return <span data-forge-scope="combobox" data-forge-part="item-text">{children}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -253,7 +253,7 @@ export interface ComboboxItemIndicatorProps {
 function ItemIndicator({ value, children }: ComboboxItemIndicatorProps) {
   const api = useCtx();
   if (!api.value.includes(value)) return null;
-  return <span data-forge-part="item-indicator">{children}</span>;
+  return <span data-forge-scope="combobox" data-forge-part="item-indicator">{children}</span>;
 }
 
 // ---------------------------------------------------------------------------

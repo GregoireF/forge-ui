@@ -1,7 +1,19 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick } from "vue";
+import { Combobox } from "../src/components/combobox/Combobox.js";
 import { useCombobox } from "../src/components/combobox/use-combobox.js";
+
+const {
+  Root: ComboboxRoot,
+  Input: ComboboxInput,
+  Trigger: ComboboxTrigger,
+  Portal: ComboboxPortal,
+  Content: ComboboxContent,
+  Item: ComboboxItem,
+  ItemText: ComboboxItemText,
+  ItemIndicator: ComboboxItemIndicator,
+} = Combobox;
 
 afterEach(cleanup);
 
@@ -178,6 +190,63 @@ describe("useCombobox (Vue)", () => {
       await fireEvent.input(screen.getByTestId("input"), { target: { value: "ap" } });
       await nextTick();
       expect(onInputChange).toHaveBeenCalledWith("ap");
+    });
+  });
+
+  describe("CSS contract — compound API", () => {
+    const ComboboxWithItemText = defineComponent({
+      components: { ComboboxRoot, ComboboxInput, ComboboxTrigger, ComboboxPortal, ComboboxContent, ComboboxItem, ComboboxItemText, ComboboxItemIndicator },
+      setup() {
+        return { fruits };
+      },
+      template: `
+        <ComboboxRoot>
+          <ComboboxInput data-testid="input" />
+          <ComboboxTrigger data-testid="trigger">▾</ComboboxTrigger>
+          <ComboboxPortal>
+            <ComboboxContent data-testid="content">
+              <ComboboxItem
+                v-for="f in fruits"
+                :key="f.value"
+                :value="f.value"
+                :label="f.label"
+                :data-testid="'item-' + f.value"
+              >
+                <ComboboxItemText>{{ f.label }}</ComboboxItemText>
+                <ComboboxItemIndicator :value="f.value">✓</ComboboxItemIndicator>
+              </ComboboxItem>
+            </ComboboxContent>
+          </ComboboxPortal>
+        </ComboboxRoot>
+      `,
+    });
+
+    it("input has data-forge-scope=combobox and data-forge-part=input", () => {
+      render(ComboboxWithItemText);
+      expect(screen.getByTestId("input")).toHaveAttribute("data-forge-scope", "combobox");
+      expect(screen.getByTestId("input")).toHaveAttribute("data-forge-part", "input");
+    });
+
+    it("trigger has data-forge-scope=combobox and data-forge-part=trigger", () => {
+      render(ComboboxWithItemText);
+      expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-scope", "combobox");
+      expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-part", "trigger");
+    });
+
+    it("content has data-forge-scope=combobox and data-forge-part=content", async () => {
+      render(ComboboxWithItemText);
+      await fireEvent.click(screen.getByTestId("trigger"));
+      await nextTick();
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-scope", "combobox");
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
+    });
+
+    it("ItemText has data-forge-scope=combobox", async () => {
+      render(ComboboxWithItemText);
+      await fireEvent.click(screen.getByTestId("trigger"));
+      await nextTick();
+      const itemText = document.querySelector('[data-forge-scope="combobox"][data-forge-part="item-text"]');
+      expect(itemText).toBeInTheDocument();
     });
   });
 });

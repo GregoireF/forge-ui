@@ -10,9 +10,12 @@ const {
   Label: SelectLabel,
   Trigger: SelectTrigger,
   Value: SelectValue,
+  Placeholder: SelectPlaceholder,
   Portal: SelectPortal,
   Content: SelectContent,
   Item: SelectItem,
+  ItemText: SelectItemText,
+  ItemIndicator: SelectItemIndicator,
   Separator: SelectSeparator,
   Group: SelectGroup,
   GroupLabel: SelectGroupLabel,
@@ -274,6 +277,118 @@ describe("Select (Vue)", () => {
       render(WithGroup);
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByRole("option", { name: "Apple" })).toBeInTheDocument();
+    });
+  });
+
+  describe("CSS contract", () => {
+    it("trigger has data-forge-scope=select and data-forge-part=trigger", () => {
+      render(makeFixture());
+      const trigger = screen.getByTestId("trigger");
+      expect(trigger).toHaveAttribute("data-forge-scope", "select");
+      expect(trigger).toHaveAttribute("data-forge-part", "trigger");
+    });
+
+    it("content has data-forge-scope=select and data-forge-part=content", async () => {
+      render(makeFixture());
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-scope", "select");
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
+    });
+
+    it("option has data-forge-scope=select and data-forge-part=option", async () => {
+      render(makeFixture());
+      await user.click(screen.getByTestId("trigger"));
+      const apple = screen.getByRole("option", { name: "Apple" });
+      expect(apple).toHaveAttribute("data-forge-scope", "select");
+      expect(apple).toHaveAttribute("data-forge-part", "option");
+    });
+
+    it("Value span has data-forge-scope=select", () => {
+      render(makeFixture());
+      const valueSpan = document.querySelector('[data-forge-scope="select"][data-forge-part="value"]');
+      expect(valueSpan).toBeInTheDocument();
+    });
+
+    it("Placeholder span has data-forge-scope=select", () => {
+      const WithPlaceholder = defineComponent({
+        components: { SelectRoot, SelectTrigger, SelectPlaceholder, SelectPortal, SelectContent, SelectItem },
+        template: `
+          <SelectRoot>
+            <SelectTrigger data-testid="trigger">
+              <SelectPlaceholder>Pick</SelectPlaceholder>
+            </SelectTrigger>
+            <SelectPortal><SelectContent><SelectItem value="a">A</SelectItem></SelectContent></SelectPortal>
+          </SelectRoot>
+        `,
+      });
+      render(WithPlaceholder);
+      const placeholder = document.querySelector('[data-forge-scope="select"][data-forge-part="placeholder"]');
+      expect(placeholder).toBeInTheDocument();
+    });
+
+    it("ItemText has data-forge-scope=select", async () => {
+      const WithItemText = defineComponent({
+        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectItemText },
+        template: `
+          <SelectRoot>
+            <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
+            <SelectPortal>
+              <SelectContent>
+                <SelectItem value="apple"><SelectItemText>Apple</SelectItemText></SelectItem>
+              </SelectContent>
+            </SelectPortal>
+          </SelectRoot>
+        `,
+      });
+      render(WithItemText);
+      await user.click(screen.getByTestId("trigger"));
+      const itemText = document.querySelector('[data-forge-scope="select"][data-forge-part="item-text"]');
+      expect(itemText).toBeInTheDocument();
+    });
+
+    it("Separator has data-forge-scope=select", async () => {
+      const WithSeparator = defineComponent({
+        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectSeparator },
+        template: `
+          <SelectRoot>
+            <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
+            <SelectPortal>
+              <SelectContent>
+                <SelectItem value="a">A</SelectItem>
+                <SelectSeparator />
+                <SelectItem value="b">B</SelectItem>
+              </SelectContent>
+            </SelectPortal>
+          </SelectRoot>
+        `,
+      });
+      render(WithSeparator);
+      await user.click(screen.getByTestId("trigger"));
+      const sep = document.querySelector('[data-forge-scope="select"][data-forge-part="separator"]');
+      expect(sep).toBeInTheDocument();
+    });
+
+    it("Group and GroupLabel have data-forge-scope=select", async () => {
+      const WithGroup = defineComponent({
+        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectGroup, SelectGroupLabel },
+        template: `
+          <SelectRoot>
+            <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
+            <SelectPortal>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectGroupLabel>Fruits</SelectGroupLabel>
+                  <SelectItem value="apple">Apple</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </SelectPortal>
+          </SelectRoot>
+        `,
+      });
+      render(WithGroup);
+      await user.click(screen.getByTestId("trigger"));
+      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group"]')).toBeInTheDocument();
+      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]')).toBeInTheDocument();
     });
   });
 });

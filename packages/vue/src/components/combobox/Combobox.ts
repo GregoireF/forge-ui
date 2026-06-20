@@ -294,7 +294,7 @@ const ComboboxItem = defineComponent({
 const ComboboxItemText = defineComponent({
   name: "ForgeComboboxItemText",
   setup(_props, { slots }) {
-    return () => h("span", { "data-forge-part": "item-text" }, slots.default?.());
+    return () => h("span", { "data-forge-scope": "combobox", "data-forge-part": "item-text" }, slots.default?.());
   },
 });
 
@@ -309,7 +309,7 @@ const ComboboxItemIndicator = defineComponent({
     const api = useCtx();
     return () => {
       if (!api.getValue().includes(props.value)) return null;
-      return h("span", { "data-forge-part": "item-indicator" }, slots.default?.());
+      return h("span", { "data-forge-scope": "combobox", "data-forge-part": "item-indicator" }, slots.default?.());
     };
   },
 });

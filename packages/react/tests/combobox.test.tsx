@@ -176,4 +176,40 @@ describe("Combobox (React)", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(["apple", "banana"]);
     });
   });
+
+  describe("CSS contract", () => {
+    it("input has data-forge-scope=combobox and data-forge-part=input", () => {
+      render(<FruitCombobox />);
+      const input = screen.getByTestId("input");
+      expect(input).toHaveAttribute("data-forge-scope", "combobox");
+      expect(input).toHaveAttribute("data-forge-part", "input");
+    });
+
+    it("trigger button has data-forge-scope=combobox and data-forge-part=trigger", () => {
+      render(<FruitCombobox />);
+      expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-scope", "combobox");
+      expect(screen.getByTestId("trigger")).toHaveAttribute("data-forge-part", "trigger");
+    });
+
+    it("content has data-forge-scope=combobox and data-forge-part=content", async () => {
+      render(<FruitCombobox />);
+      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-scope", "combobox");
+      expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
+    });
+
+    it("item has data-forge-scope=combobox and data-forge-part=option", async () => {
+      render(<FruitCombobox />);
+      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      expect(screen.getByTestId("item-apple")).toHaveAttribute("data-forge-scope", "combobox");
+      expect(screen.getByTestId("item-apple")).toHaveAttribute("data-forge-part", "option");
+    });
+
+    it("ItemText has data-forge-scope=combobox", async () => {
+      render(<FruitCombobox />);
+      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      const itemText = document.querySelector('[data-forge-scope="combobox"][data-forge-part="item-text"]');
+      expect(itemText).toBeInTheDocument();
+    });
+  });
 });

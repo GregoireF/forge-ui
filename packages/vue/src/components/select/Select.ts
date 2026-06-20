@@ -120,9 +120,9 @@ const SelectValue = defineComponent({
     return () => {
       const label = api.getValueLabel();
       // When a value is selected, always show the label — default slot acts as a placeholder slot.
-      if (label) return h("span", { "data-forge-part": "value" }, label);
-      if (slots.default) return h("span", { "data-forge-part": "value" }, slots.default?.());
-      return h("span", { "data-forge-part": "value" }, props.placeholder);
+      if (label) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, label);
+      if (slots.default) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, slots.default?.());
+      return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, props.placeholder);
     };
   },
 });
@@ -137,7 +137,7 @@ const SelectPlaceholder = defineComponent({
     const api = useCtx();
     return () => {
       if (api.getValueLabel()) return null;
-      return h("span", { "data-forge-part": "placeholder", ...attrs }, slots.default?.());
+      return h("span", { "data-forge-scope": "select", "data-forge-part": "placeholder", ...attrs }, slots.default?.());
     };
   },
 });
@@ -254,7 +254,7 @@ const SelectItem = defineComponent({
 const SelectItemText = defineComponent({
   name: "ForgeSelectItemText",
   setup(_props, { slots }) {
-    return () => h("span", { "data-forge-part": "item-text" }, slots.default?.());
+    return () => h("span", { "data-forge-scope": "select", "data-forge-part": "item-text" }, slots.default?.());
   },
 });
 
@@ -265,7 +265,7 @@ const SelectItemText = defineComponent({
 const SelectItemIndicator = defineComponent({
   name: "ForgeSelectItemIndicator",
   setup(_props, { slots }) {
-    return () => h("span", { "data-forge-part": "item-indicator" }, slots.default?.());
+    return () => h("span", { "data-forge-scope": "select", "data-forge-part": "item-indicator" }, slots.default?.());
   },
 });
 
@@ -276,7 +276,7 @@ const SelectItemIndicator = defineComponent({
 const SelectSeparator = defineComponent({
   name: "ForgeSelectSeparator",
   setup(_props, { attrs }) {
-    return () => h("li", { role: "separator", "data-forge-part": "separator", ...attrs });
+    return () => h("li", { role: "separator", "data-forge-scope": "select", "data-forge-part": "separator", ...attrs });
   },
 });
 
@@ -287,7 +287,7 @@ const SelectSeparator = defineComponent({
 const SelectGroup = defineComponent({
   name: "ForgeSelectGroup",
   setup(_props, { slots, attrs }) {
-    return () => h("ul", { role: "group", "data-forge-part": "group", ...attrs }, slots.default?.());
+    return () => h("ul", { role: "group", "data-forge-scope": "select", "data-forge-part": "group", ...attrs }, slots.default?.());
   },
 });
 
@@ -295,7 +295,7 @@ const SelectGroupLabel = defineComponent({
   name: "ForgeSelectGroupLabel",
   setup(_props, { slots, attrs }) {
     return () =>
-      h("li", { role: "presentation", "data-forge-part": "group-label", ...attrs }, slots.default?.());
+      h("li", { role: "presentation", "data-forge-scope": "select", "data-forge-part": "group-label", ...attrs }, slots.default?.());
   },
 });
 

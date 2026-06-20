@@ -94,10 +94,11 @@ export interface SelectValueProps {
 function Value({ placeholder, children }: SelectValueProps) {
   const api = useCtx();
   const label = api.valueLabel;
+  const scope = { "data-forge-scope": "select", "data-forge-part": "value" } as const;
   // When a value is selected, always show the label — children act as a placeholder slot.
-  if (label) return <span data-forge-part="value">{label}</span>;
+  if (label) return <span {...scope}>{label}</span>;
   if (children !== undefined) return <>{children}</>;
-  return <span data-forge-part="value">{placeholder || api.placeholder}</span>;
+  return <span {...scope}>{placeholder || api.placeholder}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -113,7 +114,7 @@ function Placeholder({ children, ...rest }: SelectPlaceholderProps) {
   const api = useCtx();
   if (api.valueLabel) return null;
   return (
-    <span data-forge-part="placeholder" {...rest}>
+    <span data-forge-scope="select" data-forge-part="placeholder" {...rest}>
       {children}
     </span>
   );
@@ -226,7 +227,7 @@ export interface SelectItemTextProps {
 }
 
 function ItemText({ children }: SelectItemTextProps) {
-  return <span data-forge-part="item-text">{children}</span>;
+  return <span data-forge-scope="select" data-forge-part="item-text">{children}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -238,7 +239,7 @@ export interface SelectItemIndicatorProps {
 }
 
 function ItemIndicator({ children }: SelectItemIndicatorProps) {
-  return <span data-forge-part="item-indicator">{children}</span>;
+  return <span data-forge-scope="select" data-forge-part="item-indicator">{children}</span>;
 }
 
 // ---------------------------------------------------------------------------
@@ -248,7 +249,7 @@ function ItemIndicator({ children }: SelectItemIndicatorProps) {
 export interface SelectSeparatorProps extends HTMLAttributes<HTMLLIElement> {}
 
 function Separator({ ...rest }: SelectSeparatorProps) {
-  return <li role="separator" data-forge-part="separator" {...rest} />;
+  return <li role="separator" data-forge-scope="select" data-forge-part="separator" {...rest} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -261,7 +262,7 @@ export interface SelectGroupProps extends HTMLAttributes<HTMLUListElement> {
 
 function Group({ children, ...rest }: SelectGroupProps) {
   return (
-    <ul role="group" data-forge-part="group" {...rest}>
+    <ul role="group" data-forge-scope="select" data-forge-part="group" {...rest}>
       {children}
     </ul>
   );
@@ -273,7 +274,7 @@ export interface SelectGroupLabelProps extends HTMLAttributes<HTMLLIElement> {
 
 function GroupLabel({ children, ...rest }: SelectGroupLabelProps) {
   return (
-    <li role="presentation" data-forge-part="group-label" {...rest}>
+    <li role="presentation" data-forge-scope="select" data-forge-part="group-label" {...rest}>
       {children}
     </li>
   );
