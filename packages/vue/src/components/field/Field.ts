@@ -29,7 +29,10 @@ const FieldRoot = defineComponent({
     // tracks props.invalid / props.required / etc. as reactive deps and
     // re-syncs ctx on every parent update. Destructuring to a plain object
     // would freeze the values at setup time and break reactivity.
-    const api = useField(props);
+    // Cast needed: Vue LooseRequired<> always includes undefined in value types,
+    // but exactOptionalPropertyTypes expects optional keys to be absent, not present
+    // as string | undefined. The cast is safe — useField handles undefined via ?? false.
+    const api = useField(props as Parameters<typeof useField>[0]);
     provide(fieldKey, api);
     return () => slots.default?.();
   },

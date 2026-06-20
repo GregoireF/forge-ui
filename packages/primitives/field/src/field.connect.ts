@@ -24,11 +24,18 @@ export function connectField(context: FieldContext): FieldConnectReturn {
     return parts.length > 0 ? parts.join(" ") : undefined;
   }
 
+  const scope = "field" as const;
+
   return {
     context,
 
     getLabelProps() {
-      return { id: context.labelId, htmlFor: context.controlId };
+      return {
+        id: context.labelId,
+        htmlFor: context.controlId,
+        "data-forge-scope": scope,
+        "data-forge-part": "label" as const,
+      };
     },
 
     getControlProps() {
@@ -43,11 +50,17 @@ export function connectField(context: FieldContext): FieldConnectReturn {
         required: context.required ? true : undefined,
         disabled: context.disabled ? true : undefined,
         readOnly: context.readOnly ? true : undefined,
+        "data-forge-scope": scope,
+        "data-forge-part": "control" as const,
       };
     },
 
     getDescriptionProps() {
-      return { id: context.descriptionId };
+      return {
+        id: context.descriptionId,
+        "data-forge-scope": scope,
+        "data-forge-part": "description" as const,
+      };
     },
 
     getErrorProps() {
@@ -57,13 +70,19 @@ export function connectField(context: FieldContext): FieldConnectReturn {
         // "assertive" interrupts the screen reader immediately — correct for
         // inline form errors that appear after user interaction (blur/submit).
         "aria-live": "assertive" as const,
+        "data-forge-scope": scope,
+        "data-forge-part": "error" as const,
       };
     },
 
     getRequiredIndicatorProps() {
       // aria-hidden so screen readers don't announce the visual "*".
       // The required status is already communicated via aria-required on the control.
-      return { "aria-hidden": true as const };
+      return {
+        "aria-hidden": true as const,
+        "data-forge-scope": scope,
+        "data-forge-part": "required-indicator" as const,
+      };
     },
   };
 }
