@@ -9,6 +9,15 @@ export { Accordion } from "./components/accordion/Accordion.js";
 export type { UseAccordionOptions } from "./components/accordion/use-accordion.js";
 export { useAccordion } from "./components/accordion/use-accordion.js";
 export type {
+  TabsListProps,
+  TabsPanelProps,
+  TabsRootProps,
+  TabsTriggerProps,
+} from "./components/tabs/Tabs.js";
+export { Tabs } from "./components/tabs/Tabs.js";
+export type { UseTabsOptions } from "./components/tabs/use-tabs.js";
+export { useTabs } from "./components/tabs/use-tabs.js";
+export type {
   ComboboxClearTriggerProps,
   ComboboxContentProps,
   ComboboxInputProps,
