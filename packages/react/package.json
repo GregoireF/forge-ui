@@ -18,6 +18,10 @@
       "types": "./dist/tabs/index.d.ts",
       "import": "./dist/tabs/index.js"
     },
+    "./progress": {
+      "types": "./dist/progress/index.d.ts",
+      "import": "./dist/progress/index.js"
+    },
     "./radio-group": {
       "types": "./dist/radio-group/index.d.ts",
       "import": "./dist/radio-group/index.js"
@@ -87,6 +91,7 @@
   },
   "dependencies": {
     "@forge-ui/accordion": "workspace:*",
+    "@forge-ui/progress": "workspace:*",
     "@forge-ui/radio-group": "workspace:*",
     "@forge-ui/tabs": "workspace:*",
     "@forge-ui/alert-dialog": "workspace:*",

@@ -9,6 +9,14 @@ export {
 export type { UseAccordionOptions } from "./components/accordion/use-accordion.js";
 export { useAccordion } from "./components/accordion/use-accordion.js";
 export {
+  Progress,
+  ProgressFill,
+  ProgressLabel,
+  ProgressRoot,
+  ProgressTrack,
+  ProgressValueText,
+} from "./components/progress/Progress.js";
+export {
   RadioGroup,
   RadioGroupHiddenInput,
   RadioGroupItem,

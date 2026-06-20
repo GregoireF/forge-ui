@@ -9,6 +9,13 @@ export { Accordion } from "./components/accordion/Accordion.js";
 export type { UseAccordionOptions } from "./components/accordion/use-accordion.js";
 export { useAccordion } from "./components/accordion/use-accordion.js";
 export type {
+  ProgressFillProps,
+  ProgressLabelProps,
+  ProgressRootProps,
+  ProgressValueTextProps,
+} from "./components/progress/Progress.js";
+export { Progress } from "./components/progress/Progress.js";
+export type {
   RadioGroupItemProps,
   RadioGroupLabelProps,
   RadioGroupRadioProps,
