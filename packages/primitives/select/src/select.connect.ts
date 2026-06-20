@@ -288,5 +288,14 @@ export function connectSelect(
         },
       };
     },
+
+    getIndicatorProps() {
+      return {
+        "aria-hidden": true as const,
+        "data-state": state,
+        "data-forge-scope": "select",
+        "data-forge-part": "indicator",
+      };
+    },
   };
 }

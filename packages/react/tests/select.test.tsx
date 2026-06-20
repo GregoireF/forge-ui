@@ -363,5 +363,43 @@ describe("Select (React)", () => {
       expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group"]')).toBeInTheDocument();
       expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]')).toBeInTheDocument();
     });
+
+    it("Indicator has data-forge-scope=select, data-forge-part=indicator, and data-state", () => {
+      render(
+        <Select.Root>
+          <Select.Trigger data-testid="trigger">
+            <Select.Value placeholder="Pick" />
+            <Select.Indicator data-testid="indicator">▼</Select.Indicator>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content>
+              <Select.Item value="apple">Apple</Select.Item>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>,
+      );
+      const indicator = screen.getByTestId("indicator");
+      expect(indicator).toHaveAttribute("data-forge-scope", "select");
+      expect(indicator).toHaveAttribute("data-forge-part", "indicator");
+      expect(indicator).toHaveAttribute("data-state", "closed");
+    });
+
+    it("Indicator data-state=open when select is open", async () => {
+      render(
+        <Select.Root>
+          <Select.Trigger data-testid="trigger">
+            <Select.Value placeholder="Pick" />
+            <Select.Indicator data-testid="indicator">▼</Select.Indicator>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content>
+              <Select.Item value="apple">Apple</Select.Item>
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>,
+      );
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("indicator")).toHaveAttribute("data-state", "open");
+    });
   });
 });

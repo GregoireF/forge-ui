@@ -300,6 +300,18 @@ const SelectGroupLabel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// Indicator — visual chevron/arrow inside the trigger; reflects open/closed.
+// ---------------------------------------------------------------------------
+
+const SelectIndicator = defineComponent({
+  name: "ForgeSelectIndicator",
+  setup(_props, { slots, attrs }) {
+    const api = useCtx();
+    return () => h("span", { ...api.getIndicatorProps(), ...attrs }, slots.default?.());
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
 
@@ -311,6 +323,7 @@ export const Select = {
   Placeholder: SelectPlaceholder,
   Portal: SelectPortal,
   Content: SelectContent,
+  Indicator: SelectIndicator,
   Item: SelectItem,
   ItemText: SelectItemText,
   ItemIndicator: SelectItemIndicator,
@@ -323,6 +336,7 @@ export {
   SelectContent,
   SelectGroup,
   SelectGroupLabel,
+  SelectIndicator,
   SelectItem,
   SelectItemIndicator,
   SelectItemText,

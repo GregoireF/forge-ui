@@ -1,4 +1,14 @@
 export type {
+  AccordionContentProps,
+  AccordionHeaderProps,
+  AccordionItemProps,
+  AccordionRootProps,
+  AccordionTriggerProps,
+} from "./components/accordion/Accordion.js";
+export { Accordion } from "./components/accordion/Accordion.js";
+export type { UseAccordionOptions } from "./components/accordion/use-accordion.js";
+export { useAccordion } from "./components/accordion/use-accordion.js";
+export type {
   ComboboxClearTriggerProps,
   ComboboxContentProps,
   ComboboxInputProps,

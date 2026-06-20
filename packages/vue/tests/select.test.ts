@@ -390,5 +390,45 @@ describe("Select (Vue)", () => {
       expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group"]')).toBeInTheDocument();
       expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]')).toBeInTheDocument();
     });
+
+    it("Indicator has data-forge-scope=select, data-forge-part=indicator, and data-state=closed", () => {
+      const SelectIndicator = Select.Indicator;
+      const WithIndicator = defineComponent({
+        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectIndicator },
+        template: `
+          <SelectRoot>
+            <SelectTrigger data-testid="trigger">
+              <SelectValue placeholder="Pick" />
+              <SelectIndicator data-testid="indicator">▼</SelectIndicator>
+            </SelectTrigger>
+            <SelectPortal><SelectContent><SelectItem value="a">A</SelectItem></SelectContent></SelectPortal>
+          </SelectRoot>
+        `,
+      });
+      render(WithIndicator);
+      const indicator = screen.getByTestId("indicator");
+      expect(indicator).toHaveAttribute("data-forge-scope", "select");
+      expect(indicator).toHaveAttribute("data-forge-part", "indicator");
+      expect(indicator).toHaveAttribute("data-state", "closed");
+    });
+
+    it("Indicator data-state=open when select is open", async () => {
+      const SelectIndicator = Select.Indicator;
+      const WithIndicator = defineComponent({
+        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectIndicator },
+        template: `
+          <SelectRoot>
+            <SelectTrigger data-testid="trigger">
+              <SelectValue placeholder="Pick" />
+              <SelectIndicator data-testid="indicator">▼</SelectIndicator>
+            </SelectTrigger>
+            <SelectPortal><SelectContent><SelectItem value="a">A</SelectItem></SelectContent></SelectPortal>
+          </SelectRoot>
+        `,
+      });
+      render(WithIndicator);
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("indicator")).toHaveAttribute("data-state", "open");
+    });
   });
 });

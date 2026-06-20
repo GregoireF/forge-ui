@@ -10,6 +10,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./accordion": {
+      "types": "./dist/accordion/index.d.ts",
+      "import": "./dist/accordion/index.js"
+    },
     "./dialog": {
       "types": "./dist/dialog/index.d.ts",
       "import": "./dist/dialog/index.js"
@@ -73,6 +77,7 @@
     "vue": ">=3.5.0"
   },
   "dependencies": {
+    "@forge-ui/accordion": "workspace:*",
     "@forge-ui/alert-dialog": "workspace:*",
     "@forge-ui/checkbox": "workspace:*",
     "@forge-ui/combobox": "workspace:*",

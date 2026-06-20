@@ -283,6 +283,19 @@ function GroupLabel({ children, ...rest }: SelectGroupLabelProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+// Indicator — visual chevron/arrow inside the trigger; reflects open/closed.
+// ---------------------------------------------------------------------------
+
+export interface SelectIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
+  children: ReactNode;
+}
+
+function Indicator({ children, ...rest }: SelectIndicatorProps) {
+  const api = useCtx();
+  return <span {...api.getIndicatorProps()} {...rest}>{children}</span>;
+}
+
+// ---------------------------------------------------------------------------
 
 export const Select = {
   Root,
@@ -292,6 +305,7 @@ export const Select = {
   Placeholder,
   Portal,
   Content,
+  Indicator,
   Item,
   ItemText,
   ItemIndicator,

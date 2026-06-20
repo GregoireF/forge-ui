@@ -19,6 +19,7 @@ export interface UseSelectReturn {
   getPositionerProps: () => ReturnType<SelectApi["getPositionerProps"]>;
   getContentProps: () => ReturnType<SelectApi["getContentProps"]>;
   getOptionProps: (option: { value: string; disabled?: boolean }) => ReturnType<SelectApi["getOptionProps"]>;
+  getIndicatorProps: () => ReturnType<SelectApi["getIndicatorProps"]>;
 }
 
 export function useSelect(options: UseSelectOptions = {}): UseSelectReturn {
@@ -44,5 +45,6 @@ export function useSelect(options: UseSelectOptions = {}): UseSelectReturn {
     getContentProps: () => api.value.getContentProps(),
     getOptionProps: (option: { value: string; disabled?: boolean }) =>
       api.value.getOptionProps({ value: option.value, disabled: option.disabled ?? false }),
+    getIndicatorProps: () => api.value.getIndicatorProps(),
   };
 }
