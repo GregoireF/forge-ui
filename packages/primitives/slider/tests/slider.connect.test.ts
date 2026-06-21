@@ -126,6 +126,37 @@ describe("connectSlider — getThumbProps", () => {
     expect(send).toHaveBeenCalledWith({ type: "SET_VALUE", value: 200 });
   });
 
+  // WAI-ARIA §3.23: PageUp / PageDown move by a larger step (10% of range)
+  it("onKeyDown PageUp sends INCREMENT_PAGE", () => {
+    const { api, send } = makeApi();
+    api.getThumbProps().onKeyDown({ key: "PageUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(send).toHaveBeenCalledWith({ type: "INCREMENT_PAGE" });
+  });
+
+  it("onKeyDown PageDown sends DECREMENT_PAGE", () => {
+    const { api, send } = makeApi();
+    api.getThumbProps().onKeyDown({ key: "PageDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(send).toHaveBeenCalledWith({ type: "DECREMENT_PAGE" });
+  });
+
+  // WAI-ARIA §3.23: vertical orientation uses ArrowUp/ArrowDown for increment/decrement
+  it("onKeyDown ArrowUp sends INCREMENT (vertical)", () => {
+    const { api, send } = makeApi({ orientation: "vertical" });
+    api.getThumbProps().onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(send).toHaveBeenCalledWith({ type: "INCREMENT" });
+  });
+
+  it("onKeyDown ArrowDown sends DECREMENT (vertical)", () => {
+    const { api, send } = makeApi({ orientation: "vertical" });
+    api.getThumbProps().onKeyDown({ key: "ArrowDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(send).toHaveBeenCalledWith({ type: "DECREMENT" });
+  });
+
+  it("aria-orientation reflects orientation", () => {
+    const { api } = makeApi({ orientation: "vertical" });
+    expect(api.getThumbProps()["aria-orientation"]).toBe("vertical");
+  });
+
   it("disabled: onKeyDown does nothing", () => {
     const { api, send } = makeApi({ disabled: true });
     api.getThumbProps().onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);

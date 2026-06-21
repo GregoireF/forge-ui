@@ -187,3 +187,99 @@ describe("connectRadioGroup — value / disabled", () => {
     expect(api.disabled).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// onKeyDown — WAI-ARIA §3.18: arrow keys navigate AND select simultaneously
+// Uses real DOM because navigateRadioGroup walks closest() / querySelectorAll().
+// ---------------------------------------------------------------------------
+
+describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
+  function buildDomAndApi(values: string[], contextOverrides: Partial<RadioGroupContext> = {}) {
+    const { api, send } = makeApi(contextOverrides);
+
+    const root = document.createElement("div");
+    root.setAttribute("data-forge-scope", "radio-group");
+    root.setAttribute("data-forge-part", "root");
+
+    const radioEls: HTMLButtonElement[] = values.map((v) => {
+      const item = document.createElement("div");
+      item.setAttribute("data-forge-part", "item");
+      item.setAttribute("data-value", v);
+
+      const radio = document.createElement("button");
+      radio.setAttribute("data-forge-part", "radio");
+      item.appendChild(radio);
+      root.appendChild(item);
+      return radio;
+    });
+
+    document.body.appendChild(root);
+
+    function keydownOnRadio(index: number, key: string) {
+      const e = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+      Object.defineProperty(e, "currentTarget", { value: radioEls[index] });
+      api.getRadioProps(values[index]).onKeyDown(e);
+      return e;
+    }
+
+    function cleanup() {
+      document.body.removeChild(root);
+    }
+
+    return { api, send, radioEls, keydownOnRadio, cleanup };
+  }
+
+  it("ArrowDown moves to next and SELECTs it", () => {
+    const { send, keydownOnRadio, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    keydownOnRadio(0, "ArrowDown");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "b" });
+    cleanup();
+  });
+
+  it("ArrowRight also moves to next (both axes supported)", () => {
+    const { send, keydownOnRadio, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    keydownOnRadio(0, "ArrowRight");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "b" });
+    cleanup();
+  });
+
+  it("ArrowDown wraps from last to first (WAI-ARIA: circular)", () => {
+    const { send, keydownOnRadio, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    keydownOnRadio(2, "ArrowDown");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
+    cleanup();
+  });
+
+  it("ArrowUp moves to previous and SELECTs it", () => {
+    const { send, keydownOnRadio, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    keydownOnRadio(2, "ArrowUp");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "b" });
+    cleanup();
+  });
+
+  it("ArrowLeft also moves to previous (both axes supported)", () => {
+    const { send, keydownOnRadio, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    keydownOnRadio(2, "ArrowLeft");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "b" });
+    cleanup();
+  });
+
+  it("Space key selects the focused radio", () => {
+    const { send, keydownOnRadio, cleanup } = buildDomAndApi(["a", "b"]);
+    keydownOnRadio(0, " ");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
+    cleanup();
+  });
+
+  it("disabled radio is excluded from navigation (skipped)", () => {
+    const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    // Mark the middle radio as disabled in the DOM
+    radioEls[1].setAttribute("disabled", "");
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
+    api.getRadioProps("a").onKeyDown(e);
+    // Should skip "b" (disabled) and select "c"
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "c" });
+    cleanup();
+  });
+});

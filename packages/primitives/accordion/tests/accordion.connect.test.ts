@@ -142,3 +142,101 @@ describe("connectAccordion — value", () => {
     expect(api2.value).toEqual(["b"]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// onKeyDown — WAI-ARIA §3.1: accordion header keyboard navigation
+// Uses a real DOM structure because navigateAccordion walks closest() / querySelectorAll().
+// ---------------------------------------------------------------------------
+
+describe("connectAccordion — onKeyDown keyboard navigation", () => {
+  function buildDomAndApi(itemValues: string[], contextOverrides: Partial<AccordionContext> = {}) {
+    const { api, send } = makeApi(contextOverrides);
+
+    const root = document.createElement("div");
+    root.setAttribute("data-forge-scope", "accordion");
+    root.setAttribute("data-forge-part", "root");
+
+    const triggerEls: HTMLButtonElement[] = itemValues.map((v) => {
+      const btn = document.createElement("button");
+      btn.setAttribute("data-forge-part", "trigger");
+      root.appendChild(btn);
+      return btn;
+    });
+
+    document.body.appendChild(root);
+
+    function keydownOnTrigger(index: number, key: string) {
+      const e = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+      Object.defineProperty(e, "currentTarget", { value: triggerEls[index] });
+      api.getTriggerProps(itemValues[index]).onKeyDown(e);
+      return e;
+    }
+
+    function cleanup() {
+      document.body.removeChild(root);
+    }
+
+    return { api, send, triggerEls, keydownOnTrigger, cleanup };
+  }
+
+  it("ArrowDown moves focus to next trigger", () => {
+    const { triggerEls, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const focused = vi.spyOn(triggerEls[1], "focus");
+    keydownOnTrigger(0, "ArrowDown");
+    expect(focused).toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("ArrowDown wraps to first from last (WAI-ARIA: circular)", () => {
+    const { triggerEls, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const focused = vi.spyOn(triggerEls[0], "focus");
+    keydownOnTrigger(2, "ArrowDown");
+    expect(focused).toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("ArrowUp moves focus to previous trigger", () => {
+    const { triggerEls, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const focused = vi.spyOn(triggerEls[0], "focus");
+    keydownOnTrigger(1, "ArrowUp");
+    expect(focused).toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("Home moves focus to first trigger", () => {
+    const { triggerEls, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const focused = vi.spyOn(triggerEls[0], "focus");
+    keydownOnTrigger(2, "Home");
+    expect(focused).toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("End moves focus to last trigger", () => {
+    const { triggerEls, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const focused = vi.spyOn(triggerEls[2], "focus");
+    keydownOnTrigger(0, "End");
+    expect(focused).toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("Enter key sends TOGGLE_ITEM", () => {
+    const { send, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b"]);
+    keydownOnTrigger(0, "Enter");
+    expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "a" });
+    cleanup();
+  });
+
+  it("Space key sends TOGGLE_ITEM", () => {
+    const { send, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b"]);
+    keydownOnTrigger(1, " ");
+    expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "b" });
+    cleanup();
+  });
+
+  it("disabled accordion: Enter does NOT send TOGGLE_ITEM", () => {
+    const { send, keydownOnTrigger, cleanup } = buildDomAndApi(["a", "b"], { disabled: true });
+    keydownOnTrigger(0, "Enter");
+    expect(send).not.toHaveBeenCalled();
+    cleanup();
+  });
+});
