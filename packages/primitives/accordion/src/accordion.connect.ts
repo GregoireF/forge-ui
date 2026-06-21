@@ -3,6 +3,37 @@ import type { AccordionContext, AccordionEvent } from "./accordion.types.js";
 
 type AccordionSend = (event: AccordionEvent) => void;
 
+/** WAI-ARIA Accordion Pattern §keyboard — moves focus between header buttons. */
+function navigateAccordion(e: KeyboardEvent): boolean {
+  const current = e.currentTarget as HTMLElement;
+  const root = current.closest<HTMLElement>('[data-forge-scope="accordion"][data-forge-part="root"]');
+  if (!root) return false;
+  const triggers = [
+    ...root.querySelectorAll<HTMLElement>('[data-forge-part="trigger"]:not([disabled])'),
+  ];
+  const idx = triggers.indexOf(current);
+  switch (e.key) {
+    case "ArrowDown":
+      e.preventDefault();
+      triggers[(idx + 1) % triggers.length]?.focus();
+      return true;
+    case "ArrowUp":
+      e.preventDefault();
+      triggers[(idx - 1 + triggers.length) % triggers.length]?.focus();
+      return true;
+    case "Home":
+      e.preventDefault();
+      triggers[0]?.focus();
+      return true;
+    case "End":
+      e.preventDefault();
+      triggers[triggers.length - 1]?.focus();
+      return true;
+    default:
+      return false;
+  }
+}
+
 export function connectAccordion(
   snapshot: MachineSnapshot<AccordionContext, "idle">,
   send: AccordionSend,
@@ -68,20 +99,18 @@ export function connectAccordion(
           }
         },
         onKeyDown(e: KeyboardEvent) {
+          if (navigateAccordion(e)) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (!context.disabled) {
-              send({ type: "TOGGLE_ITEM", value: itemValue });
-            }
+            if (!context.disabled) send({ type: "TOGGLE_ITEM", value: itemValue });
           }
         },
         // Vue casing
         onKeydown(e: KeyboardEvent) {
+          if (navigateAccordion(e)) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (!context.disabled) {
-              send({ type: "TOGGLE_ITEM", value: itemValue });
-            }
+            if (!context.disabled) send({ type: "TOGGLE_ITEM", value: itemValue });
           }
         },
       };

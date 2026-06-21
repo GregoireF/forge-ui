@@ -1,4 +1,12 @@
 export {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleRoot,
+  CollapsibleTrigger,
+} from "./components/collapsible/Collapsible.js";
+export type { UseCollapsibleOptions } from "./components/collapsible/use-collapsible.js";
+export { useCollapsible } from "./components/collapsible/use-collapsible.js";
+export {
   Accordion,
   AccordionContent,
   AccordionHeader,

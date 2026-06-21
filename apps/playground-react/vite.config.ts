@@ -21,6 +21,7 @@ export default defineConfig({
       "@forge-ui/tags-input": fileURLToPath(new URL("../../packages/primitives/tags-input/src/index.ts", import.meta.url)),
       "@forge-ui/floating": fileURLToPath(new URL("../../packages/floating/src/index.ts", import.meta.url)),
       "@forge-ui/accordion": fileURLToPath(new URL("../../packages/primitives/accordion/src/index.ts", import.meta.url)),
+      "@forge-ui/collapsible": fileURLToPath(new URL("../../packages/primitives/collapsible/src/index.ts", import.meta.url)),
       "@forge-ui/progress": fileURLToPath(new URL("../../packages/primitives/progress/src/index.ts", import.meta.url)),
       "@forge-ui/radio-group": fileURLToPath(new URL("../../packages/primitives/radio-group/src/index.ts", import.meta.url)),
       "@forge-ui/slider": fileURLToPath(new URL("../../packages/primitives/slider/src/index.ts", import.meta.url)),

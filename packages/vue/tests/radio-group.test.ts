@@ -1,7 +1,7 @@
-import { cleanup, render, screen } from "@testing-library/vue";
+import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick } from "vue";
 import { RadioGroup } from "../src/components/radio-group/RadioGroup.js";
 
 const {
@@ -96,6 +96,43 @@ describe("RadioGroup (Vue)", () => {
       radio.focus();
       await user.keyboard("{Enter}");
       expect(radio).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("ArrowDown moves focus to next radio AND selects it", async () => {
+      render(makeFixture({ defaultValue: "a" }));
+      const radioA = screen.getByTestId("radio-a");
+      radioA.focus();
+      fireEvent.keyDown(radioA, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-b"));
+      await nextTick();
+      expect(screen.getByTestId("radio-b")).toHaveAttribute("aria-checked", "true");
+      expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-checked", "false");
+    });
+
+    it("ArrowUp moves focus to previous radio AND selects it", async () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const radioB = screen.getByTestId("radio-b");
+      radioB.focus();
+      fireEvent.keyDown(radioB, { key: "ArrowUp" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-a"));
+      await nextTick();
+      expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("ArrowRight also moves to next radio", () => {
+      render(makeFixture({ defaultValue: "a" }));
+      const radioA = screen.getByTestId("radio-a");
+      radioA.focus();
+      fireEvent.keyDown(radioA, { key: "ArrowRight" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-b"));
+    });
+
+    it("ArrowDown wraps from last to first", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const radioB = screen.getByTestId("radio-b");
+      radioB.focus();
+      fireEvent.keyDown(radioB, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-a"));
     });
   });
 

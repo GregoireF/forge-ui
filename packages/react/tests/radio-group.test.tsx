@@ -80,6 +80,41 @@ describe("RadioGroup (React)", () => {
       fireEvent.keyDown(screen.getByTestId("radio-a"), { key: "Enter" });
       expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-checked", "true");
     });
+
+    it("ArrowDown moves focus to next radio AND selects it", () => {
+      render(makeFixture({ defaultValue: "a" }));
+      const radioA = screen.getByTestId("radio-a");
+      radioA.focus();
+      fireEvent.keyDown(radioA, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-b"));
+      expect(screen.getByTestId("radio-b")).toHaveAttribute("aria-checked", "true");
+      expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-checked", "false");
+    });
+
+    it("ArrowUp moves focus to previous radio AND selects it", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const radioB = screen.getByTestId("radio-b");
+      radioB.focus();
+      fireEvent.keyDown(radioB, { key: "ArrowUp" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-a"));
+      expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("ArrowRight also moves focus to next radio", () => {
+      render(makeFixture({ defaultValue: "a" }));
+      const radioA = screen.getByTestId("radio-a");
+      radioA.focus();
+      fireEvent.keyDown(radioA, { key: "ArrowRight" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-b"));
+    });
+
+    it("ArrowDown wraps from last to first", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const radioB = screen.getByTestId("radio-b");
+      radioB.focus();
+      fireEvent.keyDown(radioB, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("radio-a"));
+    });
   });
 
   describe("disabled", () => {

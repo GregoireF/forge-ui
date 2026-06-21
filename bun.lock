@@ -164,6 +164,16 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/collapsible": {
+      "name": "@forge-ui/collapsible",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/combobox": {
       "name": "@forge-ui/combobox",
       "version": "0.0.0",
@@ -300,6 +310,7 @@
         "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
+        "@forge-ui/collapsible": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
@@ -338,6 +349,7 @@
         "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
+        "@forge-ui/collapsible": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
@@ -670,6 +682,8 @@
     "@forge-ui/alert-dialog": ["@forge-ui/alert-dialog@workspace:packages/primitives/alert-dialog"],
 
     "@forge-ui/checkbox": ["@forge-ui/checkbox@workspace:packages/primitives/checkbox"],
+
+    "@forge-ui/collapsible": ["@forge-ui/collapsible@workspace:packages/primitives/collapsible"],
 
     "@forge-ui/combobox": ["@forge-ui/combobox@workspace:packages/primitives/combobox"],
 

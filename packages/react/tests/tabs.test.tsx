@@ -83,6 +83,71 @@ describe("Tabs (React)", () => {
       fireEvent.keyDown(screen.getByTestId("trigger-a"), { key: " " });
       expect(screen.getByTestId("panel-a")).toBeInTheDocument();
     });
+
+    it("ArrowRight moves focus to next tab (horizontal)", () => {
+      render(makeFixture({ defaultValue: "a" }));
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowRight" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
+
+    it("ArrowLeft moves focus to previous tab (horizontal)", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "ArrowLeft" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("ArrowRight wraps from last to first", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "ArrowRight" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("Home moves focus to first tab", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "Home" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("End moves focus to last tab", () => {
+      render(makeFixture({ defaultValue: "a" }));
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "End" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
+
+    it("ArrowRight in automatic mode selects the focused tab", () => {
+      render(makeFixture({ defaultValue: "a", activationMode: "automatic" }));
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowRight" });
+      expect(screen.getByTestId("panel-b")).toBeInTheDocument();
+    });
+
+    it("ArrowRight in manual mode moves focus without selecting", () => {
+      render(makeFixture({ defaultValue: "a", activationMode: "manual" }));
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowRight" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+      expect(screen.queryByTestId("panel-b")).toBeNull();
+    });
+
+    it("vertical: ArrowDown moves focus to next tab", () => {
+      render(makeFixture({ defaultValue: "a", orientation: "vertical" }));
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
   });
 
   describe("disabled", () => {

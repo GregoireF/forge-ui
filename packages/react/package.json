@@ -14,6 +14,10 @@
       "types": "./dist/accordion/index.d.ts",
       "import": "./dist/accordion/index.js"
     },
+    "./collapsible": {
+      "types": "./dist/collapsible/index.d.ts",
+      "import": "./dist/collapsible/index.js"
+    },
     "./tabs": {
       "types": "./dist/tabs/index.d.ts",
       "import": "./dist/tabs/index.js"
@@ -95,6 +99,7 @@
   },
   "dependencies": {
     "@forge-ui/accordion": "workspace:*",
+    "@forge-ui/collapsible": "workspace:*",
     "@forge-ui/progress": "workspace:*",
     "@forge-ui/radio-group": "workspace:*",
     "@forge-ui/slider": "workspace:*",

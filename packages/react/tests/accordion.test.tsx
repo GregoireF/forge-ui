@@ -117,6 +117,54 @@ describe("Accordion (React)", () => {
       fireEvent.keyDown(trigger, { key: " " });
       expect(screen.getByTestId("content-a")).toBeInTheDocument();
     });
+
+    it("ArrowDown moves focus to next trigger", () => {
+      render(makeFixture());
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
+
+    it("ArrowUp moves focus to previous trigger", () => {
+      render(makeFixture());
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "ArrowUp" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("ArrowDown wraps from last to first", () => {
+      render(makeFixture());
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("ArrowUp wraps from first to last", () => {
+      render(makeFixture());
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowUp" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
+
+    it("Home moves focus to first trigger", () => {
+      render(makeFixture());
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "Home" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("End moves focus to last trigger", () => {
+      render(makeFixture());
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "End" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
   });
 
   describe("disabled", () => {
