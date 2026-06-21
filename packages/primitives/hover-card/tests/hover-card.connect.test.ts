@@ -105,6 +105,25 @@ describe("connectHoverCard — getTriggerProps", () => {
     api.getTriggerProps().onMouseEnter();
     expect(send).toHaveBeenCalledWith({ type: "MOUSE_ENTER" });
   });
+
+  // WAI-ARIA: keyboard focus must also open hover card (without delay)
+  it("onFocus sends FOCUS", () => {
+    const { api, send } = makeApi();
+    api.getTriggerProps().onFocus();
+    expect(send).toHaveBeenCalledWith({ type: "FOCUS" });
+  });
+
+  it("onBlur sends BLUR", () => {
+    const { api, send } = makeApi();
+    api.getTriggerProps().onBlur();
+    expect(send).toHaveBeenCalledWith({ type: "BLUR" });
+  });
+
+  it("onMouseLeave sends MOUSE_LEAVE", () => {
+    const { api, send } = makeApi();
+    api.getTriggerProps().onMouseLeave();
+    expect(send).toHaveBeenCalledWith({ type: "MOUSE_LEAVE" });
+  });
 });
 
 // ---------------------------------------------------------------------------

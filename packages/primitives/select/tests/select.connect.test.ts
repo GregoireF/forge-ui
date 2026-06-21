@@ -294,6 +294,26 @@ describe("connectSelect — onKeyDown keyboard interactions", () => {
     fire(api, "ArrowDown");
     expect(send).not.toHaveBeenCalled();
   });
+
+  // WAI-ARIA §3.15: printable characters trigger typeahead (highlights first matching option)
+  it("letter key when open triggers typeahead → HIGHLIGHT_OPTION", () => {
+    const { api, send } = makeApi({ options: OPTIONS }, "open");
+    fire(api, "r"); // "r" → React (first option starting with "r")
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+  });
+
+  it("letter key when closed does NOT trigger typeahead", () => {
+    const { api, send } = makeApi({ options: OPTIONS }, "closed");
+    fire(api, "r");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("Ctrl+key when open does NOT trigger typeahead", () => {
+    const { api, send } = makeApi({ options: OPTIONS }, "open");
+    const e = { key: "a", ctrlKey: true, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    expect(send).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------

@@ -90,6 +90,69 @@ describe("connectTooltip — getTriggerProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getTriggerProps — event handlers (timer-based)
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — getTriggerProps event handlers", () => {
+  it("onFocus schedules OPEN after openDelay", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ openDelay: 100 });
+    api.getTriggerProps().onFocus();
+    vi.advanceTimersByTime(100);
+    expect(send).toHaveBeenCalledWith("OPEN");
+    vi.useRealTimers();
+  });
+
+  it("disabled: onFocus does NOT schedule OPEN", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ disabled: true });
+    api.getTriggerProps().onFocus();
+    vi.runAllTimers();
+    expect(send).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it("onBlur schedules CLOSE after closeDelay", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ closeDelay: 100 });
+    api.getTriggerProps().onBlur();
+    vi.advanceTimersByTime(100);
+    expect(send).toHaveBeenCalledWith("CLOSE");
+    vi.useRealTimers();
+  });
+
+  it("onPointerEnter (mouse) schedules OPEN", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ openDelay: 50 });
+    api.getTriggerProps().onPointerEnter({ pointerType: "mouse" });
+    vi.advanceTimersByTime(50);
+    expect(send).toHaveBeenCalledWith("OPEN");
+    vi.useRealTimers();
+  });
+
+  it("onPointerEnter with touch does NOT schedule OPEN", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ openDelay: 50 });
+    api.getTriggerProps().onPointerEnter({ pointerType: "touch" });
+    vi.runAllTimers();
+    expect(send).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it("onKeyDown Escape when open sends CLOSE immediately", () => {
+    const { api, send } = makeApi({}, "open");
+    api.getTriggerProps().onKeyDown({ key: "Escape" });
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("onKeyDown Escape when closed does nothing", () => {
+    const { api, send } = makeApi({}, "closed");
+    api.getTriggerProps().onKeyDown({ key: "Escape" });
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getContentProps
 // ---------------------------------------------------------------------------
 
