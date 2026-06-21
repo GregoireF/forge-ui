@@ -1,4 +1,4 @@
-import type { InjectionKey, PropType } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
 import { Slot } from "../dialog/Slot.js";
 import type { UseSliderReturn } from "./use-slider.js";
@@ -63,8 +63,9 @@ const SliderTrack = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const { ref, onPointerDown, ...trackAttrs } = api.getTrackProps();
-      const merged = { ...trackAttrs, onPointerdown: onPointerDown, ref, ...attrs };
+      const { ref: trackRef, onPointerDown, ...trackAttrs } = api.getTrackProps();
+      const vueRef = (el: Element | ComponentPublicInstance | null) => trackRef(el instanceof Element ? el : null);
+      const merged = { ...trackAttrs, onPointerdown: onPointerDown, ref: vueRef, ...attrs };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged, slots.default?.());
     };

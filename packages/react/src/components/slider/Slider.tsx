@@ -18,9 +18,19 @@ function useCtx(): SliderApi {
 // Root
 // ---------------------------------------------------------------------------
 
-export interface SliderRootProps extends UseSliderOptions, HTMLAttributes<HTMLDivElement> {
+export interface SliderRootProps extends Omit<HTMLAttributes<HTMLDivElement>, keyof UseSliderOptions | "defaultValue" | "defaultChecked"> {
   children: ReactNode;
   asChild?: boolean;
+  value?: number;
+  defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  orientation?: "horizontal" | "vertical";
+  disabled?: boolean;
+  onValueChange?: (value: number) => void;
+  onValueCommit?: (value: number) => void;
+  id?: string;
 }
 
 function Root({
@@ -70,10 +80,10 @@ export interface SliderTrackProps extends Omit<HTMLAttributes<HTMLDivElement>, "
 function Track({ children, asChild, ...rest }: SliderTrackProps) {
   const api = useCtx();
   const { ref, onPointerDown, ...trackAttrs } = api.getTrackProps();
-  const props = { ...trackAttrs, onPointerDown: onPointerDown as React.PointerEventHandler, ...rest } as HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> };
-  if (asChild) return <Slot ref={ref as React.Ref<HTMLDivElement>} {...props}>{children}</Slot>;
+  const onPD = onPointerDown as unknown as React.PointerEventHandler<HTMLDivElement>;
+  if (asChild) return <Slot ref={ref as React.Ref<HTMLDivElement>} onPointerDown={onPD} {...trackAttrs} {...rest}>{children}</Slot>;
   return (
-    <div ref={ref as React.Ref<HTMLDivElement>} onPointerDown={onPointerDown as React.PointerEventHandler} {...trackAttrs} {...rest}>
+    <div ref={ref as React.Ref<HTMLDivElement>} onPointerDown={onPD} {...trackAttrs} {...rest}>
       {children}
     </div>
   );
@@ -105,8 +115,9 @@ export interface SliderThumbProps extends Omit<HTMLAttributes<HTMLDivElement>, "
 
 function Thumb({ asChild, name, ...rest }: SliderThumbProps) {
   const api = useCtx();
-  const { onKeydown: _kd, ...thumbAttrs } = api.getThumbProps();
-  const props = { ...thumbAttrs, ...rest } as HTMLAttributes<HTMLDivElement>;
+  const { onKeydown: _kd, onKeyDown, ...thumbAttrs } = api.getThumbProps();
+  const onKD = onKeyDown as unknown as React.KeyboardEventHandler<HTMLDivElement>;
+  const props = { ...thumbAttrs, onKeyDown: onKD, ...rest };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }

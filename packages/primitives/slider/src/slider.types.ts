@@ -5,7 +5,7 @@ export interface SliderContext {
   step: number;
   orientation: "horizontal" | "vertical";
   disabled: boolean;
-  trackEl: HTMLElement | null;
+  trackEl: Element | null;
   onValueChange?: (value: number) => void;
   onValueCommit?: (value: number) => void;
 }

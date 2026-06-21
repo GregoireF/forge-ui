@@ -15,7 +15,7 @@ function snapToStep(value: number, min: number, step: number): number {
 
 function computeValueFromPointer(
   e: PointerEvent,
-  trackEl: HTMLElement,
+  trackEl: Element,
   ctx: { min: number; max: number; step: number; orientation: "horizontal" | "vertical" },
 ): number {
   const rect = trackEl.getBoundingClientRect();
@@ -64,7 +64,7 @@ export function connectSlider(
         "data-forge-part": "track",
         "data-orientation": orientation,
         "data-disabled": disabled ? ("" as const) : undefined,
-        ref(el: HTMLElement | null) {
+        ref(el: Element | null) {
           machine.setContext({ trackEl: el });
         },
         onPointerDown(e: PointerEvent) {
