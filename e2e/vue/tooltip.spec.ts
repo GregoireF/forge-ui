@@ -59,4 +59,17 @@ test.describe("Tooltip — Vue (forge-ui)", () => {
     const link = tooltip.getByRole("link");
     await expect(link).toBeVisible();
   });
+
+  // WAI-ARIA: keyboard focus must also reveal the tooltip (no delay)
+  test("tooltip appears on keyboard focus (no delay)", async ({ page }) => {
+    await trigger(page).focus();
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 500 });
+  });
+
+  test("tooltip hides when focus leaves the trigger", async ({ page }) => {
+    await trigger(page).focus();
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 500 });
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("tooltip").first()).not.toBeVisible({ timeout: 1000 });
+  });
 });

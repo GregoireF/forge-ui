@@ -56,4 +56,17 @@ test.describe("HoverCard — Nuxt (forge-ui)", () => {
     });
     expect(isBodyChild).toBe(true);
   });
+
+  // WAI-ARIA: focus also opens hover card without delay
+  test("hover card opens immediately on keyboard focus", async ({ page }) => {
+    await trigger(page).focus();
+    await expect(content(page)).toBeVisible({ timeout: 500 });
+  });
+
+  test("hover card closes when focus leaves", async ({ page }) => {
+    await trigger(page).focus();
+    await expect(content(page)).toBeVisible({ timeout: 500 });
+    await page.keyboard.press("Tab");
+    await expect(content(page)).not.toBeVisible({ timeout: 1000 });
+  });
 });

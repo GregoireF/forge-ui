@@ -50,4 +50,16 @@ test.describe("Collapsible — Vue (forge-ui)", () => {
     await trigger(page).click();
     await expect(trigger(page)).toHaveAttribute("data-state", "open");
   });
+
+  test("Enter key on trigger reveals content", async ({ page }) => {
+    await trigger(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(content(page)).toBeVisible();
+  });
+
+  test("Space key on trigger reveals content", async ({ page }) => {
+    await trigger(page).focus();
+    await page.keyboard.press("Space");
+    await expect(content(page)).toBeVisible();
+  });
 });

@@ -46,4 +46,11 @@ test.describe("Checkbox — Vue (forge-ui)", () => {
     const disabled = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"][data-disabled]');
     await expect(disabled.first()).toBeVisible();
   });
+
+  // WAI-ARIA §3.7: clicking indeterminate → checked (not unchecked)
+  test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({ page }) => {
+    await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
+    await secondCheckbox(page).click();
+    await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "true");
+  });
 });

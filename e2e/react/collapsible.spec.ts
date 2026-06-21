@@ -83,4 +83,20 @@ test.describe("Collapsible — React (forge-ui)", () => {
     await trigger(page).click();
     await expect(content(page)).toHaveAttribute("data-forge-scope", "collapsible");
   });
+
+  // ---------------------------------------------------------------------------
+  // Keyboard — trigger is a button, so Enter and Space are native browser behavior
+  // ---------------------------------------------------------------------------
+
+  test("Enter key on trigger reveals content", async ({ page }) => {
+    await trigger(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(content(page)).toBeVisible();
+  });
+
+  test("Space key on trigger reveals content", async ({ page }) => {
+    await trigger(page).focus();
+    await page.keyboard.press("Space");
+    await expect(content(page)).toBeVisible();
+  });
 });
