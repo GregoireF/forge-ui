@@ -66,6 +66,10 @@
       "types": "./dist/field/index.d.ts",
       "import": "./dist/field/index.js"
     },
+    "./slider": {
+      "types": "./dist/slider/index.d.ts",
+      "import": "./dist/slider/index.js"
+    },
     "./tags-input": {
       "types": "./dist/tags-input/index.d.ts",
       "import": "./dist/tags-input/index.js"
@@ -92,6 +96,7 @@
     "@forge-ui/accordion": "workspace:*",
     "@forge-ui/progress": "workspace:*",
     "@forge-ui/radio-group": "workspace:*",
+    "@forge-ui/slider": "workspace:*",
     "@forge-ui/tabs": "workspace:*",
     "@forge-ui/alert-dialog": "workspace:*",
     "@forge-ui/checkbox": "workspace:*",

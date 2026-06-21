@@ -133,6 +133,16 @@
         "nuxt": ">=4.0.0",
       },
     },
+    "packages/primitives/accordion": {
+      "name": "@forge-ui/accordion",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/alert-dialog": {
       "name": "@forge-ui/alert-dialog",
       "version": "0.0.0",
@@ -204,6 +214,23 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/progress": {
+      "name": "@forge-ui/progress",
+      "version": "0.0.0",
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/radio-group": {
+      "name": "@forge-ui/radio-group",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/select": {
       "name": "@forge-ui/select",
       "version": "0.0.0",
@@ -215,8 +242,28 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/slider": {
+      "name": "@forge-ui/slider",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/switch": {
       "name": "@forge-ui/switch",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/tabs": {
+      "name": "@forge-ui/tabs",
       "version": "0.0.0",
       "dependencies": {
         "@forge-ui/core": "workspace:*",
@@ -250,6 +297,7 @@
       "name": "@forge-ui/react",
       "version": "0.0.0",
       "dependencies": {
+        "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
@@ -258,8 +306,12 @@
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
         "@forge-ui/popover": "workspace:*",
+        "@forge-ui/progress": "workspace:*",
+        "@forge-ui/radio-group": "workspace:*",
         "@forge-ui/select": "workspace:*",
+        "@forge-ui/slider": "workspace:*",
         "@forge-ui/switch": "workspace:*",
+        "@forge-ui/tabs": "workspace:*",
         "@forge-ui/tags-input": "workspace:*",
         "@forge-ui/tooltip": "workspace:*",
       },
@@ -283,6 +335,7 @@
       "name": "@forge-ui/vue",
       "version": "0.0.0",
       "dependencies": {
+        "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
@@ -291,8 +344,12 @@
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
         "@forge-ui/popover": "workspace:*",
+        "@forge-ui/progress": "workspace:*",
+        "@forge-ui/radio-group": "workspace:*",
         "@forge-ui/select": "workspace:*",
+        "@forge-ui/slider": "workspace:*",
         "@forge-ui/switch": "workspace:*",
+        "@forge-ui/tabs": "workspace:*",
         "@forge-ui/tags-input": "workspace:*",
         "@forge-ui/tooltip": "workspace:*",
       },
@@ -608,6 +665,8 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
 
+    "@forge-ui/accordion": ["@forge-ui/accordion@workspace:packages/primitives/accordion"],
+
     "@forge-ui/alert-dialog": ["@forge-ui/alert-dialog@workspace:packages/primitives/alert-dialog"],
 
     "@forge-ui/checkbox": ["@forge-ui/checkbox@workspace:packages/primitives/checkbox"],
@@ -628,11 +687,19 @@
 
     "@forge-ui/popover": ["@forge-ui/popover@workspace:packages/primitives/popover"],
 
+    "@forge-ui/progress": ["@forge-ui/progress@workspace:packages/primitives/progress"],
+
+    "@forge-ui/radio-group": ["@forge-ui/radio-group@workspace:packages/primitives/radio-group"],
+
     "@forge-ui/react": ["@forge-ui/react@workspace:packages/react"],
 
     "@forge-ui/select": ["@forge-ui/select@workspace:packages/primitives/select"],
 
+    "@forge-ui/slider": ["@forge-ui/slider@workspace:packages/primitives/slider"],
+
     "@forge-ui/switch": ["@forge-ui/switch@workspace:packages/primitives/switch"],
+
+    "@forge-ui/tabs": ["@forge-ui/tabs@workspace:packages/primitives/tabs"],
 
     "@forge-ui/tags-input": ["@forge-ui/tags-input@workspace:packages/primitives/tags-input"],
 
