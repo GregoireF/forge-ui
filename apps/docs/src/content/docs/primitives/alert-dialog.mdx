@@ -116,6 +116,12 @@ Accepts the same props as [Dialog.Root](/primitives/dialog#dialogroot), minus `m
 | `defaultOpen` | `boolean` | `false` | Initial open state (uncontrolled) |
 | `onOpenChange` | `(open: boolean) => void` | — | Fires when open state changes |
 
+### AlertDialog.Portal
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep overlay + content in DOM when closed — required for exit animations |
+
 ### AlertDialog.Cancel / AlertDialog.Action
 
 | Prop | Type | Default | Description |
@@ -132,10 +138,18 @@ Accepts the same props as [Dialog.Root](/primitives/dialog#dialogroot), minus `m
 
 ## Accessibility
 
-- Renders with `role="alertdialog"` (screen readers announce it immediately)
-- `AlertDialog.Title` and `AlertDialog.Description` are both required
+- Renders with `role="alertdialog"` (screen readers announce it immediately on open)
+- `AlertDialog.Title` and `AlertDialog.Description` are both required for WAI-ARIA compliance
 - Clicking outside does **not** close the dialog — the user must choose an action
-- `Escape` is also disabled by default to force an explicit choice
+- `Escape` is disabled by default to force an explicit choice
+- Focus is trapped inside the dialog while it is open
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Tab` | Move focus to next focusable element inside dialog |
+| `Shift + Tab` | Move focus to previous focusable element inside dialog |
 
 <Aside type="tip">
   Use `AlertDialog.Cancel` for the safe action and `AlertDialog.Action` for the destructive one. This distinction is semantic — style them differently with `data-forge-part`.

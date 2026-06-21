@@ -135,6 +135,25 @@ The `closeDelay` gives users time to move their cursor from the trigger into the
 |------|------|---------|-------------|
 | `asChild` | `boolean` | `false` | Merge props onto child element |
 
+### HoverCard.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed — required for exit animations |
+
+### HoverCard.Arrow
+
+Renderless — merges `getArrowProps()` onto its child element. Typically a `<svg>` with a triangle path.
+
+```tsx
+<HoverCard.Arrow>
+  <svg width="10" height="5" viewBox="0 0 10 5">
+    <path d="M0 0L5 5L10 0Z" fill="white" />
+  </svg>
+</HoverCard.Arrow>
+```
+
 ## Data attributes
 
 | Attribute | Element | Values |
