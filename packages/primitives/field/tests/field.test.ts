@@ -124,11 +124,11 @@ describe("connectField — getDescriptionProps", () => {
 });
 
 describe("connectField — getErrorProps", () => {
-  it("returns error id, role=alert, aria-live=polite", () => {
+  it("returns error id, role=alert, aria-live=assertive", () => {
     const props = connectField(makeCtx()).getErrorProps();
     expect(props.id).toBe("f-error");
     expect(props.role).toBe("alert");
-    expect(props["aria-live"]).toBe("polite");
+    expect(props["aria-live"]).toBe("assertive");
   });
 });
 

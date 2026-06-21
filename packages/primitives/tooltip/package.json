@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@forge-ui/tooltip",
   "version": "0.0.0",
   "private": false,
@@ -29,3 +29,4 @@
     "typescript": "*"
   }
 }
+

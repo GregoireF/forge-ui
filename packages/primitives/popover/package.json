@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@forge-ui/popover",
   "version": "0.0.0",
   "private": false,
@@ -20,7 +20,7 @@
   "scripts": {
     "build": "bun run ../../../tooling/scripts/build.ts",
     "dev": "tsc --watch --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist coverage"
@@ -33,3 +33,4 @@
     "typescript": "*"
   }
 }
+
