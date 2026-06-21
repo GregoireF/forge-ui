@@ -136,6 +136,29 @@ describe("connectTagsInput — getInputProps", () => {
     api.getInputProps().onKeyDown(e as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalledWith({ type: "REMOVE_LAST_TAG" });
   });
+
+  // onFocus / onBlur lifecycle events
+  it("onFocus sends FOCUS", () => {
+    const { api, send } = makeApi();
+    api.getInputProps().onFocus();
+    expect(send).toHaveBeenCalledWith({ type: "FOCUS" });
+  });
+
+  it("onBlur with text in input sends ADD_TAG then BLUR", () => {
+    const { api, send } = makeApi();
+    const e = { target: { value: "mytag" } as HTMLInputElement } as FocusEvent;
+    api.getInputProps().onBlur(e);
+    expect(send).toHaveBeenCalledWith({ type: "ADD_TAG" });
+    expect(send).toHaveBeenCalledWith({ type: "BLUR" });
+  });
+
+  it("onBlur with empty input sends only BLUR (no ADD_TAG)", () => {
+    const { api, send } = makeApi();
+    const e = { target: { value: "" } as HTMLInputElement } as FocusEvent;
+    api.getInputProps().onBlur(e);
+    expect(send).not.toHaveBeenCalledWith({ type: "ADD_TAG" });
+    expect(send).toHaveBeenCalledWith({ type: "BLUR" });
+  });
 });
 
 // ---------------------------------------------------------------------------

@@ -45,6 +45,20 @@ test.describe("RadioGroup — Vue (forge-ui)", () => {
     await expect(radioReact(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.18: ArrowRight/Left also navigate; arrow also selects
+  test("ArrowRight moves to next and selects it", async ({ page }) => {
+    await radioReact(page).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(radioVue(page)).toBeFocused();
+    await expect(radioVue(page)).toHaveAttribute("aria-checked", "true");
+  });
+
+  test("ArrowDown from last radio wraps to first (circular)", async ({ page }) => {
+    await radioAngular(page).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(radioReact(page)).toBeFocused();
+  });
+
   test("radios have role=radio", async ({ page }) => {
     await expect(radioReact(page)).toHaveAttribute("role", "radio");
     await expect(radioVue(page)).toHaveAttribute("role", "radio");

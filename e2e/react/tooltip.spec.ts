@@ -80,6 +80,20 @@ test.describe("Tooltip — React (forge-ui)", () => {
     await expect(link).toBeVisible();
   });
 
+  // WAI-ARIA: keyboard focus must also reveal the tooltip (not hover-only)
+  test("tooltip appears on keyboard focus (no delay)", async ({ page }) => {
+    await trigger(page).focus();
+    // Focus bypasses the openDelay — tooltip should appear immediately (< 100ms)
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 500 });
+  });
+
+  test("tooltip hides when focus leaves the trigger", async ({ page }) => {
+    await trigger(page).focus();
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 500 });
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("tooltip").first()).not.toBeVisible({ timeout: 1000 });
+  });
+
   test("tooltip is rendered inside body (portal)", async ({ page }) => {
     await trigger(page).hover();
     await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 2000 });

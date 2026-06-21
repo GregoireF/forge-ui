@@ -66,6 +66,23 @@ test.describe("HoverCard — React (forge-ui)", () => {
   });
 
   // ---------------------------------------------------------------------------
+  // Keyboard — WAI-ARIA: HoverCard opens on focus (no delay, unlike hover)
+  // ---------------------------------------------------------------------------
+
+  test("hover card opens immediately on keyboard focus (no openDelay)", async ({ page }) => {
+    await trigger(page).focus();
+    // Focus must open without delay — 500ms timeout is generous
+    await expect(content(page)).toBeVisible({ timeout: 500 });
+  });
+
+  test("hover card closes when focus leaves trigger", async ({ page }) => {
+    await trigger(page).focus();
+    await expect(content(page)).toBeVisible({ timeout: 500 });
+    await page.keyboard.press("Tab");
+    await expect(content(page)).not.toBeVisible({ timeout: 1000 });
+  });
+
+  // ---------------------------------------------------------------------------
   // Portal
   // ---------------------------------------------------------------------------
 

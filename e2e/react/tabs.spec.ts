@@ -83,6 +83,27 @@ test.describe("Tabs — React (forge-ui)", () => {
     await expect(triggerReact(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.26: Home/End navigate to first/last tab
+  test("Home key moves focus to first tab", async ({ page }) => {
+    await triggerNuxt(page).focus();
+    await page.keyboard.press("Home");
+    await expect(triggerReact(page)).toBeFocused();
+  });
+
+  test("End key moves focus to last tab", async ({ page }) => {
+    await triggerReact(page).focus();
+    await page.keyboard.press("End");
+    await expect(triggerNuxt(page)).toBeFocused();
+  });
+
+  // WAI-ARIA §3.26: automatic activation — ArrowRight also selects the tab
+  test("ArrowRight activates the focused tab (automatic mode)", async ({ page }) => {
+    await triggerReact(page).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(triggerVue(page)).toHaveAttribute("aria-selected", "true");
+    await expect(panelVue(page)).toBeVisible();
+  });
+
   // ---------------------------------------------------------------------------
   // ARIA
   // ---------------------------------------------------------------------------

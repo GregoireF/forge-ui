@@ -57,4 +57,38 @@ test.describe("Accordion — Nuxt (forge-ui)", () => {
     await triggerWhat(page).click();
     await expect(triggerWhat(page)).toHaveAttribute("data-state", "open");
   });
+
+  // ---------------------------------------------------------------------------
+  // Keyboard navigation — WAI-ARIA §3.1
+  // ---------------------------------------------------------------------------
+
+  test("ArrowDown moves focus from first trigger to second", async ({ page }) => {
+    await triggerWhat(page).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(triggerWhy(page)).toBeFocused();
+  });
+
+  test("ArrowUp moves focus from second trigger to first", async ({ page }) => {
+    await triggerWhy(page).focus();
+    await page.keyboard.press("ArrowUp");
+    await expect(triggerWhat(page)).toBeFocused();
+  });
+
+  test("Home moves focus to first trigger", async ({ page }) => {
+    await triggerWhy(page).focus();
+    await page.keyboard.press("Home");
+    await expect(triggerWhat(page)).toBeFocused();
+  });
+
+  test("End moves focus to last trigger", async ({ page }) => {
+    await triggerWhat(page).focus();
+    await page.keyboard.press("End");
+    await expect(triggerWhy(page)).toBeFocused();
+  });
+
+  test("Enter key toggles the focused accordion item", async ({ page }) => {
+    await triggerWhat(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(contentWhat(page)).toBeVisible();
+  });
 });

@@ -66,6 +66,19 @@ test.describe("Tabs — Nuxt (forge-ui)", () => {
     await expect(triggerReact(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.26: Home/End navigate to first/last tab
+  test("Home key moves focus to first tab", async ({ page }) => {
+    await triggerNuxt(page).focus();
+    await page.keyboard.press("Home");
+    await expect(triggerReact(page)).toBeFocused();
+  });
+
+  test("End key moves focus to last tab", async ({ page }) => {
+    await triggerReact(page).focus();
+    await page.keyboard.press("End");
+    await expect(triggerNuxt(page)).toBeFocused();
+  });
+
   test("triggers have role=tab", async ({ page }) => {
     await expect(triggerReact(page)).toHaveAttribute("role", "tab");
   });

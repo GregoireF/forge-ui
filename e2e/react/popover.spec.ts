@@ -104,6 +104,23 @@ test.describe("Popover — React (forge-ui)", () => {
   });
 
   // ---------------------------------------------------------------------------
+  // Focus management (WAI-ARIA §3.16)
+  // ---------------------------------------------------------------------------
+
+  test("focus returns to trigger after closing with Escape", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(trigger(page)).toBeFocused();
+  });
+
+  test("focus returns to trigger after closing with × button", async ({ page }) => {
+    await trigger(page).click();
+    await page.locator('[data-forge-scope="popover"][data-forge-part="close"]').first().click();
+    await expect(trigger(page)).toBeFocused();
+  });
+
+  // ---------------------------------------------------------------------------
   // Forge attributes
   // ---------------------------------------------------------------------------
 

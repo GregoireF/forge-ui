@@ -204,6 +204,99 @@ describe("connectSelect — getOptionProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getTriggerProps — onKeyDown (keyboard navigation)
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — onKeyDown keyboard interactions", () => {
+  function fire(api: ReturnType<typeof connectSelect>, key: string, ctrlKey = false) {
+    const e = { key, ctrlKey, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    return e;
+  }
+
+  it("ArrowDown when closed sends OPEN", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "ArrowDown");
+    expect(send).toHaveBeenCalledWith("OPEN");
+  });
+
+  it("ArrowDown when open sends HIGHLIGHT_NEXT", () => {
+    const { api, send } = makeApi({}, "open");
+    fire(api, "ArrowDown");
+    expect(send).toHaveBeenCalledWith("HIGHLIGHT_NEXT");
+  });
+
+  it("ArrowUp when closed sends OPEN then HIGHLIGHT_LAST", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "ArrowUp");
+    expect(send).toHaveBeenCalledWith("OPEN");
+    expect(send).toHaveBeenCalledWith("HIGHLIGHT_LAST");
+  });
+
+  it("ArrowUp when open sends HIGHLIGHT_PREV", () => {
+    const { api, send } = makeApi({}, "open");
+    fire(api, "ArrowUp");
+    expect(send).toHaveBeenCalledWith("HIGHLIGHT_PREV");
+  });
+
+  it("Home when open sends HIGHLIGHT_FIRST", () => {
+    const { api, send } = makeApi({}, "open");
+    fire(api, "Home");
+    expect(send).toHaveBeenCalledWith("HIGHLIGHT_FIRST");
+  });
+
+  it("End when open sends HIGHLIGHT_LAST", () => {
+    const { api, send } = makeApi({}, "open");
+    fire(api, "End");
+    expect(send).toHaveBeenCalledWith("HIGHLIGHT_LAST");
+  });
+
+  it("Enter when closed sends OPEN", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "Enter");
+    expect(send).toHaveBeenCalledWith("OPEN");
+  });
+
+  it("Enter when open with highlighted sends SELECT_OPTION then CLOSE", () => {
+    const { api, send } = makeApi({ highlighted: "react", multiple: false }, "open");
+    fire(api, "Enter");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_OPTION", value: "react" });
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("Space when open with highlighted sends SELECT_OPTION then CLOSE", () => {
+    const { api, send } = makeApi({ highlighted: "vue", multiple: false }, "open");
+    fire(api, " ");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_OPTION", value: "vue" });
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("Escape when open sends ESCAPE_KEY", () => {
+    const { api, send } = makeApi({}, "open");
+    fire(api, "Escape");
+    expect(send).toHaveBeenCalledWith("ESCAPE_KEY");
+  });
+
+  it("Escape when closed does nothing", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "Escape");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("Tab when open sends CLOSE", () => {
+    const { api, send } = makeApi({}, "open");
+    fire(api, "Tab");
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("disabled: ArrowDown does nothing", () => {
+    const { api, send } = makeApi({ disabled: true }, "closed");
+    fire(api, "ArrowDown");
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getLabelProps
 // ---------------------------------------------------------------------------
 

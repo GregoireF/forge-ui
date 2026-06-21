@@ -68,4 +68,19 @@ test.describe("Slider — Nuxt (forge-ui)", () => {
     const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "-1");
     expect(valuenow).toBe(100);
   });
+
+  // WAI-ARIA §3.23: PageUp/PageDown move by a large step (10% of range = 10 on [0,100])
+  test("PageUp increments value by 10% of range", async ({ page }) => {
+    await thumb(page).focus();
+    await page.keyboard.press("PageUp");
+    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    expect(valuenow).toBe(60);
+  });
+
+  test("PageDown decrements value by 10% of range", async ({ page }) => {
+    await thumb(page).focus();
+    await page.keyboard.press("PageDown");
+    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    expect(valuenow).toBe(40);
+  });
 });

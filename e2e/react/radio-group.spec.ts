@@ -66,6 +66,34 @@ test.describe("RadioGroup — React (forge-ui)", () => {
     await expect(radioReact(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.18: ArrowRight/Left also navigate (both horizontal and vertical axes)
+  test("ArrowRight also moves to next radio", async ({ page }) => {
+    await radioReact(page).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(radioVue(page)).toBeFocused();
+  });
+
+  test("ArrowLeft also moves to previous radio", async ({ page }) => {
+    await radioReact(page).click();
+    await radioVue(page).focus();
+    await page.keyboard.press("ArrowLeft");
+    await expect(radioReact(page)).toBeFocused();
+  });
+
+  // WAI-ARIA §3.18: Arrow navigation also selects (unlike tab key navigation)
+  test("ArrowDown also selects the focused radio", async ({ page }) => {
+    await radioReact(page).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(radioVue(page)).toHaveAttribute("aria-checked", "true");
+    await expect(radioReact(page)).toHaveAttribute("aria-checked", "false");
+  });
+
+  test("ArrowDown from last radio wraps to first (circular)", async ({ page }) => {
+    await radioAngular(page).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(radioReact(page)).toBeFocused();
+  });
+
   // ---------------------------------------------------------------------------
   // ARIA
   // ---------------------------------------------------------------------------

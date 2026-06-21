@@ -57,6 +57,13 @@ test.describe("Checkbox — React (forge-ui)", () => {
     expect(["true", "false"]).toContain(after);
   });
 
+  // WAI-ARIA §3.7: "When a mixed checkbox is activated, it becomes checked" — not unchecked
+  test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({ page }) => {
+    await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
+    await secondCheckbox(page).click();
+    await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "true");
+  });
+
   // ---------------------------------------------------------------------------
   // Disabled
   // ---------------------------------------------------------------------------
