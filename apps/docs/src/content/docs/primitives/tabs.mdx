@@ -101,6 +101,27 @@ const [tab, setTab] = useState("overview");
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Direction of the tablist |
 | `onValueChange` | `(value: string) => void` | — | Fires on tab change |
 
+### Tabs.Trigger
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | The tab value this trigger controls |
+| `disabled` | `boolean` | `false` | Prevent activation of this tab |
+
+### Tabs.Panel
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Must match the corresponding trigger value |
+| `forceMount` | `boolean` | `false` | Keep in DOM when inactive (for exit animations) |
+
+## Accessibility
+
+- Tablist has `role="tablist"` and `aria-orientation`
+- Each trigger has `role="tab"`, `aria-selected`, `aria-controls`
+- Each panel has `role="tabpanel"` and `aria-labelledby`
+- Follows the [WAI-ARIA Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/)
+
 ## Data attributes
 
 | Attribute | Element | Values |

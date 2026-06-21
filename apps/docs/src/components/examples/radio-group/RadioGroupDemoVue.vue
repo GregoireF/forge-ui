@@ -2,8 +2,8 @@
   <div class="forge-demo">
     <RadioGroupRoot default-value="react">
       <RadioGroupItem v-for="opt in options" :key="opt.value" :value="opt.value">
-        <RadioGroupRadio :value="opt.value" />
-        <RadioGroupLabel :value="opt.value">{{ opt.label }}</RadioGroupLabel>
+        <RadioGroupRadio />
+        <RadioGroupLabel>{{ opt.label }}</RadioGroupLabel>
       </RadioGroupItem>
     </RadioGroupRoot>
   </div>

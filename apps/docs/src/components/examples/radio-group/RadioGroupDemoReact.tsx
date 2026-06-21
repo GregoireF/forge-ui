@@ -12,8 +12,8 @@ export function RadioGroupDemoReact() {
       <RadioGroup.Root defaultValue="react">
         {OPTIONS.map(({ value, label }) => (
           <RadioGroup.Item key={value} value={value}>
-            <RadioGroup.Radio value={value} />
-            <RadioGroup.Label value={value}>{label}</RadioGroup.Label>
+            <RadioGroup.Radio />
+            <RadioGroup.Label>{label}</RadioGroup.Label>
           </RadioGroup.Item>
         ))}
       </RadioGroup.Root>

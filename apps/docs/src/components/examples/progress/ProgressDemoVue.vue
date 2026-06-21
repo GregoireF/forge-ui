@@ -1,31 +1,13 @@
 <template>
   <div class="forge-demo" style="display: block; padding: 1.5rem">
-    <div
-      style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem"
-    >
-      <ProgressRoot :value="value" style="display: flex; flex-direction: column; gap: 0.5rem">
-        <div
-          style="display: flex; justify-content: space-between; align-items: center"
-        >
-          <ProgressLabel
-            :value="value"
-            style="font-size: 0.875rem; color: var(--sl-color-white)"
-          >
-            Loading…
-          </ProgressLabel>
-          <ProgressValueText
-            :value="value"
-            style="font-size: 0.875rem; color: var(--sl-color-gray-3)"
-          />
+    <div style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem">
+      <ProgressRoot :value="value">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem">
+          <ProgressLabel>Loading…</ProgressLabel>
+          <ProgressValueText />
         </div>
-        <ProgressTrack
-          :value="value"
-          style="height: 8px; background: var(--sl-color-gray-6); border-radius: 999px; overflow: hidden"
-        >
-          <ProgressFill
-            :value="value"
-            style="height: 100%; background: var(--sl-color-accent); border-radius: 999px; transition: width 0.3s ease"
-          />
+        <ProgressTrack>
+          <ProgressFill />
         </ProgressTrack>
       </ProgressRoot>
 

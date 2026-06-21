@@ -185,6 +185,12 @@ import TagsInputDemoVue from "../../../components/examples/tags-input/TagsInputD
 | `data-readonly` | `root` | `"true"` |
 | `data-value` | `tag` | The tag's string value |
 
+## Accessibility
+
+- Root has `role="group"`; each tag has `role="row"` with its text and delete button
+- `aria-disabled` propagates from Root to prevent interaction when disabled
+- `aria-readonly` propagates for read-only mode
+
 ## Keyboard interactions
 
 | Key | Action |

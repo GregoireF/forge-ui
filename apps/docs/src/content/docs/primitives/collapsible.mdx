@@ -1,0 +1,159 @@
+---
+title: Collapsible
+description: A single toggleable panel with animated open/close state and full keyboard support.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { CollapsibleDemoReact } from "../../../components/examples/collapsible/CollapsibleDemoReact.tsx";
+import CollapsibleDemoVue from "../../../components/examples/collapsible/CollapsibleDemoVue.vue";
+
+A **Collapsible** is a single section that can be expanded or collapsed. Use it for progressive disclosure of content such as FAQs, settings panels, or expandable descriptions.
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <CollapsibleDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <CollapsibleDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { Collapsible } from "@forge-ui/react";
+
+    export function FAQ() {
+      return (
+        <Collapsible.Root>
+          <Collapsible.Trigger>What is forge-ui?</Collapsible.Trigger>
+          <Collapsible.Content>
+            A headless component library for React and Vue.
+          </Collapsible.Content>
+        </Collapsible.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <CollapsibleRoot>
+        <CollapsibleTrigger>What is forge-ui?</CollapsibleTrigger>
+        <CollapsibleContent>
+          A headless component library for React and Vue.
+        </CollapsibleContent>
+      </CollapsibleRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled mode
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { useState } from "react";
+    import { Collapsible } from "@forge-ui/react";
+
+    export function ControlledCollapsible() {
+      const [open, setOpen] = useState(false);
+      return (
+        <Collapsible.Root open={open} onOpenChange={setOpen}>
+          <Collapsible.Trigger>{open ? "Hide" : "Show"} details</Collapsible.Trigger>
+          <Collapsible.Content>Details content here.</Collapsible.Content>
+        </Collapsible.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import { ref } from "vue";
+    import { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent } from "@forge-ui/vue";
+
+    const open = ref(false);
+    </script>
+
+    <template>
+      <CollapsibleRoot :open="open" @open-change="open = $event">
+        <CollapsibleTrigger>{{ open ? 'Hide' : 'Show' }} details</CollapsibleTrigger>
+        <CollapsibleContent>Details content here.</CollapsibleContent>
+      </CollapsibleRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Styling
+
+```css
+[data-forge-scope="collapsible"][data-forge-part="trigger"] {
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="closed"] {
+  display: none;
+}
+
+/* Animate using data-state */
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="open"] {
+  animation: slideDown 150ms ease-out;
+}
+```
+
+## API Reference
+
+### Collapsible.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Initial open state (uncontrolled) |
+| `disabled` | `boolean` | `false` | Prevent opening/closing |
+| `onOpenChange` | `(open: boolean) => void` | — | Fires when state changes |
+
+### Collapsible.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed (for exit animations) |
+
+### Collapsible.Trigger
+
+Renders a `<button>`. Accepts standard HTML button attributes.
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"collapsible"` |
+| `data-forge-part` | All parts | `"root"` \| `"trigger"` \| `"content"` |
+| `data-state` | `root`, `trigger`, `content` | `"open"` \| `"closed"` |
+| `data-disabled` | `root`, `trigger` | `""` when disabled |
+
+## Accessibility
+
+- Trigger has `aria-expanded` (true when open) and `aria-controls` pointing to the content panel
+- Content panel has a matching `id` for `aria-controls` linkage
+- Disabled state propagates `aria-disabled="true"` to the trigger
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `Space` | Toggle the panel |

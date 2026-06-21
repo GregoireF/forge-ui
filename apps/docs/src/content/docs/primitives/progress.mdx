@@ -115,6 +115,12 @@ Progress is a **stateless connect** — each part receives the same props indivi
 | `min` | `number` | `0` | Minimum value |
 | `max` | `number` | `100` | Maximum value |
 
+## Accessibility
+
+- Root renders `role="progressbar"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`
+- When `value={null}` (indeterminate), `aria-valuenow` is omitted
+- `aria-label` or `aria-labelledby` should be provided via `Progress.Label`
+
 ## Data attributes
 
 | Attribute | Element | Values |

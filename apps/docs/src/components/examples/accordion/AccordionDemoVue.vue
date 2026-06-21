@@ -7,12 +7,12 @@
     >
       <AccordionItem value="what">
         <AccordionHeader>
-          <AccordionTrigger :style="triggerStyle">
+          <AccordionTrigger>
             What is forge-ui?
-            <span style="opacity: 0.5">▾</span>
+            <span aria-hidden="true">▾</span>
           </AccordionTrigger>
         </AccordionHeader>
-        <AccordionContent :style="contentStyle">
+        <AccordionContent>
           forge-ui is a headless component library built on a machine → connect → framework
           architecture, giving you complete styling freedom.
         </AccordionContent>
@@ -20,12 +20,12 @@
 
       <AccordionItem value="why">
         <AccordionHeader>
-          <AccordionTrigger :style="triggerStyle">
+          <AccordionTrigger>
             Why headless?
-            <span style="opacity: 0.5">▾</span>
+            <span aria-hidden="true">▾</span>
           </AccordionTrigger>
         </AccordionHeader>
-        <AccordionContent :style="contentStyle">
+        <AccordionContent>
           Headless components handle behavior and accessibility while you own the styles. No CSS
           overrides, no specificity wars.
         </AccordionContent>
@@ -33,12 +33,12 @@
 
       <AccordionItem value="how">
         <AccordionHeader>
-          <AccordionTrigger :style="{ ...triggerStyle, borderBottom: 'none' }">
+          <AccordionTrigger>
             How does the CSS contract work?
-            <span style="opacity: 0.5">▾</span>
+            <span aria-hidden="true">▾</span>
           </AccordionTrigger>
         </AccordionHeader>
-        <AccordionContent :style="{ ...contentStyle, borderBottom: 'none' }">
+        <AccordionContent>
           Every element gets <code>data-forge-scope</code> and <code>data-forge-part</code>
           attributes. Style them with stable selectors that never break.
         </AccordionContent>
@@ -55,26 +55,4 @@ import {
   AccordionRoot,
   AccordionTrigger,
 } from "@forge-ui/vue";
-
-const triggerStyle = {
-  width: "100%",
-  textAlign: "left",
-  padding: "0.75rem 0",
-  background: "none",
-  border: "none",
-  borderBottom: "1px solid var(--sl-color-hairline)",
-  color: "var(--sl-color-white)",
-  cursor: "pointer",
-  fontSize: "0.9rem",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
-
-const contentStyle = {
-  padding: "0.75rem 0",
-  fontSize: "0.875rem",
-  color: "var(--sl-color-gray-3)",
-  borderBottom: "1px solid var(--sl-color-hairline)",
-};
 </script>

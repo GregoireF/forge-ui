@@ -41,15 +41,13 @@ A **Combobox** is a text input paired with a filterable listbox. The user can ty
         <Combobox.Root onInputChange={setQuery}>
           <Combobox.Input placeholder="Search country..." />
           <Combobox.Portal>
-            <Combobox.Positioner>
-              <Combobox.Content>
-                {filtered.map((country) => (
-                  <Combobox.Item key={country} value={country}>
-                    <Combobox.ItemText>{country}</Combobox.ItemText>
-                  </Combobox.Item>
-                ))}
-              </Combobox.Content>
-            </Combobox.Positioner>
+            <Combobox.Content>
+              {filtered.map((country) => (
+                <Combobox.Item key={country} value={country}>
+                  <Combobox.ItemText>{country}</Combobox.ItemText>
+                </Combobox.Item>
+              ))}
+            </Combobox.Content>
           </Combobox.Portal>
         </Combobox.Root>
       );
@@ -119,21 +117,95 @@ A **Combobox** is a text input paired with a filterable listbox. The user can ty
 }
 ```
 
+## Option groups
+
+Use `Combobox.Group` and `Combobox.GroupLabel` to group related options:
+
+```tsx
+<Combobox.Content>
+  <Combobox.Group>
+    <Combobox.GroupLabel>Fruits</Combobox.GroupLabel>
+    <Combobox.Item value="apple"><Combobox.ItemText>Apple</Combobox.ItemText></Combobox.Item>
+    <Combobox.Item value="banana"><Combobox.ItemText>Banana</Combobox.ItemText></Combobox.Item>
+  </Combobox.Group>
+  <Combobox.Group>
+    <Combobox.GroupLabel>Vegetables</Combobox.GroupLabel>
+    <Combobox.Item value="carrot"><Combobox.ItemText>Carrot</Combobox.ItemText></Combobox.Item>
+  </Combobox.Group>
+</Combobox.Content>
+```
+
+## Clear trigger
+
+`Combobox.ClearTrigger` renders a button that clears the current value and input text. Show it conditionally:
+
+```tsx
+<Combobox.Root value={value} onValueChange={setValue}>
+  <Combobox.Input />
+  {value && <Combobox.ClearTrigger>✕</Combobox.ClearTrigger>}
+  <Combobox.Trigger>▾</Combobox.Trigger>
+  ...
+</Combobox.Root>
+```
+
+## Creatable options
+
+When the user types a value that doesn't match any option, `Combobox.CreateOption` renders an item to create it. Pass `onCreateOption` on Root to handle the create action:
+
+```tsx
+<Combobox.Root onCreateOption={(label) => setItems([...items, label])}>
+  <Combobox.Input placeholder="Type or create…" />
+  <Combobox.Portal>
+    <Combobox.Content>
+      {filtered.map((item) => (
+        <Combobox.Item key={item} value={item}>
+          <Combobox.ItemText>{item}</Combobox.ItemText>
+        </Combobox.Item>
+      ))}
+      <Combobox.CreateOption />
+    </Combobox.Content>
+  </Combobox.Portal>
+</Combobox.Root>
+```
+
+`CreateOption` renders null when the input matches an existing option. Pass children as `(label: string) => ReactNode` to customise the label:
+
+```tsx
+<Combobox.CreateOption>{(label) => `Add "${label}"…`}</Combobox.CreateOption>
+```
+
+## Static options (performance)
+
+Pass `options` directly to Root to bypass DOM registration — required for virtual scrolling:
+
+```tsx
+<Combobox.Root options={items} onInputChange={setQuery}>
+  ...
+</Combobox.Root>
+```
+
 ## API Reference
 
 ### Combobox.Root
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string` | — | Controlled selected value |
-| `defaultValue` | `string` | — | Uncontrolled initial value |
-| `onValueChange` | `(value: string) => void` | — | Fires when value changes |
+| `value` | `string \| string[]` | — | Controlled selected value(s) |
+| `defaultValue` | `string \| string[]` | — | Uncontrolled initial value(s) |
+| `onValueChange` | `(value: string \| string[]) => void` | — | Fires when value changes |
 | `inputValue` | `string` | — | Controlled input text |
 | `onInputChange` | `(value: string) => void` | — | Fires on input text change |
 | `open` | `boolean` | — | Controlled open state |
 | `onOpenChange` | `(open: boolean) => void` | — | Fires when open changes |
 | `disabled` | `boolean` | `false` | Disable the combobox |
-| `autoComplete` | `"none"` \| `"list"` \| `"inline"` \| `"both"` | `"none"` | Input autocomplete behaviour |
+| `multiple` | `boolean` | `false` | Allow multiple selections |
+| `placeholder` | `string` | — | Input placeholder |
+| `autoComplete` | `"none" \| "list" \| "inline" \| "both"` | `"none"` | Input autocomplete behaviour |
+| `options` | `{ value: string; label: string }[]` | — | Static options (bypasses DOM registration) |
+| `filterFn` | `(option, input) => boolean` | built-in | Custom filter function |
+| `onCreateOption` | `(label: string) => void` | — | Fires when user creates a new option |
+| `placement` | `Placement` | `"bottom-start"` | Floating placement |
+| `forceMount` | `boolean` | `false` | Keep portal when closed |
 
 ### Combobox.Item
 
@@ -142,15 +214,35 @@ A **Combobox** is a text input paired with a filterable listbox. The user can ty
 | `value` | `string` | **required** | Option value |
 | `disabled` | `boolean` | `false` | Disable this option |
 
+### Combobox.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed (for exit animations) |
+
+### Combobox.CreateOption
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode \| ((label: string) => ReactNode)` | `'Créer "…"'` | Custom label or render function |
+
 ## Data attributes
 
 | Attribute | Element | Values |
 |-----------|---------|--------|
 | `data-forge-scope` | All parts | `"combobox"` |
-| `data-forge-part` | All parts | `"input"` \| `"trigger"` \| `"positioner"` \| `"content"` \| `"option"` \| `"option-text"` \| `"group"` \| `"group-label"` |
+| `data-forge-part` | All parts | `"input"` \| `"trigger"` \| `"clear-trigger"` \| `"positioner"` \| `"content"` \| `"option"` \| `"option-text"` \| `"group"` \| `"group-label"` \| `"create-option"` |
 | `data-state` | `content` | `"open"` \| `"closed"` |
-| `data-highlighted` | `option` | `"true"` when keyboard-focused |
+| `data-highlighted` | `option`, `create-option` | `"true"` when keyboard-focused |
 | `data-selected` | `option` | `"true"` when chosen |
+| `data-disabled` | `option`, `trigger`, `input` | `"true"` |
+
+## Accessibility
+
+- Input has `role="combobox"`, `aria-autocomplete`, `aria-expanded`, and `aria-controls`
+- Content has `role="listbox"`; each item has `role="option"`, `aria-selected`
+- Active descendant is tracked via `aria-activedescendant` on the input
+- Follows the [WAI-ARIA Combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/)
 
 ## Keyboard interactions
 

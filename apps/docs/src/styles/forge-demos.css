@@ -604,3 +604,73 @@
   color: var(--sl-color-red, #f87171);
   margin-left: 0.125rem;
 }
+
+/* ── Collapsible ── */
+[data-forge-scope="collapsible"][data-forge-part="trigger"] {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: var(--sl-color-bg-nav);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 6px;
+  color: var(--sl-color-white);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+[data-forge-scope="collapsible"][data-forge-part="trigger"]:hover {
+  background: var(--sl-color-gray-6);
+}
+
+[data-forge-scope="collapsible"][data-forge-part="trigger"][data-state="open"] {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="closed"] {
+  display: none;
+}
+
+[data-forge-scope="collapsible"][data-forge-part="content"] {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+  border: 1px solid var(--sl-color-hairline);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  line-height: 1.6;
+}
+
+/* ── Progress ── */
+[data-forge-scope="progress"][data-forge-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+[data-forge-scope="progress"][data-forge-part="label"] {
+  font-size: 0.875rem;
+  color: var(--sl-color-white);
+}
+
+[data-forge-scope="progress"][data-forge-part="value-text"] {
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+}
+
+[data-forge-scope="progress"][data-forge-part="track"] {
+  height: 8px;
+  background: var(--sl-color-gray-6);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+[data-forge-scope="progress"][data-forge-part="fill"] {
+  height: 100%;
+  background: var(--sl-color-accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}

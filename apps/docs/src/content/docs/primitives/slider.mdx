@@ -149,6 +149,12 @@ const [volume, setVolume] = useState(50);
 | `data-orientation` | All parts | `"horizontal"` \| `"vertical"` |
 | `data-disabled` | All parts | `""` |
 
+## Accessibility
+
+- Thumb has `role="slider"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-valuetext`, `aria-orientation`
+- `aria-disabled` propagates when the slider is disabled
+- Follows the [WAI-ARIA Slider pattern](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)
+
 ## Keyboard interactions
 
 | Key | Action |

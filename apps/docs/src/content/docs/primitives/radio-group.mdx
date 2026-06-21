@@ -29,14 +29,14 @@ A **Radio Group** presents a set of mutually exclusive choices. Only one item ca
 
     export function PlanSelector() {
       return (
-        <RadioGroup.Root defaultValue="pro">
+        <RadioGroup.Root defaultValue="pro" name="plan">
           {["free", "pro", "enterprise"].map((plan) => (
             <RadioGroup.Item key={plan} value={plan}>
-              <RadioGroup.Radio value={plan} />
-              <RadioGroup.Label value={plan}>{plan}</RadioGroup.Label>
+              <RadioGroup.Radio />
+              <RadioGroup.Label>{plan}</RadioGroup.Label>
+              <RadioGroup.HiddenInput />
             </RadioGroup.Item>
           ))}
-          <RadioGroup.HiddenInput name="plan" />
         </RadioGroup.Root>
       );
     }
@@ -52,12 +52,12 @@ A **Radio Group** presents a set of mutually exclusive choices. Only one item ca
     </script>
 
     <template>
-      <RadioGroupRoot default-value="pro">
+      <RadioGroupRoot default-value="pro" name="plan">
         <RadioGroupItem v-for="plan in plans" :key="plan" :value="plan">
-          <RadioGroupRadio :value="plan" />
-          <RadioGroupLabel :value="plan">{{ plan }}</RadioGroupLabel>
+          <RadioGroupRadio />
+          <RadioGroupLabel>{{ plan }}</RadioGroupLabel>
+          <RadioGroupHiddenInput />
         </RadioGroupItem>
-        <RadioGroupHiddenInput name="plan" />
       </RadioGroupRoot>
     </template>
     ```
@@ -100,9 +100,26 @@ A **Radio Group** presents a set of mutually exclusive choices. Only one item ca
 | `defaultValue` | `string` | — | Uncontrolled initial value |
 | `disabled` | `boolean` | `false` | Disable the entire group |
 | `required` | `boolean` | `false` | Mark as required |
-| `name` | `string` | — | Form field name shared across items |
+| `name` | `string` | — | Form field name (renders hidden inputs) |
 | `orientation` | `"horizontal" \| "vertical"` | `"vertical"` | Affects arrow key navigation |
 | `onValueChange` | `(value: string) => void` | — | Fires on selection change |
+
+### RadioGroup.Item
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | The value this item represents |
+| `disabled` | `boolean` | `false` | Disable this item individually |
+
+### RadioGroup.Radio / RadioGroup.Label / RadioGroup.HiddenInput
+
+These parts inherit their value and checked state from the parent `Item` context. No additional props required.
+
+## Accessibility
+
+- Group has `role="radiogroup"` and `aria-required`
+- Each radio has `role="radio"`, `aria-checked`, and uses roving `tabIndex` (only the selected item is in the tab sequence)
+- Navigation selects AND focuses simultaneously — matches the [WAI-ARIA Radio Group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)
 
 ## Data attributes
 

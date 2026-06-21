@@ -1,0 +1,160 @@
+---
+title: Animations
+description: CSS-only enter and exit animations using data-state attributes — no animation library required.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+forge-ui exposes a `data-state` attribute on every animatable element. Use CSS transitions or `@keyframes` animations targeting these states to add enter/exit effects without any external library.
+
+## How it works
+
+When a component opens, `data-state="open"` is set immediately. When it closes, `data-state="closed"` is set **before** the element is removed from the DOM — giving your CSS animation time to complete.
+
+The `usePresence` hook (used internally) listens for `animationend` and `transitionend` on the element, then unmounts it only after the animation finishes.
+
+<Aside type="tip">
+  If the element has no CSS animation or transition, it unmounts immediately. Always test your animations to confirm the `animationend` / `transitionend` events fire on the correct element.
+</Aside>
+
+## CSS transitions
+
+The simplest approach: transition `opacity` or `transform` between `open` and `closed` states.
+
+```css
+/* Dialog overlay */
+[data-forge-scope="dialog"][data-forge-part="overlay"] {
+  transition: opacity 200ms ease;
+}
+[data-forge-scope="dialog"][data-forge-part="overlay"][data-state="open"] {
+  opacity: 1;
+}
+[data-forge-scope="dialog"][data-forge-part="overlay"][data-state="closed"] {
+  opacity: 0;
+}
+
+/* Dialog content */
+[data-forge-scope="dialog"][data-forge-part="content"] {
+  transition: opacity 200ms ease, transform 200ms ease;
+  transform-origin: center;
+}
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="open"] {
+  opacity: 1;
+  transform: scale(1);
+}
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="closed"] {
+  opacity: 0;
+  transform: scale(0.95);
+}
+```
+
+## CSS keyframe animations
+
+For more complex effects, use `@keyframes` with `animation` — the `animationend` event fires when the animation completes, which triggers unmounting.
+
+```css
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+[data-forge-scope="popover"][data-forge-part="content"][data-state="open"] {
+  animation: fadeIn 150ms ease forwards;
+}
+[data-forge-scope="popover"][data-forge-part="content"][data-state="closed"] {
+  animation: fadeOut 100ms ease forwards;
+}
+```
+
+## Scale from transform origin
+
+For select and popover, forge-ui computes a `--forge-select-content-transform-origin` / `--forge-popover-content-transform-origin` CSS variable. Use it for a natural scale-from-trigger effect:
+
+```css
+[data-forge-scope="select"][data-forge-part="content"] {
+  transform-origin: var(--forge-select-content-transform-origin);
+  transition: opacity 150ms, transform 150ms;
+}
+[data-forge-scope="select"][data-forge-part="content"][data-state="open"] {
+  opacity: 1;
+  transform: scale(1);
+}
+[data-forge-scope="select"][data-forge-part="content"][data-state="closed"] {
+  opacity: 0;
+  transform: scale(0.95);
+}
+```
+
+## Accordion / Collapsible height animation
+
+Height animations require a workaround because CSS `transition: height` cannot animate to/from `auto`. The recommended approach is to animate `grid-template-rows`:
+
+```css
+/* Wrap the content in a grid row */
+.collapsible-content-wrapper {
+  display: grid;
+  overflow: hidden;
+  transition: grid-template-rows 250ms ease;
+}
+
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="open"] + .collapsible-content-wrapper,
+.collapsible-content-wrapper:has(> [data-state="open"]) {
+  grid-template-rows: 1fr;
+}
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="closed"] + .collapsible-content-wrapper,
+.collapsible-content-wrapper:has(> [data-state="closed"]) {
+  grid-template-rows: 0fr;
+}
+```
+
+Alternatively, use `forceMount` and animate with `max-height`:
+
+```css
+[data-forge-scope="collapsible"][data-forge-part="content"] {
+  overflow: hidden;
+  transition: max-height 250ms ease, opacity 250ms ease;
+}
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="open"] {
+  max-height: 500px;
+  opacity: 1;
+}
+[data-forge-scope="collapsible"][data-forge-part="content"][data-state="closed"] {
+  max-height: 0;
+  opacity: 0;
+}
+```
+
+Note: `max-height` requires a known upper bound. For truly dynamic content, the `grid-template-rows` approach is more robust.
+
+## Which elements support exit animations
+
+| Primitive | Element | `data-state` values |
+|-----------|---------|---------------------|
+| Dialog | `overlay`, `content` | `"open"` / `"closed"` |
+| Alert Dialog | `overlay`, `content` | `"open"` / `"closed"` |
+| Popover | `content` | `"open"` / `"closed"` |
+| Tooltip | `content` | `"open"` / `"closed"` |
+| Hover Card | `content` | `"open"` / `"closed"` |
+| Select | `content` | `"open"` / `"closed"` |
+| Combobox | `content` | `"open"` / `"closed"` |
+| Accordion | `content` | `"open"` / `"closed"` |
+| Collapsible | `content` | `"open"` / `"closed"` |
+| Tabs | `panel` | `"active"` / `"inactive"` |
+| Checkbox | `indicator` | — (always mounted when checked) |
+
+## `forceMount`
+
+By default, elements unmount when `data-state="closed"` and the CSS animation ends. To keep them mounted regardless (e.g. for Server-Side Rendering or complex route-based animation), pass `forceMount`:
+
+```tsx
+<Dialog.Portal forceMount>
+  <Dialog.Overlay forceMount />
+  <Dialog.Content forceMount>...</Dialog.Content>
+</Dialog.Portal>
+```
+
+With `forceMount`, you control mounting entirely. `data-state` is still set, but the element never unmounts automatically.

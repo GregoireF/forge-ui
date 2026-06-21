@@ -152,6 +152,13 @@ Use `Checkbox.Group` to manage a set of checkboxes as a unit.
 | `data-disabled` | `root`, `control` | `"true"` |
 | `data-required` | `root`, `control` | `"true"` |
 
+## Accessibility
+
+- Control has `role="checkbox"` and `aria-checked` (`"true"`, `"false"`, `"mixed"` for indeterminate)
+- `aria-required` and `aria-disabled` propagate from Root
+- Hidden native `<input type="checkbox">` is synced for form submission and screen readers
+- Follows the [WAI-ARIA Checkbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/)
+
 ## Keyboard interactions
 
 | Key | Action |

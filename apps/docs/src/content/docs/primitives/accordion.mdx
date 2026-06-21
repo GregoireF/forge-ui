@@ -105,11 +105,28 @@ An **Accordion** renders a series of items each with a toggleable content panel.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `type` | `"single" \| "multiple"` | `"single"` | Single or multiple open items |
-| `value` | `string \| string[]` | — | Controlled open item(s) |
-| `defaultValue` | `string \| string[]` | — | Initial open item(s) |
+| `value` | `string[]` | — | Controlled open item(s) |
+| `defaultValue` | `string[]` | — | Initial open item(s) |
 | `collapsible` | `boolean` | `false` | Allow closing the open item (single mode) |
 | `disabled` | `boolean` | `false` | Disable all items |
 | `onValueChange` | `(value: string[]) => void` | — | Fires on open/close |
+
+### Accordion.Item
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Unique identifier for this item |
+| `disabled` | `boolean` | `false` | Disable this item |
+
+### Accordion.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed (for exit animations) |
+
+### Accordion.Trigger / Accordion.Header
+
+These parts accept standard HTML attributes and `asChild`.
 
 ## Data attributes
 
@@ -117,12 +134,22 @@ An **Accordion** renders a series of items each with a toggleable content panel.
 |-----------|---------|--------|
 | `data-forge-scope` | All parts | `"accordion"` |
 | `data-forge-part` | All parts | `"root"` \| `"item"` \| `"header"` \| `"trigger"` \| `"content"` |
-| `data-state` | `trigger`, `content` | `"open"` \| `"closed"` |
-| `data-disabled` | `root`, `item`, `trigger` | `""` |
+| `data-state` | `item`, `trigger`, `content` | `"open"` \| `"closed"` |
+| `data-disabled` | `root`, `item`, `trigger` | `""` when disabled |
+
+## Accessibility
+
+- Each trigger has `role="button"`, `aria-expanded`, and `aria-controls` pointing to its content panel
+- Each content panel has `role="region"` and `aria-labelledby` pointing to its trigger
+- Follows the [WAI-ARIA Accordion pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/)
 
 ## Keyboard interactions
 
 | Key | Action |
 |-----|--------|
 | `Enter` / `Space` | Toggle the focused item |
+| `ArrowDown` | Move focus to next trigger |
+| `ArrowUp` | Move focus to previous trigger |
+| `Home` | Move focus to first trigger |
+| `End` | Move focus to last trigger |
 | `Tab` | Move focus to next interactive element |

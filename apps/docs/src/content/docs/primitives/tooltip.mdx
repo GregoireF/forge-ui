@@ -33,9 +33,7 @@ A **Tooltip** shows a short label when the trigger is hovered or focused. It is 
           <Tooltip.Root>
             <Tooltip.Trigger>Hover me</Tooltip.Trigger>
             <Tooltip.Portal>
-              <Tooltip.Positioner>
-                <Tooltip.Content>This is a tooltip</Tooltip.Content>
-              </Tooltip.Positioner>
+              <Tooltip.Content>This is a tooltip</Tooltip.Content>
             </Tooltip.Portal>
           </Tooltip.Root>
         </Tooltip.Provider>
@@ -112,12 +110,51 @@ Wrap your application (or section) in `Tooltip.Provider` to share delay configur
 | `delayDuration` | `number` | — | Override Provider delay per tooltip |
 | `placement` | `Placement` | `"top"` | Floating placement |
 
+### Tooltip.Anchor
+
+An optional element to use as the positioning reference instead of the trigger. Useful when the visual anchor differs from the interactive trigger:
+
+```tsx
+<Tooltip.Root>
+  <Tooltip.Trigger>Hover me</Tooltip.Trigger>
+  <Tooltip.Anchor asChild>
+    <div className="anchor-target" />
+  </Tooltip.Anchor>
+  <Tooltip.Portal>
+    <Tooltip.Content>Positioned relative to the anchor div</Tooltip.Content>
+  </Tooltip.Portal>
+</Tooltip.Root>
+```
+
+### Tooltip.Arrow
+
+A renderless compound that merges arrow positioning props onto its child element:
+
+```tsx
+<Tooltip.Content>
+  This is a tooltip
+  <Tooltip.Arrow>
+    <svg width="10" height="5" viewBox="0 0 30 10">
+      <polygon points="0,0 30,0 15,10" />
+    </svg>
+  </Tooltip.Arrow>
+</Tooltip.Content>
+```
+
+The child receives `data-forge-part="arrow"` and inline `style` for absolute positioning. Use `data-forge-part="arrow-tip"` on a child element for the tip point.
+
+### Tooltip.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed (for exit animations) |
+
 ## Data attributes
 
 | Attribute | Element | Values |
 |-----------|---------|--------|
 | `data-forge-scope` | All parts | `"tooltip"` |
-| `data-forge-part` | All parts | `"trigger"` \| `"positioner"` \| `"content"` \| `"arrow"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"anchor"` \| `"positioner"` \| `"content"` \| `"arrow"` \| `"arrow-tip"` |
 | `data-state` | `content` | `"open"` \| `"closed"` |
 | `data-side` | `content` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` |
 

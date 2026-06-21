@@ -37,16 +37,14 @@ A **Select** renders a button trigger that opens a floating listbox of options. 
             <Select.Indicator>▾</Select.Indicator>
           </Select.Trigger>
           <Select.Portal>
-            <Select.Positioner>
-              <Select.Content>
-                {fruits.map((fruit) => (
-                  <Select.Item key={fruit} value={fruit}>
-                    <Select.ItemText>{fruit}</Select.ItemText>
-                    <Select.ItemIndicator>✓</Select.ItemIndicator>
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Positioner>
+            <Select.Content>
+              {fruits.map((fruit) => (
+                <Select.Item key={fruit} value={fruit}>
+                  <Select.ItemText>{fruit}</Select.ItemText>
+                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                </Select.Item>
+              ))}
+            </Select.Content>
           </Select.Portal>
         </Select.Root>
       );
@@ -150,6 +148,28 @@ A **Select** renders a button trigger that opens a floating listbox of options. 
 }
 ```
 
+## Placeholder
+
+Two approaches for placeholder content:
+
+**Simple text** — pass the `placeholder` prop on `Select.Value`:
+```tsx
+<Select.Value placeholder="Pick a fruit…" />
+```
+
+**Rich content or distinct styling** — use `Select.Placeholder` for CSS targeting and JSX flexibility:
+```tsx
+<Select.Trigger>
+  <Select.Value>
+    <Select.Placeholder>
+      <span style={{ opacity: 0.5 }}>Pick a fruit…</span>
+    </Select.Placeholder>
+  </Select.Value>
+</Select.Trigger>
+```
+
+`Select.Placeholder` renders only when no value is selected and gets `data-forge-part="placeholder"` for styling.
+
 ## API Reference
 
 ### Select.Root
@@ -163,6 +183,14 @@ A **Select** renders a button trigger that opens a floating listbox of options. 
 | `onOpenChange` | `(open: boolean) => void` | — | Fires when open changes |
 | `disabled` | `boolean` | `false` | Disable the select |
 | `placement` | `Placement` | `"bottom-start"` | Floating placement |
+| `placeholder` | `string` | — | Default placeholder for `Select.Value` |
+
+### Select.Value
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | — | Text shown when no value is selected |
+| `children` | `ReactNode` | — | Custom placeholder slot (shown when no value) |
 
 ### Select.Item
 
@@ -172,13 +200,31 @@ A **Select** renders a button trigger that opens a floating listbox of options. 
 | `disabled` | `boolean` | `false` | Disable this option |
 | `asChild` | `boolean` | `false` | Merge props onto child |
 
+### Select.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed (for exit animations) |
+
+### Select.Portal
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `container` | `HTMLElement` | `document.body` | Portal target element |
+| `forceMount` | `boolean` | `false` | Keep portal when closed |
+
+### Select.Placeholder
+
+Renders only when no value is selected. Accepts standard HTML span attributes.
+
 ## Data attributes
 
 | Attribute | Element | Values |
 |-----------|---------|--------|
 | `data-forge-scope` | All parts | `"select"` |
-| `data-forge-part` | All parts | `"trigger"` \| `"value-text"` \| `"indicator"` \| `"positioner"` \| `"content"` \| `"option"` \| `"option-text"` \| `"group"` \| `"group-label"` \| `"separator"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"value"` \| `"placeholder"` \| `"indicator"` \| `"positioner"` \| `"content"` \| `"option"` \| `"option-text"` \| `"group"` \| `"group-label"` \| `"separator"` |
 | `data-state` | `trigger`, `content` | `"open"` \| `"closed"` |
+| `data-placeholder` | `trigger` | `""` when no value is selected |
 | `data-highlighted` | `option` | `"true"` when keyboard-focused |
 | `data-selected` | `option` | `"true"` when chosen |
 | `data-disabled` | `option`, `trigger` | `"true"` |
@@ -189,6 +235,13 @@ A **Select** renders a button trigger that opens a floating listbox of options. 
 |----------|-------------|
 | `--forge-select-content-transform-origin` | Origin for scale animation on content |
 | `--forge-revealed` | `1` when positioned and ready |
+
+## Accessibility
+
+- Trigger has `role="combobox"` and `aria-haspopup="listbox"`, `aria-expanded`
+- Content has `role="listbox"`; each item has `role="option"` and `aria-selected`
+- Value is synced to a hidden `<select>` for form submission
+- Follows the [WAI-ARIA Combobox / Listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/)
 
 ## Keyboard interactions
 

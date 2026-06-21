@@ -136,6 +136,13 @@ A **Switch** is a binary toggle that represents an on/off state. It is backed by
 | `data-state` | `root`, `control` | `"checked"` \| `"unchecked"` |
 | `data-disabled` | `root`, `control` | `"true"` |
 
+## Accessibility
+
+- Control has `role="switch"` and `aria-checked`
+- Hidden native `<input type="checkbox">` is synced for form submission
+- `aria-disabled` propagates from Root
+- Follows the [WAI-ARIA Switch pattern](https://www.w3.org/WAI/ARIA/apg/patterns/switch/)
+
 ## Keyboard interactions
 
 | Key | Action |

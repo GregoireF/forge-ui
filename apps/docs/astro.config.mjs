@@ -32,6 +32,7 @@ export default defineConfig({
             { label: "Introduction", link: "/" },
             { label: "Installation", link: "/getting-started/installation" },
             { label: "CSS Contract", link: "/getting-started/css-contract" },
+            { label: "Animations", link: "/getting-started/animations" },
           ],
         },
         {
@@ -40,6 +41,7 @@ export default defineConfig({
             { label: "Accordion", link: "/primitives/accordion" },
             { label: "Alert Dialog", link: "/primitives/alert-dialog" },
             { label: "Checkbox", link: "/primitives/checkbox" },
+            { label: "Collapsible", link: "/primitives/collapsible" },
             { label: "Combobox", link: "/primitives/combobox" },
             { label: "Dialog", link: "/primitives/dialog" },
             { label: "Field", link: "/primitives/field" },
@@ -68,6 +70,7 @@ export default defineConfig({
         "@forge-ui/core": src("core"),
         "@forge-ui/floating": src("floating"),
         "@forge-ui/accordion": src("primitives/accordion"),
+        "@forge-ui/collapsible": src("primitives/collapsible"),
         "@forge-ui/alert-dialog": src("primitives/alert-dialog"),
         "@forge-ui/checkbox": src("primitives/checkbox"),
         "@forge-ui/combobox": src("primitives/combobox"),

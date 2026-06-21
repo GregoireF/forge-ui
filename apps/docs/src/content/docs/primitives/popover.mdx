@@ -32,13 +32,11 @@ A **Popover** displays rich floating content anchored to a trigger. Unlike Dialo
         <Popover.Root>
           <Popover.Trigger>Settings</Popover.Trigger>
           <Popover.Portal>
-            <Popover.Positioner>
-              <Popover.Content>
-                <Popover.Title>Appearance</Popover.Title>
-                <Popover.Description>Customise your interface.</Popover.Description>
-                <Popover.Close>×</Popover.Close>
-              </Popover.Content>
-            </Popover.Positioner>
+            <Popover.Content>
+              <Popover.Title>Appearance</Popover.Title>
+              <Popover.Description>Customise your interface.</Popover.Description>
+              <Popover.Close>×</Popover.Close>
+            </Popover.Content>
           </Popover.Portal>
         </Popover.Root>
       );
@@ -106,18 +104,63 @@ Available placements: `top`, `top-start`, `top-end`, `bottom` (default), `bottom
 | `onOpenChange` | `(open: boolean) => void` | — | Fires on state change |
 | `placement` | `Placement` | `"bottom"` | Floating placement |
 | `offset` | `number` | `8` | Distance from anchor in px |
-| `modal` | `boolean` | `false` | Enable modal behaviour |
+| `modal` | `boolean` | `false` | Enable modal behaviour (focus trap + scroll lock) |
 | `onPointerDownOutside` | `(e: PointerEvent) => void` | — | Pointer down outside |
 | `onEscapeKeyDown` | `(e: KeyboardEvent) => void` | — | Escape key |
+
+### Popover.Anchor
+
+An optional element to use as the positioning reference instead of the trigger:
+
+```tsx
+<Popover.Root>
+  <Popover.Trigger>Open</Popover.Trigger>
+  <Popover.Anchor asChild>
+    <div className="anchor-target" />
+  </Popover.Anchor>
+  <Popover.Portal>
+    <Popover.Content>Positioned relative to the anchor</Popover.Content>
+  </Popover.Portal>
+</Popover.Root>
+```
+
+### Popover.Arrow
+
+A renderless compound that merges arrow positioning props onto its child:
+
+```tsx
+<Popover.Content>
+  Content here
+  <Popover.Arrow>
+    <svg width="10" height="5" viewBox="0 0 30 10">
+      <polygon points="0,0 30,0 15,10" />
+    </svg>
+  </Popover.Arrow>
+</Popover.Content>
+```
+
+### Popover.Content
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forceMount` | `boolean` | `false` | Keep in DOM when closed (for exit animations) |
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+
+### Popover.Portal
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `container` | `HTMLElement` | `document.body` | Portal target |
+| `forceMount` | `boolean` | `false` | Keep portal when closed |
 
 ## Data attributes
 
 | Attribute | Element | Values |
 |-----------|---------|--------|
 | `data-forge-scope` | All parts | `"popover"` |
-| `data-forge-part` | All parts | `"trigger"` \| `"positioner"` \| `"content"` \| `"title"` \| `"description"` \| `"close"` \| `"arrow"` |
-| `data-state` | `content` | `"open"` \| `"closed"` |
-| `data-side` | `content` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` |
+| `data-forge-part` | All parts | `"trigger"` \| `"anchor"` \| `"positioner"` \| `"content"` \| `"title"` \| `"description"` \| `"close"` \| `"arrow"` |
+| `data-state` | `trigger`, `content` | `"open"` \| `"closed"` |
+| `data-side` | `content`, `positioner` | `"top"` \| `"bottom"` \| `"left"` \| `"right"` |
 | `data-placement` | `positioner` | Full placement string |
 
 ## CSS variables
