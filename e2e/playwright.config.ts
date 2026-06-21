@@ -41,5 +41,11 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 30_000,
     },
+    {
+      command: "bun run dev --cwd ../apps/playground-nuxt",
+      url: "http://localhost:3002",
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+    },
   ],
 });

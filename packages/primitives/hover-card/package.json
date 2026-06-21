@@ -18,6 +18,8 @@
   "scripts": {
     "build": "bun run ../../../tooling/scripts/build.ts",
     "dev": "tsc --watch --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

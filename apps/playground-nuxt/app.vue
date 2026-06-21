@@ -2,7 +2,7 @@
 // Explicit imports for dot-notation namespaces used in templates.
 // Without these, the Vue template compiler emits resolveComponent("HoverCard.Root")
 // which fails in SSR because no component is registered under that dot-notation name.
-import { Combobox, HoverCard, TagsInput } from "@forge-ui/vue";
+import { Accordion, Collapsible, Combobox, HoverCard, Progress, RadioGroup, Slider, Tabs, TagsInput } from "@forge-ui/vue";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
@@ -122,6 +122,9 @@ const languages = [
 ];
 const cbSelected = ref<string[]>([]);
 const tagsInputTags = ref<string[]>(["TypeScript", "Nuxt"]);
+const progressValue = ref(42);
+const sliderValue = ref(50);
+const radioGroupValue = ref<string[]>(["react"]);
 const alertConfirming = ref(false);
 function handleDeleteConfirm() {
   alertConfirming.value = true;
@@ -781,6 +784,155 @@ function handleDeleteConfirm() {
       <p v-if="tagsInputTags.length" style="margin:0.5rem 0 0;font-size:0.8rem;color:#64748b">
         Tags : {{ tagsInputTags.join(', ') }}
       </p>
+    </section>
+
+    <!-- ── Accordion ─────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Accordion</h2>
+      <p :style="sectionDesc">Panneau accordéon — single, multiple, ou collapsible.</p>
+      <div style="width:100%;max-width:400px">
+        <Accordion.Root type="single" :collapsible="true" :default-value="[]">
+          <Accordion.Item value="what">
+            <Accordion.Header>
+              <Accordion.Trigger data-testid="accordion-trigger-what" style="width:100%;display:flex;justify-content:space-between;padding:0.75rem 1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:0.875rem;font-weight:500">
+                Qu'est-ce que forge-ui ? <span aria-hidden="true">▾</span>
+              </Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content data-testid="accordion-content-what" style="padding:0.75rem 1rem;border:1px solid #e2e8f0;border-top:none;font-size:0.875rem;color:#374151">
+              Une bibliothèque de composants UI headless avec architecture 3 niveaux.
+            </Accordion.Content>
+          </Accordion.Item>
+          <Accordion.Item value="why" style="margin-top:0.5rem">
+            <Accordion.Header>
+              <Accordion.Trigger data-testid="accordion-trigger-why" style="width:100%;display:flex;justify-content:space-between;padding:0.75rem 1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:0.875rem;font-weight:500">
+                Pourquoi headless ? <span aria-hidden="true">▾</span>
+              </Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content data-testid="accordion-content-why" style="padding:0.75rem 1rem;border:1px solid #e2e8f0;border-top:none;font-size:0.875rem;color:#374151">
+              Vous gardez le contrôle total du CSS — aucun style imposé.
+            </Accordion.Content>
+          </Accordion.Item>
+        </Accordion.Root>
+      </div>
+    </section>
+
+    <!-- ── Collapsible ───────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Collapsible</h2>
+      <p :style="sectionDesc">Toggle simple — un contenu masqué/révélé.</p>
+      <Collapsible.Root style="width:100%;max-width:400px">
+        <Collapsible.Trigger data-testid="collapsible-trigger" style="width:100%;padding:0.75rem 1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;font-size:0.875rem;font-weight:500;text-align:left;display:flex;justify-content:space-between">
+          Voir les détails <span aria-hidden="true">▾</span>
+        </Collapsible.Trigger>
+        <Collapsible.Content data-testid="collapsible-content" style="padding:0.75rem 1rem;border:1px solid #e2e8f0;border-top:none;font-size:0.875rem;color:#374151">
+          Contenu masqué révélé par le trigger collapsible.
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </section>
+
+    <!-- ── Tabs ──────────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Tabs</h2>
+      <p :style="sectionDesc">Navigation par onglets WAI-ARIA. Keyboard ArrowLeft/Right.</p>
+      <div style="width:100%;max-width:400px">
+        <Tabs.Root default-value="react">
+          <Tabs.List data-testid="tabs-list" style="display:flex;border-bottom:2px solid #e2e8f0;gap:0.25rem">
+            <Tabs.Trigger value="react" data-testid="tabs-trigger-react" style="padding:0.5rem 1rem;border:none;background:none;cursor:pointer;font-size:0.875rem;font-weight:500">React</Tabs.Trigger>
+            <Tabs.Trigger value="vue" data-testid="tabs-trigger-vue" style="padding:0.5rem 1rem;border:none;background:none;cursor:pointer;font-size:0.875rem;font-weight:500">Vue</Tabs.Trigger>
+            <Tabs.Trigger value="nuxt" data-testid="tabs-trigger-nuxt" style="padding:0.5rem 1rem;border:none;background:none;cursor:pointer;font-size:0.875rem;font-weight:500">Nuxt</Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Panel value="react" data-testid="tabs-panel-react" style="padding:1rem 0;font-size:0.875rem;color:#374151">
+            React — bibliothèque UI pour créer des interfaces composant.
+          </Tabs.Panel>
+          <Tabs.Panel value="vue" data-testid="tabs-panel-vue" style="padding:1rem 0;font-size:0.875rem;color:#374151">
+            Vue — framework progressif pour les interfaces utilisateur.
+          </Tabs.Panel>
+          <Tabs.Panel value="nuxt" data-testid="tabs-panel-nuxt" style="padding:1rem 0;font-size:0.875rem;color:#374151">
+            Nuxt — framework full-stack basé sur Vue.
+          </Tabs.Panel>
+        </Tabs.Root>
+      </div>
+    </section>
+
+    <!-- ── Progress ──────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Progress</h2>
+      <p :style="sectionDesc">Barre de progression — déterminée ou indéterminée.</p>
+      <div style="display:flex;flex-direction:column;gap:1rem;width:100%;max-width:400px">
+        <Progress.Root :value="progressValue" :max="100" style="display:flex;flex-direction:column;gap:0.5rem">
+          <div style="display:flex;justify-content:space-between">
+            <Progress.Label style="font-size:0.875rem;font-weight:500">Chargement</Progress.Label>
+            <Progress.ValueText data-testid="progress-value" style="font-size:0.875rem;color:#64748b" />
+          </div>
+          <Progress.Track data-testid="progress-track" style="height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden">
+            <Progress.Fill data-testid="progress-fill" style="height:100%;background:#1e293b;transition:width 0.3s;border-radius:999px" />
+          </Progress.Track>
+        </Progress.Root>
+        <div style="display:flex;gap:0.5rem">
+          <button :style="btn" @click="progressValue = Math.max(0, progressValue - 10)">−10</button>
+          <button :style="btn" @click="progressValue = Math.min(100, progressValue + 10)">+10</button>
+        </div>
+        <Progress.Root data-testid="progress-indeterminate" style="display:flex;flex-direction:column;gap:0.5rem">
+          <Progress.Label style="font-size:0.875rem;font-weight:500">Indéterminé</Progress.Label>
+          <Progress.Track style="height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden">
+            <Progress.Fill style="height:100%;background:#6366f1;border-radius:999px" />
+          </Progress.Track>
+        </Progress.Root>
+      </div>
+    </section>
+
+    <!-- ── RadioGroup ─────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">RadioGroup</h2>
+      <p :style="sectionDesc">Sélection exclusive. Arrow keys pour naviguer.</p>
+      <RadioGroup.Root
+        :value="radioGroupValue"
+        :on-value-change="(v) => radioGroupValue = v"
+        name="framework"
+        style="display:flex;flex-direction:column;gap:0.75rem"
+      >
+        <RadioGroup.Item
+          v-for="opt in [{ value: 'react', label: 'React' }, { value: 'vue', label: 'Vue' }, { value: 'angular', label: 'Angular' }]"
+          :key="opt.value"
+          :value="opt.value"
+          :data-testid="`radio-item-${opt.value}`"
+        >
+          <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+            <RadioGroup.Radio style="width:18px;height:18px;border-radius:50%;border:2px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center">
+              <span data-forge-part="indicator" style="width:8px;height:8px;border-radius:50%;background:#1e293b;display:none" />
+            </RadioGroup.Radio>
+            <RadioGroup.Label style="font-size:0.875rem;color:#1e293b;cursor:pointer">
+              {{ opt.label }}
+            </RadioGroup.Label>
+          </div>
+          <RadioGroup.HiddenInput />
+        </RadioGroup.Item>
+      </RadioGroup.Root>
+    </section>
+
+    <!-- ── Slider ─────────────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">Slider</h2>
+      <p :style="sectionDesc">Curseur draggable. Arrow keys pour incrémenter/décrémenter.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;max-width:320px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.875rem;font-weight:500">Volume</span>
+          <code data-testid="slider-value" style="font-size:0.875rem;color:#64748b">{{ sliderValue }}</code>
+        </div>
+        <Slider.Root
+          :value="sliderValue"
+          :on-value-change="(v) => sliderValue = v"
+          :min="0"
+          :max="100"
+          :step="1"
+          style="position:relative;height:20px;display:flex;align-items:center"
+        >
+          <Slider.Track data-testid="slider-track" style="position:relative;height:4px;background:#e2e8f0;border-radius:2px;flex-grow:1">
+            <Slider.Range style="position:absolute;height:100%;background:#1e293b;border-radius:2px" />
+          </Slider.Track>
+          <Slider.Thumb data-testid="slider-thumb" style="display:block;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #1e293b;box-shadow:0 1px 4px rgb(0 0 0 / 0.15);cursor:grab" />
+        </Slider.Root>
+      </div>
     </section>
   </main>
 </template>

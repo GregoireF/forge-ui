@@ -1,4 +1,4 @@
-import { AlertDialog, Checkbox, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Select, Switch, TagsInput, Tooltip, useDialog } from "@forge-ui/react";
+import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Progress, RadioGroup, Select, Slider, Switch, Tabs, TagsInput, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -106,6 +106,30 @@ export default function App() {
 
       <Section title="TagsInput" description="Saisie libre de tags. Enter=ajouter, Backspace=supprimer dernier.">
         <TagsInputDemo />
+      </Section>
+
+      <Section title="Accordion" description="Panneau accordéon — simple, multiple, ou collapsible.">
+        <AccordionDemo />
+      </Section>
+
+      <Section title="Collapsible" description="Toggle simple — un contenu masqué/révélé.">
+        <CollapsibleDemo />
+      </Section>
+
+      <Section title="Tabs" description="Navigation par onglets WAI-ARIA. Keyboard ArrowLeft/Right.">
+        <TabsDemo />
+      </Section>
+
+      <Section title="Progress" description="Barre de progression — déterminée ou indéterminée.">
+        <ProgressDemo />
+      </Section>
+
+      <Section title="RadioGroup" description="Sélection exclusive. Arrow keys pour naviguer.">
+        <RadioGroupDemo />
+      </Section>
+
+      <Section title="Slider" description="Curseur draggable. Arrow keys pour incrémenter/décrémenter.">
+        <SliderDemo />
       </Section>
     </main>
   );
@@ -1045,6 +1069,159 @@ function TagsInputDemo() {
           Tags : {tags.join(", ")}
         </p>
       )}
+    </div>
+  );
+}
+
+/* ── Accordion ──────────────────────────────────────────────────────────────── */
+
+function AccordionDemo() {
+  return (
+    <div style={{ width: "100%", maxWidth: "400px" }}>
+      <Accordion.Root type="single" collapsible defaultValue={[]}>
+        <Accordion.Item value="what">
+          <Accordion.Header>
+            <Accordion.Trigger data-testid="accordion-trigger-what" style={{ width: "100%", display: "flex", justifyContent: "space-between", padding: "0.75rem 1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+              Qu'est-ce que forge-ui ? <span aria-hidden="true">▾</span>
+            </Accordion.Trigger>
+          </Accordion.Header>
+          <Accordion.Content data-testid="accordion-content-what" style={{ padding: "0.75rem 1rem", border: "1px solid #e2e8f0", borderTop: "none", fontSize: "0.875rem", color: "#374151" }}>
+            Une bibliothèque de composants UI headless avec architecture 3 niveaux.
+          </Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="why" style={{ marginTop: "0.5rem" }}>
+          <Accordion.Header>
+            <Accordion.Trigger data-testid="accordion-trigger-why" style={{ width: "100%", display: "flex", justifyContent: "space-between", padding: "0.75rem 1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+              Pourquoi headless ? <span aria-hidden="true">▾</span>
+            </Accordion.Trigger>
+          </Accordion.Header>
+          <Accordion.Content data-testid="accordion-content-why" style={{ padding: "0.75rem 1rem", border: "1px solid #e2e8f0", borderTop: "none", fontSize: "0.875rem", color: "#374151" }}>
+            Vous gardez le contrôle total du CSS — aucun style imposé.
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion.Root>
+    </div>
+  );
+}
+
+/* ── Collapsible ─────────────────────────────────────────────────────────────── */
+
+function CollapsibleDemo() {
+  return (
+    <Collapsible.Root style={{ width: "100%", maxWidth: "400px" }}>
+      <Collapsible.Trigger data-testid="collapsible-trigger" style={{ width: "100%", padding: "0.75rem 1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500, textAlign: "left", display: "flex", justifyContent: "space-between" }}>
+        Voir les détails <span aria-hidden="true">▾</span>
+      </Collapsible.Trigger>
+      <Collapsible.Content data-testid="collapsible-content" style={{ padding: "0.75rem 1rem", border: "1px solid #e2e8f0", borderTop: "none", fontSize: "0.875rem", color: "#374151" }}>
+        Contenu masqué révélé par le trigger collapsible.
+      </Collapsible.Content>
+    </Collapsible.Root>
+  );
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────────────── */
+
+function TabsDemo() {
+  return (
+    <div style={{ width: "100%", maxWidth: "400px" }}>
+      <Tabs.Root defaultValue="react">
+        <Tabs.List data-testid="tabs-list" style={{ display: "flex", borderBottom: "2px solid #e2e8f0", gap: "0.25rem" }}>
+          <Tabs.Trigger value="react" data-testid="tabs-trigger-react" style={{ padding: "0.5rem 1rem", border: "none", background: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+            React
+          </Tabs.Trigger>
+          <Tabs.Trigger value="vue" data-testid="tabs-trigger-vue" style={{ padding: "0.5rem 1rem", border: "none", background: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+            Vue
+          </Tabs.Trigger>
+          <Tabs.Trigger value="nuxt" data-testid="tabs-trigger-nuxt" style={{ padding: "0.5rem 1rem", border: "none", background: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+            Nuxt
+          </Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Panel value="react" data-testid="tabs-panel-react" style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}>
+          React — bibliothèque UI pour créer des interfaces composant.
+        </Tabs.Panel>
+        <Tabs.Panel value="vue" data-testid="tabs-panel-vue" style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}>
+          Vue — framework progressif pour les interfaces utilisateur.
+        </Tabs.Panel>
+        <Tabs.Panel value="nuxt" data-testid="tabs-panel-nuxt" style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}>
+          Nuxt — framework full-stack basé sur Vue.
+        </Tabs.Panel>
+      </Tabs.Root>
+    </div>
+  );
+}
+
+/* ── Progress ────────────────────────────────────────────────────────────────── */
+
+function ProgressDemo() {
+  const [value, setValue] = useState(42);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", maxWidth: "400px" }}>
+      <Progress.Root value={value} max={100} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Chargement</Progress.Label>
+          <Progress.ValueText data-testid="progress-value" style={{ fontSize: "0.875rem", color: "#64748b" }} />
+        </div>
+        <Progress.Track data-testid="progress-track" style={{ height: "8px", background: "#e2e8f0", borderRadius: "999px", overflow: "hidden" }}>
+          <Progress.Fill data-testid="progress-fill" style={{ height: "100%", background: "#1e293b", transition: "width 0.3s", borderRadius: "999px" }} />
+        </Progress.Track>
+      </Progress.Root>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        <button style={btnStyle} onClick={() => setValue((v) => Math.max(0, v - 10))}>−10</button>
+        <button style={btnStyle} onClick={() => setValue((v) => Math.min(100, v + 10))}>+10</button>
+      </div>
+      <Progress.Root data-testid="progress-indeterminate" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Indéterminé</Progress.Label>
+        <Progress.Track style={{ height: "8px", background: "#e2e8f0", borderRadius: "999px", overflow: "hidden" }}>
+          <Progress.Fill style={{ height: "100%", background: "#6366f1", borderRadius: "999px" }} />
+        </Progress.Track>
+      </Progress.Root>
+    </div>
+  );
+}
+
+/* ── RadioGroup ──────────────────────────────────────────────────────────────── */
+
+function RadioGroupDemo() {
+  const [value, setValue] = useState<string[]>(["react"]);
+  return (
+    <RadioGroup.Root value={value} onValueChange={setValue} name="framework" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      {[
+        { value: "react", label: "React" },
+        { value: "vue", label: "Vue" },
+        { value: "angular", label: "Angular" },
+      ].map((opt) => (
+        <RadioGroup.Item key={opt.value} value={opt.value} data-testid={`radio-item-${opt.value}`}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+            <RadioGroup.Radio style={{ width: "18px", height: "18px", borderRadius: "50%", border: "2px solid #cbd5e1", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span data-forge-part="indicator" style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1e293b", display: "none" }} />
+            </RadioGroup.Radio>
+            <RadioGroup.Label style={{ fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" }}>
+              {opt.label}
+            </RadioGroup.Label>
+          </div>
+          <RadioGroup.HiddenInput />
+        </RadioGroup.Item>
+      ))}
+    </RadioGroup.Root>
+  );
+}
+
+/* ── Slider ──────────────────────────────────────────────────────────────────── */
+
+function SliderDemo() {
+  const [value, setValue] = useState(50);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%", maxWidth: "320px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Volume</span>
+        <code data-testid="slider-value" style={{ fontSize: "0.875rem", color: "#64748b" }}>{value}</code>
+      </div>
+      <Slider.Root value={value} onValueChange={setValue} min={0} max={100} step={1} style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}>
+        <Slider.Track data-testid="slider-track" style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
+          <Slider.Range style={{ position: "absolute", height: "100%", background: "#1e293b", borderRadius: "2px" }} />
+        </Slider.Track>
+        <Slider.Thumb data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
+      </Slider.Root>
     </div>
   );
 }
