@@ -151,6 +151,18 @@ describe("connectPopover — getCloseProps", () => {
   });
 });
 
+describe("connectPopover — getArrowTipProps", () => {
+  it("data-forge-part=arrow-tip", () => {
+    const { api } = makeApi();
+    expect(api.getArrowTipProps()["data-forge-part"]).toBe("arrow-tip");
+  });
+
+  it("data-forge-scope=popover", () => {
+    const { api } = makeApi();
+    expect(api.getArrowTipProps()["data-forge-scope"]).toBe("popover");
+  });
+});
+
 describe("connectPopover — getTitleProps / getDescriptionProps", () => {
   it("title has correct id", () => {
     const { api } = makeApi();

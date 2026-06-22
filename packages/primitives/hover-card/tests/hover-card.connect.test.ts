@@ -167,3 +167,25 @@ describe("connectHoverCard — getPositionerProps", () => {
     expect(api.getPositionerProps()["data-side"]).toBe("top");
   });
 });
+
+describe("connectHoverCard — getArrowProps", () => {
+  it("data-forge-part=arrow", () => {
+    const { api } = makeApi();
+    expect(api.getArrowProps()["data-forge-part"]).toBe("arrow");
+  });
+
+  it("data-side matches placement side", () => {
+    const { api } = makeApi({ currentPlacement: "left" });
+    expect(api.getArrowProps()["data-side"]).toBe("left");
+  });
+
+  it("ref callback calls machine.setContext with arrowEl", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectHoverCard(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    api.getArrowProps().ref(el);
+    expect(machine.setContext).toHaveBeenCalledWith({ arrowEl: el });
+  });
+});
