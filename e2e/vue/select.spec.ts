@@ -321,6 +321,29 @@ test.describe("Select — Vue (forge-ui)", () => {
   });
 
   // ---------------------------------------------------------------------------
+  // Typeahead (WAI-ARIA §3.15)
+  // ---------------------------------------------------------------------------
+
+  test("typing a letter highlights the first matching option", async ({ page }) => {
+    await selectTrigger(page).focus();
+    await page.keyboard.press("ArrowDown"); // open
+    await page.keyboard.press("v");
+    const vueOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" }).first();
+    await expect(vueOption).toHaveAttribute("data-highlighted", "");
+  });
+
+  test("typeahead: pressing same letter twice cycles to next matching option", async ({ page }) => {
+    await selectTrigger(page).focus();
+    await page.keyboard.press("ArrowDown"); // open
+    await page.keyboard.press("s"); // → Svelte
+    const svelteOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Svelte" }).first();
+    await expect(svelteOption).toHaveAttribute("data-highlighted", "");
+    await page.keyboard.press("s"); // → Solid (next "s")
+    const solidOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Solid" }).first();
+    await expect(solidOption).toHaveAttribute("data-highlighted", "");
+  });
+
+  // ---------------------------------------------------------------------------
   // Disabled option
   // ---------------------------------------------------------------------------
 
