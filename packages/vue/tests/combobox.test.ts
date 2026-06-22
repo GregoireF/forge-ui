@@ -149,6 +149,14 @@ describe("useCombobox (Vue)", () => {
       expect(screen.getByTestId("item-banana")).toBeInTheDocument();
       expect(screen.queryByTestId("item-apple")).toBeNull();
     });
+
+    it("is case-insensitive", async () => {
+      render(makeComboboxWithOptions());
+      await fireEvent.input(screen.getByTestId("input"), { target: { value: "APPLE" } });
+      await nextTick();
+      expect(screen.getByTestId("item-apple")).toBeInTheDocument();
+      expect(screen.queryByTestId("item-banana")).toBeNull();
+    });
   });
 
   describe("selection", () => {
@@ -170,6 +178,29 @@ describe("useCombobox (Vue)", () => {
       await nextTick();
       expect(screen.getByTestId("input")).toHaveValue("Apple");
     });
+
+    it("does not select disabled items on click", async () => {
+      const onValueChange = vi.fn();
+      render(makeComboboxWithOptions({ onValueChange }));
+      await fireEvent.click(screen.getByTestId("trigger"));
+      await nextTick();
+      await fireEvent.click(screen.getByTestId("item-grape")); // grape is disabled
+      await nextTick();
+      expect(onValueChange).not.toHaveBeenCalled();
+    });
+
+    it("selects multiple values without closing", async () => {
+      const onValueChange = vi.fn();
+      render(makeComboboxWithOptions({ multiple: true, onValueChange }));
+      await fireEvent.click(screen.getByTestId("trigger"));
+      await nextTick();
+      await fireEvent.click(screen.getByTestId("item-apple"));
+      await nextTick();
+      await fireEvent.click(screen.getByTestId("item-banana"));
+      await nextTick();
+      expect(onValueChange).toHaveBeenLastCalledWith(["apple", "banana"]);
+      expect(screen.getByTestId("input")).toHaveAttribute("aria-expanded", "true");
+    });
   });
 
   describe("keyboard navigation", () => {
@@ -180,6 +211,18 @@ describe("useCombobox (Vue)", () => {
       await fireEvent.keyDown(screen.getByTestId("input"), { key: "ArrowDown" });
       await nextTick();
       expect(screen.getByTestId("item-apple")).toHaveAttribute("data-highlighted", "");
+    });
+
+    it("Enter selects highlighted option", async () => {
+      const onValueChange = vi.fn();
+      render(makeComboboxWithOptions({ onValueChange }));
+      await fireEvent.click(screen.getByTestId("trigger"));
+      await nextTick();
+      await fireEvent.keyDown(screen.getByTestId("input"), { key: "ArrowDown" });
+      await nextTick();
+      await fireEvent.keyDown(screen.getByTestId("input"), { key: "Enter" });
+      await nextTick();
+      expect(onValueChange).toHaveBeenCalledWith(["apple"]);
     });
   });
 
@@ -247,6 +290,14 @@ describe("useCombobox (Vue)", () => {
       await nextTick();
       const itemText = document.querySelector('[data-forge-scope="combobox"][data-forge-part="item-text"]');
       expect(itemText).toBeInTheDocument();
+    });
+
+    it("item has data-forge-scope=combobox and data-forge-part=option", async () => {
+      render(ComboboxWithItemText);
+      await fireEvent.click(screen.getByTestId("trigger"));
+      await nextTick();
+      const item = document.querySelector('[data-forge-scope="combobox"][data-forge-part="option"]');
+      expect(item).toBeInTheDocument();
     });
   });
 });
