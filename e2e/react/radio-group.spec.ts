@@ -111,4 +111,10 @@ test.describe("RadioGroup — React (forge-ui)", () => {
     await expect(radioVue(page)).toHaveAttribute("role", "radio");
     await expect(radioAngular(page)).toHaveAttribute("role", "radio");
   });
+
+  // WAI-ARIA §3.15: roving tabIndex — selected radio has tabIndex=0, others -1.
+  test("checked radio has tabIndex=0, unchecked have tabIndex=-1", async ({ page }) => {
+    await expect(radioReact(page)).toHaveAttribute("tabindex", "0");
+    await expect(radioVue(page)).toHaveAttribute("tabindex", "-1");
+  });
 });
