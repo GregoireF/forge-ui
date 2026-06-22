@@ -44,6 +44,13 @@ test.describe("Checkbox — Nuxt (forge-ui)", () => {
     expect(before).not.toBe(after);
   });
 
+  test("clicking indeterminate checkbox cycles state", async ({ page }) => {
+    await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
+    await secondCheckbox(page).click();
+    const after = await secondCheckbox(page).getAttribute("aria-checked");
+    expect(["true", "false"]).toContain(after);
+  });
+
   // WAI-ARIA §3.7: clicking indeterminate → checked (not unchecked)
   test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({ page }) => {
     await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
