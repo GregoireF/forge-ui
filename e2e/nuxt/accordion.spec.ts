@@ -119,4 +119,18 @@ test.describe("Accordion — Nuxt (forge-ui)", () => {
     await page.keyboard.press("Space");
     await expect(contentWhat(page)).toBeVisible();
   });
+
+  // WAI-ARIA §3.1: trigger aria-controls must point to content, content
+  // role=region must have aria-labelledby pointing back to the trigger.
+  test("trigger aria-controls points to content id", async ({ page }) => {
+    const controlsId = await triggerWhat(page).getAttribute("aria-controls");
+    expect(controlsId).toBeTruthy();
+    await expect(contentWhat(page)).toHaveAttribute("id", controlsId!);
+  });
+
+  test("content role=region has aria-labelledby pointing to its trigger", async ({ page }) => {
+    const triggerId = await triggerWhat(page).getAttribute("id");
+    await expect(contentWhat(page)).toHaveAttribute("role", "region");
+    await expect(contentWhat(page)).toHaveAttribute("aria-labelledby", triggerId!);
+  });
 });
