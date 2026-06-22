@@ -254,4 +254,16 @@ describe("createDialogMachine — activities (keyboard + focus)", () => {
     expect(m.getSnapshot().context.contentEl).toBe(el);
     el.remove();
   });
+
+  // Stack registry: only the top-most open dialog captures Escape
+  it("nested dialogs: Escape only closes the top dialog, not the one below", () => {
+    const m1 = makeMachine({ id: "dialog-1" });
+    const m2 = makeMachine({ id: "dialog-2" });
+    m1.send("OPEN");
+    m2.send("OPEN");
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    // Only the top (m2) should close
+    expect(m2.getSnapshot().matches("closed")).toBe(true);
+    expect(m1.getSnapshot().matches("open")).toBe(true);
+  });
 });
