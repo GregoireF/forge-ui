@@ -54,6 +54,23 @@ test.describe("TagsInput — Vue (forge-ui)", () => {
     await expect(tags(page)).toHaveCount(countBefore - 1);
   });
 
+  // WAI-ARIA: delete button aria-label must include the tag value so AT
+  // announces which tag will be removed, not just "button".
+  test("tag delete button has aria-label containing tag value", async ({ page }) => {
+    const deleteBtn = page.locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]').first();
+    const label = await deleteBtn.getAttribute("aria-label");
+    expect(label).toBeTruthy();
+    expect(label).toContain("TypeScript");
+  });
+
+  // WAI-ARIA: input aria-labelledby must point to the label element
+  test("input has aria-labelledby pointing to label", async ({ page }) => {
+    const labelledBy = await tagInput(page).getAttribute("aria-labelledby");
+    expect(labelledBy).toBeTruthy();
+    const labelEl = page.locator(`#${labelledBy}`);
+    await expect(labelEl).toBeVisible();
+  });
+
   // onBlur with pending text commits the tag (connect sends ADD_TAG before BLUR)
   test("blurring input with text commits the pending tag", async ({ page }) => {
     const countBefore = await tags(page).count();
