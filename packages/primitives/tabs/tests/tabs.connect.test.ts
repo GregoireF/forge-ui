@@ -110,6 +110,24 @@ describe("connectTabs — getTriggerProps", () => {
     api.getTriggerProps("tab2").onClick();
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "tab2" });
   });
+
+  it("onFocus sends SELECT_TAB in automatic mode (WAI-ARIA §3.26 auto-activation)", () => {
+    const { api, send } = makeApi({ activationMode: "automatic" });
+    api.getTriggerProps("tab2").onFocus();
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "tab2" });
+  });
+
+  it("onFocus does NOT send SELECT_TAB in manual mode", () => {
+    const { api, send } = makeApi({ activationMode: "manual" });
+    api.getTriggerProps("tab2").onFocus();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("globally disabled: onFocus does NOT send SELECT_TAB even in automatic mode", () => {
+    const { api, send } = makeApi({ activationMode: "automatic", disabled: true });
+    api.getTriggerProps("tab2").onFocus();
+    expect(send).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------
