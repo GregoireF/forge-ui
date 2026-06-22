@@ -286,6 +286,24 @@ test.describe("Combobox — Nuxt (forge-ui)", () => {
     await expect(comboboxContent(page)).toHaveAttribute("role", "listbox");
   });
 
+  // WAI-ARIA §6.6.1: the listbox must be labelled by the same label as the input
+  // so AT announces what the list is for when the user navigates into it.
+  test("listbox aria-labelledby points to the label element", async ({ page }) => {
+    await comboboxTrigger(page).click();
+    const labelledBy = await comboboxContent(page).getAttribute("aria-labelledby");
+    expect(labelledBy).toBeTruthy();
+    const labelEl = page.locator(`#${labelledBy}`);
+    await expect(labelEl).toBeVisible();
+  });
+
+  // WAI-ARIA §6.6.1: the combobox input must be labelled
+  test("input aria-labelledby points to the label element", async ({ page }) => {
+    const labelledBy = await comboboxInput(page).getAttribute("aria-labelledby");
+    expect(labelledBy).toBeTruthy();
+    const labelEl = page.locator(`#${labelledBy}`);
+    await expect(labelEl).toBeVisible();
+  });
+
   test("options have role=option", async ({ page }) => {
     await comboboxTrigger(page).click();
     await expect(comboboxOptions(page).first()).toHaveAttribute("role", "option");
