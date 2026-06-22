@@ -11,12 +11,20 @@ function makeMachine(overrides = {}) {
   return m;
 }
 
+// happy-dom does not implement requestAnimationFrame — stub it so that dialog
+// focus-management activities (which call rAF for deferred focus) don't throw.
+beforeEach(() => {
+  vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+  vi.stubGlobal("cancelAnimationFrame", () => {});
+});
+
 // Stop all machines and clear stack registry after every test so event
 // listeners and registry entries don't bleed into subsequent tests.
 afterEach(() => {
   for (const m of activeMachines) m.stop();
   activeMachines = [];
   clearRegistry();
+  vi.unstubAllGlobals();
 });
 
 describe("createDialogMachine — state transitions", () => {
