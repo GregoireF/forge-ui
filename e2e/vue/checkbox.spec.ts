@@ -25,6 +25,12 @@ test.describe("Checkbox — Vue (forge-ui)", () => {
     await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
   });
 
+  test("clicking unchecked checkbox checks it", async ({ page }) => {
+    await firstCheckbox(page).click(); // → unchecked
+    await firstCheckbox(page).click(); // → checked
+    await expect(firstCheckbox(page)).toHaveAttribute("aria-checked", "true");
+  });
+
   test("clicking checked checkbox unchecks it", async ({ page }) => {
     await firstCheckbox(page).click();
     await expect(firstCheckbox(page)).toHaveAttribute("aria-checked", "false");
@@ -45,6 +51,10 @@ test.describe("Checkbox — Vue (forge-ui)", () => {
   test("disabled checkbox has data-disabled attribute", async ({ page }) => {
     const disabled = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"][data-disabled]');
     await expect(disabled.first()).toBeVisible();
+  });
+
+  test("checkbox has data-forge-scope=checkbox", async ({ page }) => {
+    await expect(firstCheckbox(page)).toHaveAttribute("data-forge-scope", "checkbox");
   });
 
   // WAI-ARIA §3.7: clicking indeterminate → checked (not unchecked)

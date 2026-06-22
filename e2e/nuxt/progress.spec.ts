@@ -31,6 +31,14 @@ test.describe("Progress — Nuxt (forge-ui)", () => {
     expect(valuemax).toBe(100);
   });
 
+  test("fill is visible", async ({ page }) => {
+    await expect(page.locator('[data-forge-scope="progress"][data-forge-part="fill"]').first()).toBeVisible();
+  });
+
+  test("value text element is visible", async ({ page }) => {
+    await expect(page.locator('[data-forge-scope="progress"][data-forge-part="value-text"]').first()).toBeVisible();
+  });
+
   test("+10 button increases value to 52", async ({ page }) => {
     await page.getByRole("button", { name: "+10" }).first().click();
     const valuenow = parseInt(await track(page).getAttribute("aria-valuenow") ?? "0");
@@ -51,5 +59,10 @@ test.describe("Progress — Nuxt (forge-ui)", () => {
     const indeterminateTrack = indeterminate(page).locator('[role="progressbar"]');
     const valuenow = await indeterminateTrack.getAttribute("aria-valuenow");
     expect(valuenow).toBeNull();
+  });
+
+  test("indeterminate progressbar has data-state=indeterminate", async ({ page }) => {
+    const indeterminateTrack = indeterminate(page).locator('[role="progressbar"]');
+    await expect(indeterminateTrack).toHaveAttribute("data-state", "indeterminate");
   });
 });

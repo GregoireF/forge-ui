@@ -16,6 +16,10 @@ test.describe("Collapsible — Vue (forge-ui)", () => {
     await expect(content(page)).not.toBeVisible();
   });
 
+  test("trigger is visible on load", async ({ page }) => {
+    await expect(trigger(page)).toBeVisible();
+  });
+
   test("clicking trigger reveals content", async ({ page }) => {
     await trigger(page).click();
     await expect(content(page)).toBeVisible();
@@ -49,6 +53,15 @@ test.describe("Collapsible — Vue (forge-ui)", () => {
   test("trigger has data-state=open when expanded", async ({ page }) => {
     await trigger(page).click();
     await expect(trigger(page)).toHaveAttribute("data-state", "open");
+  });
+
+  test("content has data-state=open when visible", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toHaveAttribute("data-state", "open");
+  });
+
+  test("content has data-forge-scope=collapsible", async ({ page }) => {
+    await expect(content(page)).toHaveAttribute("data-forge-scope", "collapsible");
   });
 
   test("Enter key on trigger reveals content", async ({ page }) => {

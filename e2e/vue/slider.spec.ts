@@ -55,6 +55,20 @@ test.describe("Slider — Vue (forge-ui)", () => {
     expect(valuenow).toBe(49);
   });
 
+  test("ArrowUp increments value by 1", async ({ page }) => {
+    await thumb(page).focus();
+    await page.keyboard.press("ArrowUp");
+    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    expect(valuenow).toBe(51);
+  });
+
+  test("ArrowDown decrements value by 1", async ({ page }) => {
+    await thumb(page).focus();
+    await page.keyboard.press("ArrowDown");
+    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    expect(valuenow).toBe(49);
+  });
+
   test("Home sets value to min (0)", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("Home");
@@ -82,5 +96,9 @@ test.describe("Slider — Vue (forge-ui)", () => {
     await page.keyboard.press("PageDown");
     const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
     expect(valuenow).toBe(40);
+  });
+
+  test("slider thumb has data-forge-scope=slider", async ({ page }) => {
+    await expect(thumb(page)).toHaveAttribute("data-forge-scope", "slider");
   });
 });
