@@ -151,6 +151,19 @@ describe("connectSelect — getTriggerProps", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  // WAI-ARIA: aria-disabled informs AT the trigger cannot open the listbox,
+  // keeping it focusable (read-only) rather than fully removing it from tab order.
+  it("aria-disabled=true when select is disabled", () => {
+    const { api } = makeApi({ disabled: true });
+    expect(api.getTriggerProps()["aria-disabled"]).toBe(true);
+  });
+
+  it("aria-disabled absent when select is enabled", () => {
+    const { api } = makeApi({ disabled: false });
+    const props = api.getTriggerProps() as Record<string, unknown>;
+    expect(props["aria-disabled"]).toBeUndefined();
+  });
+
   it("data-placeholder when value is empty", () => {
     const { api } = makeApi({ value: [] });
     expect(api.getTriggerProps()["data-placeholder"]).toBe("");
