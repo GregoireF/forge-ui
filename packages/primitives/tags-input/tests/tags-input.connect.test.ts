@@ -99,6 +99,16 @@ describe("connectTagsInput — getRootProps", () => {
     const { api } = makeApi({ disabled: true });
     expect(api.getRootProps()["data-disabled"]).toBe("");
   });
+
+  it("data-readonly when readOnly", () => {
+    const { api } = makeApi({ readOnly: true });
+    expect(api.getRootProps()["data-readonly"]).toBe("");
+  });
+
+  it("no data-readonly when not readOnly", () => {
+    const { api } = makeApi({ readOnly: false });
+    expect(api.getRootProps()["data-readonly"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -114,6 +124,16 @@ describe("connectTagsInput — getInputProps", () => {
   it("id matches context inputId", () => {
     const { api } = makeApi({ inputId: "my-input" });
     expect(api.getInputProps().id).toBe("my-input");
+  });
+
+  it("readOnly=true sets readOnly attribute on input", () => {
+    const { api } = makeApi({ readOnly: true });
+    expect(api.getInputProps().readOnly).toBe(true);
+  });
+
+  it("readOnly=false does NOT set readOnly attribute", () => {
+    const { api } = makeApi({ readOnly: false });
+    expect((api.getInputProps() as Record<string, unknown>).readOnly).toBeUndefined();
   });
 
   it("onKeyDown Enter sends ADD_TAG", () => {
