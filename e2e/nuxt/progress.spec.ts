@@ -75,4 +75,11 @@ test.describe("Progress — Nuxt (forge-ui)", () => {
     const indeterminateTrack = indeterminate(page).locator('[role="progressbar"]');
     await expect(indeterminateTrack).toHaveAttribute("aria-valuetext", "loading");
   });
+
+  // WAI-ARIA §3.14: progressbar must have an accessible name.
+  // The playground passes aria-label via prop passthrough — verify it reaches the DOM.
+  test("progressbar has an accessible name via aria-label", async ({ page }) => {
+    const label = await track(page).getAttribute("aria-label");
+    expect(label).toBeTruthy();
+  });
 });
