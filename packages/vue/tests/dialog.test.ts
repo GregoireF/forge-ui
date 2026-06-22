@@ -1,7 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen, waitFor } from "@testing-library/vue";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, nextTick } from "vue";
+import { defineComponent, nextTick, ref } from "vue";
 import { Dialog } from "../src/components/dialog/Dialog.js";
 import { DialogPortal } from "../src/components/dialog/DialogPortal.js";
 import { useDialog } from "../src/components/dialog/use-dialog.js";
@@ -101,6 +101,12 @@ describe("useDialog (Vue)", () => {
       render(makeDialogFixture());
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");
+    });
+
+    it("overlay has data-state=open when open", async () => {
+      render(makeDialogFixture());
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("overlay")).toHaveAttribute("data-state", "open");
     });
 
     it("trigger has data-forge-part=trigger", () => {
@@ -252,6 +258,30 @@ describe("useDialog (Vue)", () => {
       expect(link).toHaveAttribute("data-forge-part", "trigger");
       await user.click(link);
       expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
+
+    it("Close asChild merges forge props onto consumer element", async () => {
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle, DialogClose },
+        template: `
+          <DialogRoot id="test-close-aschild">
+            <DialogTrigger data-testid="trig">Open</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>T</DialogTitle>
+              <DialogClose :asChild="true">
+                <a data-testid="link-close" href="#">Close</a>
+              </DialogClose>
+            </DialogContent>
+          </DialogRoot>
+        `,
+      });
+      render(Fixture);
+      await user.click(screen.getByTestId("trig"));
+      const link = screen.getByTestId("link-close");
+      expect(link.tagName).toBe("A");
+      expect(link).toHaveAttribute("data-forge-part", "close");
+      await user.click(link);
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
     it("compound parts have correct data-forge-part attributes", async () => {
@@ -446,6 +476,25 @@ describe("useDialog (Vue)", () => {
       onOpenChange.mockClear();
       await user.click(screen.getByTestId("close"));
       expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it("closes when open prop changes to false", async () => {
+      const isOpen = ref(true);
+      const Fixture = defineComponent({
+        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle },
+        setup() { return { isOpen }; },
+        template: `
+          <DialogRoot id="test-controlled-close" :open="isOpen">
+            <DialogTrigger>Open</DialogTrigger>
+            <DialogContent><DialogTitle>T</DialogTitle></DialogContent>
+          </DialogRoot>
+        `,
+      });
+      render(Fixture);
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+      isOpen.value = false;
+      await nextTick();
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
     it("v-model:open — emits update:open on open/close", async () => {
@@ -649,6 +698,23 @@ describe("useDialog (Vue)", () => {
       // nextTick flushes Vue's async DOM update queue before asserting.
       await nextTick();
       expect(screen.getByTestId("portal-child")).toBeInTheDocument();
+    });
+
+    it("renders inline when disabled=true (disabled mode)", async () => {
+      const Fixture = defineComponent({
+        components: { DialogPortal },
+        template: `
+          <div data-testid="app-root">
+            <DialogPortal :disabled="true">
+              <span data-testid="inline-child">inline</span>
+            </DialogPortal>
+          </div>
+        `,
+      });
+      render(Fixture);
+      await nextTick();
+      const appRoot = screen.getByTestId("app-root");
+      expect(appRoot.querySelector("[data-testid='inline-child']")).not.toBeNull();
     });
   });
 });
