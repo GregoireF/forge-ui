@@ -94,6 +94,36 @@ describe("connectCollapsible — getTriggerProps", () => {
     const { api } = makeApi({ disabled: true });
     expect(api.getTriggerProps()["aria-disabled"]).toBe(true);
   });
+
+  // WAI-ARIA: keyboard users activate with Enter or Space
+  it("Enter key sends TOGGLE", () => {
+    const { api, send } = makeApi();
+    const e = { key: "Enter", preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "TOGGLE" });
+    expect(e.preventDefault).toHaveBeenCalled();
+  });
+
+  it("Space key sends TOGGLE", () => {
+    const { api, send } = makeApi();
+    const e = { key: " ", preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "TOGGLE" });
+  });
+
+  it("disabled: Enter does not send TOGGLE", () => {
+    const { api, send } = makeApi({ disabled: true });
+    const e = { key: "Enter", preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("other keys are ignored", () => {
+    const { api, send } = makeApi();
+    const e = { key: "ArrowDown", preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    expect(send).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------
