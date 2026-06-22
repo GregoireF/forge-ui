@@ -65,4 +65,15 @@ test.describe("Progress — Vue (forge-ui)", () => {
     const indeterminateTrack = indeterminate(page).locator('[role="progressbar"]');
     await expect(indeterminateTrack).toHaveAttribute("data-state", "indeterminate");
   });
+
+  // WAI-ARIA §3.14: aria-valuetext provides human-readable description
+  // so AT announces "loading" instead of silence for indeterminate progress.
+  test("aria-valuetext shows percentage for determinate progress", async ({ page }) => {
+    await expect(track(page)).toHaveAttribute("aria-valuetext", "42%");
+  });
+
+  test('aria-valuetext is "loading" for indeterminate progress', async ({ page }) => {
+    const indeterminateTrack = indeterminate(page).locator('[role="progressbar"]');
+    await expect(indeterminateTrack).toHaveAttribute("aria-valuetext", "loading");
+  });
 });
