@@ -165,6 +165,65 @@ describe("connectSlider — getThumbProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getTrackProps
+// ---------------------------------------------------------------------------
+
+describe("connectSlider — getTrackProps", () => {
+  it("data-forge-part=track", () => {
+    const { api } = makeApi();
+    expect(api.getTrackProps()["data-forge-part"]).toBe("track");
+  });
+
+  it("data-orientation reflects orientation", () => {
+    const { api } = makeApi({ orientation: "vertical" });
+    expect(api.getTrackProps()["data-orientation"]).toBe("vertical");
+  });
+
+  it("data-disabled when disabled", () => {
+    const { api } = makeApi({ disabled: true });
+    expect(api.getTrackProps()["data-disabled"]).toBe("");
+  });
+
+  it("no data-disabled when enabled", () => {
+    const { api } = makeApi({ disabled: false });
+    expect(api.getTrackProps()["data-disabled"]).toBeUndefined();
+  });
+
+  it("onPointerDown does nothing when disabled", () => {
+    const { api, send } = makeApi({ disabled: true });
+    const e = { button: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getRangeProps
+// ---------------------------------------------------------------------------
+
+describe("connectSlider — getRangeProps", () => {
+  it("data-forge-part=range", () => {
+    const { api } = makeApi();
+    expect(api.getRangeProps()["data-forge-part"]).toBe("range");
+  });
+
+  it("horizontal: right style reflects 100-percent", () => {
+    const { api } = makeApi({ value: 25, min: 0, max: 100 });
+    expect(api.getRangeProps().style.right).toBe("75%");
+  });
+
+  it("horizontal: left is always 0%", () => {
+    const { api } = makeApi({ value: 60 });
+    expect(api.getRangeProps().style.left).toBe("0%");
+  });
+
+  it("vertical: top style reflects 100-percent", () => {
+    const { api } = makeApi({ value: 40, orientation: "vertical" });
+    expect(api.getRangeProps().style.top).toBe("60%");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getRootProps
 // ---------------------------------------------------------------------------
 
