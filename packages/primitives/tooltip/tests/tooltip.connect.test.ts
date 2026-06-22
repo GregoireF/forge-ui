@@ -213,4 +213,52 @@ describe("connectTooltip — getArrowProps", () => {
     const { api } = makeApi({ currentPlacement: "top" });
     expect(api.getArrowProps()["data-side"]).toBe("top");
   });
+
+  it("ref callback registers arrowEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    api.getArrowProps().ref(el);
+    expect(machine.setContext).toHaveBeenCalledWith({ arrowEl: el });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getArrowTipProps
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — getArrowTipProps", () => {
+  it("data-forge-part=arrow-tip", () => {
+    expect(makeApi().api.getArrowTipProps()["data-forge-part"]).toBe("arrow-tip");
+  });
+
+  it("data-forge-scope=tooltip", () => {
+    expect(makeApi().api.getArrowTipProps()["data-forge-scope"]).toBe("tooltip");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getAnchorProps
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — getAnchorProps", () => {
+  it("data-forge-part=anchor", () => {
+    expect(makeApi().api.getAnchorProps()["data-forge-part"]).toBe("anchor");
+  });
+
+  it("data-forge-scope=tooltip", () => {
+    expect(makeApi().api.getAnchorProps()["data-forge-scope"]).toBe("tooltip");
+  });
+
+  it("ref callback registers anchorEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    api.getAnchorProps().ref(el);
+    expect(machine.setContext).toHaveBeenCalledWith({ anchorEl: el });
+  });
 });

@@ -116,6 +116,27 @@ describe("connectCombobox — hasCreateOption", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getLabelProps
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getLabelProps", () => {
+  it("id=labelId", () => {
+    const { api } = makeApi();
+    expect(api.getLabelProps().id).toBe("test-combobox-label");
+  });
+
+  it("htmlFor=inputId (associates label with input)", () => {
+    const { api } = makeApi();
+    expect(api.getLabelProps().htmlFor).toBe("test-combobox-input");
+  });
+
+  it("data-forge-part=label", () => {
+    const { api } = makeApi();
+    expect(api.getLabelProps()["data-forge-part"]).toBe("label");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getInputProps — ARIA
 // ---------------------------------------------------------------------------
 

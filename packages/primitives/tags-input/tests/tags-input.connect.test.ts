@@ -225,3 +225,31 @@ describe("connectTagsInput — getLabelProps", () => {
     expect(api.getLabelProps().htmlFor).toBe("the-input");
   });
 });
+
+// ---------------------------------------------------------------------------
+// getHiddenInputProps (form integration)
+// ---------------------------------------------------------------------------
+
+describe("connectTagsInput — getHiddenInputProps", () => {
+  it("type=hidden", () => {
+    expect(makeApi().api.getHiddenInputProps().type).toBe("hidden");
+  });
+
+  it("aria-hidden=true (not exposed to a11y tree)", () => {
+    expect(makeApi().api.getHiddenInputProps()["aria-hidden"]).toBe(true);
+  });
+
+  it("name equals the context id", () => {
+    const { api } = makeApi({ id: "my-tags" });
+    expect(api.getHiddenInputProps().name).toBe("my-tags");
+  });
+
+  it("value is comma-joined tags", () => {
+    const { api } = makeApi({ value: ["react", "vue", "angular"] });
+    expect(api.getHiddenInputProps().value).toBe("react,vue,angular");
+  });
+
+  it("value is empty string when no tags", () => {
+    expect(makeApi({ value: [] }).api.getHiddenInputProps().value).toBe("");
+  });
+});

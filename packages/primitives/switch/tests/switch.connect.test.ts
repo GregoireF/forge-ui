@@ -47,6 +47,37 @@ describe("connectSwitch — isChecked", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getRootProps
+// ---------------------------------------------------------------------------
+
+describe("connectSwitch — getRootProps", () => {
+  it("data-forge-part=root", () => {
+    const { api } = makeApi();
+    expect(api.getRootProps()["data-forge-part"]).toBe("root");
+  });
+
+  it("data-state=off when off", () => {
+    expect(makeApi({}, "off").api.getRootProps()["data-state"]).toBe("off");
+  });
+
+  it("data-state=on when on", () => {
+    expect(makeApi({}, "on").api.getRootProps()["data-state"]).toBe("on");
+  });
+
+  it("data-disabled present when disabled=true", () => {
+    expect(makeApi({ disabled: true }).api.getRootProps()["data-disabled"]).toBe("");
+  });
+
+  it("data-required present when required=true", () => {
+    expect(makeApi({ required: true }).api.getRootProps()["data-required"]).toBe("");
+  });
+
+  it("data-invalid present when invalid=true", () => {
+    expect(makeApi({ invalid: true }).api.getRootProps()["data-invalid"]).toBe("");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getControlProps — ARIA
 // ---------------------------------------------------------------------------
 

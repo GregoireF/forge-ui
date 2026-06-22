@@ -132,6 +132,16 @@ describe("connectField — getErrorProps", () => {
   });
 });
 
+describe("connectField — getRequiredIndicatorProps", () => {
+  it("aria-hidden=true (decorative — screen reader already hears aria-required)", () => {
+    expect(connectField(makeCtx()).getRequiredIndicatorProps()["aria-hidden"]).toBe(true);
+  });
+
+  it("data-forge-part=required-indicator", () => {
+    expect(connectField(makeCtx()).getRequiredIndicatorProps()["data-forge-part"]).toBe("required-indicator");
+  });
+});
+
 // ---------------------------------------------------------------------------
 // connectField — pure (no side effects)
 // ---------------------------------------------------------------------------

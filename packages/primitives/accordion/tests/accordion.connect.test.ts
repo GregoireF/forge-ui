@@ -62,6 +62,27 @@ describe("connectAccordion — getItemProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getHeaderProps
+// ---------------------------------------------------------------------------
+
+describe("connectAccordion — getHeaderProps", () => {
+  it("data-forge-part=header", () => {
+    const { api } = makeApi();
+    expect(api.getHeaderProps("a")["data-forge-part"]).toBe("header");
+  });
+
+  it("data-state=closed when item closed", () => {
+    const { api } = makeApi({ value: [] });
+    expect(api.getHeaderProps("a")["data-state"]).toBe("closed");
+  });
+
+  it("data-state=open when item open", () => {
+    const { api } = makeApi({ value: ["a"] });
+    expect(api.getHeaderProps("a")["data-state"]).toBe("open");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getTriggerProps
 // ---------------------------------------------------------------------------
 

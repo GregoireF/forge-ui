@@ -58,6 +58,45 @@ describe("connectCheckbox — checked", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getRootProps
+// ---------------------------------------------------------------------------
+
+describe("connectCheckbox — getRootProps", () => {
+  it("data-forge-part=root", () => {
+    const { api } = makeApi();
+    expect(api.getRootProps()["data-forge-part"]).toBe("root");
+  });
+
+  it("data-state reflects current checkbox state", () => {
+    expect(makeApi({}, "checked").api.getRootProps()["data-state"]).toBe("checked");
+    expect(makeApi({}, "unchecked").api.getRootProps()["data-state"]).toBe("unchecked");
+    expect(makeApi({}, "indeterminate").api.getRootProps()["data-state"]).toBe("indeterminate");
+  });
+
+  it("data-disabled present when disabled=true", () => {
+    expect(makeApi({ disabled: true }).api.getRootProps()["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when disabled=false", () => {
+    expect(makeApi({ disabled: false }).api.getRootProps()["data-disabled"]).toBeUndefined();
+  });
+
+  it("data-required present when required=true", () => {
+    expect(makeApi({ required: true }).api.getRootProps()["data-required"]).toBe("");
+  });
+
+  it("ref callback registers rootEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectCheckbox(makeSnapshot(ctx, "unchecked"), send, machine);
+    const el = document.createElement("div");
+    api.getRootProps().ref(el);
+    expect(machine.setContext).toHaveBeenCalledWith({ rootEl: el });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getControlProps — ARIA
 // ---------------------------------------------------------------------------
 

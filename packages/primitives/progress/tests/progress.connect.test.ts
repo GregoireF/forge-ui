@@ -124,6 +124,50 @@ describe("connectProgress — custom min/max", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getTrackProps
+// ---------------------------------------------------------------------------
+
+describe("connectProgress — getTrackProps", () => {
+  it("data-forge-part=track", () => {
+    expect(connectProgress({ value: 50 }).getTrackProps()["data-forge-part"]).toBe("track");
+  });
+
+  it("data-state=loading when value is set", () => {
+    expect(connectProgress({ value: 50 }).getTrackProps()["data-state"]).toBe("loading");
+  });
+
+  it("data-state=indeterminate when value is null", () => {
+    expect(connectProgress({ value: null }).getTrackProps()["data-state"]).toBe("indeterminate");
+  });
+
+  it("data-state=complete when value equals max", () => {
+    expect(connectProgress({ value: 100 }).getTrackProps()["data-state"]).toBe("complete");
+  });
+
+  it("data-value reflects current value", () => {
+    expect(connectProgress({ value: 42 }).getTrackProps()["data-value"]).toBe(42);
+  });
+
+  it("data-max reflects max", () => {
+    expect(connectProgress({ value: 50, max: 200 }).getTrackProps()["data-max"]).toBe(200);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getLabelProps
+// ---------------------------------------------------------------------------
+
+describe("connectProgress — getLabelProps", () => {
+  it("data-forge-part=label", () => {
+    expect(connectProgress({ value: 50 }).getLabelProps()["data-forge-part"]).toBe("label");
+  });
+
+  it("data-forge-scope=progress", () => {
+    expect(connectProgress({ value: 50 }).getLabelProps()["data-forge-scope"]).toBe("progress");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getValueTextProps
 // ---------------------------------------------------------------------------
 
