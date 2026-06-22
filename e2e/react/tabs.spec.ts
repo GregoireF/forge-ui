@@ -120,4 +120,23 @@ test.describe("Tabs — React (forge-ui)", () => {
   test("inactive tab has aria-selected=false", async ({ page }) => {
     await expect(triggerVue(page)).toHaveAttribute("aria-selected", "false");
   });
+
+  // WAI-ARIA §3.22: trigger aria-controls must point to its panel id, and
+  // the panel aria-labelledby must point back to the trigger id.
+  test("trigger aria-controls points to its panel", async ({ page }) => {
+    const controlsId = await triggerReact(page).getAttribute("aria-controls");
+    expect(controlsId).toBeTruthy();
+    await expect(panelReact(page)).toHaveAttribute("id", controlsId!);
+  });
+
+  test("panel aria-labelledby points to its trigger", async ({ page }) => {
+    const triggerId = await triggerReact(page).getAttribute("id");
+    await expect(panelReact(page)).toHaveAttribute("aria-labelledby", triggerId!);
+  });
+
+  // WAI-ARIA: only the selected tab should have tabIndex=0 (roving tabIndex)
+  test("selected tab has tabIndex=0, others have tabIndex=-1", async ({ page }) => {
+    await expect(triggerReact(page)).toHaveAttribute("tabindex", "0");
+    await expect(triggerVue(page)).toHaveAttribute("tabindex", "-1");
+  });
 });
