@@ -94,4 +94,32 @@ test.describe("Accessibility (axe-core) — Vue playground", () => {
       .analyze();
     expect(results.violations).toEqual([]);
   });
+
+  test("Collapsible open: no a11y violations", async ({ page }) => {
+    await page.locator('[data-testid="collapsible-trigger"]').first().click();
+    await page.locator('[data-forge-scope="collapsible"][data-forge-part="content"]').first().waitFor({ state: "visible" });
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("Field with validation error: no a11y violations", async ({ page }) => {
+    const emailInput = page.locator('[data-forge-scope="field"][data-forge-part="control"]').first();
+    await emailInput.fill("not-an-email");
+    await emailInput.blur();
+    await page.locator('[role="alert"]').first().waitFor({ state: "visible" });
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("Tags-input with tags: no a11y violations", async ({ page }) => {
+    await page.locator('[data-forge-scope="tags-input"][data-forge-part="input"]').first().waitFor({ state: "visible" });
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
 });
