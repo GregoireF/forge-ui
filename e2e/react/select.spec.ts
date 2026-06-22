@@ -258,6 +258,17 @@ test.describe("Select — React (forge-ui)", () => {
     await expect(vueOption).toHaveAttribute("aria-selected", "false");
   });
 
+  // WAI-ARIA §6.8.1: trigger aria-labelledby must reference both the label id
+  // and the trigger's own id so AT announces "label: selected value".
+  test("trigger aria-labelledby includes both label id and trigger id", async ({ page }) => {
+    const triggerId = await selectTrigger(page).getAttribute("id");
+    const labelledBy = await selectTrigger(page).getAttribute("aria-labelledby");
+    expect(labelledBy).toBeTruthy();
+    expect(labelledBy).toContain(triggerId);
+    const parts = labelledBy!.trim().split(/\s+/);
+    expect(parts.length).toBeGreaterThanOrEqual(1);
+  });
+
   test("trigger aria-controls points to listbox id", async ({ page }) => {
     const controls = await selectTrigger(page).getAttribute("aria-controls");
     expect(controls).toBeTruthy();
