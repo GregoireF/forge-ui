@@ -47,6 +47,26 @@ test.describe("HoverCard — Nuxt (forge-ui)", () => {
     expect(haspopup).toBe("dialog");
   });
 
+  // WAI-ARIA: aria-controls must reference the content id so AT can navigate to it.
+  test("trigger aria-controls points to content id", async ({ page }) => {
+    await trigger(page).hover();
+    await expect(content(page)).toBeVisible({ timeout: 2000 });
+    const controlsId = await trigger(page).getAttribute("aria-controls");
+    expect(controlsId).toBeTruthy();
+    await expect(content(page)).toHaveAttribute("id", controlsId!);
+  });
+
+  test("trigger aria-expanded=false when closed", async ({ page }) => {
+    const expanded = await trigger(page).getAttribute("aria-expanded");
+    expect(expanded).toBe("false");
+  });
+
+  test("trigger aria-expanded=true when open", async ({ page }) => {
+    await trigger(page).hover();
+    await expect(content(page)).toBeVisible({ timeout: 2000 });
+    await expect(trigger(page)).toHaveAttribute("aria-expanded", "true");
+  });
+
   test("content has data-state=open when visible", async ({ page }) => {
     await trigger(page).hover();
     await expect(content(page)).toBeVisible({ timeout: 2000 });
