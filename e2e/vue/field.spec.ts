@@ -75,4 +75,14 @@ test.describe("Field — Vue (forge-ui)", () => {
     await input(page).blur();
     await expect(input(page)).not.toHaveAttribute("aria-invalid", "true");
   });
+
+  // WAI-ARIA: aria-describedby must include the error id when field is invalid
+  // so AT reads the error message alongside the input label.
+  test("aria-describedby includes error id when field is invalid", async ({ page }) => {
+    await input(page).fill("not-an-email");
+    await input(page).blur();
+    const describedBy = await input(page).getAttribute("aria-describedby");
+    const errorId = await page.locator('[role="alert"]').getAttribute("id");
+    expect(describedBy).toContain(errorId);
+  });
 });
