@@ -181,6 +181,21 @@ describe("connectProgress — getLabelProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Accessible name contract
+// ---------------------------------------------------------------------------
+
+// WAI-ARIA §3.14: role=progressbar MUST have an accessible name.
+// The connect does not wire aria-labelledby — consumers must pass aria-label
+// (or aria-labelledby) on Progress.Root via prop passthrough (...rest / ...attrs).
+describe("connectProgress — accessible name contract", () => {
+  it("no built-in accessible name — consumer must provide aria-label via prop passthrough", () => {
+    const props = connectProgress({ value: 50 }).getRootProps() as Record<string, unknown>;
+    expect(props["aria-label"]).toBeUndefined();
+    expect(props["aria-labelledby"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getValueTextProps
 // ---------------------------------------------------------------------------
 

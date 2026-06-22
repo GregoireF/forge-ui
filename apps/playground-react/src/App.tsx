@@ -1156,7 +1156,7 @@ function ProgressDemo() {
   const [value, setValue] = useState(42);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", maxWidth: "400px" }}>
-      <Progress.Root value={value} max={100} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <Progress.Root value={value} max={100} aria-label="Chargement" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Chargement</Progress.Label>
           <Progress.ValueText data-testid="progress-value" style={{ fontSize: "0.875rem", color: "#64748b" }} />
@@ -1169,7 +1169,7 @@ function ProgressDemo() {
         <button style={btnStyle} onClick={() => setValue((v) => Math.max(0, v - 10))}>−10</button>
         <button style={btnStyle} onClick={() => setValue((v) => Math.min(100, v + 10))}>+10</button>
       </div>
-      <Progress.Root data-testid="progress-indeterminate" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <Progress.Root data-testid="progress-indeterminate" aria-label="Indéterminé" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Indéterminé</Progress.Label>
         <Progress.Track style={{ height: "8px", background: "#e2e8f0", borderRadius: "999px", overflow: "hidden" }}>
           <Progress.Fill style={{ height: "100%", background: "#6366f1", borderRadius: "999px" }} />

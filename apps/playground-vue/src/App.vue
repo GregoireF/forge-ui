@@ -934,7 +934,7 @@ const radioGroupValue = ref<string[]>(["react"]);
       <h2 :style="sectionTitleStyle">Progress</h2>
       <p :style="sectionDescStyle">Barre de progression — déterminée ou indéterminée.</p>
       <div style="display:flex;flex-direction:column;gap:1rem;width:100%;max-width:400px">
-        <Progress.Root :value="progressValue" :max="100" style="display:flex;flex-direction:column;gap:0.5rem">
+        <Progress.Root :value="progressValue" :max="100" aria-label="Chargement" style="display:flex;flex-direction:column;gap:0.5rem">
           <div style="display:flex;justify-content:space-between">
             <Progress.Label style="font-size:0.875rem;font-weight:500">Chargement</Progress.Label>
             <Progress.ValueText data-testid="progress-value" style="font-size:0.875rem;color:#64748b" />
@@ -947,7 +947,7 @@ const radioGroupValue = ref<string[]>(["react"]);
           <button :style="btnStyle" @click="progressValue = Math.max(0, progressValue - 10)">−10</button>
           <button :style="btnStyle" @click="progressValue = Math.min(100, progressValue + 10)">+10</button>
         </div>
-        <Progress.Root data-testid="progress-indeterminate" style="display:flex;flex-direction:column;gap:0.5rem">
+        <Progress.Root data-testid="progress-indeterminate" aria-label="Indéterminé" style="display:flex;flex-direction:column;gap:0.5rem">
           <Progress.Label style="font-size:0.875rem;font-weight:500">Indéterminé</Progress.Label>
           <Progress.Track style="height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden">
             <Progress.Fill style="height:100%;background:#6366f1;border-radius:999px" />
