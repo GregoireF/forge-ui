@@ -56,6 +56,11 @@ test.describe("Popover — Nuxt (forge-ui)", () => {
     await expect(trigger(page)).toHaveAttribute("aria-expanded", "true");
   });
 
+  test("trigger has aria-haspopup", async ({ page }) => {
+    const val = await trigger(page).getAttribute("aria-haspopup");
+    expect(val).toBeTruthy();
+  });
+
   test("content has data-state=open when open", async ({ page }) => {
     await trigger(page).click();
     await expect(content(page)).toHaveAttribute("data-state", "open");

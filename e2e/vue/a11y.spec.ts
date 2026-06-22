@@ -15,6 +15,14 @@ test.describe("Accessibility (axe-core) — Vue playground", () => {
     expect(results.violations).toEqual([]);
   });
 
+  test("Tabs selected: no a11y violations", async ({ page }) => {
+    await page.locator('[data-testid="tabs-trigger-vue"]').click();
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
   test("Dialog open: no a11y violations", async ({ page }) => {
     await page.getByRole("button", { name: "Ouvrir le dialog" }).first().click();
     await page.getByRole("dialog").waitFor({ state: "visible" });

@@ -43,6 +43,14 @@ test.describe("Dialog — Nuxt (forge-ui)", () => {
   // ARIA
   // ---------------------------------------------------------------------------
 
+  test("trigger has aria-expanded=true when open", async ({ page }) => {
+    await page.getByRole("button", { name: "Open dialog" }).click();
+    await expect(page.locator('[data-forge-part="trigger"]').first()).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+  });
+
   test("dialog has aria-modal=true", async ({ page }) => {
     await page.getByRole("button", { name: "Open dialog" }).click();
     await expect(page.getByRole("dialog")).toHaveAttribute("aria-modal", "true");
@@ -62,6 +70,21 @@ test.describe("Dialog — Nuxt (forge-ui)", () => {
     const describedBy = await dialog.getAttribute("aria-describedby");
     expect(describedBy).toBeTruthy();
     await expect(page.locator(`#${describedBy}`)).toBeVisible();
+  });
+
+  test("trigger has data-state=closed on load", async ({ page }) => {
+    await expect(page.getByRole("button", { name: "Open dialog" })).toHaveAttribute(
+      "data-state",
+      "closed",
+    );
+  });
+
+  test("trigger has data-state=open when dialog is open", async ({ page }) => {
+    await page.getByRole("button", { name: "Open dialog" }).click();
+    await expect(page.locator('[data-forge-part="trigger"]').first()).toHaveAttribute(
+      "data-state",
+      "open",
+    );
   });
 
   test("dialog content has data-state=open when open", async ({ page }) => {
@@ -95,7 +118,7 @@ test.describe("Dialog — Nuxt (forge-ui)", () => {
     await expect(trigger).toBeFocused();
   });
 
-  test("Tab key wraps focus within dialog (focus trap)", async ({ page }) => {
+  test("Tab key wraps focus within dialog", async ({ page }) => {
     await page.getByRole("button", { name: "Open dialog" }).click();
     const dialog = page.getByRole("dialog");
     const closeBtn = page.getByRole("button", { name: "Close" });
@@ -105,7 +128,7 @@ test.describe("Dialog — Nuxt (forge-ui)", () => {
     expect(focusedInsideDialog).toBe(true);
   });
 
-  test("Shift+Tab key wraps focus within dialog (focus trap)", async ({ page }) => {
+  test("Shift+Tab key wraps focus within dialog", async ({ page }) => {
     await page.getByRole("button", { name: "Open dialog" }).click();
     const dialog = page.getByRole("dialog");
     await dialog.press("Tab");

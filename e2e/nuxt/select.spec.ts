@@ -76,6 +76,13 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     await expect(selectContent(page)).not.toBeAttached();
   });
 
+  test("closes on trigger click when open", async ({ page }) => {
+    await selectTrigger(page).click();
+    await expect(selectContent(page)).toBeVisible();
+    await selectTrigger(page).click();
+    await expect(selectContent(page)).not.toBeAttached();
+  });
+
   test("focus returns to trigger after Escape", async ({ page }) => {
     await selectTrigger(page).click();
     await page.keyboard.press("Escape");
@@ -102,11 +109,12 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     await expect(options.nth(count - 1)).toHaveAttribute("data-highlighted", "");
   });
 
-  test("ArrowDown then ArrowDown moves to second option", async ({ page }) => {
+  test("ArrowDown then ArrowDown moves highlight to second option", async ({ page }) => {
     await selectTrigger(page).focus();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
-    await expect(selectOptions(page).nth(1)).toHaveAttribute("data-highlighted", "");
+    const secondOption = selectOptions(page).nth(1);
+    await expect(secondOption).toHaveAttribute("data-highlighted", "");
   });
 
   test("Home key highlights first option", async ({ page }) => {
@@ -151,13 +159,13 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     await expect(selectContent(page)).not.toBeAttached();
   });
 
-  test("selected item gets data-selected attribute on reopen", async ({ page }) => {
+  test("selected item gets data-selected attribute", async ({ page }) => {
     await selectTrigger(page).click();
-    await page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first().click();
+    const reactOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first();
+    await reactOption.click();
     await selectTrigger(page).click();
-    await expect(
-      page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first()
-    ).toHaveAttribute("data-selected", "");
+    const reactOptionAgain = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first();
+    await expect(reactOptionAgain).toHaveAttribute("data-selected", "");
   });
 
   test("trigger displays selected value label", async ({ page }) => {
@@ -178,6 +186,17 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     const firstOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Design" });
     await firstOption.click();
     await expect(multiContent).toBeVisible();
+  });
+
+  test("multi-select: multiple items get data-selected", async ({ page }) => {
+    const multiTrigger = page.locator('[data-forge-scope="select"][data-forge-part="trigger"]').nth(1);
+    await multiTrigger.click();
+    const designOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Design" });
+    const devOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Développement" });
+    await designOption.click();
+    await devOption.click();
+    await expect(designOption).toHaveAttribute("data-selected", "");
+    await expect(devOption).toHaveAttribute("data-selected", "");
   });
 
   // ---------------------------------------------------------------------------
@@ -220,6 +239,20 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     ).toHaveAttribute("aria-selected", "true");
   });
 
+  test("unselected option has aria-selected=false", async ({ page }) => {
+    await selectTrigger(page).click();
+    const vueOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" }).first();
+    await expect(vueOption).toHaveAttribute("aria-selected", "false");
+  });
+
+  test("trigger aria-controls points to listbox id", async ({ page }) => {
+    const controls = await selectTrigger(page).getAttribute("aria-controls");
+    expect(controls).toBeTruthy();
+    await selectTrigger(page).click();
+    const listbox = page.locator(`#${controls}`);
+    await expect(listbox).toBeVisible();
+  });
+
   test("trigger aria-activedescendant points to highlighted option", async ({ page }) => {
     await selectTrigger(page).focus();
     await page.keyboard.press("ArrowDown");
@@ -228,7 +261,16 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     await expect(page.locator(`#${activeDesc}`)).toHaveAttribute("data-highlighted", "");
   });
 
-  test("disabled option has aria-disabled=true", async ({ page }) => {
+  test("trigger data-state=closed when closed", async ({ page }) => {
+    await expect(selectTrigger(page)).toHaveAttribute("data-state", "closed");
+  });
+
+  test("trigger data-state=open when open", async ({ page }) => {
+    await selectTrigger(page).click();
+    await expect(selectTrigger(page)).toHaveAttribute("data-state", "open");
+  });
+
+  test("disabled option has aria-disabled and cannot be selected", async ({ page }) => {
     await selectTrigger(page).click();
     const disabledOption = page.locator('[data-forge-scope="select"][data-forge-part="option"][data-disabled]').first();
     await expect(disabledOption).toHaveAttribute("aria-disabled", "true");
@@ -254,5 +296,21 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     const box = await selectPositioner(page).boundingBox();
     expect(box).not.toBeNull();
     expect(box!.y).toBeGreaterThan(10);
+  });
+
+  test("no flash to (0,0) on repeated open/close cycles", async ({ page }) => {
+    const sel = '[data-forge-scope="select"][data-forge-part="positioner"]';
+
+    for (let i = 1; i <= 3; i++) {
+      await selectTrigger(page).click();
+      await waitForRevealed(page, sel);
+      const box = await selectPositioner(page).boundingBox();
+      expect(box, `open #${i}: positioner bounding box should not be null`).not.toBeNull();
+      expect(box!.y, `open #${i}: positioner must not flash to y≈0`).toBeGreaterThan(10);
+
+      await page.keyboard.press("Escape");
+      await expect(page.locator(sel)).not.toBeAttached({ timeout: 3000 });
+      await page.waitForTimeout(30);
+    }
   });
 });

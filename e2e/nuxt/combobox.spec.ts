@@ -233,6 +233,14 @@ test.describe("Combobox — Nuxt (forge-ui)", () => {
     await expect(jsOption).toHaveAttribute("aria-selected", "true");
   });
 
+  test("multi-select: selected options have data-selected attribute", async ({ page }) => {
+    await multiInput(page).focus();
+    await page.keyboard.press("ArrowDown");
+    const tsOption = multiOptions(page).filter({ hasText: "TypeScript" });
+    await tsOption.click();
+    await expect(tsOption).toHaveAttribute("data-selected", "");
+  });
+
   // ---------------------------------------------------------------------------
   // ARIA
   // ---------------------------------------------------------------------------
@@ -248,6 +256,29 @@ test.describe("Combobox — Nuxt (forge-ui)", () => {
   test("input has aria-expanded=true when open", async ({ page }) => {
     await comboboxTrigger(page).click();
     await expect(comboboxInput(page)).toHaveAttribute("aria-expanded", "true");
+  });
+
+  test("input has aria-controls pointing to listbox", async ({ page }) => {
+    const controls = await comboboxInput(page).getAttribute("aria-controls");
+    expect(controls).toBeTruthy();
+    await comboboxTrigger(page).click();
+    const listbox = page.locator(`#${controls}`);
+    await expect(listbox).toBeVisible();
+  });
+
+  test("aria-activedescendant is absent when no option is highlighted", async ({ page }) => {
+    await comboboxTrigger(page).click();
+    const activeDesc = await comboboxInput(page).getAttribute("aria-activedescendant");
+    expect(!activeDesc || activeDesc === "").toBe(true);
+  });
+
+  test("input data-state=closed when closed", async ({ page }) => {
+    await expect(comboboxInput(page)).toHaveAttribute("data-state", "closed");
+  });
+
+  test("input data-state=open when open", async ({ page }) => {
+    await comboboxTrigger(page).click();
+    await expect(comboboxInput(page)).toHaveAttribute("data-state", "open");
   });
 
   test("content has role=listbox when open", async ({ page }) => {
@@ -293,5 +324,21 @@ test.describe("Combobox — Nuxt (forge-ui)", () => {
     const box = await comboboxPositioner(page).boundingBox();
     expect(box).not.toBeNull();
     expect(box!.y).toBeGreaterThan(10);
+  });
+
+  test("no flash to (0,0) on repeated open/close cycles", async ({ page }) => {
+    const sel = '[data-forge-scope="combobox"][data-forge-part="positioner"]';
+
+    for (let i = 1; i <= 3; i++) {
+      await comboboxTrigger(page).click();
+      await waitForRevealed(page, sel);
+      const box = await comboboxPositioner(page).boundingBox();
+      expect(box, `open #${i}: positioner bounding box should not be null`).not.toBeNull();
+      expect(box!.y, `open #${i}: positioner must not flash to y≈0`).toBeGreaterThan(10);
+
+      await page.keyboard.press("Escape");
+      await expect(page.locator(sel)).not.toBeAttached({ timeout: 3000 });
+      await page.waitForTimeout(30);
+    }
   });
 });
