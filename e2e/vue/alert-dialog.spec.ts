@@ -80,6 +80,14 @@ test.describe("AlertDialog — Vue (forge-ui)", () => {
     await expect(trigger(page)).toHaveAttribute("data-state", "open");
   });
 
+  // WAI-ARIA §3.2: focus MUST move inside the alertdialog on open
+  test("focus moves inside alert dialog on open", async ({ page }) => {
+    await trigger(page).click();
+    const dialog = content(page);
+    const focusedInsideDialog = await dialog.evaluate((el) => el.contains(document.activeElement));
+    expect(focusedInsideDialog).toBe(true);
+  });
+
   test("focus returns to trigger after cancel", async ({ page }) => {
     await trigger(page).click();
     await page.locator('[data-forge-scope="alert-dialog"][data-forge-part="cancel"]').click();
