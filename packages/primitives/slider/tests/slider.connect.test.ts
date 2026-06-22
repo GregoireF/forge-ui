@@ -72,6 +72,17 @@ describe("connectSlider — getThumbProps", () => {
     expect(api.getThumbProps().role).toBe("slider");
   });
 
+  // WAI-ARIA §3.14: role="slider" MUST have an accessible name. The connect
+  // intentionally omits aria-label — consumers must provide it directly on
+  // <Slider.Thumb aria-label="Volume" /> (frameworks spread extra props via
+  // ...rest / ...attrs).
+  it("no built-in accessible name — consumer must provide aria-label", () => {
+    const { api } = makeApi();
+    const props = api.getThumbProps() as Record<string, unknown>;
+    expect(props["aria-label"]).toBeUndefined();
+    expect(props["aria-labelledby"]).toBeUndefined();
+  });
+
   it("aria-valuenow reflects value", () => {
     const { api } = makeApi({ value: 42 });
     expect(api.getThumbProps()["aria-valuenow"]).toBe(42);

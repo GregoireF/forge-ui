@@ -63,6 +63,13 @@ describe("connectPopover — getContentProps", () => {
     expect(props["aria-modal"]).toBe(false); // modal defaults false for popover
   });
 
+  // WAI-ARIA: when modal=true the AT must treat the dialog as modal — it
+  // hides sibling content. aria-modal=true signals this to the AT.
+  it("aria-modal=true when modal prop is true", () => {
+    const { api } = makeOpenApi({ modal: true });
+    expect(api.getContentProps()["aria-modal"]).toBe(true);
+  });
+
   it("omits aria-labelledby when title is not registered", () => {
     const { api } = makeOpenApi();
     expect(api.getContentProps()["aria-labelledby"]).toBeUndefined();
