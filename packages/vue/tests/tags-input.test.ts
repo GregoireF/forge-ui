@@ -225,6 +225,30 @@ describe("useTagsInput (Vue)", () => {
     });
   });
 
+  describe("delimiter", () => {
+    it("adds a tag on the configured delimiter key", () => {
+      const spy = vi.fn();
+      const sendRef: { current: SendFn | null } = { current: null };
+      type InputProps = ReturnType<ReturnType<typeof useTagsInput>["getInputProps"]>;
+      const propsRef: { current: InputProps | null } = { current: null };
+      const Fixture = defineComponent({
+        setup() {
+          const api = useTagsInput({ id: "test-delim", delimiter: ",", onValueChange: spy });
+          sendRef.current = api.send;
+          propsRef.current = api.getInputProps();
+          return api;
+        },
+        template: `<div><input v-bind="getInputProps()" data-testid="input" /></div>`,
+      });
+      render(Fixture);
+      const send = sendRef.current!;
+      send({ type: "FOCUS" });
+      send({ type: "INPUT_CHANGE", value: "TypeScript" });
+      propsRef.current!.onKeyDown({ key: ",", preventDefault: () => {} } as unknown as KeyboardEvent);
+      expect(spy).toHaveBeenCalledWith(["TypeScript"]);
+    });
+  });
+
   describe("form", () => {
     it("renders hidden input with comma-joined values", () => {
       const fixture = defineComponent({

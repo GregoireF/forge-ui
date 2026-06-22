@@ -22,6 +22,7 @@ export function connectTagsInput(
     isRequired: context.required,
     isInvalid: context.invalid,
     canAddMore,
+    delimiter: context.delimiter,
 
     getRootProps() {
       return {
@@ -62,7 +63,7 @@ export function connectTagsInput(
         },
         onInput: (e: Event) => send({ type: "INPUT_CHANGE", value: (e.target as HTMLInputElement).value }),
         onKeyDown: (e: KeyboardEvent) => {
-          if (e.key === "Enter") {
+          if (e.key === "Enter" || (context.delimiter && e.key === context.delimiter)) {
             e.preventDefault();
             send({ type: "ADD_TAG" });
           } else if (e.key === "Backspace" && (e.target as HTMLInputElement).value === "") {

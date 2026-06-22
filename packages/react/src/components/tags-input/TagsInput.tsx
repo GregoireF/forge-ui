@@ -114,7 +114,7 @@ function Input({ ...rest }: TagsInputInputProps) {
         api.send({ type: "INPUT_CHANGE", value: e.target.value });
       }}
       onKeyDown={(e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" || (api.delimiter && e.key === api.delimiter)) {
           e.preventDefault();
           api.send({ type: "ADD_TAG" });
         } else if (e.key === "Backspace" && e.currentTarget.value === "") {

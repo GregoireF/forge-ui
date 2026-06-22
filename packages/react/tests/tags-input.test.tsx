@@ -176,6 +176,22 @@ describe("TagsInput (React)", () => {
     });
   });
 
+  describe("delimiter", () => {
+    it("adds a tag on the configured delimiter key", () => {
+      const spy = vi.fn();
+      render(
+        <TagsInput.Root delimiter="," onValueChange={spy}>
+          <TagsInput.Input data-testid="input" />
+        </TagsInput.Root>,
+      );
+      const input = screen.getByTestId("input");
+      fireEvent.focus(input);
+      fireEvent.change(input, { target: { value: "TypeScript" } });
+      fireEvent.keyDown(input, { key: "," });
+      expect(spy).toHaveBeenCalledWith(["TypeScript"]);
+    });
+  });
+
   describe("form", () => {
     it("renders hidden input with comma-joined values", () => {
       render(
