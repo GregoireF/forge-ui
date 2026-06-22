@@ -94,6 +94,27 @@ test.describe("AlertDialog — Vue (forge-ui)", () => {
     await expect(trigger(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.2 focus trap: Tab MUST NOT escape the alert dialog
+  test("Tab key wraps focus within alert dialog", async ({ page }) => {
+    await trigger(page).click();
+    const dialog = content(page);
+    const actionBtn = page.locator('[data-forge-scope="alert-dialog"][data-forge-part="action"]');
+    await actionBtn.focus();
+    await page.keyboard.press("Tab");
+    const focusedInsideDialog = await dialog.evaluate((el) => el.contains(document.activeElement));
+    expect(focusedInsideDialog).toBe(true);
+  });
+
+  // WAI-ARIA §3.2 focus trap: Shift+Tab MUST NOT escape the alert dialog
+  test("Shift+Tab key wraps focus within alert dialog", async ({ page }) => {
+    await trigger(page).click();
+    const dialog = content(page);
+    await dialog.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    const focusedInsideDialog = await dialog.evaluate((el) => el.contains(document.activeElement));
+    expect(focusedInsideDialog).toBe(true);
+  });
+
   test("content is rendered in body (portal)", async ({ page }) => {
     await trigger(page).click();
     const isBodyChild = await page.evaluate(() => {
