@@ -233,6 +233,24 @@ describe("Select (Vue)", () => {
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
     });
+
+    it("toggles option in multiple mode", async () => {
+      const onValueChange = vi.fn();
+      render(makeFixture({ multiple: true, onValueChange }));
+      await user.click(screen.getByTestId("trigger"));
+      await user.click(screen.getByRole("option", { name: "Apple" }));
+      expect(onValueChange).toHaveBeenCalledWith(["apple"]);
+      await user.click(screen.getByRole("option", { name: "Apple" }));
+      expect(onValueChange).toHaveBeenCalledWith([]);
+    });
+  });
+
+  describe("disabled state", () => {
+    it("disabled trigger does not open on click", async () => {
+      render(makeFixture({ disabled: true }));
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
   });
 
   describe("compound component API", () => {

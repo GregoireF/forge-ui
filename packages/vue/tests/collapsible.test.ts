@@ -157,6 +157,20 @@ describe("Collapsible (Vue)", () => {
       expect(screen.getByTestId("content")).toBeInTheDocument();
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "closed");
     });
+
+    it("forceMount open content has data-state=open", () => {
+      const Fixture = defineComponent({
+        components: { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent },
+        template: `
+          <CollapsibleRoot :default-open="true">
+            <CollapsibleTrigger data-testid="trigger">Toggle</CollapsibleTrigger>
+            <CollapsibleContent :force-mount="true" data-testid="content">Content</CollapsibleContent>
+          </CollapsibleRoot>
+        `,
+      });
+      render(Fixture);
+      expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");
+    });
   });
 
   describe("CSS contract", () => {

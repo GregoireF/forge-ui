@@ -147,6 +147,27 @@ describe("RadioGroup (Vue)", () => {
       render(makeFixture({ disabled: true }));
       expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-disabled", "true");
     });
+
+    it("item-level disabled: only that item is blocked", async () => {
+      const Fixture = defineComponent({
+        components: { RadioGroupRoot, RadioGroupItem, RadioGroupRadio },
+        template: `
+          <RadioGroupRoot>
+            <RadioGroupItem value="a" :disabled="true">
+              <RadioGroupRadio data-testid="radio-a" />
+            </RadioGroupItem>
+            <RadioGroupItem value="b">
+              <RadioGroupRadio data-testid="radio-b" />
+            </RadioGroupItem>
+          </RadioGroupRoot>
+        `,
+      });
+      render(Fixture);
+      await user.click(screen.getByTestId("radio-a"));
+      expect(screen.getByTestId("radio-a")).toHaveAttribute("aria-checked", "false");
+      await user.click(screen.getByTestId("radio-b"));
+      expect(screen.getByTestId("radio-b")).toHaveAttribute("aria-checked", "true");
+    });
   });
 
   describe("callbacks", () => {
@@ -209,6 +230,22 @@ describe("RadioGroup (Vue)", () => {
       expect(input).not.toBeNull();
       expect(input.name).toBe("color");
       expect(input.value).toBe("red");
+    });
+
+    it("does not render hidden input when no name", () => {
+      const Fixture = defineComponent({
+        components: { RadioGroupRoot, RadioGroupItem, RadioGroupRadio, RadioGroupHiddenInput },
+        template: `
+          <RadioGroupRoot>
+            <RadioGroupItem value="red">
+              <RadioGroupRadio />
+              <RadioGroupHiddenInput />
+            </RadioGroupItem>
+          </RadioGroupRoot>
+        `,
+      });
+      render(Fixture);
+      expect(document.querySelector('input[type="radio"]')).toBeNull();
     });
   });
 

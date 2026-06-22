@@ -209,6 +209,30 @@ describe("Tooltip (Vue)", () => {
   });
 
   // -------------------------------------------------------------------------
+  // Interactive tooltip
+  // -------------------------------------------------------------------------
+
+  describe("interactive", () => {
+    it("stays open when pointer moves from trigger to content", async () => {
+      render(TestTooltip({ openDelay: 0, closeDelay: 100, interactive: true }));
+      const trigger = screen.getByTestId("trigger");
+
+      fireEvent.pointerEnter(trigger, { pointerType: "mouse" });
+      vi.advanceTimersByTime(0);
+      await nextTick();
+      expect(screen.getByRole("tooltip")).toBeInTheDocument();
+
+      fireEvent.pointerLeave(trigger);
+      const content = screen.getByTestId("content");
+      fireEvent.pointerEnter(content, { pointerType: "mouse" });
+
+      vi.advanceTimersByTime(100);
+      await nextTick();
+      expect(screen.getByRole("tooltip")).toBeInTheDocument();
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // Controlled mode
   // -------------------------------------------------------------------------
 
@@ -264,6 +288,65 @@ describe("Tooltip (Vue)", () => {
   // -------------------------------------------------------------------------
 
   describe("Provider", () => {
+    it("skips openDelay when a tooltip just closed (skipDelay)", async () => {
+      render(
+        defineComponent({
+          render() {
+            return h(
+              TooltipProvider,
+              { openDelay: 500, closeDelay: 0, skipDelay: 1000 },
+              {
+                default: () => [
+                  h(
+                    TooltipRoot,
+                    { openDelay: 500, closeDelay: 0 },
+                    {
+                      default: () => [
+                        h(TooltipTrigger, { "data-testid": "trigger-a" }, () => "A"),
+                        h(TooltipPortal, {}, {
+                          default: () => h(TooltipContent, { "data-testid": "content-a" }, () => "Tip A"),
+                        }),
+                      ],
+                    },
+                  ),
+                  h(
+                    TooltipRoot,
+                    {},
+                    {
+                      default: () => [
+                        h(TooltipTrigger, { "data-testid": "trigger-b" }, () => "B"),
+                        h(TooltipPortal, {}, {
+                          default: () => h(TooltipContent, { "data-testid": "content-b" }, () => "Tip B"),
+                        }),
+                      ],
+                    },
+                  ),
+                ],
+              },
+            );
+          },
+        }),
+      );
+
+      // Open A — 500ms delay from Provider
+      fireEvent.pointerEnter(screen.getByTestId("trigger-a"), { pointerType: "mouse" });
+      vi.advanceTimersByTime(500);
+      await nextTick();
+      expect(screen.getByTestId("content-a")).toBeInTheDocument();
+
+      // Close A — notifyClose sets lastClosedAtRef
+      fireEvent.pointerLeave(screen.getByTestId("trigger-a"));
+      vi.advanceTimersByTime(0);
+      await nextTick();
+      expect(screen.queryByTestId("content-a")).not.toBeInTheDocument();
+
+      // Open B immediately — isInQuickSuccession=true → delay=0
+      fireEvent.pointerEnter(screen.getByTestId("trigger-b"), { pointerType: "mouse" });
+      vi.advanceTimersByTime(0);
+      await nextTick();
+      expect(screen.getByTestId("content-b")).toBeInTheDocument();
+    });
+
     it("Provider provides openDelay override to child Roots", async () => {
       render(
         defineComponent({

@@ -84,6 +84,18 @@ describe("useAlertDialog (Vue)", () => {
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("content")).toHaveAttribute("data-forge-scope", "alert-dialog");
     });
+
+    it("cancel button has data-forge-part=cancel", async () => {
+      render(makeAlertDialogFixture());
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("cancel-btn")).toHaveAttribute("data-forge-part", "cancel");
+    });
+
+    it("action button has data-forge-part=action", async () => {
+      render(makeAlertDialogFixture());
+      await user.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("action-btn")).toHaveAttribute("data-forge-part", "action");
+    });
   });
 
   describe("WAI-ARIA alertdialog blocking", () => {
@@ -115,6 +127,13 @@ describe("useAlertDialog (Vue)", () => {
       // Click outside the alertdialog — should NOT close it.
       await user.click(document.body);
       expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    });
+
+    it("fires onOpenChange on open", async () => {
+      const onOpenChange = vi.fn();
+      render(makeAlertDialogFixture({ onOpenChange }));
+      await user.click(screen.getByTestId("trigger"));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
     });
 
     it("fires onOpenChange on open and cancel", async () => {

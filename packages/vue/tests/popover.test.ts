@@ -113,6 +113,26 @@ describe("usePopover (Vue)", () => {
       await user.click(screen.getByTestId("trigger"));
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");
     });
+
+    it("adds aria-labelledby once Title mounts (compound)", async () => {
+      const Fixture = defineComponent({
+        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription },
+        template: `
+          <PopoverRoot id="aria-test">
+            <PopoverTrigger data-testid="trig">Open</PopoverTrigger>
+            <PopoverContent>
+              <PopoverTitle>Labelled</PopoverTitle>
+              <PopoverDescription>Body.</PopoverDescription>
+            </PopoverContent>
+          </PopoverRoot>
+        `,
+      });
+      render(Fixture);
+      await user.click(screen.getByTestId("trig"));
+      const content = screen.getByRole("dialog");
+      const titleId = screen.getByRole("heading").id;
+      expect(content).toHaveAttribute("aria-labelledby", titleId);
+    });
   });
 
   describe("keyboard", () => {
