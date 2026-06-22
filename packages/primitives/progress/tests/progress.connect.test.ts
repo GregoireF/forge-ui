@@ -31,6 +31,19 @@ describe("connectProgress — getRootProps", () => {
     expect(api.getRootProps()["aria-valuenow"]).toBeUndefined();
   });
 
+  // WAI-ARIA §3.14: aria-valuetext provides a human-readable description
+  // of the current value. For indeterminate state it must say "loading"
+  // (or similar) because aria-valuenow is absent.
+  it('aria-valuetext is "loading" when indeterminate', () => {
+    const api = connectProgress({ value: null });
+    expect(api.getRootProps()["aria-valuetext"]).toBe("loading");
+  });
+
+  it("aria-valuetext shows percentage string when value is set", () => {
+    const api = connectProgress({ value: 42 });
+    expect(api.getRootProps()["aria-valuetext"]).toBe("42%");
+  });
+
   it("has data-forge-scope=progress", () => {
     const api = connectProgress({ value: 50 });
     expect(api.getRootProps()["data-forge-scope"]).toBe("progress");

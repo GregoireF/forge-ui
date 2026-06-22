@@ -243,6 +243,60 @@ describe("connectTooltip — getArrowTipProps", () => {
 // getAnchorProps
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Provider callbacks (_isInQuickSuccession / _notifyOpen / _notifyClose)
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — Provider skip-delay callbacks", () => {
+  it("schedules OPEN with delay=0 when _isInQuickSuccession returns true", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({
+      openDelay: 700,
+      _isInQuickSuccession: () => true,
+    });
+    api.getTriggerProps().onFocus();
+    // With quick succession the delay is 0 — OPEN should fire synchronously after
+    // the 0ms timer flushes.
+    vi.advanceTimersByTime(0);
+    expect(send).toHaveBeenCalledWith("OPEN");
+    vi.useRealTimers();
+  });
+
+  it("uses full openDelay when _isInQuickSuccession returns false", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({
+      openDelay: 700,
+      _isInQuickSuccession: () => false,
+    });
+    api.getTriggerProps().onFocus();
+    vi.advanceTimersByTime(699);
+    expect(send).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(send).toHaveBeenCalledWith("OPEN");
+    vi.useRealTimers();
+  });
+
+  it("calls _notifyOpen when OPEN fires", () => {
+    vi.useFakeTimers();
+    const notifyOpen = vi.fn();
+    const { api } = makeApi({ openDelay: 0, _notifyOpen: notifyOpen });
+    api.getTriggerProps().onFocus();
+    vi.advanceTimersByTime(0);
+    expect(notifyOpen).toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it("calls _notifyClose when CLOSE fires", () => {
+    vi.useFakeTimers();
+    const notifyClose = vi.fn();
+    const { api } = makeApi({ closeDelay: 0, _notifyClose: notifyClose });
+    api.getTriggerProps().onBlur();
+    vi.advanceTimersByTime(0);
+    expect(notifyClose).toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+});
+
 describe("connectTooltip — getAnchorProps", () => {
   it("data-forge-part=anchor", () => {
     expect(makeApi().api.getAnchorProps()["data-forge-part"]).toBe("anchor");
