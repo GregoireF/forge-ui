@@ -144,6 +144,12 @@ describe("connectTagsInput — getInputProps", () => {
     expect((api.getInputProps() as Record<string, unknown>).readOnly).toBeUndefined();
   });
 
+  // WAI-ARIA: the input must be labelled so AT can announce what the field is.
+  it("aria-labelledby points to the label id", () => {
+    const { api } = makeApi({ labelId: "my-label" });
+    expect(api.getInputProps()["aria-labelledby"]).toBe("my-label");
+  });
+
   it("aria-invalid=true when invalid", () => {
     expect(makeApi({ invalid: true }).api.getInputProps()["aria-invalid"]).toBe(true);
   });
@@ -248,6 +254,15 @@ describe("connectTagsInput — getTagDeleteProps", () => {
     const { api, send } = makeApi();
     api.getTagDeleteProps("x").onClick();
     expect(send).toHaveBeenCalledWith({ type: "REMOVE_TAG", value: "x" });
+  });
+
+  // WAI-ARIA: the delete button must have an accessible name so screen readers
+  // announce which tag will be deleted. Currently hardcoded in French —
+  // this test documents the existing behaviour; i18n support is a future task.
+  it("aria-label includes the tag value for screen reader context", () => {
+    const { api } = makeApi();
+    const label = api.getTagDeleteProps("TypeScript")["aria-label"];
+    expect(label).toContain("TypeScript");
   });
 });
 
