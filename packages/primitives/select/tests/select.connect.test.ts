@@ -155,6 +155,15 @@ describe("connectSelect — getTriggerProps", () => {
     const { api } = makeApi({ value: [] });
     expect(api.getTriggerProps()["data-placeholder"]).toBe("");
   });
+
+  // WAI-ARIA §6.8.1: the trigger's accessible name must reference both the
+  // label element and the trigger itself so AT announces "label: selected value".
+  it("aria-labelledby references both labelId and triggerId", () => {
+    const { api } = makeApi({ labelId: "sel-label", triggerId: "sel-trigger" });
+    const labelledBy = api.getTriggerProps()["aria-labelledby"];
+    expect(labelledBy).toContain("sel-label");
+    expect(labelledBy).toContain("sel-trigger");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -175,6 +184,13 @@ describe("connectSelect — getContentProps", () => {
   it("aria-multiselectable when multiple", () => {
     const { api } = makeApi({ multiple: true });
     expect(api.getContentProps()["aria-multiselectable"]).toBe(true);
+  });
+
+  // The listbox must reference the same label as the trigger so AT can
+  // announce the label when the listbox receives focus.
+  it("aria-labelledby references the labelId", () => {
+    const { api } = makeApi({ labelId: "the-label" });
+    expect(api.getContentProps()["aria-labelledby"]).toBe("the-label");
   });
 });
 

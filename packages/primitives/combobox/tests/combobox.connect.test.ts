@@ -176,6 +176,24 @@ describe("connectCombobox — getInputProps", () => {
     expect(api.getInputProps().disabled).toBe(true);
   });
 
+  // WAI-ARIA 1.2 §6.6.1: aria-autocomplete tells AT what kind of completion
+  // is offered. "both" = client-side filter (suggestions updated inline).
+  // "list" = server-side / async mode where onInputChange is provided.
+  it('aria-autocomplete="both" when filtering client-side (no onInputChange)', () => {
+    const { api } = makeApi();
+    expect(api.getInputProps()["aria-autocomplete"]).toBe("both");
+  });
+
+  it('aria-autocomplete="list" when onInputChange is provided (async/server-side filter)', () => {
+    const { api } = makeApi({ onInputChange: vi.fn() });
+    expect(api.getInputProps()["aria-autocomplete"]).toBe("list");
+  });
+
+  it("autocomplete=off to prevent browser autocomplete from interfering", () => {
+    const { api } = makeApi();
+    expect(api.getInputProps().autocomplete).toBe("off");
+  });
+
   // WAI-ARIA §6.6.3: combobox must expose aria-activedescendant pointing to
   // the highlighted option element so AT announce the focused item without
   // moving DOM focus out of the input.
