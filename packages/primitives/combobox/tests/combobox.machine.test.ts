@@ -132,6 +132,51 @@ describe("createComboboxMachine — INPUT_CHANGE auto-opens", () => {
 });
 
 // ---------------------------------------------------------------------------
+// allOptions / client-side filtering
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — allOptions client-side filtering", () => {
+  const fruits = [
+    { value: "apple", label: "Apple" },
+    { value: "apricot", label: "Apricot" },
+    { value: "banana", label: "Banana" },
+  ];
+
+  it("HIGHLIGHT_NEXT navigates only filtered options when inputValue is set", () => {
+    const m = make({ options: fruits });
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "ap" }); // Apple, Apricot match
+    m.send({ type: "HIGHLIGHT_OPTION", value: "apple" });
+    m.send("HIGHLIGHT_NEXT");
+    // Banana is filtered out — next after apple should be apricot
+    expect(m.getSnapshot().context.highlighted).toBe("apricot");
+  });
+
+  it("HIGHLIGHT_NEXT wraps within filtered set, not full list", () => {
+    const m = make({ options: fruits });
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "ap" }); // Apple, Apricot
+    m.send({ type: "HIGHLIGHT_OPTION", value: "apricot" });
+    m.send("HIGHLIGHT_NEXT");
+    // End of filtered set — wraps to apple (not banana)
+    expect(m.getSnapshot().context.highlighted).toBe("apple");
+  });
+
+  it("custom filterFn is applied during navigation", () => {
+    // Only match options whose value starts with the inputValue
+    const startsWithFilter = (opt: { value: string; label: string }, input: string) =>
+      opt.value.startsWith(input);
+    const m = make({ options: fruits, filterFn: startsWithFilter });
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "ap" }); // apple, apricot (value starts with "ap")
+    m.send("HIGHLIGHT_FIRST");
+    expect(m.getSnapshot().context.highlighted).toBe("apple");
+    m.send("HIGHLIGHT_NEXT");
+    expect(m.getSnapshot().context.highlighted).toBe("apricot");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // SELECT_OPTION — single mode
 // ---------------------------------------------------------------------------
 
@@ -264,6 +309,28 @@ describe("createComboboxMachine — HIGHLIGHT navigation", () => {
     const m = makeWithOpts();
     m.send("HIGHLIGHT_LAST");
     expect(m.getSnapshot().context.highlighted).toBe("c");
+  });
+
+  it("HIGHLIGHT_NEXT skips disabled options", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Apple" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "Banana", disabled: true } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "c", label: "Cherry" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("HIGHLIGHT_NEXT");
+    expect(m.getSnapshot().context.highlighted).toBe("c");
+  });
+
+  it("HIGHLIGHT_PREV skips disabled options", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Apple" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "Banana", disabled: true } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "c", label: "Cherry" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "c" });
+    m.send("HIGHLIGHT_PREV");
+    expect(m.getSnapshot().context.highlighted).toBe("a");
   });
 });
 
