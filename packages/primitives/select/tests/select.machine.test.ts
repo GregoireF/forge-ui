@@ -45,6 +45,17 @@ describe("createSelectMachine — initial state", () => {
     expect(m.getSnapshot().context.value).toEqual(["react", "vue"]);
   });
 
+  // Zag.js pattern: controlled `value` takes precedence over `defaultValue`
+  it("value prop takes precedence over defaultValue (controlled mode)", () => {
+    const m = make({ value: "vue", defaultValue: "react" });
+    expect(m.getSnapshot().context.value).toEqual(["vue"]);
+  });
+
+  it("value array takes precedence over defaultValue (controlled multi)", () => {
+    const m = make({ value: ["vue"], defaultValue: ["react", "angular"] });
+    expect(m.getSnapshot().context.value).toEqual(["vue"]);
+  });
+
   it("multiple defaults to false", () => {
     const m = make();
     expect(m.getSnapshot().context.multiple).toBe(false);

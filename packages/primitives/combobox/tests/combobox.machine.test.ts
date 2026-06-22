@@ -35,6 +35,12 @@ describe("createComboboxMachine — initial state", () => {
     expect(m.getSnapshot().context.value).toEqual(["react"]);
   });
 
+  // Zag.js pattern: controlled `value` takes precedence over `defaultValue`
+  it("value prop takes precedence over defaultValue (controlled mode)", () => {
+    const m = make({ value: "vue", defaultValue: "react" });
+    expect(m.getSnapshot().context.value).toEqual(["vue"]);
+  });
+
   it("inputValue starts empty", () => {
     const m = make();
     expect(m.getSnapshot().context.inputValue).toBe("");
