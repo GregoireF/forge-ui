@@ -137,6 +137,16 @@ describe("connectTagsInput — getInputProps", () => {
     expect(send).not.toHaveBeenCalledWith({ type: "REMOVE_LAST_TAG" });
   });
 
+  // WAI-ARIA / Zag.js gap: comma/custom delimiter is in the machine context but
+  // NOT yet wired in onKeyDown — typing "," does not commit a tag.
+  // When implemented, pressing the delimiter key should send ADD_TAG immediately.
+  it.skip("onKeyDown delimiter key sends ADD_TAG (not yet implemented in connect)", () => {
+    const { api, send } = makeApi({ delimiter: "," });
+    const e = { key: ",", preventDefault: vi.fn(), target: { value: "mytag," } as HTMLInputElement };
+    api.getInputProps().onKeyDown(e as unknown as KeyboardEvent);
+    expect(send).toHaveBeenCalledWith({ type: "ADD_TAG" });
+  });
+
   // onFocus / onBlur lifecycle events
   it("onFocus sends FOCUS", () => {
     const { api, send } = makeApi();
