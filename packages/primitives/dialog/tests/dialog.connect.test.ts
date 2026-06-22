@@ -197,6 +197,20 @@ describe("connectDialog — setContentCallbacks", () => {
     expect(machine.getSnapshot().context.contentOnEscapeKeyDown).toBe(handler);
   });
 
+  it("sets content-level onOpenAutoFocus in machine context", () => {
+    const { machine, api } = makeOpenApi();
+    const handler = (e: Event) => e.preventDefault();
+    api.setContentCallbacks({ onOpenAutoFocus: handler });
+    expect(machine.getSnapshot().context.contentOnOpenAutoFocus).toBe(handler);
+  });
+
+  it("sets content-level onCloseAutoFocus in machine context", () => {
+    const { machine, api } = makeOpenApi();
+    const handler = (e: Event) => e.preventDefault();
+    api.setContentCallbacks({ onCloseAutoFocus: handler });
+    expect(machine.getSnapshot().context.contentOnCloseAutoFocus).toBe(handler);
+  });
+
   it("clears content-level callbacks when called with empty object", () => {
     const { machine, api } = makeOpenApi();
     api.setContentCallbacks({ onEscapeKeyDown: () => {} });

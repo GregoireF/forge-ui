@@ -182,3 +182,86 @@ describe("createPopoverMachine — keyboard activity", () => {
     expect(m.getSnapshot().matches("open")).toBe(true);
   });
 });
+
+describe("createPopoverMachine — focus management (WAI-ARIA §6.2)", () => {
+  // Stub rAF synchronously so manageFocus fires before CLOSE is sent.
+  // Scope to this describe only — other tests open without triggerEl which would
+  // trigger computePosition's retry loop with a global synchronous stub.
+  beforeEach(() => {
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  // computePosition's scheduleSetup retries each rAF frame when triggerEl is
+  // null. With a synchronous rAF stub that causes infinite recursion. Fix: always
+  // provide BOTH triggerEl and contentEl so the retry guard is never true.
+  function makeElements(): {
+    trigger: HTMLButtonElement;
+    content: HTMLDivElement;
+    inside: HTMLButtonElement;
+  } {
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+    const content = document.createElement("div");
+    const inside = document.createElement("button");
+    content.appendChild(inside);
+    document.body.appendChild(content);
+    return { trigger, content, inside };
+  }
+
+  it("restores focus to previously focused element on close", () => {
+    const { trigger, content, inside } = makeElements();
+    trigger.focus();
+    const m = makeMachine();
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    expect(document.activeElement).toBe(inside);
+    m.send("CLOSE");
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("uses finalFocusEl instead of previousFocus when specified", () => {
+    const { trigger, content, inside } = makeElements();
+    const altTarget = document.createElement("button");
+    document.body.appendChild(altTarget);
+    trigger.focus();
+    const m = makeMachine({ finalFocusEl: () => altTarget });
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    inside.focus();
+    m.send("CLOSE");
+    expect(document.activeElement).toBe(altTarget);
+    trigger.remove();
+    altTarget.remove();
+    content.remove();
+  });
+
+  it("onOpenAutoFocus e.preventDefault() prevents initial focus movement", () => {
+    const { trigger, content, inside } = makeElements();
+    trigger.focus();
+    const m = makeMachine({ onOpenAutoFocus: (e: Event) => e.preventDefault() });
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    expect(document.activeElement).not.toBe(inside);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("onCloseAutoFocus e.preventDefault() prevents focus restoration", () => {
+    const { trigger, content, inside } = makeElements();
+    trigger.focus();
+    const m = makeMachine({ onCloseAutoFocus: (e: Event) => e.preventDefault() });
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    inside.focus();
+    m.send("CLOSE");
+    expect(document.activeElement).not.toBe(trigger);
+    trigger.remove();
+    content.remove();
+  });
+});

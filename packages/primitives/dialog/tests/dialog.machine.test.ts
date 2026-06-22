@@ -275,3 +275,93 @@ describe("createDialogMachine — activities (keyboard + focus)", () => {
     expect(m1.getSnapshot().matches("open")).toBe(true);
   });
 });
+
+describe("createDialogMachine — focus management (WAI-ARIA §6.2)", () => {
+  function makeContentWithButton(): { content: HTMLDivElement; inside: HTMLButtonElement } {
+    const content = document.createElement("div");
+    const inside = document.createElement("button");
+    content.appendChild(inside);
+    document.body.appendChild(content);
+    return { content, inside };
+  }
+
+  function makeTrigger(): HTMLButtonElement {
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+    return trigger;
+  }
+
+  it("restores focus to previously focused element on close", () => {
+    const trigger = makeTrigger();
+    trigger.focus();
+    const { content, inside } = makeContentWithButton();
+    const m = makeMachine();
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    // rAF stubbed to run immediately → focusFirst(content) ran
+    expect(document.activeElement).toBe(inside);
+    m.send("CLOSE");
+    // cleanup → previousFocus.focus() = trigger
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("uses finalFocusEl instead of previousFocus when specified", () => {
+    const trigger = makeTrigger();
+    const altTarget = makeTrigger();
+    trigger.focus();
+    const { content } = makeContentWithButton();
+    const m = makeMachine({ finalFocusEl: () => altTarget });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    m.send("CLOSE");
+    expect(document.activeElement).toBe(altTarget);
+    trigger.remove();
+    altTarget.remove();
+    content.remove();
+  });
+
+  it("focuses initialFocusEl instead of first focusable on open", () => {
+    const trigger = makeTrigger();
+    trigger.focus();
+    const content = document.createElement("div");
+    const btn1 = document.createElement("button");
+    const btn2 = document.createElement("button");
+    content.appendChild(btn1);
+    content.appendChild(btn2);
+    document.body.appendChild(content);
+    const m = makeMachine({ initialFocusEl: () => btn2 });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    expect(document.activeElement).toBe(btn2);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("onOpenAutoFocus e.preventDefault() prevents initial focus movement", () => {
+    const trigger = makeTrigger();
+    trigger.focus();
+    const { content, inside } = makeContentWithButton();
+    const m = makeMachine({ onOpenAutoFocus: (e: Event) => e.preventDefault() });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    expect(document.activeElement).not.toBe(inside);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("onCloseAutoFocus e.preventDefault() prevents focus restoration", () => {
+    const trigger = makeTrigger();
+    trigger.focus();
+    const { content, inside } = makeContentWithButton();
+    const m = makeMachine({ onCloseAutoFocus: (e: Event) => e.preventDefault() });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    inside.focus();
+    m.send("CLOSE");
+    expect(document.activeElement).not.toBe(trigger);
+    trigger.remove();
+    content.remove();
+  });
+});
