@@ -339,6 +339,93 @@ describe("connectSelect — onKeyDown keyboard interactions", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getOptionProps — mouse events
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — getOptionProps mouse events", () => {
+  it("onMouseMove highlights non-disabled option", () => {
+    const { api, send } = makeApi({ highlighted: null }, "open");
+    api.getOptionProps({ value: "react", disabled: false }).onMouseMove();
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+  });
+
+  it("onMouseMove on already-highlighted option does nothing", () => {
+    const { api, send } = makeApi({ highlighted: "react" }, "open");
+    api.getOptionProps({ value: "react", disabled: false }).onMouseMove();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onMouseMove on disabled option does nothing", () => {
+    const { api, send } = makeApi({ highlighted: null }, "open");
+    api.getOptionProps({ value: "angular", disabled: true }).onMouseMove();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onMouseLeave clears highlight (value=null)", () => {
+    const { api, send } = makeApi({ highlighted: "react" }, "open");
+    api.getOptionProps({ value: "react", disabled: false }).onMouseLeave();
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPositionerProps
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — getPositionerProps", () => {
+  it("data-forge-part=positioner", () => {
+    const { api } = makeApi();
+    expect(api.getPositionerProps()["data-forge-part"]).toBe("positioner");
+  });
+
+  it("style.position matches positioning strategy", () => {
+    const { api } = makeApi({ positioning: { strategy: "fixed", placement: "bottom" } as SelectContext["positioning"] });
+    expect(api.getPositionerProps().style.position).toBe("fixed");
+  });
+
+  it("style.top reflects y coordinate", () => {
+    const { api } = makeApi({ y: 42 });
+    expect(api.getPositionerProps().style.top).toBe("42px");
+  });
+
+  it("style.left reflects x coordinate", () => {
+    const { api } = makeApi({ x: 100 });
+    expect(api.getPositionerProps().style.left).toBe("100px");
+  });
+
+  it("pointerEvents=none when not yet positioned", () => {
+    const { api } = makeApi({ positioned: false });
+    expect(api.getPositionerProps().style.pointerEvents).toBe("none");
+  });
+
+  it("no pointerEvents restriction when positioned", () => {
+    const { api } = makeApi({ positioned: true });
+    expect(api.getPositionerProps().style.pointerEvents).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getIndicatorProps
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — getIndicatorProps", () => {
+  it("aria-hidden=true (decorative element)", () => {
+    const { api } = makeApi();
+    expect(api.getIndicatorProps()["aria-hidden"]).toBe(true);
+  });
+
+  it("data-state=closed when closed", () => {
+    const { api } = makeApi({}, "closed");
+    expect(api.getIndicatorProps()["data-state"]).toBe("closed");
+  });
+
+  it("data-state=open when open", () => {
+    const { api } = makeApi({}, "open");
+    expect(api.getIndicatorProps()["data-state"]).toBe("open");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getLabelProps
 // ---------------------------------------------------------------------------
 
