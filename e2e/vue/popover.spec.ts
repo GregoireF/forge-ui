@@ -71,6 +71,12 @@ test.describe("Popover — Vue (forge-ui)", () => {
     await expect(content(page)).toHaveAttribute("id", controlsId!);
   });
 
+  // WAI-ARIA §3.10: popover content must have role=dialog
+  test("content has role=dialog", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toHaveAttribute("role", "dialog");
+  });
+
   test("content has data-state=open when open", async ({ page }) => {
     await trigger(page).click();
     await expect(content(page)).toHaveAttribute("data-state", "open");
