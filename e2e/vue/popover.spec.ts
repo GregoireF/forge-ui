@@ -71,4 +71,21 @@ test.describe("Popover — Vue (forge-ui)", () => {
     });
     expect(isBodyChild).toBe(true);
   });
+
+  // WAI-ARIA §3.10: focus returns to trigger after closing
+  test("focus returns to trigger after closing with Escape", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(content(page)).not.toBeVisible();
+    await expect(trigger(page)).toBeFocused();
+  });
+
+  test("focus returns to trigger after closing with × button", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toBeVisible();
+    await page.locator('[data-forge-scope="popover"][data-forge-part="close"]').first().click();
+    await expect(content(page)).not.toBeVisible();
+    await expect(trigger(page)).toBeFocused();
+  });
 });
