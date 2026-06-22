@@ -55,10 +55,10 @@ describe("connectAlertDialog — isOpen", () => {
 // ---------------------------------------------------------------------------
 
 describe("connectAlertDialog — getTriggerProps interactions", () => {
-  it("onClick sends OPEN", () => {
+  it("onClick sends TOGGLE (dialog connect uses TOGGLE, not OPEN)", () => {
     const { api, send } = makeApi({}, "closed");
     api.getTriggerProps().onClick();
-    expect(send).toHaveBeenCalledWith("OPEN");
+    expect(send).toHaveBeenCalledWith("TOGGLE");
   });
 
   it("data-state=open when open", () => {
