@@ -50,6 +50,12 @@ describe("connectField — getLabelProps", () => {
     expect(props.id).toBe("name-label");
     expect(props.htmlFor).toBe("name");
   });
+
+  it("has data-forge-scope=field and data-forge-part=label", () => {
+    const props = connectField(makeCtx()).getLabelProps();
+    expect(props["data-forge-scope"]).toBe("field");
+    expect(props["data-forge-part"]).toBe("label");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -121,6 +127,12 @@ describe("connectField — getDescriptionProps", () => {
   it("returns the description id", () => {
     expect(connectField(makeCtx()).getDescriptionProps().id).toBe("f-description");
   });
+
+  it("has data-forge-scope=field and data-forge-part=description", () => {
+    const props = connectField(makeCtx()).getDescriptionProps();
+    expect(props["data-forge-scope"]).toBe("field");
+    expect(props["data-forge-part"]).toBe("description");
+  });
 });
 
 describe("connectField — getErrorProps", () => {
@@ -129,6 +141,14 @@ describe("connectField — getErrorProps", () => {
     expect(props.id).toBe("f-error");
     expect(props.role).toBe("alert");
     expect(props["aria-live"]).toBe("assertive");
+  });
+
+  // WAI-ARIA §3.5: role=alert implies aria-live=assertive by default, but
+  // we set it explicitly so the polyfill behaviour is clear.
+  it("has data-forge-scope=field and data-forge-part=error", () => {
+    const props = connectField(makeCtx()).getErrorProps();
+    expect(props["data-forge-scope"]).toBe("field");
+    expect(props["data-forge-part"]).toBe("error");
   });
 });
 
