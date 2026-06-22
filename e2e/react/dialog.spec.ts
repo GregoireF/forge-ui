@@ -104,6 +104,14 @@ test.describe("Dialog — React (forge-ui)", () => {
   // Focus management
   // ---------------------------------------------------------------------------
 
+  // WAI-ARIA §3.2: focus MUST move inside the dialog on open (before user presses Tab)
+  test("focus moves inside dialog on open", async ({ page }) => {
+    await page.getByRole("button", { name: "Open dialog" }).click();
+    const dialog = page.getByRole("dialog");
+    const focusedInsideDialog = await dialog.evaluate((el) => el.contains(document.activeElement));
+    expect(focusedInsideDialog).toBe(true);
+  });
+
   test("focus returns to trigger after close via Escape", async ({ page }) => {
     const trigger = page.getByRole("button", { name: "Open dialog" });
     await trigger.click();
