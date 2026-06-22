@@ -69,4 +69,10 @@ test.describe("Field — Vue (forge-ui)", () => {
     await input(page).blur();
     await expect(input(page)).toHaveAttribute("aria-invalid", "true");
   });
+
+  test("typing valid email makes field valid", async ({ page }) => {
+    await input(page).fill("valid@example.com");
+    await input(page).blur();
+    await expect(input(page)).not.toHaveAttribute("aria-invalid", "true");
+  });
 });
