@@ -44,6 +44,7 @@ test.describe("Collapsible — Nuxt (forge-ui)", () => {
   test("trigger has aria-controls pointing to content", async ({ page }) => {
     const controls = await trigger(page).getAttribute("aria-controls");
     expect(controls).toBeTruthy();
+    await expect(content(page)).toHaveAttribute("id", controls!);
   });
 
   test("trigger has data-state=closed when collapsed", async ({ page }) => {

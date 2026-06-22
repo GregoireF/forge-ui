@@ -44,6 +44,8 @@ test.describe("Collapsible — Vue (forge-ui)", () => {
   test("trigger has aria-controls pointing to content", async ({ page }) => {
     const controls = await trigger(page).getAttribute("aria-controls");
     expect(controls).toBeTruthy();
+    // Verify bidirectional: the id on the content matches the controls value.
+    await expect(content(page)).toHaveAttribute("id", controls!);
   });
 
   test("trigger has data-state=closed when collapsed", async ({ page }) => {
