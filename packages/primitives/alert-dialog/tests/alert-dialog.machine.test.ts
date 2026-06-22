@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { clearRegistry } from "@forge-ui/core";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createAlertDialogMachine } from "../src/alert-dialog.machine.js";
 
 let active: ReturnType<typeof createAlertDialogMachine>[] = [];
@@ -10,9 +11,16 @@ function make(opts: Partial<Parameters<typeof createAlertDialogMachine>[0]> = {}
   return m;
 }
 
+beforeEach(() => {
+  vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+  vi.stubGlobal("cancelAnimationFrame", () => {});
+});
+
 afterEach(() => {
   for (const m of active) m.stop();
   active = [];
+  clearRegistry();
+  vi.unstubAllGlobals();
 });
 
 // ---------------------------------------------------------------------------
@@ -146,5 +154,65 @@ describe("createAlertDialogMachine — onOpenChange", () => {
     const cb = vi.fn();
     make({ defaultOpen: true, onOpenChange: cb });
     expect(cb).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Focus management — WAI-ARIA alert dialog must manage focus identically to
+// dialog (delegated to createDialogMachine under the hood)
+// ---------------------------------------------------------------------------
+
+describe("createAlertDialogMachine — focus management (WAI-ARIA §6.2)", () => {
+  function makeElements(): {
+    trigger: HTMLButtonElement;
+    content: HTMLDivElement;
+    inside: HTMLButtonElement;
+  } {
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+    const content = document.createElement("div");
+    const inside = document.createElement("button");
+    content.appendChild(inside);
+    document.body.appendChild(content);
+    return { trigger, content, inside };
+  }
+
+  it("restores focus to previously focused element on close", () => {
+    const { trigger, content, inside } = makeElements();
+    trigger.focus();
+    const m = make();
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    expect(document.activeElement).toBe(inside);
+    m.send("CLOSE");
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("moves focus into content on open via initialFocusEl", () => {
+    const { trigger, content } = makeElements();
+    const btn2 = document.createElement("button");
+    content.appendChild(btn2);
+    trigger.focus();
+    const m = make({ initialFocusEl: () => btn2 });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    expect(document.activeElement).toBe(btn2);
+    trigger.remove();
+    content.remove();
+  });
+
+  it("onCloseAutoFocus e.preventDefault() prevents focus restoration", () => {
+    const { trigger, content, inside } = makeElements();
+    trigger.focus();
+    const m = make({ onCloseAutoFocus: (e: Event) => e.preventDefault() });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    inside.focus();
+    m.send("CLOSE");
+    expect(document.activeElement).not.toBe(trigger);
+    trigger.remove();
+    content.remove();
   });
 });
