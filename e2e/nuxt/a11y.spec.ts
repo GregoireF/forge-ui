@@ -85,4 +85,13 @@ test.describe("Accessibility (axe-core) — Nuxt playground", () => {
       .analyze();
     expect(results.violations).toEqual([]);
   });
+
+  test("HoverCard open: no a11y violations", async ({ page }) => {
+    await page.locator('[data-forge-scope="hover-card"][data-forge-part="trigger"]').first().hover();
+    await page.locator('[data-forge-scope="hover-card"][data-forge-part="content"]').first().waitFor({ state: "visible", timeout: 2000 });
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
 });
