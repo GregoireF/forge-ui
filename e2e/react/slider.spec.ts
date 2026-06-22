@@ -115,4 +115,11 @@ test.describe("Slider — React (forge-ui)", () => {
   test("slider thumb has data-forge-scope=slider", async ({ page }) => {
     await expect(thumb(page)).toHaveAttribute("data-forge-scope", "slider");
   });
+
+  // WAI-ARIA §3.14: role=slider MUST have an accessible name.
+  // The connect intentionally omits aria-label; consumers must pass it via props.
+  test("slider thumb has an accessible name via aria-label", async ({ page }) => {
+    const label = await thumb(page).getAttribute("aria-label");
+    expect(label).toBeTruthy();
+  });
 });
