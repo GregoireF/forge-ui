@@ -111,6 +111,19 @@ describe("connectTabs — getTriggerProps", () => {
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "tab2" });
   });
 
+  // WAI-ARIA: a disabled tab trigger must expose aria-disabled so AT announces
+  // the tab cannot be activated, while remaining in the focus order.
+  it("aria-disabled=true when tab is globally disabled", () => {
+    const { api } = makeApi({ disabled: true });
+    expect(api.getTriggerProps("tab2")["aria-disabled"]).toBe(true);
+  });
+
+  it("aria-disabled absent when tab is enabled", () => {
+    const { api } = makeApi({ disabled: false });
+    const props = api.getTriggerProps("tab2") as Record<string, unknown>;
+    expect(props["aria-disabled"]).toBeUndefined();
+  });
+
   it("onFocus sends SELECT_TAB in automatic mode (WAI-ARIA §3.26 auto-activation)", () => {
     const { api, send } = makeApi({ activationMode: "automatic" });
     api.getTriggerProps("tab2").onFocus();
