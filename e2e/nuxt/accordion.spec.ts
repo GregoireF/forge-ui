@@ -21,9 +21,19 @@ test.describe("Accordion — Nuxt (forge-ui)", () => {
     await expect(contentWhy(page)).not.toBeVisible();
   });
 
+  test("both triggers are visible on load", async ({ page }) => {
+    await expect(triggerWhat(page)).toBeVisible();
+    await expect(triggerWhy(page)).toBeVisible();
+  });
+
   test("clicking first trigger opens first panel", async ({ page }) => {
     await triggerWhat(page).click();
     await expect(contentWhat(page)).toBeVisible();
+  });
+
+  test("clicking second trigger opens second panel", async ({ page }) => {
+    await triggerWhy(page).click();
+    await expect(contentWhy(page)).toBeVisible();
   });
 
   test("in single mode, opening second closes first", async ({ page }) => {
@@ -58,6 +68,11 @@ test.describe("Accordion — Nuxt (forge-ui)", () => {
     await expect(triggerWhat(page)).toHaveAttribute("data-state", "open");
   });
 
+  test("content has data-state=open when visible", async ({ page }) => {
+    await triggerWhat(page).click();
+    await expect(contentWhat(page)).toHaveAttribute("data-state", "open");
+  });
+
   // ---------------------------------------------------------------------------
   // Keyboard navigation — WAI-ARIA §3.1
   // ---------------------------------------------------------------------------
@@ -86,9 +101,22 @@ test.describe("Accordion — Nuxt (forge-ui)", () => {
     await expect(triggerWhy(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.1: ArrowDown wraps circularly from last to first
+  test("ArrowDown wraps from last trigger to first (WAI-ARIA: circular)", async ({ page }) => {
+    await triggerWhy(page).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(triggerWhat(page)).toBeFocused();
+  });
+
   test("Enter key toggles the focused accordion item", async ({ page }) => {
     await triggerWhat(page).focus();
     await page.keyboard.press("Enter");
+    await expect(contentWhat(page)).toBeVisible();
+  });
+
+  test("Space key toggles the focused accordion item", async ({ page }) => {
+    await triggerWhat(page).focus();
+    await page.keyboard.press("Space");
     await expect(contentWhat(page)).toBeVisible();
   });
 });

@@ -16,8 +16,16 @@ test.describe("Switch — Nuxt (forge-ui)", () => {
   const invalidSwitch = (page: import("@playwright/test").Page) =>
     page.getByRole("switch").nth(2);
 
+  test("switches exist on load", async ({ page }) => {
+    await expect(page.getByRole("switch")).toHaveCount(3);
+  });
+
   test("first switch starts unchecked", async ({ page }) => {
     await expect(firstSwitch(page)).toHaveAttribute("aria-checked", "false");
+  });
+
+  test("second switch starts checked and disabled", async ({ page }) => {
+    await expect(disabledSwitch(page)).toHaveAttribute("aria-checked", "true");
   });
 
   test("clicking first switch turns it on", async ({ page }) => {
@@ -49,5 +57,18 @@ test.describe("Switch — Nuxt (forge-ui)", () => {
 
   test("switch has role=switch", async ({ page }) => {
     await expect(firstSwitch(page)).toHaveAttribute("role", "switch");
+  });
+
+  test("switch has data-forge-scope=switch", async ({ page }) => {
+    await expect(firstSwitch(page)).toHaveAttribute("data-forge-scope", "switch");
+  });
+
+  test("switch has data-state=off initially", async ({ page }) => {
+    await expect(firstSwitch(page)).toHaveAttribute("data-state", "off");
+  });
+
+  test("switch has data-state=on after toggle", async ({ page }) => {
+    await firstSwitch(page).click();
+    await expect(firstSwitch(page)).toHaveAttribute("data-state", "on");
   });
 });
