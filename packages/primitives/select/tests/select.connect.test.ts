@@ -314,6 +314,28 @@ describe("connectSelect — onKeyDown keyboard interactions", () => {
     api.getTriggerProps().onKeyDown(e);
     expect(send).not.toHaveBeenCalled();
   });
+
+  // Buffer accumulation: "r" then "e" within 500ms → buffer="re" → matches React
+  it("successive keys accumulate buffer — 'r' then 'e' matches 'react'", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ options: OPTIONS }, "open");
+    fire(api, "r");
+    vi.advanceTimersByTime(100); // within window — buffer still "r"
+    fire(api, "e"); // buffer = "re" → starts with "re": React
+    expect(send).toHaveBeenLastCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+    vi.useRealTimers();
+  });
+
+  // After 500ms the buffer resets, so a new press starts a fresh match
+  it("buffer clears after 500ms — second 'r' matches from scratch", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ options: OPTIONS }, "open");
+    fire(api, "r"); // first press → "react"
+    vi.advanceTimersByTime(600); // timer fires → buffer cleared
+    fire(api, "r"); // fresh buffer → "react" again (first matching)
+    expect(send).toHaveBeenLastCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+    vi.useRealTimers();
+  });
 });
 
 // ---------------------------------------------------------------------------
