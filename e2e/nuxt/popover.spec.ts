@@ -61,6 +61,16 @@ test.describe("Popover — Nuxt (forge-ui)", () => {
     expect(val).toBeTruthy();
   });
 
+  // WAI-ARIA §3.10: trigger aria-controls must reference the content element id
+  // so AT can navigate from the trigger to the open dialog.
+  test("trigger aria-controls points to content id", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toBeVisible();
+    const controlsId = await trigger(page).getAttribute("aria-controls");
+    expect(controlsId).toBeTruthy();
+    await expect(content(page)).toHaveAttribute("id", controlsId!);
+  });
+
   test("content has data-state=open when open", async ({ page }) => {
     await trigger(page).click();
     await expect(content(page)).toHaveAttribute("data-state", "open");

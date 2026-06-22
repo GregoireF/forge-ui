@@ -930,7 +930,7 @@ function handleDeleteConfirm() {
           <Slider.Track data-testid="slider-track" style="position:relative;height:4px;background:#e2e8f0;border-radius:2px;flex-grow:1">
             <Slider.Range style="position:absolute;height:100%;background:#1e293b;border-radius:2px" />
           </Slider.Track>
-          <Slider.Thumb data-testid="slider-thumb" style="display:block;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #1e293b;box-shadow:0 1px 4px rgb(0 0 0 / 0.15);cursor:grab" />
+          <Slider.Thumb aria-label="Valeur" data-testid="slider-thumb" style="display:block;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #1e293b;box-shadow:0 1px 4px rgb(0 0 0 / 0.15);cursor:grab" />
         </Slider.Root>
       </div>
     </section>

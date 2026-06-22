@@ -1220,7 +1220,7 @@ function SliderDemo() {
         <Slider.Track data-testid="slider-track" style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
           <Slider.Range style={{ position: "absolute", height: "100%", background: "#1e293b", borderRadius: "2px" }} />
         </Slider.Track>
-        <Slider.Thumb data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
+        <Slider.Thumb aria-label="Valeur" data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
       </Slider.Root>
     </div>
   );
