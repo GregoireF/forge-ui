@@ -53,6 +53,14 @@ test.describe("RadioGroup — Nuxt (forge-ui)", () => {
     await expect(radioVue(page)).toHaveAttribute("aria-checked", "true");
   });
 
+  // WAI-ARIA §3.18: ArrowDown selects simultaneously (unlike Tab which only focuses)
+  test("ArrowDown also selects the focused radio", async ({ page }) => {
+    await radioReact(page).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(radioVue(page)).toHaveAttribute("aria-checked", "true");
+    await expect(radioReact(page)).toHaveAttribute("aria-checked", "false");
+  });
+
   test("ArrowDown from last radio wraps to first (circular)", async ({ page }) => {
     await radioAngular(page).focus();
     await page.keyboard.press("ArrowDown");

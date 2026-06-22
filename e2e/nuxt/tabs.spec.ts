@@ -79,6 +79,14 @@ test.describe("Tabs — Nuxt (forge-ui)", () => {
     await expect(triggerNuxt(page)).toBeFocused();
   });
 
+  // WAI-ARIA §3.26: automatic mode activates tab on ArrowRight (focus + select simultaneously)
+  test("ArrowRight activates the focused tab (automatic mode)", async ({ page }) => {
+    await triggerReact(page).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(triggerVue(page)).toHaveAttribute("aria-selected", "true");
+    await expect(panelVue(page)).toBeVisible();
+  });
+
   test("triggers have role=tab", async ({ page }) => {
     await expect(triggerReact(page)).toHaveAttribute("role", "tab");
   });
