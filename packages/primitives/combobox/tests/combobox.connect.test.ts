@@ -282,6 +282,19 @@ describe("connectCombobox — getOptionProps", () => {
     const { api } = makeApi({ highlighted: "react" });
     expect(api.getOptionProps({ value: "react" })["data-highlighted"]).toBe("");
   });
+
+  // WAI-ARIA §3.5: disabled options must expose aria-disabled so AT announces
+  // that the option cannot be selected (instead of just ignoring the click).
+  it("aria-disabled=true when option is disabled", () => {
+    const { api } = makeApi();
+    expect(api.getOptionProps({ value: "react", disabled: true })["aria-disabled"]).toBe(true);
+  });
+
+  it("aria-disabled absent when option is enabled", () => {
+    const { api } = makeApi();
+    const props = api.getOptionProps({ value: "react" }) as Record<string, unknown>;
+    expect(props["aria-disabled"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------
