@@ -171,6 +171,13 @@ describe("connectCombobox — getInputProps", () => {
     expect(api.getInputProps()["aria-invalid"]).toBe(true);
   });
 
+  // WAI-ARIA: aria-readonly informs AT the value cannot be changed (even though
+  // the user can still focus and copy it — unlike aria-disabled).
+  it("aria-readonly=true when readOnly", () => {
+    const { api } = makeApi({ readOnly: true });
+    expect(api.getInputProps()["aria-readonly"]).toBe(true);
+  });
+
   it("disabled when context.disabled", () => {
     const { api } = makeApi({ disabled: true });
     expect(api.getInputProps().disabled).toBe(true);
