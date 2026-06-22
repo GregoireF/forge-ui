@@ -53,4 +53,13 @@ test.describe("TagsInput — Vue (forge-ui)", () => {
     await page.keyboard.press("Backspace");
     await expect(tags(page)).toHaveCount(countBefore - 1);
   });
+
+  // onBlur with pending text commits the tag (connect sends ADD_TAG before BLUR)
+  test("blurring input with text commits the pending tag", async ({ page }) => {
+    const countBefore = await tags(page).count();
+    await tagInput(page).fill("SvelteKit");
+    await page.mouse.click(5, 5); // blur away
+    await expect(tags(page)).toHaveCount(countBefore + 1);
+    await expect(page.locator('[data-forge-scope="tags-input"]').getByText("SvelteKit")).toBeVisible();
+  });
 });
