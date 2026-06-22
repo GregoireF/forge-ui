@@ -109,6 +109,14 @@ describe("connectTagsInput — getRootProps", () => {
     const { api } = makeApi({ readOnly: false });
     expect(api.getRootProps()["data-readonly"]).toBeUndefined();
   });
+
+  it("data-invalid when invalid", () => {
+    expect(makeApi({ invalid: true }).api.getRootProps()["data-invalid"]).toBe("");
+  });
+
+  it("no data-invalid when not invalid", () => {
+    expect(makeApi({ invalid: false }).api.getRootProps()["data-invalid"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -134,6 +142,18 @@ describe("connectTagsInput — getInputProps", () => {
   it("readOnly=false does NOT set readOnly attribute", () => {
     const { api } = makeApi({ readOnly: false });
     expect((api.getInputProps() as Record<string, unknown>).readOnly).toBeUndefined();
+  });
+
+  it("aria-invalid=true when invalid", () => {
+    expect(makeApi({ invalid: true }).api.getInputProps()["aria-invalid"]).toBe(true);
+  });
+
+  it("aria-invalid absent when not invalid", () => {
+    expect((makeApi({ invalid: false }).api.getInputProps() as Record<string, unknown>)["aria-invalid"]).toBeUndefined();
+  });
+
+  it("aria-required=true when required", () => {
+    expect(makeApi({ required: true }).api.getInputProps()["aria-required"]).toBe(true);
   });
 
   it("onKeyDown Enter sends ADD_TAG", () => {
