@@ -175,6 +175,24 @@ describe("connectCombobox — getInputProps", () => {
     const { api } = makeApi({ disabled: true });
     expect(api.getInputProps().disabled).toBe(true);
   });
+
+  // WAI-ARIA §6.6.3: combobox must expose aria-activedescendant pointing to
+  // the highlighted option element so AT announce the focused item without
+  // moving DOM focus out of the input.
+  it("aria-activedescendant is undefined when nothing highlighted", () => {
+    const { api } = makeApi({ highlighted: null }, "open");
+    expect(api.getInputProps()["aria-activedescendant"]).toBeUndefined();
+  });
+
+  it("aria-activedescendant points to highlighted option id", () => {
+    const { api } = makeApi({ highlighted: "react", contentId: "my-list" }, "open");
+    expect(api.getInputProps()["aria-activedescendant"]).toBe("my-list-option-react");
+  });
+
+  it("aria-activedescendant uses the option value to build a stable id", () => {
+    const { api } = makeApi({ highlighted: "vue" }, "open");
+    expect(api.getInputProps()["aria-activedescendant"]).toBe("test-combobox-content-option-vue");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -211,6 +229,13 @@ describe("connectCombobox — getOptionProps", () => {
   it("role=option", () => {
     const { api } = makeApi();
     expect(api.getOptionProps({ value: "react" }).role).toBe("option");
+  });
+
+  // The option id must match the pattern used by aria-activedescendant in
+  // getInputProps so assistive technologies can resolve the reference.
+  it("id is contentId-option-value (matches aria-activedescendant target)", () => {
+    const { api } = makeApi({ contentId: "cb-list" });
+    expect(api.getOptionProps({ value: "react" }).id).toBe("cb-list-option-react");
   });
 
   it("aria-selected=true when value is selected", () => {

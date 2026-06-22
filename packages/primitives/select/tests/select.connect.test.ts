@@ -111,6 +111,24 @@ describe("connectSelect — getTriggerProps", () => {
     expect(api.getTriggerProps()["aria-controls"]).toBe("my-listbox");
   });
 
+  // WAI-ARIA §6.8.1: when open and an option is highlighted, the trigger
+  // must expose aria-activedescendant pointing to that option's id so AT
+  // can announce the focused item without moving DOM focus.
+  it("aria-activedescendant is undefined when closed (never exposed while closed)", () => {
+    const { api } = makeApi({ highlighted: "react" }, "closed");
+    expect(api.getTriggerProps()["aria-activedescendant"]).toBeUndefined();
+  });
+
+  it("aria-activedescendant is undefined when open but nothing highlighted", () => {
+    const { api } = makeApi({ highlighted: null }, "open");
+    expect(api.getTriggerProps()["aria-activedescendant"]).toBeUndefined();
+  });
+
+  it("aria-activedescendant points to highlighted option id when open", () => {
+    const { api } = makeApi({ id: "my-sel", highlighted: "react" }, "open");
+    expect(api.getTriggerProps()["aria-activedescendant"]).toBe("my-sel-opt-react");
+  });
+
   it("data-state=closed when closed", () => {
     const { api } = makeApi({}, "closed");
     expect(api.getTriggerProps()["data-state"]).toBe("closed");
@@ -168,6 +186,13 @@ describe("connectSelect — getOptionProps", () => {
   it("role=option", () => {
     const { api } = makeApi();
     expect(api.getOptionProps({ value: "react", disabled: false }).role).toBe("option");
+  });
+
+  // The option id must match the pattern expected by aria-activedescendant so
+  // AT can resolve the reference from the trigger to the highlighted option.
+  it("id is selectId-opt-value (matches aria-activedescendant pattern)", () => {
+    const { api } = makeApi({ id: "my-sel" });
+    expect(api.getOptionProps({ value: "react", disabled: false }).id).toBe("my-sel-opt-react");
   });
 
   it("aria-selected=true when value is selected", () => {
