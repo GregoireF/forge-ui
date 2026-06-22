@@ -358,6 +358,122 @@ describe("connectCombobox — onKeydown keyboard interactions", () => {
 // value / valueLabel
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// getPositionerProps
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getPositionerProps", () => {
+  it("data-forge-part=positioner", () => {
+    const { api } = makeApi();
+    expect(api.getPositionerProps()["data-forge-part"]).toBe("positioner");
+  });
+
+  it("style.top reflects y coordinate", () => {
+    const { api } = makeApi({ y: 88 });
+    expect(api.getPositionerProps().style.top).toBe("88px");
+  });
+
+  it("style.left reflects x coordinate", () => {
+    const { api } = makeApi({ x: 44 });
+    expect(api.getPositionerProps().style.left).toBe("44px");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getTriggerProps (toggle button)
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getTriggerProps", () => {
+  it("tabIndex=-1 (not in tab order)", () => {
+    const { api } = makeApi();
+    expect(api.getTriggerProps().tabIndex).toBe(-1);
+  });
+
+  it("aria-label=Open when closed", () => {
+    const { api } = makeApi({}, "closed");
+    expect(api.getTriggerProps()["aria-label"]).toBe("Open");
+  });
+
+  it("aria-label=Close when open", () => {
+    const { api } = makeApi({}, "open");
+    expect(api.getTriggerProps()["aria-label"]).toBe("Close");
+  });
+
+  it("onClick when closed sends OPEN", () => {
+    const { api, send } = makeApi({}, "closed");
+    api.getTriggerProps().onClick();
+    expect(send).toHaveBeenCalledWith("OPEN");
+  });
+
+  it("onClick when open sends CLOSE", () => {
+    const { api, send } = makeApi({}, "open");
+    api.getTriggerProps().onClick();
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("disabled: onClick does nothing", () => {
+    const { api, send } = makeApi({ disabled: true });
+    api.getTriggerProps().onClick();
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getOptionProps — mouse events
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getOptionProps mouse events", () => {
+  it("onMousemove highlights non-disabled, non-highlighted option", () => {
+    const { api, send } = makeApi({ highlighted: null }, "open");
+    api.getOptionProps({ value: "react" }).onMousemove();
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+  });
+
+  it("onMousemove on already-highlighted option does nothing", () => {
+    const { api, send } = makeApi({ highlighted: "react" }, "open");
+    api.getOptionProps({ value: "react" }).onMousemove();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onMousemove on disabled option does nothing", () => {
+    const { api, send } = makeApi({ highlighted: null }, "open");
+    api.getOptionProps({ value: "react", disabled: true }).onMousemove();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onMouseleave clears highlight (value=null)", () => {
+    const { api, send } = makeApi({ highlighted: "react" }, "open");
+    api.getOptionProps({ value: "react" }).onMouseleave();
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getCreateOptionProps
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getCreateOptionProps", () => {
+  it("role=option", () => {
+    const { api } = makeApi();
+    expect(api.getCreateOptionProps().role).toBe("option");
+  });
+
+  it("aria-selected=false (never pre-selected)", () => {
+    const { api } = makeApi();
+    expect(api.getCreateOptionProps()["aria-selected"]).toBe(false);
+  });
+
+  it("onClick sends CREATE_OPTION", () => {
+    const { api, send } = makeApi();
+    api.getCreateOptionProps().onClick();
+    expect(send).toHaveBeenCalledWith({ type: "CREATE_OPTION" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// value and valueLabel
+// ---------------------------------------------------------------------------
+
 describe("connectCombobox — value and valueLabel", () => {
   it("value is empty array when nothing selected", () => {
     const { api } = makeApi();
