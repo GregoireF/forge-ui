@@ -51,6 +51,28 @@ describe("connectAlertDialog — isOpen", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getTriggerProps — interaction (delegated to dialog connect)
+// ---------------------------------------------------------------------------
+
+describe("connectAlertDialog — getTriggerProps interactions", () => {
+  it("onClick sends OPEN", () => {
+    const { api, send } = makeApi({}, "closed");
+    api.getTriggerProps().onClick();
+    expect(send).toHaveBeenCalledWith("OPEN");
+  });
+
+  it("data-state=open when open", () => {
+    const { api } = makeApi({}, "open");
+    expect(api.getTriggerProps()["data-state"]).toBe("open");
+  });
+
+  it("data-state=closed when closed", () => {
+    const { api } = makeApi({}, "closed");
+    expect(api.getTriggerProps()["data-state"]).toBe("closed");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // scope — ALL parts must be "alert-dialog"
 // ---------------------------------------------------------------------------
 
