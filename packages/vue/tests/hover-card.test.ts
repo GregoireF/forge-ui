@@ -19,6 +19,20 @@ import { useHoverCard } from "../src/components/hover-card/use-hover-card.js";
 // (via Vue's hyphenate) instead of 'mouseenter', so mouse events would not fire.
 // ---------------------------------------------------------------------------
 describe("useHoverCard (Vue)", () => {
+  it("content is absent by default", () => {
+    const Fixture = defineComponent({
+      setup: () => useHoverCard({ id: "test-hc", openDelay: 0 }),
+      template: `
+        <div>
+          <a v-bind="getTriggerProps()" data-testid="trigger" href="#">Hover</a>
+          <div v-if="isOpen" v-bind="getContentProps()" data-testid="content">Card</div>
+        </div>
+      `,
+    });
+    render(Fixture);
+    expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+  });
+
   it("trigger has data-state=closed when closed", () => {
     const Fixture = defineComponent({
       setup: () => useHoverCard({ id: "test-hc", openDelay: 0, closeDelay: 0 }),
@@ -150,6 +164,40 @@ describe("HoverCard compound (Vue)", () => {
       await waitFor(() => expect(screen.getByTestId("content")).toBeInTheDocument());
     });
 
+    it("trigger has data-state=open when open", async () => {
+      const Fixture = defineComponent({
+        components: { HoverCardRoot, HoverCardTrigger, HoverCardContent },
+        template: `
+          <HoverCardRoot id="ds-open" :openDelay="0" :closeDelay="0">
+            <HoverCardTrigger data-testid="trigger">Hover me</HoverCardTrigger>
+            <HoverCardContent data-testid="content">Card</HoverCardContent>
+          </HoverCardRoot>
+        `,
+      });
+      render(Fixture);
+      await user.hover(screen.getByTestId("trigger"));
+      await waitFor(() =>
+        expect(screen.getByTestId("trigger")).toHaveAttribute("data-state", "open"),
+      );
+    });
+
+    it("trigger has aria-expanded=true when open", async () => {
+      const Fixture = defineComponent({
+        components: { HoverCardRoot, HoverCardTrigger, HoverCardContent },
+        template: `
+          <HoverCardRoot id="aria-open" :openDelay="0" :closeDelay="0">
+            <HoverCardTrigger data-testid="trigger">Hover me</HoverCardTrigger>
+            <HoverCardContent data-testid="content">Card</HoverCardContent>
+          </HoverCardRoot>
+        `,
+      });
+      render(Fixture);
+      await user.hover(screen.getByTestId("trigger"));
+      await waitFor(() =>
+        expect(screen.getByTestId("trigger")).toHaveAttribute("aria-expanded", "true"),
+      );
+    });
+
     it("closes on unhover", async () => {
       const Fixture = defineComponent({
         components: { HoverCardRoot, HoverCardTrigger, HoverCardContent },
@@ -201,13 +249,30 @@ describe("HoverCard compound (Vue)", () => {
       await waitFor(() => expect(updates).toContain(false));
     });
 
-    it("onOpenChange callback fires on open/close", async () => {
+    it("calls onOpenChange(true) on open", async () => {
       const onOpenChange = vi.fn();
       const Fixture = defineComponent({
         components: { HoverCardRoot, HoverCardTrigger, HoverCardContent },
         setup: () => ({ onOpenChange }),
         template: `
-          <HoverCardRoot id="callback" :openDelay="0" :closeDelay="0" :onOpenChange="onOpenChange">
+          <HoverCardRoot id="cb-open" :openDelay="0" :closeDelay="0" :onOpenChange="onOpenChange">
+            <HoverCardTrigger data-testid="trigger">Hover</HoverCardTrigger>
+            <HoverCardContent>Card</HoverCardContent>
+          </HoverCardRoot>
+        `,
+      });
+      render(Fixture);
+      await user.hover(screen.getByTestId("trigger"));
+      await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(true));
+    });
+
+    it("calls onOpenChange(false) on close", async () => {
+      const onOpenChange = vi.fn();
+      const Fixture = defineComponent({
+        components: { HoverCardRoot, HoverCardTrigger, HoverCardContent },
+        setup: () => ({ onOpenChange }),
+        template: `
+          <HoverCardRoot id="cb-close" :openDelay="0" :closeDelay="0" :onOpenChange="onOpenChange">
             <HoverCardTrigger data-testid="trigger">Hover</HoverCardTrigger>
             <HoverCardContent>Card</HoverCardContent>
           </HoverCardRoot>
@@ -219,6 +284,28 @@ describe("HoverCard compound (Vue)", () => {
       onOpenChange.mockClear();
       await user.unhover(screen.getByTestId("trigger"));
       await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    });
+  });
+
+  describe("stay-open behavior", () => {
+    it("stays open when hovering over Content", async () => {
+      const Fixture = defineComponent({
+        components: { HoverCardRoot, HoverCardTrigger, HoverCardContent },
+        template: `
+          <HoverCardRoot id="stay-open" :openDelay="0" :closeDelay="200">
+            <HoverCardTrigger data-testid="trigger">Hover me</HoverCardTrigger>
+            <HoverCardContent :forceMount="true" data-testid="content"><a href="#">link</a></HoverCardContent>
+          </HoverCardRoot>
+        `,
+      });
+      render(Fixture);
+      await user.hover(screen.getByTestId("trigger"));
+      await waitFor(() =>
+        expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open"),
+      );
+      await user.hover(screen.getByTestId("content"));
+      await new Promise((r) => setTimeout(r, 50));
+      expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");
     });
   });
 
