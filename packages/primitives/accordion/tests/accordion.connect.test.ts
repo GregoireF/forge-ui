@@ -113,6 +113,19 @@ describe("connectAccordion — getTriggerProps", () => {
     expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "a" });
   });
 
+  // WAI-ARIA: aria-disabled informs AT the trigger cannot be activated,
+  // even though it remains focusable (unlike the HTML disabled attribute).
+  it("aria-disabled=true when accordion is disabled", () => {
+    const { api } = makeApi({ disabled: true });
+    expect(api.getTriggerProps("a")["aria-disabled"]).toBe(true);
+  });
+
+  it("aria-disabled absent when accordion is enabled", () => {
+    const { api } = makeApi({ disabled: false });
+    const props = api.getTriggerProps("a") as Record<string, unknown>;
+    expect(props["aria-disabled"]).toBeUndefined();
+  });
+
   it("disabled: onClick does not send", () => {
     const { api, send } = makeApi({ disabled: true });
     api.getTriggerProps("a").onClick();
