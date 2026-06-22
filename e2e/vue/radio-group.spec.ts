@@ -14,6 +14,12 @@ test.describe("RadioGroup — Vue (forge-ui)", () => {
   const radioAngular = (page: import("@playwright/test").Page) =>
     page.locator('[data-testid="radio-item-angular"] [role="radio"]');
 
+  test("radio buttons exist", async ({ page }) => {
+    await expect(radioReact(page)).toBeVisible();
+    await expect(radioVue(page)).toBeVisible();
+    await expect(radioAngular(page)).toBeVisible();
+  });
+
   test("React radio is checked on load", async ({ page }) => {
     await expect(radioReact(page)).toHaveAttribute("aria-checked", "true");
   });
@@ -42,6 +48,19 @@ test.describe("RadioGroup — Vue (forge-ui)", () => {
     await radioReact(page).click();
     await radioVue(page).focus();
     await page.keyboard.press("ArrowUp");
+    await expect(radioReact(page)).toBeFocused();
+  });
+
+  // WAI-ARIA §3.18: ArrowRight/Left also navigate
+  test("ArrowRight also moves to next radio", async ({ page }) => {
+    await radioReact(page).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(radioVue(page)).toBeFocused();
+  });
+
+  test("ArrowLeft also moves to previous radio", async ({ page }) => {
+    await radioVue(page).focus();
+    await page.keyboard.press("ArrowLeft");
     await expect(radioReact(page)).toBeFocused();
   });
 

@@ -43,6 +43,10 @@ test.describe("Popover — Nuxt (forge-ui)", () => {
     await expect(content(page)).not.toBeVisible();
   });
 
+  test("trigger has data-state=closed on load", async ({ page }) => {
+    await expect(trigger(page)).toHaveAttribute("data-state", "closed");
+  });
+
   test("trigger has aria-expanded=false on load", async ({ page }) => {
     await expect(trigger(page)).toHaveAttribute("aria-expanded", "false");
   });
@@ -55,6 +59,11 @@ test.describe("Popover — Nuxt (forge-ui)", () => {
   test("content has data-state=open when open", async ({ page }) => {
     await trigger(page).click();
     await expect(content(page)).toHaveAttribute("data-state", "open");
+  });
+
+  test("content has data-forge-scope=popover", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toHaveAttribute("data-forge-scope", "popover");
   });
 
   test("content is rendered in body (portal)", async ({ page }) => {

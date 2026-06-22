@@ -22,6 +22,12 @@ test.describe("HoverCard — Nuxt (forge-ui)", () => {
     await expect(content(page)).toBeVisible({ timeout: 2000 });
   });
 
+  test("content shows text about forge-ui", async ({ page }) => {
+    await trigger(page).hover();
+    await expect(content(page)).toBeVisible({ timeout: 2000 });
+    await expect(content(page)).toContainText("forge-ui");
+  });
+
   test("content stays open when pointer moves into it", async ({ page }) => {
     await trigger(page).hover();
     await expect(content(page)).toBeVisible({ timeout: 2000 });

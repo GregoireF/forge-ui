@@ -87,6 +87,10 @@ test.describe("Tabs — Nuxt (forge-ui)", () => {
     await expect(panelVue(page)).toBeVisible();
   });
 
+  test("inactive tab has aria-selected=false", async ({ page }) => {
+    await expect(triggerVue(page)).toHaveAttribute("aria-selected", "false");
+  });
+
   test("triggers have role=tab", async ({ page }) => {
     await expect(triggerReact(page)).toHaveAttribute("role", "tab");
   });

@@ -69,4 +69,24 @@ test.describe("Tooltip — Nuxt (forge-ui)", () => {
     await page.keyboard.press("Tab");
     await expect(page.getByRole("tooltip").first()).not.toBeVisible({ timeout: 1000 });
   });
+
+  test("skip-delay: second tooltip opens faster after first closed", async ({ page }) => {
+    await trigger(page).hover();
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 2000 });
+    await page.mouse.move(0, 0);
+    await expect(page.getByRole("tooltip").first()).not.toBeVisible({ timeout: 2000 });
+    const t2 = page.getByRole("button", { name: "Skip-delay" });
+    await t2.hover();
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 1000 });
+  });
+
+  test("tooltip is rendered inside body (portal)", async ({ page }) => {
+    await trigger(page).hover();
+    await expect(page.getByRole("tooltip").first()).toBeVisible({ timeout: 2000 });
+    const isBodyChild = await page.evaluate(() => {
+      const tooltip = document.querySelector('[role="tooltip"]');
+      return tooltip?.closest("body") !== null;
+    });
+    expect(isBodyChild).toBe(true);
+  });
 });

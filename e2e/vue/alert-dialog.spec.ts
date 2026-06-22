@@ -59,6 +59,18 @@ test.describe("AlertDialog — Vue (forge-ui)", () => {
     await expect(page.locator(`#${labelledBy}`)).toBeVisible();
   });
 
+  test("has description via aria-describedby", async ({ page }) => {
+    await trigger(page).click();
+    const describedBy = await content(page).getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    await expect(page.locator(`#${describedBy}`)).toBeVisible();
+  });
+
+  test("content has data-state=open when open", async ({ page }) => {
+    await trigger(page).click();
+    await expect(content(page)).toHaveAttribute("data-state", "open");
+  });
+
   test("trigger has data-state=closed on load", async ({ page }) => {
     await expect(trigger(page)).toHaveAttribute("data-state", "closed");
   });
