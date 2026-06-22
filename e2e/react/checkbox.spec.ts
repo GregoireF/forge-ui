@@ -68,9 +68,11 @@ test.describe("Checkbox — React (forge-ui)", () => {
   // Disabled
   // ---------------------------------------------------------------------------
 
+  // WAI-ARIA: disabled checkbox must expose aria-disabled=true so AT can
+  // announce it is non-interactive, not just visually dimmed.
   test("disabled checkbox has aria-disabled=true", async ({ page }) => {
-    const disabled = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"][data-disabled]');
-    await expect(disabled.first()).toBeVisible();
+    const thirdCheckbox = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"]').nth(2);
+    await expect(thirdCheckbox).toHaveAttribute("aria-disabled", "true");
   });
 
   // ---------------------------------------------------------------------------

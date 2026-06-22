@@ -67,6 +67,13 @@ test.describe("Checkbox — Nuxt (forge-ui)", () => {
     await expect(disabled.first()).toBeVisible();
   });
 
+  // WAI-ARIA: disabled checkbox must expose aria-disabled=true so AT can
+  // announce it is non-interactive, not just visually dimmed.
+  test("disabled checkbox has aria-disabled=true", async ({ page }) => {
+    const thirdCheckbox = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"]').nth(2);
+    await expect(thirdCheckbox).toHaveAttribute("aria-disabled", "true");
+  });
+
   test("checkbox has data-forge-scope=checkbox", async ({ page }) => {
     await expect(firstCheckbox(page)).toHaveAttribute("data-forge-scope", "checkbox");
   });
