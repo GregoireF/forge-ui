@@ -1,11 +1,12 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, ref } from "vue";
 import {
   CheckboxControl,
   CheckboxGroup,
   CheckboxGroupAll,
+  CheckboxIndicator,
   CheckboxRoot,
 } from "../src/components/checkbox/Checkbox.js";
 import { useCheckbox } from "../src/components/checkbox/use-checkbox.js";
@@ -79,9 +80,29 @@ describe("useCheckbox (Vue)", () => {
       expect(screen.getByTestId("indicator")).toBeInTheDocument();
     });
 
+    it("forceMount renders Indicator even when unchecked", () => {
+      render(
+        defineComponent({
+          components: { CheckboxRoot, CheckboxControl, CheckboxIndicator },
+          template: `
+            <CheckboxRoot>
+              <CheckboxControl />
+              <CheckboxIndicator :forceMount="true" data-testid="indicator">✓</CheckboxIndicator>
+            </CheckboxRoot>
+          `,
+        }),
+      );
+      expect(screen.getByTestId("indicator")).toBeInTheDocument();
+    });
+
     it("control has role=checkbox", () => {
       render(makeCheckboxFixture());
       expect(screen.getByTestId("control")).toHaveAttribute("role", "checkbox");
+    });
+
+    it("disabled control has tabIndex=-1", () => {
+      render(makeCheckboxFixture({ disabled: true }));
+      expect(screen.getByTestId("control")).toHaveAttribute("tabindex", "-1");
     });
   });
 
@@ -101,6 +122,15 @@ describe("useCheckbox (Vue)", () => {
       expect(screen.getByTestId("control")).toHaveAttribute("aria-checked", "true");
     });
 
+    it("toggles on Space key (WAI-ARIA §3.7)", async () => {
+      render(makeCheckboxFixture());
+      const control = screen.getByTestId("control");
+      await user.click(control);
+      expect(control).toHaveAttribute("aria-checked", "true");
+      await user.keyboard(" ");
+      expect(control).toHaveAttribute("aria-checked", "false");
+    });
+
     it("does not toggle when disabled", async () => {
       render(makeCheckboxFixture({ disabled: true }));
       await user.click(screen.getByTestId("control"));
@@ -116,6 +146,38 @@ describe("useCheckbox (Vue)", () => {
       expect(spy).toHaveBeenCalledWith(true);
       await user.click(screen.getByTestId("control"));
       expect(spy).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe("controlled mode", () => {
+    it("reflects controlled checked prop", async () => {
+      const isChecked = ref(false);
+      render(
+        defineComponent({
+          components: { CheckboxRoot, CheckboxControl },
+          setup() { return { isChecked }; },
+          template: `<CheckboxRoot :checked="isChecked"><CheckboxControl data-testid="control" /></CheckboxRoot>`,
+        }),
+      );
+      expect(screen.getByTestId("control")).toHaveAttribute("aria-checked", "false");
+      isChecked.value = true;
+      await nextTick();
+      expect(screen.getByTestId("control")).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("reflects controlled indeterminate", async () => {
+      const state = ref<boolean | "indeterminate">("indeterminate");
+      render(
+        defineComponent({
+          components: { CheckboxRoot, CheckboxControl },
+          setup() { return { state }; },
+          template: `<CheckboxRoot :checked="state"><CheckboxControl data-testid="control" /></CheckboxRoot>`,
+        }),
+      );
+      expect(screen.getByTestId("control")).toHaveAttribute("aria-checked", "mixed");
+      state.value = true;
+      await nextTick();
+      expect(screen.getByTestId("control")).toHaveAttribute("aria-checked", "true");
     });
   });
 
@@ -138,6 +200,28 @@ describe("useCheckbox (Vue)", () => {
       const input = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
       expect(input).not.toBeNull();
       expect(input.name).toBe("terms");
+    });
+
+    it("hidden input is checked when checkbox is checked", () => {
+      render(
+        defineComponent({
+          components: { CheckboxRoot, CheckboxControl },
+          template: `<CheckboxRoot name="terms" :defaultChecked="true"><CheckboxControl /></CheckboxRoot>`,
+        }),
+      );
+      const input = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      expect(input).not.toBeNull();
+      expect(input.checked).toBe(true);
+    });
+
+    it("does not render hidden input when no name", () => {
+      render(
+        defineComponent({
+          components: { CheckboxRoot, CheckboxControl },
+          template: `<CheckboxRoot><CheckboxControl /></CheckboxRoot>`,
+        }),
+      );
+      expect(document.querySelector('input[type="checkbox"]')).toBeNull();
     });
   });
 
