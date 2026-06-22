@@ -45,6 +45,12 @@ test.describe("Switch — Nuxt (forge-ui)", () => {
     await expect(disabledSwitch(page)).toHaveAttribute("aria-checked", "true");
   });
 
+  // WAI-ARIA: aria-disabled informs AT the switch cannot be interacted with,
+  // even though it is visible and focusable.
+  test("disabled switch has aria-disabled=true", async ({ page }) => {
+    await expect(disabledSwitch(page)).toHaveAttribute("aria-disabled", "true");
+  });
+
   test("invalid switch has aria-invalid=true", async ({ page }) => {
     await expect(invalidSwitch(page)).toHaveAttribute("aria-invalid", "true");
   });
