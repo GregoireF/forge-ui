@@ -1,5 +1,5 @@
 import type { InjectionKey, PropType } from "vue";
-import { defineComponent, h, inject, provide } from "vue";
+import { defineComponent, h, inject, provide, watch } from "vue";
 import { Slot } from "../dialog/Slot.js";
 import type { UseAccordionReturn } from "./use-accordion.js";
 import { useAccordion } from "./use-accordion.js";
@@ -53,6 +53,16 @@ const AccordionRoot = defineComponent({
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
     });
+    // Sync controlled value prop changes after initial mount
+    watch(
+      () => props.value,
+      (v) => {
+        if (v === undefined) return;
+        const normalized = Array.isArray(v) ? v : [v];
+        api.send({ type: "SET_VALUE", value: normalized });
+      },
+    );
+
     provide(accordionKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };

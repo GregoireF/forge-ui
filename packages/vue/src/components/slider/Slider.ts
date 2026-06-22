@@ -1,5 +1,5 @@
 import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
-import { defineComponent, h, inject, provide } from "vue";
+import { defineComponent, h, inject, provide, watch } from "vue";
 import { Slot } from "../dialog/Slot.js";
 import type { UseSliderReturn } from "./use-slider.js";
 import { useSlider } from "./use-slider.js";
@@ -44,6 +44,15 @@ const SliderRoot = defineComponent({
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
       ...(props.onValueCommit !== undefined && { onValueCommit: props.onValueCommit }),
     });
+    // Sync controlled value prop changes after initial mount
+    watch(
+      () => props.value,
+      (v) => {
+        if (v === undefined) return;
+        api.send({ type: "SET_VALUE", value: v });
+      },
+    );
+
     provide(sliderKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };

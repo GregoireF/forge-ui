@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, ref } from "vue";
 import { Slider } from "../src/components/slider/Slider.js";
 
 const { Root: SliderRoot, Track: SliderTrack, Range: SliderRange, Thumb: SliderThumb } = Slider;
@@ -115,6 +115,24 @@ describe("Slider (Vue)", () => {
       expect(thumb).toHaveAttribute("aria-valuenow", "49");
     });
 
+    it("ArrowUp increments by step", async () => {
+      const user = userEvent.setup();
+      render(makeFixture({ defaultValue: 50 }));
+      const thumb = screen.getByRole("slider");
+      thumb.focus();
+      await user.keyboard("{ArrowUp}");
+      expect(thumb).toHaveAttribute("aria-valuenow", "51");
+    });
+
+    it("ArrowDown decrements by step", async () => {
+      const user = userEvent.setup();
+      render(makeFixture({ defaultValue: 50 }));
+      const thumb = screen.getByRole("slider");
+      thumb.focus();
+      await user.keyboard("{ArrowDown}");
+      expect(thumb).toHaveAttribute("aria-valuenow", "49");
+    });
+
     it("Home sets value to min", async () => {
       const user = userEvent.setup();
       render(makeFixture({ defaultValue: 50 }));
@@ -180,6 +198,29 @@ describe("Slider (Vue)", () => {
       thumb.focus();
       await user.keyboard("{ArrowRight}");
       expect(onChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("controlled mode", () => {
+    it("value is controlled", async () => {
+      const controlledValue = ref(30);
+      const Fixture = defineComponent({
+        components: { SliderRoot, SliderTrack, SliderRange, SliderThumb },
+        setup() { return { controlledValue }; },
+        template: `
+          <SliderRoot :value="controlledValue" :min="0" :max="100" :step="1" data-testid="root">
+            <SliderTrack data-testid="track">
+              <SliderRange data-testid="range" />
+            </SliderTrack>
+            <SliderThumb data-testid="thumb" />
+          </SliderRoot>
+        `,
+      });
+      render(Fixture);
+      expect(screen.getByRole("slider")).toHaveAttribute("aria-valuenow", "30");
+      controlledValue.value = 70;
+      await nextTick();
+      expect(screen.getByRole("slider")).toHaveAttribute("aria-valuenow", "70");
     });
   });
 

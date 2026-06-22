@@ -113,6 +113,22 @@ describe("Tabs (Vue)", () => {
       expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
     });
 
+    it("ArrowRight wraps from last to first", () => {
+      render(makeFixture({ defaultValue: "b" }));
+      const triggerB = screen.getByTestId("trigger-b");
+      triggerB.focus();
+      fireEvent.keyDown(triggerB, { key: "ArrowRight" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("vertical: ArrowDown moves focus to next tab", () => {
+      render(makeFixture({ defaultValue: "a", orientation: "vertical" }));
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
+
     it("ArrowRight in automatic mode also selects the tab", async () => {
       render(makeFixture({ defaultValue: "a", activationMode: "automatic" }));
       const triggerA = screen.getByTestId("trigger-a");
@@ -232,6 +248,12 @@ describe("Tabs (Vue)", () => {
       const triggerId = panel.getAttribute("aria-labelledby");
       expect(triggerId).toBeTruthy();
       expect(document.getElementById(triggerId!)).toBe(screen.getByTestId("trigger-a"));
+    });
+
+    it("inactive trigger has tabIndex=-1, active has tabIndex=0", () => {
+      render(makeFixture({ defaultValue: "a" }));
+      expect(screen.getByTestId("trigger-a")).toHaveAttribute("tabindex", "0");
+      expect(screen.getByTestId("trigger-b")).toHaveAttribute("tabindex", "-1");
     });
   });
 

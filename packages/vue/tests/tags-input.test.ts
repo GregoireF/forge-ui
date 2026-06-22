@@ -53,6 +53,27 @@ describe("useTagsInput (Vue)", () => {
       expect(screen.getByTestId("input")).toBeInTheDocument();
     });
 
+    it("renders with defaultValue tags", () => {
+      const fixture = defineComponent({
+        components: { TagsInputRoot, TagsInputInput, TagsInputTag, TagsInputTagDelete },
+        template: `
+          <TagsInputRoot id="test" :defaultValue="['React', 'Vue']">
+            <TagsInputInput data-testid="input" />
+            <TagsInputTag value="React" data-testid="tag-react">React</TagsInputTag>
+            <TagsInputTag value="Vue" data-testid="tag-vue">Vue</TagsInputTag>
+          </TagsInputRoot>
+        `,
+      });
+      render(fixture);
+      expect(screen.getByTestId("tag-react")).toBeInTheDocument();
+      expect(screen.getByTestId("tag-vue")).toBeInTheDocument();
+    });
+
+    it("input is disabled when disabled=true", () => {
+      render(makeTagsInputFixture({ disabled: true }));
+      expect(screen.getByTestId("input")).toBeDisabled();
+    });
+
     it("root has data-forge-scope and data-forge-part", () => {
       const { container } = render(makeTagsInputFixture());
       const root = container.firstChild as HTMLElement;
@@ -96,6 +117,17 @@ describe("useTagsInput (Vue)", () => {
       fireEvent.keyDown(input, { key: "Enter" });
       // Nothing added since inputValue is "" — but confirms handler fires without crash
       expect(spy).not.toHaveBeenCalled();
+    });
+
+    it("clears input after adding tag", () => {
+      const sendRef: { current: SendFn | null } = { current: null };
+      render(makeTagsInputFixture({}, sendRef));
+      const send = sendRef.current!;
+      const input = screen.getByTestId("input") as HTMLInputElement;
+      send({ type: "FOCUS" });
+      send({ type: "INPUT_CHANGE", value: "TypeScript" });
+      send({ type: "ADD_TAG" });
+      expect(input.value).toBe("");
     });
 
     it("does not add empty tag", () => {

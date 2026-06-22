@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, ref } from "vue";
 import { Accordion } from "../src/components/accordion/Accordion.js";
 
 const { Root: AccordionRoot, Item: AccordionItem, Header: AccordionHeader, Trigger: AccordionTrigger, Content: AccordionContent } = Accordion;
@@ -158,6 +158,14 @@ describe("Accordion (Vue)", () => {
       expect(document.activeElement).toBe(screen.getByTestId("trigger-a"));
     });
 
+    it("ArrowUp wraps from first to last", () => {
+      render(makeFixture());
+      const triggerA = screen.getByTestId("trigger-a");
+      triggerA.focus();
+      fireEvent.keyDown(triggerA, { key: "ArrowUp" });
+      expect(document.activeElement).toBe(screen.getByTestId("trigger-b"));
+    });
+
     it("Home moves focus to first trigger", () => {
       render(makeFixture());
       const triggerB = screen.getByTestId("trigger-b");
@@ -201,6 +209,38 @@ describe("Accordion (Vue)", () => {
       render(makeFixture({ defaultValue: ["a"], collapsible: true, onValueChange: spy }));
       await user.click(screen.getByTestId("trigger-a"));
       expect(spy).toHaveBeenCalledWith([]);
+    });
+
+    it("multiple mode: onValueChange carries cumulative open values", async () => {
+      const spy = vi.fn();
+      render(makeFixture({ type: "multiple", onValueChange: spy }));
+      await user.click(screen.getByTestId("trigger-a"));
+      expect(spy).toHaveBeenCalledWith(["a"]);
+      await user.click(screen.getByTestId("trigger-b"));
+      expect(spy).toHaveBeenCalledWith(["a", "b"]);
+    });
+  });
+
+  describe("controlled mode", () => {
+    it("reflects controlled value prop", async () => {
+      const isOpen = ref<string[]>([]);
+      const Fixture = defineComponent({
+        components: { AccordionRoot, AccordionItem, AccordionHeader, AccordionTrigger, AccordionContent },
+        setup() { return { isOpen }; },
+        template: `
+          <AccordionRoot :value="isOpen">
+            <AccordionItem value="a">
+              <AccordionHeader><AccordionTrigger data-testid="trigger-a">A</AccordionTrigger></AccordionHeader>
+              <AccordionContent data-testid="content-a">Content A</AccordionContent>
+            </AccordionItem>
+          </AccordionRoot>
+        `,
+      });
+      render(Fixture);
+      expect(screen.queryByTestId("content-a")).toBeNull();
+      isOpen.value = ["a"];
+      await nextTick();
+      expect(screen.getByTestId("content-a")).toBeInTheDocument();
     });
   });
 

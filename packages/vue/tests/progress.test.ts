@@ -66,6 +66,11 @@ describe("Progress (Vue)", () => {
       expect(root).toHaveAttribute("aria-valuemax", "100");
     });
 
+    it("aria-valuenow absent when indeterminate", () => {
+      render(makeFixture(null));
+      expect(screen.getByRole("progressbar")).not.toHaveAttribute("aria-valuenow");
+    });
+
     it("aria-valuetext is percentage string", () => {
       render(makeFixture(50));
       expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuetext", "50%");
@@ -74,6 +79,13 @@ describe("Progress (Vue)", () => {
     it("aria-valuetext is 'loading' when indeterminate", () => {
       render(makeFixture(null));
       expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuetext", "loading");
+    });
+  });
+
+  describe("custom range", () => {
+    it("calculates percentage with custom min/max", () => {
+      render(makeFixture(150, 200, 100));
+      expect(screen.getByTestId("value-text")).toHaveTextContent("50%");
     });
   });
 
@@ -106,6 +118,11 @@ describe("Progress (Vue)", () => {
       render(makeFixture(50));
       expect(screen.getByTestId("fill")).toHaveAttribute("data-forge-scope", "progress");
       expect(screen.getByTestId("fill")).toHaveAttribute("data-forge-part", "fill");
+    });
+
+    it("fill has correct width style at 50%", () => {
+      render(makeFixture(50));
+      expect(screen.getByTestId("fill")).toHaveStyle({ width: "50%" });
     });
 
     it("data-value reflects numeric value", () => {
