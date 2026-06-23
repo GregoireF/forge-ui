@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { clearRegistry } from "@forge-ui/core";
 import { createSelectMachine } from "../src/select.machine.js";
 
 let active: ReturnType<typeof createSelectMachine>[] = [];
@@ -13,6 +14,7 @@ function make(opts: Partial<Parameters<typeof createSelectMachine>[0]> = {}) {
 afterEach(() => {
   for (const m of active) m.stop();
   active = [];
+  clearRegistry();
 });
 
 // ---------------------------------------------------------------------------
@@ -432,5 +434,47 @@ describe("createSelectMachine — SELECT_HIGHLIGHTED", () => {
     m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
     m.send("SELECT_HIGHLIGHTED");
     expect(cb).toHaveBeenCalledWith(["a"]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// watchOutside activity config callbacks (machine.ts lines 131-132)
+//
+// WHY: The getId and getContainers lambdas in makeWatchOutsideActivity are only
+// called when a pointerdown event fires on the document AND the select is the
+// topmost layer. The select registers itself via registerLayer (first open
+// activity), so no manual pushLayer is needed — opening the select suffices.
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — watchOutside activity config callbacks", () => {
+  beforeEach(() => {
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("getId and getContainers called on outside pointerdown when select is top layer", () => {
+    const content = document.createElement("div");
+    document.body.appendChild(content);
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+
+    const m = make();
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    expect(m.getSnapshot().matches("open")).toBe(true);
+
+    const outsideEl = document.createElement("button");
+    document.body.appendChild(outsideEl);
+    outsideEl.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true }));
+
+    // INTERACT_OUTSIDE closes the select
+    expect(m.getSnapshot().matches("closed")).toBe(true);
+
+    trigger.remove();
+    content.remove();
+    outsideEl.remove();
   });
 });

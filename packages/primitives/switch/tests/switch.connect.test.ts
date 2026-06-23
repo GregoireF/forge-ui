@@ -207,3 +207,23 @@ describe("connectSwitch — getThumbProps", () => {
     expect(api.getThumbProps()["aria-hidden"]).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// getRootProps ref callback
+//
+// WHY: The ref arrow function registers the root DOM element on the machine
+// so it can be accessed in connect props (e.g. for aria-labelledby resolution).
+// It is uncovered because static prop tests never invoke ref callbacks.
+// ---------------------------------------------------------------------------
+
+describe("connectSwitch — getRootProps ref callback", () => {
+  it("ref registers rootEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectSwitch(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getRootProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ rootEl: el });
+  });
+});

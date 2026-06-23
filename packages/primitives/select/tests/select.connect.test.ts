@@ -543,3 +543,33 @@ describe("connectSelect — getLabelProps", () => {
     expect(api.getLabelProps().htmlFor).toBe("my-trigger");
   });
 });
+
+// ---------------------------------------------------------------------------
+// ref callbacks — getTriggerProps and getContentProps
+//
+// WHY: ref callbacks register DOM elements on the machine so activities like
+// computePosition and watchOutside can access them. These arrow functions on
+// the prop object are never exercised by static ARIA-attribute tests.
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — ref callbacks", () => {
+  it("getTriggerProps ref registers triggerEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectSelect(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("button");
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+  });
+
+  it("getContentProps ref registers contentEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectSelect(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+  });
+});

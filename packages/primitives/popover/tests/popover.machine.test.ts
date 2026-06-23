@@ -137,6 +137,21 @@ describe("createPopoverMachine — presence registration", () => {
     m.send("REGISTER_DESCRIPTION");
     expect(m.getSnapshot().context.descriptionRegistered).toBe(true);
   });
+
+  it("UNREGISTER_DESCRIPTION sets descriptionRegistered:false", () => {
+    const m = makeMachine();
+    m.send("REGISTER_DESCRIPTION");
+    m.send("UNREGISTER_DESCRIPTION");
+    expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
+  });
+
+  it("UNREGISTER_DESCRIPTION in open state sets descriptionRegistered:false", () => {
+    const m = makeMachine();
+    m.send("OPEN");
+    m.send("REGISTER_DESCRIPTION");
+    m.send("UNREGISTER_DESCRIPTION");
+    expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
+  });
 });
 
 describe("createPopoverMachine — callbacks", () => {
@@ -263,5 +278,93 @@ describe("createPopoverMachine — focus management (WAI-ARIA §6.2)", () => {
     expect(document.activeElement).not.toBe(trigger);
     trigger.remove();
     content.remove();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Activity config callbacks — trapKeyboard and watchOutside
+//
+// WHY: The lambdas inside makeKeyboardActivity({ getContentEl, isModal }) and
+// makeWatchOutsideActivity({ getContainers, getOnPointerDownOutside, ... })
+// config objects are only invoked during real DOM events. The stubs below
+// replicate the dialog machine test pattern: set contentEl before opening,
+// stub rAF synchronously, then dispatch the event that triggers the callback.
+// ---------------------------------------------------------------------------
+
+describe("createPopoverMachine — activity config callbacks (contentEl required)", () => {
+  beforeEach(() => {
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("trapKeyboard: getContentEl and isModal called when Tab is pressed while open", () => {
+    const content = document.createElement("div");
+    const focusable = document.createElement("button");
+    content.appendChild(focusable);
+    document.body.appendChild(content);
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+
+    const m = makeMachine();
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+
+    // Tab dispatch — keyboard activity listener fires getContentEl + isModal
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+
+    // Popover should still be open (Tab does not close it, only traps focus)
+    expect(m.getSnapshot().matches("open")).toBe(true);
+
+    trigger.remove();
+    content.remove();
+  });
+
+  it("watchOutside: getContainers called on outside pointerdown (popover is top layer via registerLayer)", () => {
+    const content = document.createElement("div");
+    document.body.appendChild(content);
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+
+    const m = makeMachine();
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    expect(m.getSnapshot().matches("open")).toBe(true);
+
+    // Outside element — not inside content or trigger
+    const outsideEl = document.createElement("div");
+    document.body.appendChild(outsideEl);
+    outsideEl.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true }));
+
+    // watchOutside sends INTERACT_OUTSIDE → closed
+    expect(m.getSnapshot().matches("closed")).toBe(true);
+
+    trigger.remove();
+    content.remove();
+    outsideEl.remove();
+  });
+
+  it("watchOutside: getOnFocusOutside called on outside focusin (line 103)", () => {
+    const content = document.createElement("div");
+    document.body.appendChild(content);
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+
+    const m = makeMachine();
+    m.setContext({ contentEl: content, triggerEl: trigger });
+    m.send("OPEN");
+    expect(m.getSnapshot().matches("open")).toBe(true);
+
+    const outsideBtn = document.createElement("button");
+    document.body.appendChild(outsideBtn);
+    outsideBtn.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+
+    expect(m.getSnapshot().matches("closed")).toBe(true);
+
+    trigger.remove();
+    content.remove();
+    outsideBtn.remove();
   });
 });
