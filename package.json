@@ -18,6 +18,7 @@
     "dev:nuxt": "bun run --cwd apps/playground-nuxt dev",
     "dev:docs": "bun run --cwd apps/docs dev",
     "test": "turbo run test --filter=!e2e",
+    "test:coverage": "turbo run test --filter=!e2e -- --coverage",
     "test:e2e": "bun run --cwd e2e test",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

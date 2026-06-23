@@ -40,8 +40,35 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
-      - name: Test
-        run: bun run test
+      - name: Test with coverage
+        run: bun run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: >-
+            packages/react/coverage/lcov.info,
+            packages/vue/coverage/lcov.info,
+            packages/primitives/accordion/coverage/lcov.info,
+            packages/primitives/alert-dialog/coverage/lcov.info,
+            packages/primitives/checkbox/coverage/lcov.info,
+            packages/primitives/collapsible/coverage/lcov.info,
+            packages/primitives/combobox/coverage/lcov.info,
+            packages/primitives/dialog/coverage/lcov.info,
+            packages/primitives/field/coverage/lcov.info,
+            packages/primitives/hover-card/coverage/lcov.info,
+            packages/primitives/popover/coverage/lcov.info,
+            packages/primitives/progress/coverage/lcov.info,
+            packages/primitives/radio-group/coverage/lcov.info,
+            packages/primitives/select/coverage/lcov.info,
+            packages/primitives/slider/coverage/lcov.info,
+            packages/primitives/switch/coverage/lcov.info,
+            packages/primitives/tabs/coverage/lcov.info,
+            packages/primitives/tags-input/coverage/lcov.info,
+            packages/primitives/tooltip/coverage/lcov.info
+          flags: unit
+          fail_ci_if_error: false
 
       - name: Build
         run: bun run build

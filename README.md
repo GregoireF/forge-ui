@@ -1,8 +1,14 @@
 # forge-ui
 
+[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg?token=TOKEN)](https://codecov.io/gh/OWNER/REPO)
+[![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
+[![E2E Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33)](e2e/)
+
 Composants headless accessibles pour React 19 et Vue 3. Zéro style — vous gérez le CSS.
 
 > **Statut : pré-release (alpha).** API en cours de stabilisation. Pas encore publié sur npm.
+> **Badges** : remplacez `OWNER/REPO` et `TOKEN` par vos valeurs et ajoutez le secret `CODECOV_TOKEN` dans les settings GitHub.
 
 ---
 
@@ -211,10 +217,11 @@ bun --filter @forge-ui/playground-react dev
 bun --filter @forge-ui/playground-vue dev
 bun --filter @forge-ui/playground-nuxt dev
 
-# Tests (190 specs)
-bun run test
-cd packages/react && bun run test   # 100 specs
-cd packages/vue   && bun run test   # 90 specs
+# Tests
+bun run test               # tous les packages (turbo)
+bun run test:coverage      # + rapport de couverture lcov + json-summary
+cd packages/react && bun run test
+cd packages/vue   && bun run test
 
 # Build + typecheck
 bun run build
