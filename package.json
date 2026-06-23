@@ -26,6 +26,8 @@
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
     "prepare": "node tooling/scripts/setup-hooks.mjs",
+    "size": "bun run tooling/scripts/bundle-size.ts",
+    "size:ci": "bun run tooling/scripts/bundle-size.ts --fail-on-threshold",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "release": "turbo run build && changeset publish"
