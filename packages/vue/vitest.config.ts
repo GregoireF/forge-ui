@@ -66,6 +66,14 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "json-summary", "lcov", "html"],
       include: ["src/**/*.ts"],
+      exclude: ["src/**/index.ts"],
+      // Target thresholds (TODO: uncomment progressively as coverage improves):
+      // thresholds: {
+      //   lines: 90,
+      //   functions: 92,
+      //   branches: 80,
+      //   statements: 88,
+      // },
     },
   },
 });

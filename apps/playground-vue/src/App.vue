@@ -632,6 +632,13 @@ const radioGroupValue = ref<string[]>(["react"]);
             </TooltipPortal>
           </TooltipRoot>
 
+          <TooltipRoot :disabled="true">
+            <TooltipTrigger :style="{ ...btnStyle, opacity: 0.5 }" :disabled="true">Désactivé</TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent :style="tooltipStyle">Ne s'affiche pas</TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+
           <TooltipRoot :positioning="{ placement: 'bottom' }">
             <TooltipTrigger :style="btnGhostStyle">Placement bas</TooltipTrigger>
             <TooltipPortal>
@@ -718,6 +725,22 @@ const radioGroupValue = ref<string[]>(["react"]);
           <Field.Description style="font-size:0.75rem;color:#64748b">Entrez votre adresse e-mail.</Field.Description>
           <Field.Error style="font-size:0.75rem;color:#dc2626">Adresse e-mail invalide.</Field.Error>
         </Field.Root>
+
+        <FieldGroup data-testid="field-group" style="display:flex;flex-direction:column;gap:0.5rem">
+          <FieldGroupLabel :style="labelStyle">Notifications</FieldGroupLabel>
+          <Field.Root>
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <Field.Control><input type="checkbox" id="vue-notif-email" /></Field.Control>
+              <Field.Label style="font-size:0.875rem">Par email</Field.Label>
+            </div>
+          </Field.Root>
+          <Field.Root>
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <Field.Control><input type="checkbox" id="vue-notif-sms" /></Field.Control>
+              <Field.Label style="font-size:0.875rem">Par SMS</Field.Label>
+            </div>
+          </Field.Root>
+        </FieldGroup>
 
       </div>
     </section>

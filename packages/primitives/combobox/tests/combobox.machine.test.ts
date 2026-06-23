@@ -383,3 +383,239 @@ describe("createComboboxMachine — callbacks", () => {
     expect(cb).toHaveBeenCalledWith(["x"]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// SELECT_HIGHLIGHTED — keyboard Enter selection
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — SELECT_HIGHLIGHTED (single)", () => {
+  it("sets value to highlighted and updates inputValue", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "react", label: "React" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "react" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).toEqual(["react"]);
+    expect(m.getSnapshot().context.inputValue).toBe("React");
+  });
+
+  it("stays open (connect closes for single-select)", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "HIGHLIGHT_OPTION", value: "x" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().matches("open")).toBe(true);
+  });
+
+  it("is a no-op when highlighted=null", () => {
+    const m = make({ defaultValue: ["old"] });
+    m.send("OPEN");
+    // highlighted=null by default in open
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).toEqual(["old"]);
+  });
+
+  it("calls onValueChange with new value", () => {
+    const cb = vi.fn();
+    const m = make({ onValueChange: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "vue", label: "Vue" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "vue" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(cb).toHaveBeenCalledWith(["vue"]);
+  });
+});
+
+describe("createComboboxMachine — SELECT_HIGHLIGHTED (multiple)", () => {
+  it("adds highlighted to selection", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).toContain("a");
+  });
+
+  it("removes highlighted if already selected (toggle)", () => {
+    const m = make({ multiple: true, defaultValue: ["a"] });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).not.toContain("a");
+  });
+
+  it("builds selectedLabels on add", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "ts", label: "TypeScript" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "ts" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.selectedLabels["ts"]).toBe("TypeScript");
+  });
+
+  it("removes from selectedLabels on deselect", () => {
+    const m = make({ multiple: true, defaultValue: ["ts"] });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "ts", label: "TypeScript" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "ts" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.selectedLabels["ts"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CLOSE / INTERACT_OUTSIDE with multiple=true (label capture)
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — CLOSE with multiple=true (label capture)", () => {
+  it("captures labels for selected options before unmounting", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Apple" } });
+    m.send({ type: "SELECT_OPTION", value: "a" });
+    m.send("CLOSE");
+    // Label must be preserved in selectedLabels after options portal unmounts.
+    expect(m.getSnapshot().context.selectedLabels["a"]).toBe("Apple");
+  });
+
+  it("resets highlighted and inputValue on CLOSE (multiple)", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send({ type: "INPUT_CHANGE", value: "typed" });
+    m.send("CLOSE");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+    expect(m.getSnapshot().context.inputValue).toBe("");
+  });
+
+  it("single: resets inputValue to selected label on CLOSE", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "r", label: "React" } });
+    m.send({ type: "SELECT_OPTION", value: "r" });
+    m.send({ type: "INPUT_CHANGE", value: "re-typed" });
+    m.send("CLOSE");
+    expect(m.getSnapshot().context.inputValue).toBe("React");
+  });
+
+  it("single: resets inputValue to '' when nothing selected", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "typed" });
+    m.send("CLOSE");
+    expect(m.getSnapshot().context.inputValue).toBe("");
+  });
+});
+
+describe("createComboboxMachine — INTERACT_OUTSIDE with multiple=true", () => {
+  it("captures labels for selected options", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "Banana" } });
+    m.send({ type: "SELECT_OPTION", value: "b" });
+    m.send("INTERACT_OUTSIDE");
+    expect(m.getSnapshot().context.selectedLabels["b"]).toBe("Banana");
+  });
+
+  it("resets highlighted and inputValue", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "HIGHLIGHT_OPTION", value: "x" });
+    m.send("INTERACT_OUTSIDE");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+    expect(m.getSnapshot().context.inputValue).toBe("");
+  });
+
+  it("calls onOpenChange(false)", () => {
+    const cb = vi.fn();
+    const m = make({ multiple: true, onOpenChange: cb });
+    m.send("OPEN");
+    m.send("INTERACT_OUTSIDE");
+    expect(cb).toHaveBeenLastCalledWith(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// INPUT_CHANGE in open state + REGISTER/UNREGISTER in open state
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — INPUT_CHANGE in open state", () => {
+  it("updates inputValue while already open", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "vue" });
+    expect(m.getSnapshot().context.inputValue).toBe("vue");
+    expect(m.getSnapshot().matches("open")).toBe(true);
+  });
+
+  it("calls onInputChange while already open", () => {
+    const cb = vi.fn();
+    const m = make({ onInputChange: cb });
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "filter" });
+    expect(cb).toHaveBeenCalledWith("filter");
+  });
+});
+
+describe("createComboboxMachine — REGISTER/UNREGISTER in open state", () => {
+  it("REGISTER_OPTION in open state adds the option", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    expect(m.getSnapshot().context.options.some((o) => o.value === "x")).toBe(true);
+  });
+
+  it("REGISTER_OPTION in open state is idempotent (no duplicates)", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    expect(m.getSnapshot().context.options.filter((o) => o.value === "x")).toHaveLength(1);
+  });
+
+  it("UNREGISTER_OPTION in open state removes the option", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    m.send({ type: "UNREGISTER_OPTION", value: "x" });
+    expect(m.getSnapshot().context.options.some((o) => o.value === "x")).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// onHighlightChange callback
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — onHighlightChange callback", () => {
+  it("HIGHLIGHT_OPTION calls onHighlightChange", () => {
+    const cb = vi.fn();
+    const m = make({ onHighlightChange: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    expect(cb).toHaveBeenCalledWith("a");
+  });
+
+  it("HIGHLIGHT_NEXT calls onHighlightChange", () => {
+    const cb = vi.fn();
+    const m = make({ onHighlightChange: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    cb.mockClear();
+    m.send("HIGHLIGHT_NEXT");
+    expect(cb).toHaveBeenCalledWith("b");
+  });
+
+  it("HIGHLIGHT_FIRST calls onHighlightChange", () => {
+    const cb = vi.fn();
+    const m = make({ onHighlightChange: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "z", label: "Z" } });
+    m.send("HIGHLIGHT_FIRST");
+    expect(cb).toHaveBeenCalledWith("z");
+  });
+});

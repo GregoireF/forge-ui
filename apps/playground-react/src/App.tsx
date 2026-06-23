@@ -814,6 +814,21 @@ function FieldDemo() {
         </Field.Error>
       </Field.Root>
 
+      <Field.Group data-testid="field-group" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <Field.GroupLabel style={labelStyle}>Notifications</Field.GroupLabel>
+        <Field.Root>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Field.Control><input type="checkbox" id="react-notif-email" /></Field.Control>
+            <Field.Label htmlFor="react-notif-email" style={{ fontSize: "0.875rem" }}>Par email</Field.Label>
+          </div>
+        </Field.Root>
+        <Field.Root>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Field.Control><input type="checkbox" id="react-notif-sms" /></Field.Control>
+            <Field.Label htmlFor="react-notif-sms" style={{ fontSize: "0.875rem" }}>Par SMS</Field.Label>
+          </div>
+        </Field.Root>
+      </Field.Group>
     </div>
   );
 }

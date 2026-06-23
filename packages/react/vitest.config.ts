@@ -66,6 +66,15 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "json-summary", "lcov", "html"],
       include: ["src/**/*.ts", "src/**/*.tsx"],
+      // Barrel re-export files contain zero logic — exclude to avoid skewing averages.
+      exclude: ["src/**/index.ts", "src/**/index.tsx"],
+      // Target thresholds (TODO: uncomment progressively as coverage improves):
+      // thresholds: {
+      //   lines: 90,
+      //   functions: 92,
+      //   branches: 80,
+      //   statements: 88,
+      // },
     },
   },
 });
