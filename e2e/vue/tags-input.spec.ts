@@ -79,4 +79,21 @@ test.describe("TagsInput — Vue (forge-ui)", () => {
     await expect(tags(page)).toHaveCount(countBefore + 1);
     await expect(page.locator('[data-forge-scope="tags-input"]').getByText("SvelteKit")).toBeVisible();
   });
+
+  // WAI-ARIA: a live region lets AT announce tag add/remove without interrupting the user.
+  test("live region exists with role=status and aria-live=polite", async ({ page }) => {
+    const liveRegion = page.locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]').first();
+    await expect(liveRegion).toBeAttached();
+    await expect(liveRegion).toHaveAttribute("role", "status");
+    await expect(liveRegion).toHaveAttribute("aria-live", "polite");
+    await expect(liveRegion).toHaveAttribute("aria-atomic", "true");
+  });
+
+  test("live region announces added tag", async ({ page }) => {
+    const liveRegion = page.locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]').first();
+    await tagInput(page).fill("Svelte");
+    await tagInput(page).press("Enter");
+    await expect(liveRegion).toContainText("Svelte");
+    await expect(liveRegion).toContainText("added");
+  });
 });

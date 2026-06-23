@@ -101,5 +101,18 @@ export function connectTagsInput(
         "aria-hidden": true as const,
       };
     },
+
+    // WAI-ARIA: a visually-hidden live region lets AT announce tag add/remove.
+    // The framework layer is responsible for updating the text content.
+    getLiveRegionProps() {
+      return {
+        role: "status" as const,
+        "aria-live": "polite" as const,
+        "aria-atomic": true as const,
+        "aria-relevant": "additions text" as const,
+        "data-forge-scope": "tags-input",
+        "data-forge-part": "live-region",
+      };
+    },
   };
 }

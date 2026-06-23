@@ -305,3 +305,28 @@ describe("connectTagsInput — getHiddenInputProps", () => {
     expect(makeApi({ value: [] }).api.getHiddenInputProps().value).toBe("");
   });
 });
+
+// ---------------------------------------------------------------------------
+// getLiveRegionProps (WAI-ARIA live announcer)
+// ---------------------------------------------------------------------------
+
+describe("connectTagsInput — getLiveRegionProps", () => {
+  // WAI-ARIA: a polite live region lets AT announce tag add/remove without
+  // interrupting the user. The framework layer sets the text content
+  // imperatively when api.value changes (add → "X added", remove → "X removed").
+  it("role=status", () => {
+    expect(makeApi().api.getLiveRegionProps().role).toBe("status");
+  });
+
+  it("aria-live=polite (non-interrupting)", () => {
+    expect(makeApi().api.getLiveRegionProps()["aria-live"]).toBe("polite");
+  });
+
+  it("aria-atomic=true (read the full message)", () => {
+    expect(makeApi().api.getLiveRegionProps()["aria-atomic"]).toBe(true);
+  });
+
+  it("data-forge-part=live-region", () => {
+    expect(makeApi().api.getLiveRegionProps()["data-forge-part"]).toBe("live-region");
+  });
+});

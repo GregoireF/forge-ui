@@ -1,5 +1,5 @@
 import type { InjectionKey, PropType } from "vue";
-import { defineComponent, h, inject, provide } from "vue";
+import { defineComponent, h, inject, provide, ref, watch } from "vue";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
 import { useTagsInput } from "./use-tags-input.js";
 
@@ -64,7 +64,29 @@ const TagsInputRoot = defineComponent({
     const api = useTagsInput(opts);
     provide(tagsInputKey, api);
 
-    return () => h("div", api.getRootProps(), slots.default?.());
+    const liveRegionEl = ref<HTMLSpanElement | null>(null);
+
+    watch(
+      () => api.value.value,
+      (curr: string[], prev: string[]) => {
+        if (!liveRegionEl.value) return;
+        if (curr.length > prev.length) {
+          const added = curr.find((v) => !prev.includes(v)) ?? curr[curr.length - 1];
+          liveRegionEl.value.textContent = `${added} added`;
+        } else if (curr.length < prev.length) {
+          const removed = prev.find((v) => !curr.includes(v)) ?? prev[prev.length - 1];
+          liveRegionEl.value.textContent = `${removed} removed`;
+        }
+      },
+    );
+
+    const liveRegionStyle = { position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 };
+
+    return () =>
+      h("div", api.getRootProps(), [
+        slots.default?.(),
+        h("span", { ...api.getLiveRegionProps(), ref: liveRegionEl, style: liveRegionStyle }),
+      ]);
   },
 });
 

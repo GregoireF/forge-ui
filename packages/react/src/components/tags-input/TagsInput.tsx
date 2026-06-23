@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, CSSProperties, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
 import { useTagsInput } from "./use-tags-input.js";
 
@@ -57,10 +57,31 @@ function Root({
     ...(onInputChange !== undefined && { onInputChange }),
   });
 
+  const liveRegionRef = useRef<HTMLSpanElement>(null);
+  const prevValueRef = useRef<string[]>(api.value);
+
+  useEffect(() => {
+    const prev = prevValueRef.current;
+    const curr = api.value;
+    if (curr.length > prev.length) {
+      const added = curr.find((v) => !prev.includes(v)) ?? curr[curr.length - 1];
+      if (liveRegionRef.current) liveRegionRef.current.textContent = `${added} added`;
+    } else if (curr.length < prev.length) {
+      const removed = prev.find((v) => !curr.includes(v)) ?? prev[prev.length - 1];
+      if (liveRegionRef.current) liveRegionRef.current.textContent = `${removed} removed`;
+    }
+    prevValueRef.current = curr;
+  }, [api.value]);
+
   return (
     <TagsInputCtx.Provider value={api}>
       <div {...api.getRootProps()} style={style} className={className}>
         {children}
+        <span
+          {...api.getLiveRegionProps()}
+          ref={liveRegionRef}
+          style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}
+        />
       </div>
     </TagsInputCtx.Provider>
   );

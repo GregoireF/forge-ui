@@ -45,6 +45,7 @@ export function useTagsInput(options: UseTagsInputOptions = {}) {
     getTagProps: (value: string) => api.value.getTagProps(value),
     getTagDeleteProps: (value: string) => api.value.getTagDeleteProps(value),
     getHiddenInputProps: () => api.value.getHiddenInputProps(),
+    getLiveRegionProps: () => api.value.getLiveRegionProps(),
   };
 }
 
