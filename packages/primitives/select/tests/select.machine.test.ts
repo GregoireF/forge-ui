@@ -331,3 +331,106 @@ describe("createSelectMachine — callbacks", () => {
     expect(cb).toHaveBeenCalledWith("a");
   });
 });
+
+// ---------------------------------------------------------------------------
+// defaultLabel — pre-seeds valueLabelMap before options mount
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — defaultLabel", () => {
+  it("string defaultLabel seeds label for single defaultValue", () => {
+    const m = make({ defaultValue: "react", defaultLabel: "React" });
+    expect(m.getSnapshot().context.valueLabelMap["react"]).toBe("React");
+  });
+
+  it("array defaultLabel seeds labels for multiple defaultValues", () => {
+    const m = make({ defaultValue: ["react", "vue"], defaultLabel: ["React", "Vue"] });
+    expect(m.getSnapshot().context.valueLabelMap["react"]).toBe("React");
+    expect(m.getSnapshot().context.valueLabelMap["vue"]).toBe("Vue");
+  });
+
+  it("no defaultLabel: valueLabelMap starts empty", () => {
+    const m = make({ defaultValue: "react" });
+    expect(m.getSnapshot().context.valueLabelMap).toEqual({});
+  });
+});
+
+// ---------------------------------------------------------------------------
+// UNREGISTER_OPTION — closed and open states
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — UNREGISTER_OPTION", () => {
+  it("removes option in closed state", () => {
+    const m = make();
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "UNREGISTER_OPTION", value: "a" });
+    expect(m.getSnapshot().context.options).toHaveLength(0);
+  });
+
+  it("removes option in open state", () => {
+    const m = make({ defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "UNREGISTER_OPTION", value: "a" });
+    expect(m.getSnapshot().context.options).toHaveLength(0);
+  });
+
+  it("does not remove other options", () => {
+    const m = make();
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B" } });
+    m.send({ type: "UNREGISTER_OPTION", value: "a" });
+    expect(m.getSnapshot().context.options).toHaveLength(1);
+    expect(m.getSnapshot().context.options[0].value).toBe("b");
+  });
+
+  it("UNREGISTER keeps valueLabelMap (label survives close)", () => {
+    const m = make();
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Alpha" } });
+    m.send({ type: "UNREGISTER_OPTION", value: "a" });
+    expect(m.getSnapshot().context.valueLabelMap["a"]).toBe("Alpha");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SELECT_HIGHLIGHTED — keyboard Enter selection
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — SELECT_HIGHLIGHTED", () => {
+  it("single: selects highlighted option", () => {
+    const m = make({ defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).toEqual(["a"]);
+  });
+
+  it("single: no-op when highlighted=null", () => {
+    const m = make({ defaultOpen: true });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).toEqual([]);
+  });
+
+  it("multiple: adds highlighted to selection", () => {
+    const m = make({ multiple: true, defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).toContain("a");
+  });
+
+  it("multiple: deselects highlighted if already selected (toggle)", () => {
+    const m = make({ multiple: true, defaultValue: ["a"], defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(m.getSnapshot().context.value).not.toContain("a");
+  });
+
+  it("multiple: SELECT_HIGHLIGHTED calls onValueChange", () => {
+    const cb = vi.fn();
+    const m = make({ multiple: true, defaultOpen: true, onValueChange: cb });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    m.send("SELECT_HIGHLIGHTED");
+    expect(cb).toHaveBeenCalledWith(["a"]);
+  });
+});

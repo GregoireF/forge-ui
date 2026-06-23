@@ -16,7 +16,13 @@ function makeCtx(overrides: Partial<SliderContext> = {}): SliderContext {
 }
 
 function makeSnapshot(ctx: SliderContext, state: SliderState = "idle") {
-  return { value: state, context: ctx, matches: (s: string) => s === state };
+  return {
+    value: state,
+    context: ctx,
+    tags: [] as ReadonlyArray<string>,
+    matches: (...states: string[]) => states.includes(state),
+    hasTag: (_tag: string) => false,
+  };
 }
 
 function makeApi(overrides: Partial<SliderContext> = {}, state: SliderState = "idle") {
@@ -273,5 +279,187 @@ describe("connectSlider — getHiddenInputProps", () => {
   it("value reflects current value", () => {
     const { api } = makeApi({ value: 75 });
     expect(api.getHiddenInputProps().value).toBe(75);
+  });
+
+  it("onChange is a no-op (required by React for controlled inputs)", () => {
+    const { api } = makeApi();
+    const props = api.getHiddenInputProps() as Record<string, () => void>;
+    expect(() => props["onChange"]()).not.toThrow();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// onPointerDown — with trackEl (covers computeValueFromPointer + helpers)
+// These tests provide a mock trackEl so the handler reaches the computation
+// path instead of returning early at the "if (!trackEl) return" guard.
+// ---------------------------------------------------------------------------
+
+function makeMockTrackEl(rect: { left: number; top: number; width: number; height: number }) {
+  return { getBoundingClientRect: () => rect } as unknown as Element;
+}
+
+describe("connectSlider — onPointerDown with trackEl", () => {
+  it("trackEl=null (button=0, enabled) is no-op", () => {
+    const { api, send } = makeApi({ trackEl: null });
+    const e = { button: 0, clientX: 50, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("button !== 0 is no-op", () => {
+    const { api, send } = makeApi({ trackEl: makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 }) });
+    const e = { button: 2, clientX: 50, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("horizontal: sends POINTER_DOWN with value derived from clientX", () => {
+    const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 20 });
+    const { api, send } = makeApi({ trackEl, value: 0, min: 0, max: 100 });
+    const e = { button: 0, clientX: 75, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 75 });
+  });
+
+  it("vertical: sends POINTER_DOWN with value derived from clientY (inverted axis)", () => {
+    const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 20, height: 100 });
+    const { api, send } = makeApi({ trackEl, value: 0, min: 0, max: 100, orientation: "vertical" });
+    // clientY=30 from top → percent = 1 - 30/100 = 0.7 → value = 70
+    const e = { button: 0, clientX: 0, clientY: 30, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 70 });
+  });
+
+  it("clamps to min when pointer is left of track", () => {
+    const trackEl = makeMockTrackEl({ left: 50, top: 0, width: 100, height: 0 });
+    const { api, send } = makeApi({ trackEl, min: 0, max: 100 });
+    // clientX=0 → percent=(0-50)/100=-0.5 → clamped to 0 → value=0
+    const e = { button: 0, clientX: 0, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 0 });
+  });
+
+  it("clamps to max when pointer is right of track", () => {
+    const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 });
+    const { api, send } = makeApi({ trackEl, min: 0, max: 100 });
+    // clientX=200 → percent=2 → clamped to 1 → value=100
+    const e = { button: 0, clientX: 200, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 100 });
+  });
+
+  it("snaps to nearest step grid", () => {
+    const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 });
+    const { api, send } = makeApi({ trackEl, min: 0, max: 100, step: 10 });
+    // clientX=53 → raw=53 → snapped to 50 (step=10)
+    const e = { button: 0, clientX: 53, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 50 });
+  });
+
+  it("snaps with decimal step (avoids float drift)", () => {
+    const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 });
+    const { api, send } = makeApi({ trackEl, min: 0, max: 1, step: 0.1 });
+    // clientX=33 → raw=0.33 → snapped to 0.3
+    const e = { button: 0, clientX: 33, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 0.3 });
+  });
+
+  it("calls preventDefault when trackEl is present", () => {
+    const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 });
+    const { api } = makeApi({ trackEl });
+    const preventDefault = vi.fn();
+    const e = { button: 0, clientX: 50, clientY: 0, preventDefault } as unknown as PointerEvent;
+    api.getTrackProps().onPointerDown(e);
+    expect(preventDefault).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// onKeydown (Vue lowercase alias) — mirrors onKeyDown but for Vue event naming
+// Both handlers must be present because React uses camelCase and Vue uses lowercase.
+// ---------------------------------------------------------------------------
+
+describe("connectSlider — onKeydown (Vue alias for onKeyDown)", () => {
+  function callKeydown(api: ReturnType<typeof makeApi>["api"], key: string) {
+    const props = api.getThumbProps() as Record<string, (e: unknown) => void>;
+    props["onKeydown"]({ key, preventDefault: vi.fn() });
+  }
+
+  it("ArrowRight → INCREMENT", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "ArrowRight");
+    expect(send).toHaveBeenCalledWith({ type: "INCREMENT" });
+  });
+
+  it("ArrowUp → INCREMENT", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "ArrowUp");
+    expect(send).toHaveBeenCalledWith({ type: "INCREMENT" });
+  });
+
+  it("ArrowLeft → DECREMENT", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "ArrowLeft");
+    expect(send).toHaveBeenCalledWith({ type: "DECREMENT" });
+  });
+
+  it("ArrowDown → DECREMENT", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "ArrowDown");
+    expect(send).toHaveBeenCalledWith({ type: "DECREMENT" });
+  });
+
+  it("PageUp → INCREMENT_PAGE", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "PageUp");
+    expect(send).toHaveBeenCalledWith({ type: "INCREMENT_PAGE" });
+  });
+
+  it("PageDown → DECREMENT_PAGE", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "PageDown");
+    expect(send).toHaveBeenCalledWith({ type: "DECREMENT_PAGE" });
+  });
+
+  it("Home → SET_VALUE with min", () => {
+    const { api, send } = makeApi({ min: 5 });
+    callKeydown(api, "Home");
+    expect(send).toHaveBeenCalledWith({ type: "SET_VALUE", value: 5 });
+  });
+
+  it("End → SET_VALUE with max", () => {
+    const { api, send } = makeApi({ max: 200 });
+    callKeydown(api, "End");
+    expect(send).toHaveBeenCalledWith({ type: "SET_VALUE", value: 200 });
+  });
+
+  it("disabled: no-op for any key", () => {
+    const { api, send } = makeApi({ disabled: true });
+    callKeydown(api, "ArrowRight");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("unknown key: no-op", () => {
+    const { api, send } = makeApi();
+    callKeydown(api, "Tab");
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getTrackProps — ref callback
+// ---------------------------------------------------------------------------
+
+describe("connectSlider — getTrackProps ref callback", () => {
+  it("ref callback registers trackEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectSlider(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getTrackProps() as Record<string, (el: Element | null) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ trackEl: el });
   });
 });

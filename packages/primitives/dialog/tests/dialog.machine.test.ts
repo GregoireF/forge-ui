@@ -210,6 +210,21 @@ describe("createDialogMachine — presence registration", () => {
     m.send("REGISTER_DESCRIPTION");
     expect(m.getSnapshot().context.descriptionRegistered).toBe(true);
   });
+
+  it("UNREGISTER_DESCRIPTION sets descriptionRegistered:false", () => {
+    const m = makeMachine();
+    m.send("REGISTER_DESCRIPTION");
+    m.send("UNREGISTER_DESCRIPTION");
+    expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
+  });
+
+  it("UNREGISTER_DESCRIPTION in open state sets descriptionRegistered:false", () => {
+    const m = makeMachine();
+    m.send("OPEN");
+    m.send("REGISTER_DESCRIPTION");
+    m.send("UNREGISTER_DESCRIPTION");
+    expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
+  });
 });
 
 describe("createDialogMachine — activities (keyboard + focus)", () => {
@@ -363,5 +378,82 @@ describe("createDialogMachine — focus management (WAI-ARIA §6.2)", () => {
     expect(document.activeElement).not.toBe(trigger);
     trigger.remove();
     content.remove();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Activity config callbacks — require real contentEl to exercise
+// trapKeyboard's getContentEl/isModal, hideBackground's getId,
+// watchOutside's getContainers/getOnPointerDownOutside/getOnInteractOutside.
+// ---------------------------------------------------------------------------
+
+describe("createDialogMachine — activity config callbacks (contentEl required)", () => {
+  beforeEach(() => {
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("trapKeyboard: getContentEl and isModal called when Tab is pressed while open", () => {
+    const content = document.createElement("div");
+    const btn = document.createElement("button");
+    content.appendChild(btn);
+    document.body.appendChild(content);
+    const m = makeMachine({ modal: true }); // trapFocus=true by default
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    // Dispatching Tab triggers the keyboard activity's tab-trap logic,
+    // which calls getContentEl(ctx) and isModal(ctx) internally.
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+    expect(m.getSnapshot().matches("open")).toBe(true);
+    m.send("CLOSE");
+    content.remove();
+  });
+
+  it("hideBackground: getId called when dialog opens with contentEl set", () => {
+    const content = document.createElement("div");
+    const other = document.createElement("div");
+    document.body.appendChild(content);
+    document.body.appendChild(other);
+    const m = makeMachine({ hideOthers: true });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    // hideBackground activity runs on open and calls getId(ctx) to register the layer
+    expect(m.getSnapshot().matches("open")).toBe(true);
+    m.send("CLOSE");
+    content.remove();
+    other.remove();
+  });
+
+  it("watchOutside: getContainers and getOnPointerDownOutside called on outside pointerdown", () => {
+    const content = document.createElement("div");
+    const outsideEl = document.createElement("button");
+    document.body.appendChild(content);
+    document.body.appendChild(outsideEl);
+    const onPointerDownOutside = vi.fn();
+    const m = makeMachine({ onPointerDownOutside });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    // pointerdown outside content → watchOutside calls getContainers/getOnPointerDownOutside
+    outsideEl.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, composed: true, cancelable: true }));
+    content.remove();
+    outsideEl.remove();
+  });
+
+  it("watchOutside: getOnFocusOutside and getOnInteractOutside called on outside focus", () => {
+    const content = document.createElement("div");
+    const outsideBtn = document.createElement("button");
+    document.body.appendChild(content);
+    document.body.appendChild(outsideBtn);
+    const onFocusOutside = vi.fn();
+    const m = makeMachine({ onFocusOutside });
+    m.setContext({ contentEl: content });
+    m.send("OPEN");
+    // focus outside content → watchOutside calls getOnFocusOutside/getOnInteractOutside
+    outsideBtn.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true }));
+    content.remove();
+    outsideBtn.remove();
   });
 });

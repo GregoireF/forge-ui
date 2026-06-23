@@ -273,4 +273,25 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     expect(send).not.toHaveBeenCalled();
     cleanup();
   });
+
+  // onKeydown (Vue lowercase alias) — same routing, different event name binding
+  it("onKeydown (Vue alias): Enter sends TOGGLE_ITEM", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "a" });
+    cleanup();
+  });
+
+  it("onKeydown (Vue alias): disabled accordion: Enter does NOT send TOGGLE_ITEM", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b"], { disabled: true });
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).not.toHaveBeenCalled();
+    cleanup();
+  });
 });

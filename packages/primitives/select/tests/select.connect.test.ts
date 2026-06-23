@@ -390,6 +390,33 @@ describe("connectSelect — onKeyDown keyboard interactions", () => {
     expect(send).toHaveBeenLastCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
     vi.useRealTimers();
   });
+
+  // Typeahead cycle: when multiple options share the same prefix and the current
+  // highlighted is already one of those matches, pressing the key again advances
+  // to the NEXT match instead of staying on the same one.
+  it("cycle through multiple prefix-matches — advances when current is already highlighted", () => {
+    const multiR: SelectOption[] = [
+      { value: "react", label: "React", disabled: false },
+      { value: "redux", label: "Redux", disabled: false },
+      { value: "vue", label: "Vue", disabled: false },
+    ];
+    // highlighted="react" → fire "r" → both React+Redux match (length>1) →
+    // current (react) is at idx=0 → advance to redux
+    const { api, send } = makeApi({ options: multiR, highlighted: "react" }, "open");
+    fire(api, "r");
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "redux" });
+  });
+
+  it("cycle wraps to first match when current is the last match", () => {
+    const multiR: SelectOption[] = [
+      { value: "react", label: "React", disabled: false },
+      { value: "redux", label: "Redux", disabled: false },
+    ];
+    // highlighted="redux" (idx=1, last match) → wrap to react (idx=0)
+    const { api, send } = makeApi({ options: multiR, highlighted: "redux" }, "open");
+    fire(api, "r");
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -418,6 +445,28 @@ describe("connectSelect — getOptionProps mouse events", () => {
   it("onMouseLeave clears highlight (value=null)", () => {
     const { api, send } = makeApi({ highlighted: "react" }, "open");
     api.getOptionProps({ value: "react", disabled: false }).onMouseLeave();
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
+  });
+
+  // Vue uses lowercase native DOM event names (onMousemove / onMouseleave)
+  it("onMousemove (Vue alias) highlights non-disabled option", () => {
+    const { api, send } = makeApi({ highlighted: null }, "open");
+    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<string, () => void>;
+    props["onMousemove"]();
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+  });
+
+  it("onMousemove (Vue alias) on already-highlighted is no-op", () => {
+    const { api, send } = makeApi({ highlighted: "react" }, "open");
+    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<string, () => void>;
+    props["onMousemove"]();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onMouseleave (Vue alias) clears highlight", () => {
+    const { api, send } = makeApi({ highlighted: "react" }, "open");
+    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<string, () => void>;
+    props["onMouseleave"]();
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
   });
 });

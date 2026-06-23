@@ -294,4 +294,25 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "c" });
     cleanup();
   });
+
+  // onKeydown (Vue lowercase alias) — same logic, different event name binding
+  it("onKeydown (Vue alias): Space selects the focused radio", () => {
+    const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
+    const props = api.getRadioProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
+    cleanup();
+  });
+
+  it("onKeydown (Vue alias): Enter selects the focused radio", () => {
+    const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
+    const props = api.getRadioProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
+    cleanup();
+  });
 });

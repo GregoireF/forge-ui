@@ -290,4 +290,55 @@ describe("connectTabs — onKeyDown keyboard navigation", () => {
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "a" });
     cleanup();
   });
+
+  // onKeydown (Vue lowercase alias) — same logic, different event name binding
+  it("onKeydown (Vue alias): ArrowRight sends SELECT_TAB for next tab (automatic)", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b", "c"], "a");
+    const e = new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "b" });
+    cleanup();
+  });
+
+  it("onKeydown (Vue alias): Enter selects tab in manual mode", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b"], "b", { activationMode: "manual" });
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "a" });
+    cleanup();
+  });
 });
+
+// ---------------------------------------------------------------------------
+// onFocusin — Vue alias for onFocus (native DOM event name)
+// Vue fires "focusin" on the host element rather than React's synthetic onFocus.
+// Both handlers must be present so focus-to-activate works in both frameworks.
+// ---------------------------------------------------------------------------
+
+describe("connectTabs — onFocusin (Vue alias for onFocus)", () => {
+  it("onFocusin sends SELECT_TAB in automatic mode", () => {
+    const { api, send } = makeApi({ activationMode: "automatic" });
+    const props = api.getTriggerProps("tab2") as Record<string, () => void>;
+    props["onFocusin"]();
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "tab2" });
+  });
+
+  it("onFocusin does NOT send SELECT_TAB in manual mode", () => {
+    const { api, send } = makeApi({ activationMode: "manual" });
+    const props = api.getTriggerProps("tab2") as Record<string, () => void>;
+    props["onFocusin"]();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onFocusin does NOT send SELECT_TAB when globally disabled", () => {
+    const { api, send } = makeApi({ activationMode: "automatic", disabled: true });
+    const props = api.getTriggerProps("tab2") as Record<string, () => void>;
+    props["onFocusin"]();
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+

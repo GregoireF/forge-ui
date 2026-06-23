@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { connectHoverCard } from "../src/hover-card.connect.js";
 import type { HoverCardContext, HoverCardState } from "../src/hover-card.types.js";
 
@@ -187,5 +187,146 @@ describe("connectHoverCard — getArrowProps", () => {
     const el = document.createElement("div");
     api.getArrowProps().ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ arrowEl: el });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// scheduleOpen / scheduleClose — timer bodies via fake timers
+//
+// WHY fake timers: the connect layer uses raw setTimeout for open/close delays.
+// vi.useFakeTimers() replaces setTimeout with a synchronous stub, so we can
+// advance time and assert the OPEN_TIMEOUT / CLOSE_TIMEOUT events were sent
+// without waiting real milliseconds.
+// ---------------------------------------------------------------------------
+
+describe("connectHoverCard — scheduleOpen (onMouseEnter timer)", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it("OPEN_TIMEOUT sent after openDelay", () => {
+    const { api, send } = makeApi({ openDelay: 700 });
+    api.getTriggerProps().onMouseEnter();
+    expect(send).not.toHaveBeenCalledWith({ type: "OPEN_TIMEOUT" });
+    vi.advanceTimersByTime(700);
+    expect(send).toHaveBeenCalledWith({ type: "OPEN_TIMEOUT" });
+  });
+
+  it("cancels pending close timer when scheduleOpen runs", () => {
+    const { api, send } = makeApi({ openDelay: 700, closeDelay: 300 });
+    // Start a close timer
+    api.getTriggerProps().onMouseLeave();
+    // Immediately mouse-enter → should cancel the close timer
+    api.getTriggerProps().onMouseEnter();
+    vi.advanceTimersByTime(300);
+    expect(send).not.toHaveBeenCalledWith({ type: "CLOSE_TIMEOUT" });
+  });
+
+  it("OPEN_TIMEOUT not sent before delay elapses", () => {
+    const { api, send } = makeApi({ openDelay: 700 });
+    api.getTriggerProps().onMouseEnter();
+    vi.advanceTimersByTime(699);
+    expect(send).not.toHaveBeenCalledWith({ type: "OPEN_TIMEOUT" });
+  });
+});
+
+describe("connectHoverCard — scheduleClose (onMouseLeave timer)", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it("CLOSE_TIMEOUT sent after closeDelay", () => {
+    const { api, send } = makeApi({ closeDelay: 300 });
+    api.getTriggerProps().onMouseLeave();
+    expect(send).not.toHaveBeenCalledWith({ type: "CLOSE_TIMEOUT" });
+    vi.advanceTimersByTime(300);
+    expect(send).toHaveBeenCalledWith({ type: "CLOSE_TIMEOUT" });
+  });
+
+  it("cancels pending open timer when scheduleClose runs", () => {
+    const { api, send } = makeApi({ openDelay: 700, closeDelay: 300 });
+    // Start an open timer
+    api.getTriggerProps().onMouseEnter();
+    // Immediately mouse-leave → should cancel the open timer
+    api.getTriggerProps().onMouseLeave();
+    vi.advanceTimersByTime(700);
+    expect(send).not.toHaveBeenCalledWith({ type: "OPEN_TIMEOUT" });
+  });
+
+  it("CLOSE_TIMEOUT not sent before delay elapses", () => {
+    const { api, send } = makeApi({ closeDelay: 300 });
+    api.getTriggerProps().onMouseLeave();
+    vi.advanceTimersByTime(299);
+    expect(send).not.toHaveBeenCalledWith({ type: "CLOSE_TIMEOUT" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getContentProps — mouse event handlers
+//
+// WHY: The content panel keeps the hover-card open while the user interacts
+// with it. onMouseEnter cancels the pending close timer; onMouseLeave restarts
+// the close countdown. These handlers are never tested in the prop-getter
+// section above, leaving lines 110-120 of the connect file uncovered.
+// ---------------------------------------------------------------------------
+
+describe("connectHoverCard — getContentProps event handlers", () => {
+  it("onMouseEnter sends MOUSE_ENTER", () => {
+    const { api, send } = makeApi();
+    api.getContentProps().onMouseEnter();
+    expect(send).toHaveBeenCalledWith({ type: "MOUSE_ENTER" });
+  });
+
+  it("onMouseEnter clears pending _closeTimerId", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ closeDelay: 300 });
+    // Start a close timer via trigger leave
+    api.getTriggerProps().onMouseLeave();
+    // Hover onto the content → should cancel that timer
+    api.getContentProps().onMouseEnter();
+    vi.advanceTimersByTime(300);
+    expect(send).not.toHaveBeenCalledWith({ type: "CLOSE_TIMEOUT" });
+    vi.useRealTimers();
+  });
+
+  it("onMouseLeave sends MOUSE_LEAVE", () => {
+    const { api, send } = makeApi();
+    api.getContentProps().onMouseLeave();
+    expect(send).toHaveBeenCalledWith({ type: "MOUSE_LEAVE" });
+  });
+
+  it("onMouseLeave schedules close: CLOSE_TIMEOUT fired after closeDelay", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ closeDelay: 300 });
+    api.getContentProps().onMouseLeave();
+    vi.advanceTimersByTime(300);
+    expect(send).toHaveBeenCalledWith({ type: "CLOSE_TIMEOUT" });
+    vi.useRealTimers();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ref callbacks — trigger and content
+// Calling ref(el) exercises the arrow functions that register DOM elements
+// on the machine. These lines are systematically uncovered without this test.
+// ---------------------------------------------------------------------------
+
+describe("connectHoverCard — ref callbacks", () => {
+  it("getTriggerProps ref registers triggerEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectHoverCard(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("button");
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+  });
+
+  it("getContentProps ref registers contentEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectHoverCard(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 });

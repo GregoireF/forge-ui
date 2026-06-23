@@ -231,6 +231,113 @@ describe("createSliderMachine — POINTER_DOWN → dragging", () => {
 // Callbacks — INCREMENT calls both onValueChange AND onValueCommit
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Drag activity — document pointermove / pointerup events
+// The drag activity registers global DOM listeners when the machine enters
+// "dragging". Setting trackEl lets computeValueFromPointer do real geometry.
+// ---------------------------------------------------------------------------
+
+describe("createSliderMachine — drag activity (document events)", () => {
+  function makeMockTrackEl(rect = { left: 0, top: 0, width: 100, height: 100 }) {
+    return { getBoundingClientRect: () => rect } as unknown as Element;
+  }
+
+  it("pointermove updates value via document event", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 30, onValueChange: onChange });
+    // Set trackEl on the live context (activity receives the same object reference)
+    m.setContext({ trackEl: makeMockTrackEl() });
+    m.send({ type: "POINTER_DOWN", value: 30 });
+
+    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 75, clientY: 0 }));
+    expect(m.getSnapshot().context.value).toBe(75);
+    expect(onChange).toHaveBeenCalledWith(75);
+  });
+
+  it("pointermove is no-op when computed value equals current value", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 50, onValueChange: onChange });
+    m.setContext({ trackEl: makeMockTrackEl() });
+    m.send({ type: "POINTER_DOWN", value: 50 });
+    // POINTER_DOWN itself triggers onValueChange — clear it before asserting pointermove
+    onChange.mockClear();
+
+    // clientX=50 on a 100px track → value=50 (unchanged) → early return in onPointerMove
+    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 50, clientY: 0 }));
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("pointermove while disabled does not update value", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 50, disabled: true, onValueChange: onChange });
+    m.setContext({ trackEl: makeMockTrackEl() });
+    // POINTER_DOWN transitions to dragging regardless of disabled (by design)
+    m.send({ type: "POINTER_DOWN", value: 50 });
+
+    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 75, clientY: 0 }));
+    expect(m.getSnapshot().context.value).toBe(50);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("pointermove: trackEl=null → computeValueFromPointer returns current value (no-op)", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 50, onValueChange: onChange });
+    // trackEl remains null — computeValueFromPointer returns ctx.value without geometry
+    m.send({ type: "POINTER_DOWN", value: 50 });
+    // POINTER_DOWN itself triggers onValueChange — clear before the pointermove assertion
+    onChange.mockClear();
+
+    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 75, clientY: 0 }));
+    // newValue=50 (same as ctx.value) → early return in onPointerMove → no onChange
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("pointerup calls onValueCommit and returns to idle", () => {
+    const onCommit = vi.fn();
+    const m = make({ defaultValue: 30, onValueCommit: onCommit });
+    m.setContext({ trackEl: makeMockTrackEl() });
+    m.send({ type: "POINTER_DOWN", value: 30 });
+
+    document.dispatchEvent(new PointerEvent("pointerup", { clientX: 80, clientY: 0 }));
+    expect(onCommit).toHaveBeenCalledWith(80);
+    expect(m.getSnapshot().matches("idle")).toBe(true);
+  });
+
+  it("pointerup: trackEl=null commits current value (early return in computeValueFromPointer)", () => {
+    const onCommit = vi.fn();
+    const m = make({ defaultValue: 40, onValueCommit: onCommit });
+    m.send({ type: "POINTER_DOWN", value: 40 });
+
+    // trackEl null → computeValueFromPointer returns ctx.value (40)
+    document.dispatchEvent(new PointerEvent("pointerup", { clientX: 80, clientY: 0 }));
+    expect(onCommit).toHaveBeenCalledWith(40);
+  });
+
+  it("pointercancel returns to idle without commit", () => {
+    const onCommit = vi.fn();
+    const m = make({ defaultValue: 50, onValueCommit: onCommit });
+    m.send({ type: "POINTER_DOWN", value: 50 });
+
+    document.dispatchEvent(new PointerEvent("pointercancel"));
+    expect(m.getSnapshot().matches("idle")).toBe(true);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it("vertical: pointermove uses inverted clientY axis", () => {
+    const m = make({ defaultValue: 50, orientation: "vertical" });
+    m.setContext({ trackEl: makeMockTrackEl({ left: 0, top: 0, width: 20, height: 100 }) });
+    m.send({ type: "POINTER_DOWN", value: 50 });
+
+    // clientY=25 → percent = 1 - 25/100 = 0.75 → value = 75
+    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 0, clientY: 25 }));
+    expect(m.getSnapshot().context.value).toBe(75);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Callbacks — INCREMENT calls both onValueChange AND onValueCommit
+// ---------------------------------------------------------------------------
+
 describe("createSliderMachine — callbacks", () => {
   it("onValueChange called on INCREMENT", () => {
     const onChange = vi.fn();

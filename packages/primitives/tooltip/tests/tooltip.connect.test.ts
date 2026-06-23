@@ -151,6 +151,15 @@ describe("connectTooltip — getTriggerProps event handlers", () => {
     vi.useRealTimers();
   });
 
+  it("onPointerLeave schedules CLOSE after closeDelay", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ closeDelay: 100 });
+    api.getTriggerProps().onPointerLeave();
+    vi.advanceTimersByTime(100);
+    expect(send).toHaveBeenCalledWith("CLOSE");
+    vi.useRealTimers();
+  });
+
   it("onKeyDown Escape when open sends CLOSE immediately", () => {
     const { api, send } = makeApi({}, "open");
     api.getTriggerProps().onKeyDown({ key: "Escape" });
@@ -172,6 +181,16 @@ describe("connectTooltip — getContentProps", () => {
   it("role=tooltip", () => {
     const { api } = makeApi();
     expect(api.getContentProps().role).toBe("tooltip");
+  });
+
+  it("ref callback registers contentEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 
   it("id matches contentId", () => {
@@ -326,5 +345,84 @@ describe("connectTooltip — getAnchorProps", () => {
     const el = document.createElement("div");
     api.getAnchorProps().ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ anchorEl: el });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getTriggerProps — ref callback
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — getTriggerProps ref callback", () => {
+  it("ref callback registers triggerEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getTriggerProps — closeOnPointerDown (conditional handler)
+// When closeOnPointerDown=true, the trigger gets an onPointerDown that immediately
+// cancels any pending open timer and closes the tooltip if it is currently open.
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — getTriggerProps closeOnPointerDown", () => {
+  it("closeOnPointerDown=true: onPointerDown while open sends CLOSE", () => {
+    const { api, send } = makeApi({ closeOnPointerDown: true }, "open");
+    const props = api.getTriggerProps() as Record<string, () => void>;
+    props["onPointerDown"]();
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("closeOnPointerDown=true: onPointerDown while closed clears timer but does not send CLOSE", () => {
+    const { api, send } = makeApi({ closeOnPointerDown: true }, "closed");
+    const props = api.getTriggerProps() as Record<string, () => void>;
+    props["onPointerDown"]();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("closeOnPointerDown=false: onPointerDown is not present on trigger", () => {
+    const { api } = makeApi({ closeOnPointerDown: false });
+    const props = api.getTriggerProps() as Record<string, unknown>;
+    expect(props["onPointerDown"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getContentProps — interactive mode handlers
+// When interactive=true, the content element gets onPointerEnter/onPointerLeave
+// so hovering onto the tooltip content itself keeps it open (e.g. for links inside).
+// ---------------------------------------------------------------------------
+
+describe("connectTooltip — getContentProps interactive handlers", () => {
+  it("interactive=true: onPointerEnter schedules OPEN after openDelay", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ interactive: true, openDelay: 50 });
+    const props = api.getContentProps() as Record<string, () => void>;
+    props["onPointerEnter"]();
+    vi.advanceTimersByTime(50);
+    expect(send).toHaveBeenCalledWith("OPEN");
+    vi.useRealTimers();
+  });
+
+  it("interactive=true: onPointerLeave schedules CLOSE after closeDelay", () => {
+    vi.useFakeTimers();
+    const { api, send } = makeApi({ interactive: true, closeDelay: 50 });
+    const props = api.getContentProps() as Record<string, () => void>;
+    props["onPointerLeave"]();
+    vi.advanceTimersByTime(50);
+    expect(send).toHaveBeenCalledWith("CLOSE");
+    vi.useRealTimers();
+  });
+
+  it("interactive=false: onPointerEnter/onPointerLeave are absent on content", () => {
+    const { api } = makeApi({ interactive: false });
+    const props = api.getContentProps() as Record<string, unknown>;
+    expect(props["onPointerEnter"]).toBeUndefined();
+    expect(props["onPointerLeave"]).toBeUndefined();
   });
 });
