@@ -180,6 +180,7 @@ export function createSliderMachine(options: CreateSliderOptions) {
       orientation: options.orientation ?? "horizontal",
       disabled: options.disabled ?? false,
       trackEl: null,
+      ...(options.getValueLabel !== undefined && { getValueLabel: options.getValueLabel }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
       ...(options.onValueCommit !== undefined && { onValueCommit: options.onValueCommit }),
     },

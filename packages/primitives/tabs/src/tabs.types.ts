@@ -5,6 +5,8 @@ export interface TabsContext {
   activationMode: TabsActivationMode;
   disabled: boolean;
   orientation: "horizontal" | "vertical";
+  /** Accessible label for the tablist — required by WAI-ARIA when no visible heading labels the list. */
+  label?: string;
   onValueChange?: (value: string) => void;
 }
 
@@ -24,5 +26,7 @@ export interface CreateTabsOptions {
   disabled?: boolean;
   /** @default "horizontal" */
   orientation?: "horizontal" | "vertical";
+  /** Accessible label for the tablist — set when no visible element labels the tab set. */
+  label?: string;
   onValueChange?: (value: string) => void;
 }

@@ -172,6 +172,7 @@ export function connectCombobox(
         role: "listbox" as const,
         "aria-labelledby": context.labelId,
         "aria-multiselectable": context.multiple ? true : undefined,
+        "aria-busy": context.isLoading || undefined,
         "data-state": state,
         "data-forge-scope": "combobox",
         "data-forge-part": "content",

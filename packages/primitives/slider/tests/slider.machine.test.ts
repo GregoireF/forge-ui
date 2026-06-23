@@ -344,6 +344,23 @@ describe("createSliderMachine — drag activity (document events)", () => {
 // Both call the same guard pattern `if (context.disabled) return;`.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// getValueLabel prop — stored in context for aria-valuetext in connect
+// ---------------------------------------------------------------------------
+
+describe("createSliderMachine — getValueLabel prop", () => {
+  it("getValueLabel stored in context when provided", () => {
+    const getValueLabel = (v: number) => v < 50 ? "low" : "high";
+    const m = make({ getValueLabel });
+    expect(m.getSnapshot().context.getValueLabel).toBe(getValueLabel);
+  });
+
+  it("getValueLabel absent from context when not provided", () => {
+    const m = make();
+    expect(m.getSnapshot().context.getValueLabel).toBeUndefined();
+  });
+});
+
 describe("createSliderMachine — DECREMENT_PAGE disabled", () => {
   it("DECREMENT_PAGE is no-op when disabled (line 108)", () => {
     const m = make({ defaultValue: 50, disabled: true });

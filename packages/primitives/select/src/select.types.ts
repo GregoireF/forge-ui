@@ -34,6 +34,8 @@ export interface SelectContext {
   placeholder: string;
   /** Disable the entire select. */
   disabled: boolean;
+  required: boolean;
+  invalid: boolean;
   // Floating positioning
   x: number;
   y: number;

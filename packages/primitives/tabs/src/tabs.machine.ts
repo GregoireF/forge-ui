@@ -34,6 +34,7 @@ export function createTabsMachine(options: CreateTabsOptions) {
       activationMode: options.activationMode ?? "automatic",
       disabled: options.disabled ?? false,
       orientation: options.orientation ?? "horizontal",
+      ...(options.label !== undefined && { label: options.label }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
     },
     initial: "idle",

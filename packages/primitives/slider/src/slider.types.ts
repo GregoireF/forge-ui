@@ -6,6 +6,8 @@ export interface SliderContext {
   orientation: "horizontal" | "vertical";
   disabled: boolean;
   trackEl: Element | null;
+  /** Produces aria-valuetext for the thumb — use for non-numeric labels ("low", "medium", "high"). */
+  getValueLabel?: (value: number) => string;
   onValueChange?: (value: number) => void;
   onValueCommit?: (value: number) => void;
 }
@@ -39,6 +41,8 @@ export interface CreateSliderOptions {
   orientation?: "horizontal" | "vertical";
   /** @default false */
   disabled?: boolean;
+  /** Produces aria-valuetext for the thumb — use for non-numeric labels ("low", "medium", "high"). */
+  getValueLabel?: (value: number) => string;
   onValueChange?: (value: number) => void;
   /** Fires on pointerup / keyboard commit. */
   onValueCommit?: (value: number) => void;

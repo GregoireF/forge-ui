@@ -18,6 +18,8 @@ function makeCtx(overrides: Partial<SelectContext> = {}): SelectContext {
     valueLabelMap: {},
     placeholder: "Select...",
     disabled: false,
+    required: false,
+    invalid: false,
     x: 0,
     y: 0,
     positioned: false,
@@ -678,5 +680,37 @@ describe("connectSelect — keyboard branch coverage", () => {
     const { api, send } = makeApi({}, "closed");
     fire(api, "Tab");
     expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// aria-required / aria-invalid on trigger
+// WHY: WAI-ARIA form semantics — AT announces required/invalid alongside the
+// field label. Radix Select omits these; forge-ui adds them explicitly.
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — aria-required / aria-invalid on trigger", () => {
+  it("aria-required absent when required:false (default)", () => {
+    const { api } = makeApi({ required: false });
+    const props = api.getTriggerProps() as Record<string, unknown>;
+    expect(props["aria-required"]).toBeUndefined();
+  });
+
+  it("aria-required=true when required:true", () => {
+    const { api } = makeApi({ required: true });
+    const props = api.getTriggerProps() as Record<string, unknown>;
+    expect(props["aria-required"]).toBe(true);
+  });
+
+  it("aria-invalid absent when invalid:false (default)", () => {
+    const { api } = makeApi({ invalid: false });
+    const props = api.getTriggerProps() as Record<string, unknown>;
+    expect(props["aria-invalid"]).toBeUndefined();
+  });
+
+  it("aria-invalid=true when invalid:true", () => {
+    const { api } = makeApi({ invalid: true });
+    const props = api.getTriggerProps() as Record<string, unknown>;
+    expect(props["aria-invalid"]).toBe(true);
   });
 });

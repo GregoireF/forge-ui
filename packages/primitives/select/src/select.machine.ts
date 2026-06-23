@@ -66,6 +66,8 @@ export interface CreateSelectMachineOptions {
   placeholder?: string;
   /** Disable the entire select. */
   disabled?: boolean;
+  required?: boolean;
+  invalid?: boolean;
   positioning?: FloatingPositioning;
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;
@@ -167,6 +169,8 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
       valueLabelMap: initialLabelMap,
       placeholder: options.placeholder ?? "Select an option",
       disabled: options.disabled ?? false,
+      required: options.required ?? false,
+      invalid: options.invalid ?? false,
       x: 0,
       y: 0,
       positioned: false,

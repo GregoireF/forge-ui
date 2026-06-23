@@ -50,6 +50,8 @@ export interface ComboboxContext {
   placeholder: string | undefined;
   /** When provided, internal filtering is skipped — the caller filters via onInputChange. */
   onInputChange?: (value: string) => void;
+  /** When true, sets aria-busy on the listbox — signals AT that results are loading (server-side mode). */
+  isLoading?: boolean;
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;
   onHighlightChange?: (value: string | null) => void;

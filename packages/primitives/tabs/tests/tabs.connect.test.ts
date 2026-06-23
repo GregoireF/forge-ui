@@ -461,3 +461,22 @@ describe("connectTabs — navigateTabs branch coverage", () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// getListProps — aria-label (WAI-ARIA §4.5: tablist must have accessible name
+// when not labelled by a visible element)
+// WHY: Radix Tabs does not expose aria-label on the tablist; forge-ui adds it
+// via the `label` prop. AT users get the list's purpose even without a heading.
+// ---------------------------------------------------------------------------
+
+describe("connectTabs — getListProps aria-label", () => {
+  it("aria-label absent when label option is not set", () => {
+    const { api } = makeApi();
+    expect((api.getListProps() as Record<string, unknown>)["aria-label"]).toBeUndefined();
+  });
+
+  it("aria-label=label when label option is set", () => {
+    const { api } = makeApi({ label: "Settings tabs" });
+    expect((api.getListProps() as Record<string, unknown>)["aria-label"]).toBe("Settings tabs");
+  });
+});
+

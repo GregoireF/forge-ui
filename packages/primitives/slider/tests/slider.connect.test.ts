@@ -463,3 +463,32 @@ describe("connectSlider — getTrackProps ref callback", () => {
     expect(machine.setContext).toHaveBeenCalledWith({ trackEl: el });
   });
 });
+
+// ---------------------------------------------------------------------------
+// aria-valuetext / getValueLabel
+// WHY: WAI-ARIA §3.23 recommends aria-valuetext when the numeric value alone
+// is insufficient — e.g. "low/medium/high" ratings or formatted percentages.
+// Without getValueLabel the attribute must be absent (undefined), not "".
+// ---------------------------------------------------------------------------
+
+describe("connectSlider — aria-valuetext via getValueLabel", () => {
+  it("aria-valuetext absent when getValueLabel is not set", () => {
+    const { api } = makeApi({ defaultValue: 50 });
+    const props = api.getThumbProps() as Record<string, unknown>;
+    expect(props["aria-valuetext"]).toBeUndefined();
+  });
+
+  it("aria-valuetext reflects getValueLabel output when provided", () => {
+    const getValueLabel = (v: number) => v < 33 ? "low" : v < 66 ? "medium" : "high";
+    const { api } = makeApi({ defaultValue: 50, getValueLabel });
+    const props = api.getThumbProps() as Record<string, unknown>;
+    expect(props["aria-valuetext"]).toBe("medium");
+  });
+
+  it("aria-valuetext reflects the current snapshot value via getValueLabel", () => {
+    const getValueLabel = (v: number) => `${v}%`;
+    // Pass value:30 directly — makeApi takes SliderContext overrides, not machine options
+    const { api } = makeApi({ value: 30, getValueLabel });
+    expect((api.getThumbProps() as Record<string, unknown>)["aria-valuetext"]).toBe("30%");
+  });
+});

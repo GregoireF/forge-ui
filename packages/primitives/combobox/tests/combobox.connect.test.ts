@@ -773,3 +773,30 @@ describe("connectCombobox — ref callbacks", () => {
     expect(machine.setContext).toHaveBeenCalledWith({ buttonEl: el });
   });
 });
+
+// ---------------------------------------------------------------------------
+// aria-busy on listbox content (WAI-ARIA combobox pattern — server-side mode)
+// WHY: When onInputChange is provided (server-side filtering), the listbox may
+// be empty while results load. aria-busy signals AT to wait before reading the
+// list. Radix Combobox has no such affordance; forge-ui explicitly supports it.
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — aria-busy on listbox", () => {
+  it("aria-busy absent when isLoading is not set (default)", () => {
+    const { api } = makeApi({}, "open");
+    const props = api.getContentProps() as Record<string, unknown>;
+    expect(props["aria-busy"]).toBeUndefined();
+  });
+
+  it("aria-busy absent when isLoading=false", () => {
+    const { api } = makeApi({ isLoading: false }, "open");
+    const props = api.getContentProps() as Record<string, unknown>;
+    expect(props["aria-busy"]).toBeUndefined();
+  });
+
+  it("aria-busy=true when isLoading=true", () => {
+    const { api } = makeApi({ isLoading: true }, "open");
+    const props = api.getContentProps() as Record<string, unknown>;
+    expect(props["aria-busy"]).toBe(true);
+  });
+});

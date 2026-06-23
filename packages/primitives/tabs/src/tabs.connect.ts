@@ -70,10 +70,11 @@ export function connectTabs(
       return {
         role: "tablist" as const,
         "aria-orientation": orientation,
+        ...(context.label !== undefined && { "aria-label": context.label }),
         "data-forge-scope": "tabs",
         "data-forge-part": "list",
         "data-orientation": orientation,
-      } as const;
+      };
     },
 
     getTriggerProps(tabValue: string) {

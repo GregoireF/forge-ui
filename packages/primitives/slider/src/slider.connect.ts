@@ -97,6 +97,7 @@ export function connectSlider(
         "aria-valuemin": min,
         "aria-valuemax": max,
         "aria-valuenow": value,
+        "aria-valuetext": context.getValueLabel?.(value),
         "aria-orientation": orientation,
         "aria-disabled": disabled || undefined,
         "data-forge-scope": "slider",

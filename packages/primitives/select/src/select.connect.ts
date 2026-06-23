@@ -189,6 +189,8 @@ export function connectSelect(
         "aria-labelledby": `${context.labelId} ${context.triggerId}`,
         "aria-activedescendant": activeDescendantId,
         "aria-disabled": context.disabled || undefined,
+        "aria-required": context.required || undefined,
+        "aria-invalid": context.invalid || undefined,
         disabled: context.disabled || undefined,
         "data-state": state,
         "data-disabled": context.disabled ? "" : undefined,

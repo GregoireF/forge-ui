@@ -157,6 +157,22 @@ describe("createTabsMachine — onValueChange", () => {
 // cover the "root" fallback branch.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// label prop (line 37: `options.label !== undefined`)
+// ---------------------------------------------------------------------------
+
+describe("createTabsMachine — label prop", () => {
+  it("label stored in context when provided", () => {
+    const m = make({ label: "Settings tabs" });
+    expect(m.getSnapshot().context.label).toBe("Settings tabs");
+  });
+
+  it("label absent from context when not provided", () => {
+    const m = make();
+    expect(m.getSnapshot().context.label).toBeUndefined();
+  });
+});
+
 describe("createTabsMachine — id fallback", () => {
   it("defaults id to 'root' in machine id when omitted", () => {
     const m = createTabsMachine({});

@@ -95,6 +95,7 @@ export interface CreateComboboxMachineOptions {
   readOnly?: boolean;
   required?: boolean;
   invalid?: boolean;
+  isLoading?: boolean;
   positioning?: FloatingPositioning;
   onInputChange?: (value: string) => void;
   onValueChange?: (value: string[]) => void;
@@ -135,6 +136,7 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       readOnly: options.readOnly ?? false,
       required: options.required ?? false,
       invalid: options.invalid ?? false,
+      isLoading: options.isLoading ?? false,
       placeholder: options.placeholder,
       ...(options.onInputChange !== undefined && { onInputChange: options.onInputChange }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
