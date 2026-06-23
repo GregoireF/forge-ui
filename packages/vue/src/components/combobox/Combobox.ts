@@ -1,4 +1,4 @@
-import type { ComboboxOption, ComboboxPositioning } from "@forge-ui/combobox";
+import type { ComboboxOption, ComboboxPositioning, ComboboxTranslations } from "@forge-ui/combobox";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref, VNodeRef } from "vue";
 import {
   defineComponent,
@@ -66,6 +66,7 @@ const ComboboxRoot = defineComponent({
     options: { type: Array as PropType<ComboboxOption[]>, default: undefined },
     onHighlightedScroll: { type: Function as PropType<(value: string, index: number) => void>, default: undefined },
     onCreateOption: { type: Function as PropType<(value: string) => void>, default: undefined },
+    translations: { type: Object as PropType<Partial<ComboboxTranslations>>, default: undefined },
   },
   emits: ["update:value", "update:open"],
   setup(props, { slots }) {
@@ -87,6 +88,7 @@ const ComboboxRoot = defineComponent({
       ...(props.options !== undefined && { options: props.options }),
       ...(props.onHighlightedScroll !== undefined && { onHighlightedScroll: props.onHighlightedScroll }),
       ...(props.onCreateOption !== undefined && { onCreateOption: props.onCreateOption }),
+      ...(props.translations !== undefined && { translations: props.translations }),
     };
 
     const api = useCombobox(opts);

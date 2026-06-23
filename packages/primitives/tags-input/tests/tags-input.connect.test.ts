@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { connectTagsInput } from "../src/tags-input.connect.js";
 import type { TagsInputContext, TagsInputState } from "../src/tags-input.types.js";
+import { defaultTagsInputTranslations } from "../src/tags-input.types.js";
 
 function makeCtx(overrides: Partial<TagsInputContext> = {}): TagsInputContext {
   return {
@@ -14,6 +15,7 @@ function makeCtx(overrides: Partial<TagsInputContext> = {}): TagsInputContext {
     required: false,
     invalid: false,
     allowDuplicates: false,
+    translations: defaultTagsInputTranslations,
     ...overrides,
   };
 }
@@ -256,13 +258,18 @@ describe("connectTagsInput — getTagDeleteProps", () => {
     expect(send).toHaveBeenCalledWith({ type: "REMOVE_TAG", value: "x" });
   });
 
-  // WAI-ARIA: the delete button must have an accessible name so screen readers
-  // announce which tag will be deleted. Currently hardcoded in French —
-  // this test documents the existing behaviour; i18n support is a future task.
-  it("aria-label includes the tag value for screen reader context", () => {
+  // WAI-ARIA: the delete button must have an accessible name containing the tag value
+  // so screen readers announce which tag will be deleted ("Remove TypeScript").
+  it("aria-label default (EN): 'Remove <value>'", () => {
     const { api } = makeApi();
-    const label = api.getTagDeleteProps("TypeScript")["aria-label"];
-    expect(label).toContain("TypeScript");
+    expect(api.getTagDeleteProps("TypeScript")["aria-label"]).toBe("Remove TypeScript");
+  });
+
+  it("aria-label uses custom deleteTag translation", () => {
+    const { api } = makeApi({
+      translations: { deleteTag: (v) => `Supprimer ${v}` },
+    });
+    expect(api.getTagDeleteProps("TypeScript")["aria-label"]).toBe("Supprimer TypeScript");
   });
 });
 

@@ -1,6 +1,21 @@
 import type { Placement } from "@floating-ui/dom";
 import type { FloatingPositioning, ResolvedFloatingPositioning } from "@forge-ui/floating";
 
+export interface ComboboxTranslations {
+  /** Accessible label for the clear button. */
+  clear: string;
+  /** Accessible label for the toggle button when the listbox is open. */
+  close: string;
+  /** Accessible label for the toggle button when the listbox is closed. */
+  open: string;
+}
+
+export const defaultComboboxTranslations: ComboboxTranslations = {
+  clear: "Clear",
+  close: "Close",
+  open: "Open",
+};
+
 export type { FloatingPositioning as ComboboxPositioning };
 
 export interface ComboboxOption {
@@ -46,6 +61,7 @@ export interface ComboboxContext {
   onHighlightedScroll?: (value: string, index: number) => void;
   /** Called when user wants to create a new option. Receives the current input value. */
   onCreateOption?: (value: string) => void;
+  translations: ComboboxTranslations;
   // Floating — the input acts as reference (triggerEl), listbox as content (contentEl).
   triggerEl: HTMLElement | null;
   contentEl: HTMLElement | null;

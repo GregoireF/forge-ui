@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { connectCombobox } from "../src/combobox.connect.js";
 import type { ComboboxContext, ComboboxOption, ComboboxState } from "../src/combobox.types.js";
+import { defaultComboboxTranslations } from "../src/combobox.types.js";
 
 const OPTIONS: ComboboxOption[] = [
   { value: "react", label: "React" },
@@ -25,6 +26,7 @@ function makeCtx(overrides: Partial<ComboboxContext> = {}): ComboboxContext {
     invalid: false,
     multiple: false,
     placeholder: "Select...",
+    translations: defaultComboboxTranslations,
     triggerEl: null,
     contentEl: null,
     buttonEl: null,
@@ -316,9 +318,14 @@ describe("connectCombobox — getClearTriggerProps", () => {
 
   // WAI-ARIA: the clear button must have an accessible name so AT can
   // announce its purpose without relying on an icon or visual context.
-  it("aria-label=Clear", () => {
+  it("aria-label default (EN): 'Clear'", () => {
     const { api } = makeApi();
     expect(api.getClearTriggerProps()["aria-label"]).toBe("Clear");
+  });
+
+  it("aria-label uses custom clear translation", () => {
+    const { api } = makeApi({ translations: { ...defaultComboboxTranslations, clear: "Effacer" } });
+    expect(api.getClearTriggerProps()["aria-label"]).toBe("Effacer");
   });
 
   it("onClick sends CLEAR when not disabled", () => {
@@ -480,14 +487,20 @@ describe("connectCombobox — getTriggerProps", () => {
     expect(api.getTriggerProps().tabIndex).toBe(-1);
   });
 
-  it("aria-label=Open when closed", () => {
+  it("aria-label default (EN): 'Open' when closed", () => {
     const { api } = makeApi({}, "closed");
     expect(api.getTriggerProps()["aria-label"]).toBe("Open");
   });
 
-  it("aria-label=Close when open", () => {
+  it("aria-label default (EN): 'Close' when open", () => {
     const { api } = makeApi({}, "open");
     expect(api.getTriggerProps()["aria-label"]).toBe("Close");
+  });
+
+  it("aria-label uses custom open/close translations", () => {
+    const translations = { ...defaultComboboxTranslations, open: "Ouvrir", close: "Fermer" };
+    expect(makeApi({ translations }, "closed").api.getTriggerProps()["aria-label"]).toBe("Ouvrir");
+    expect(makeApi({ translations }, "open").api.getTriggerProps()["aria-label"]).toBe("Fermer");
   });
 
   it("onClick when closed sends OPEN", () => {

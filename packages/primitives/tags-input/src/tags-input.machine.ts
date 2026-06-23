@@ -1,5 +1,6 @@
 import { createMachine } from "@forge-ui/core";
-import type { TagsInputContext, TagsInputEvent, TagsInputState } from "./tags-input.types.js";
+import type { TagsInputContext, TagsInputEvent, TagsInputState, TagsInputTranslations } from "./tags-input.types.js";
+import { defaultTagsInputTranslations } from "./tags-input.types.js";
 
 export interface CreateTagsInputMachineOptions {
   id?: string;
@@ -12,6 +13,7 @@ export interface CreateTagsInputMachineOptions {
   maxTags?: number;
   allowDuplicates?: boolean;
   delimiter?: string;
+  translations?: Partial<TagsInputTranslations>;
   onValueChange?: (value: string[]) => void;
   onInputChange?: (value: string) => void;
 }
@@ -34,6 +36,7 @@ export function createTagsInputMachine(opts: CreateTagsInputMachineOptions = {})
       required: opts.required ?? false,
       invalid: opts.invalid ?? false,
       allowDuplicates: opts.allowDuplicates ?? false,
+      translations: { ...defaultTagsInputTranslations, ...opts.translations },
       ...(opts.maxTags !== undefined && { maxTags: opts.maxTags }),
       ...(opts.delimiter !== undefined && { delimiter: opts.delimiter }),
       ...(opts.onValueChange !== undefined && { onValueChange: opts.onValueChange }),

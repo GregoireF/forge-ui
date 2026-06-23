@@ -1,7 +1,8 @@
 import { createMachine, makeWatchOutsideActivity } from "@forge-ui/core";
 import type { FloatingPositioning } from "@forge-ui/floating";
 import { makeComputePositionActivity } from "@forge-ui/floating";
-import type { ComboboxContext, ComboboxEvent, ComboboxOption, ComboboxState } from "./combobox.types.js";
+import type { ComboboxContext, ComboboxEvent, ComboboxOption, ComboboxState, ComboboxTranslations } from "./combobox.types.js";
+import { defaultComboboxTranslations } from "./combobox.types.js";
 
 // ---------------------------------------------------------------------------
 // Navigation helpers (operate on the filtered visible options)
@@ -103,6 +104,7 @@ export interface CreateComboboxMachineOptions {
   options?: ComboboxOption[];
   onHighlightedScroll?: (value: string, index: number) => void;
   onCreateOption?: (value: string) => void;
+  translations?: Partial<ComboboxTranslations>;
 }
 
 // ---------------------------------------------------------------------------
@@ -142,6 +144,7 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       ...(options.options !== undefined && { allOptions: options.options }),
       ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
       ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
+      translations: { ...defaultComboboxTranslations, ...options.translations },
       triggerEl: null,
       contentEl: null,
       buttonEl: null,

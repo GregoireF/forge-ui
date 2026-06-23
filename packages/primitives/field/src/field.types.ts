@@ -44,6 +44,15 @@ export interface FieldConnectReturn {
   /** Wraps the required indicator (* or custom) with aria-hidden so screen readers skip it.
    *  Screen readers already get the required status from aria-required on the control. */
   getRequiredIndicatorProps(): { "aria-hidden": true };
+  /** WAI-ARIA §3.7: group wrapper for multi-control fields (radio set, date fields, etc.).
+   *  Equivalent of <fieldset>/<legend> — use instead of getControlProps() in those cases. */
+  getGroupProps(): {
+    role: "group";
+    "aria-labelledby": string;
+    "aria-describedby": string | undefined;
+    "data-forge-scope": "field";
+    "data-forge-part": "group";
+  };
 }
 
 // Full API returned by framework hooks — extends connect with reactive register/unregister.

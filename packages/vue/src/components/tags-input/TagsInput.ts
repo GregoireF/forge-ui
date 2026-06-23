@@ -1,5 +1,6 @@
 import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, ref, watch } from "vue";
+import type { TagsInputTranslations } from "@forge-ui/tags-input";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
 import { useTagsInput } from "./use-tags-input.js";
 
@@ -32,6 +33,7 @@ const TagsInputRoot = defineComponent({
     maxTags: { type: Number, default: undefined },
     allowDuplicates: { type: Boolean, default: undefined },
     delimiter: { type: String, default: undefined },
+    translations: { type: Object as PropType<Partial<TagsInputTranslations>>, default: undefined },
     onValueChange: {
       type: Function as PropType<(value: string[]) => void>,
       default: undefined,
@@ -54,6 +56,7 @@ const TagsInputRoot = defineComponent({
       ...(props.maxTags !== undefined && { maxTags: props.maxTags }),
       ...(props.allowDuplicates !== undefined && { allowDuplicates: props.allowDuplicates }),
       ...(props.delimiter !== undefined && { delimiter: props.delimiter }),
+      ...(props.translations !== undefined && { translations: props.translations }),
       onValueChange: (v: string[]) => {
         emit("update:value", v);
         props.onValueChange?.(v);

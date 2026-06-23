@@ -39,6 +39,17 @@ describe("connectProgress — getRootProps", () => {
     expect(api.getRootProps()["aria-valuetext"]).toBe("loading");
   });
 
+  // WAI-ARIA §6.9: aria-busy signals active loading to AT; absent when value is known
+  it("aria-busy=true when indeterminate (value=null)", () => {
+    const api = connectProgress({ value: null });
+    expect((api.getRootProps() as Record<string, unknown>)["aria-busy"]).toBe(true);
+  });
+
+  it("aria-busy absent when value is a number", () => {
+    const api = connectProgress({ value: 50 });
+    expect((api.getRootProps() as Record<string, unknown>)["aria-busy"]).toBeUndefined();
+  });
+
   it("aria-valuetext shows percentage string when value is set", () => {
     const api = connectProgress({ value: 42 });
     expect(api.getRootProps()["aria-valuetext"]).toBe("42%");

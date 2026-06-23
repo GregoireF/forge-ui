@@ -84,5 +84,17 @@ export function connectField(context: FieldContext): FieldConnectReturn {
         "data-forge-part": "required-indicator" as const,
       };
     },
+
+    // WAI-ARIA §3.7: use when Field wraps multiple controls (radio group, multi-field
+    // date, etc.). Equivalent of <fieldset>/<legend> in div-based markup.
+    getGroupProps() {
+      return {
+        role: "group" as const,
+        "aria-labelledby": context.labelId,
+        "aria-describedby": buildAriaDescribedBy(),
+        "data-forge-scope": scope,
+        "data-forge-part": "group" as const,
+      };
+    },
   };
 }

@@ -54,7 +54,8 @@ export function connectTooltip(
 
     getTriggerProps() {
       return {
-        "aria-describedby": context.contentId,
+        // WAI-ARIA §4.2.5: omit aria-describedby when disabled — content is never revealed
+        "aria-describedby": context.disabled ? undefined : context.contentId,
         "data-state": state,
         "data-disabled": context.disabled || undefined,
         "data-forge-scope": "tooltip",

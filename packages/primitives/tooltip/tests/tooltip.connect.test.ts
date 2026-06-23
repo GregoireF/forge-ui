@@ -87,6 +87,18 @@ describe("connectTooltip — getTriggerProps", () => {
     const { api } = makeApi({ disabled: true });
     expect(api.getTriggerProps()["data-disabled"]).toBe(true);
   });
+
+  // WAI-ARIA §4.2.5: aria-describedby must be absent when disabled — the tooltip
+  // never opens so pointing AT to an invisible content element is a broken promise.
+  it("aria-describedby present when enabled", () => {
+    const { api } = makeApi({ disabled: false, contentId: "tip-content" });
+    expect(api.getTriggerProps()["aria-describedby"]).toBe("tip-content");
+  });
+
+  it("aria-describedby absent when disabled", () => {
+    const { api } = makeApi({ disabled: true, contentId: "tip-content" });
+    expect((api.getTriggerProps() as Record<string, unknown>)["aria-describedby"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, CSSProperties, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useEffect, useRef } from "react";
+import type { TagsInputTranslations } from "@forge-ui/tags-input";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
 import { useTagsInput } from "./use-tags-input.js";
 
@@ -23,6 +24,7 @@ export interface TagsInputRootProps extends UseTagsInputOptions {
   children: ReactNode;
   style?: CSSProperties;
   className?: string;
+  translations?: Partial<TagsInputTranslations>;
 }
 
 function Root({
@@ -39,6 +41,7 @@ function Root({
   maxTags,
   allowDuplicates,
   delimiter,
+  translations,
   onValueChange,
   onInputChange,
 }: TagsInputRootProps) {
@@ -53,6 +56,7 @@ function Root({
     ...(maxTags !== undefined && { maxTags }),
     ...(allowDuplicates !== undefined && { allowDuplicates }),
     ...(delimiter !== undefined && { delimiter }),
+    ...(translations !== undefined && { translations }),
     ...(onValueChange !== undefined && { onValueChange }),
     ...(onInputChange !== undefined && { onInputChange }),
   });

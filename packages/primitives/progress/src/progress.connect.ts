@@ -33,6 +33,8 @@ export function connectProgress(options: ProgressConnectOptions) {
         "aria-valuemax": max,
         "aria-valuenow": value ?? undefined,
         "aria-valuetext": value !== null ? `${percent}%` : "loading",
+        // WAI-ARIA §6.9: aria-busy signals active loading to AT when value is absent
+        "aria-busy": value === null ? (true as const) : undefined,
         "data-state": state,
         "data-value": value ?? undefined,
         "data-max": max,

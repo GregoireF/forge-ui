@@ -163,6 +163,44 @@ describe("connectField — getRequiredIndicatorProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// connectField — getGroupProps
+// ---------------------------------------------------------------------------
+
+describe("connectField — getGroupProps", () => {
+  // WAI-ARIA §3.7: role=group + aria-labelledby is the div-based equivalent of
+  // <fieldset>/<legend>. Use instead of getControlProps() when Field wraps multiple
+  // controls (radio set, multi-field date, checkbox group, etc.).
+  it("role=group", () => {
+    expect(connectField(makeCtx()).getGroupProps().role).toBe("group");
+  });
+
+  it("aria-labelledby points to the label id", () => {
+    const ctx = makeCtx({ controlId: "addr" });
+    expect(connectField(ctx).getGroupProps()["aria-labelledby"]).toBe("addr-label");
+  });
+
+  it("aria-describedby is undefined when no description and no error", () => {
+    expect(connectField(makeCtx()).getGroupProps()["aria-describedby"]).toBeUndefined();
+  });
+
+  it("aria-describedby includes descriptionId when hasDescription=true", () => {
+    const ctx = makeCtx({ hasDescription: true });
+    expect(connectField(ctx).getGroupProps()["aria-describedby"]).toBe("f-description");
+  });
+
+  it("aria-describedby includes both when hasDescription=true and hasError=true", () => {
+    const ctx = makeCtx({ hasDescription: true, hasError: true });
+    expect(connectField(ctx).getGroupProps()["aria-describedby"]).toBe("f-description f-error");
+  });
+
+  it("data-forge-scope=field and data-forge-part=group", () => {
+    const props = connectField(makeCtx()).getGroupProps();
+    expect(props["data-forge-scope"]).toBe("field");
+    expect(props["data-forge-part"]).toBe("group");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // connectField — pure (no side effects)
 // ---------------------------------------------------------------------------
 

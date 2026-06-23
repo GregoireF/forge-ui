@@ -9,4 +9,6 @@ export type {
   ComboboxPositioning,
   ComboboxSend,
   ComboboxState,
+  ComboboxTranslations,
 } from "./combobox.types.js";
+export { defaultComboboxTranslations } from "./combobox.types.js";

@@ -1,3 +1,12 @@
+export interface TagsInputTranslations {
+  /** Accessible label for the tag delete button. Receives the tag value. */
+  deleteTag: (value: string) => string;
+}
+
+export const defaultTagsInputTranslations: TagsInputTranslations = {
+  deleteTag: (value) => `Remove ${value}`,
+};
+
 export interface TagsInputContext {
   id: string;
   inputId: string;
@@ -11,6 +20,7 @@ export interface TagsInputContext {
   maxTags?: number;
   delimiter?: string;
   allowDuplicates: boolean;
+  translations: TagsInputTranslations;
   onValueChange?: (value: string[]) => void;
   onInputChange?: (value: string) => void;
 }

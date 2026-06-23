@@ -86,7 +86,7 @@ export function connectTagsInput(
       return {
         "data-forge-scope": "tags-input",
         "data-forge-part": "tag-delete",
-        "aria-label": `Supprimer ${value}`,
+        "aria-label": context.translations.deleteTag(value),
         type: "button" as const,
         tabIndex: -1 as const,
         onClick: () => send({ type: "REMOVE_TAG", value }),

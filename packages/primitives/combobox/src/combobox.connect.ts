@@ -215,7 +215,7 @@ export function connectCombobox(
     getClearTriggerProps() {
       return {
         type: "button" as const,
-        "aria-label": "Clear",
+        "aria-label": context.translations.clear,
         "data-forge-scope": "combobox",
         "data-forge-part": "clear-trigger",
         onClick() {
@@ -232,7 +232,7 @@ export function connectCombobox(
       return {
         type: "button" as const,
         tabIndex: -1 as const,
-        "aria-label": isOpen ? "Close" : "Open",
+        "aria-label": isOpen ? context.translations.close : context.translations.open,
         "data-state": state,
         "data-forge-scope": "combobox",
         "data-forge-part": "trigger",

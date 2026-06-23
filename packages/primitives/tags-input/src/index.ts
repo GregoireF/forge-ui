@@ -7,4 +7,6 @@ export type {
   TagsInputEvent,
   TagsInputSend,
   TagsInputState,
+  TagsInputTranslations,
 } from "./tags-input.types.js";
+export { defaultTagsInputTranslations } from "./tags-input.types.js";
