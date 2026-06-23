@@ -705,6 +705,208 @@ describe("createComboboxMachine — REGISTER/UNREGISTER in closed state", () => 
 // we must push manually in the test to make isTopLayer return true.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// getEffectiveOptions — server-side filtering path (line 22)
+// WHY: `if (context.onInputChange) return base;` skips client-side filtering
+// when the caller manages filtering externally. This branch is only triggered
+// when onInputChange is set AND a navigation event calls getEffectiveOptions
+// (HIGHLIGHT_NEXT, etc.) while the listbox is open.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// getNextHighlighted / getPrevHighlighted edge cases for combobox (lines 29, 37-38)
+// WHY: These helpers exist independently in combobox.machine.ts. The select
+// machine has its own copy. Both need their own coverage.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — HIGHLIGHT_NEXT/PREV edge cases", () => {
+  it("HIGHLIGHT_NEXT returns null when no enabled options (line 29 TRUE)", () => {
+    const m = make();
+    m.send("OPEN");
+    // No options registered → getEffectiveOptions=[] → enabled=[] → return null
+    m.send("HIGHLIGHT_NEXT");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_PREV returns null when no enabled options (line 37 TRUE)", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send("HIGHLIGHT_PREV");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_PREV when current=null selects last enabled (line 38 TRUE)", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B" } });
+    // current=null → return last enabled = "b"
+    m.send("HIGHLIGHT_PREV");
+    expect(m.getSnapshot().context.highlighted).toBe("b");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Positioning boundary / middleware (lines 167-168)
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — positioning boundary/middleware", () => {
+  it("boundary stored in positioning context when provided (line 167)", () => {
+    const boundary = document.createElement("div");
+    const m = make({ positioning: { boundary } });
+    expect(m.getSnapshot().context.positioning.boundary).toBe(boundary);
+  });
+
+  it("middleware stored in positioning context when provided (line 168)", () => {
+    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createComboboxMachine>[0]["positioning"]["middleware"];
+    const m = make({ positioning: { middleware } });
+    expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
+  });
+});
+
+describe("createComboboxMachine — server-side filtering (onInputChange set)", () => {
+  it("HIGHLIGHT_NEXT uses unfiltered base options when onInputChange is set (line 22)", () => {
+    const opts = [
+      { value: "a", label: "Apple" },
+      { value: "b", label: "Banana" },
+    ];
+    const m = make({ options: opts, onInputChange: vi.fn() });
+    m.send("OPEN");
+    // INPUT_CHANGE resets highlighted to null AND would filter out everything client-side.
+    // With server-side mode (onInputChange set), getEffectiveOptions returns unfiltered base
+    // → HIGHLIGHT_NEXT resolves first enabled = "a". Without it, filtered=[] → null.
+    m.send({ type: "INPUT_CHANGE", value: "xyz" });
+    m.send("HIGHLIGHT_NEXT");
+    // server-side: getEffectiveOptions → return base (unfiltered) → [a, b], first = "a"
+    expect(m.getSnapshot().context.highlighted).toBe("a");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SELECT_OPTION multiple mode: opt not found in options list (line 304)
+// WHY: `opt?.label ?? value` — the `?? value` (fallback to raw value) fires
+// when the option is not in context.options (e.g. registering after selecting
+// or virtual scroll scenario).
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — SELECT_OPTION option not in options list", () => {
+  it("multiple mode: uses raw value as label when option not found in context.options (line 304)", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    // Select "unknown" without registering it → opt=undefined → label falls back to value
+    m.send({ type: "SELECT_OPTION", value: "unknown" });
+    expect(m.getSnapshot().context.selectedLabels["unknown"]).toBe("unknown");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// HIGHLIGHT_FIRST / HIGHLIGHT_LAST null fallback in open state (lines 344, 354)
+// WHY: `[0]?.value ?? null` — the `?? null` fires when there are no enabled
+// options after filtering. Existing tests always have registered options.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — HIGHLIGHT_FIRST/LAST with empty options", () => {
+  it("HIGHLIGHT_FIRST returns null when no options are registered (line 344)", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send("HIGHLIGHT_FIRST");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_LAST returns null when no options are registered (line 354)", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send("HIGHLIGHT_LAST");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_FIRST returns null when all options are filtered out by inputValue", () => {
+    const m = make({ options: [{ value: "a", label: "Apple" }] });
+    m.send("OPEN");
+    m.send({ type: "INPUT_CHANGE", value: "xyz" }); // no match
+    m.send("HIGHLIGHT_FIRST");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// invokeOnHighlightedScroll: index === -1 false-branch (line 65 → reported as 68)
+// WHY: If highlighted is set to a value that is NOT in getEffectiveOptions (e.g.
+// because inputValue filters it out), findIndex returns -1 and the callback must
+// NOT be invoked. HIGHLIGHT_OPTION is used because it sets highlighted to any
+// arbitrary string without validating against the options list.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — invokeOnHighlightedScroll index out of range", () => {
+  it("does not invoke onHighlightedScroll when highlighted item is filtered out (line 65)", () => {
+    const onHighlightedScroll = vi.fn();
+    const m = make({ onHighlightedScroll });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Apple" } });
+    m.send("OPEN");
+    // Type "xyz" → filters out "a" → getEffectiveOptions returns []
+    m.send({ type: "INPUT_CHANGE", value: "xyz" });
+    // HIGHLIGHT_OPTION sets highlighted to "a" then calls invokeOnHighlightedScroll.
+    // getEffectiveOptions → [] → findIndex → -1 → callback NOT called (FALSE branch of `if (index >= 0)`)
+    m.send({ type: "HIGHLIGHT_OPTION", value: "a" });
+    expect(onHighlightedScroll).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CLOSE multiple mode — selected value not in context.options (line 227)
+// INTERACT_OUTSIDE multiple mode — same (line 247)
+// WHY: These handlers iterate over selected values and look up each one in
+// context.options. `if (opt)` FALSE branch fires when a selected value has been
+// unregistered (virtual scroll, portal unmount) before the close fires.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — CLOSE/INTERACT_OUTSIDE multiple unregistered option", () => {
+  it("CLOSE: skips label capture when selected value is not in context.options (line 227 FALSE)", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    // Register option and select it via SELECT_OPTION
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Apple" } });
+    m.send({ type: "SELECT_OPTION", value: "a" });
+    // Unregister the option (simulates virtual-scroll unmount)
+    m.send({ type: "UNREGISTER_OPTION", value: "a" });
+    // CLOSE fires: context.value=["a"] but context.options=[] → opt=undefined → if(opt) FALSE
+    m.send("CLOSE");
+    expect(m.getSnapshot().matches("closed")).toBe(true);
+    // selectedLabels for "a" was set by SELECT_OPTION; CLOSE should NOT override it with undefined
+    expect(m.getSnapshot().context.value).toContain("a");
+  });
+
+  it("INTERACT_OUTSIDE: skips label capture when selected value is not in context.options (line 247 FALSE)", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "Banana" } });
+    m.send({ type: "SELECT_OPTION", value: "b" });
+    m.send({ type: "UNREGISTER_OPTION", value: "b" });
+    m.send("INTERACT_OUTSIDE");
+    expect(m.getSnapshot().matches("closed")).toBe(true);
+    expect(m.getSnapshot().context.value).toContain("b");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SELECT_HIGHLIGHTED multiple mode: highlighted not in context.options (line 304)
+// WHY: The action uses `context.highlighted` (not event.value). `opt?.label ?? value`
+// — the `?? value` fallback fires when the highlighted item is not registered.
+// This differs from SELECT_OPTION (line 279) which uses event.value.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — SELECT_HIGHLIGHTED option not registered", () => {
+  it("multiple mode: falls back to raw value as label when highlighted item not in context.options (line 304)", () => {
+    const m = make({ multiple: true });
+    m.send("OPEN");
+    // HIGHLIGHT_OPTION without registering the option — sets highlighted directly
+    m.send({ type: "HIGHLIGHT_OPTION", value: "unregistered" });
+    m.send("SELECT_HIGHLIGHTED");
+    // opt=undefined → opt?.label=undefined → ?? "unregistered"
+    expect(m.getSnapshot().context.selectedLabels["unregistered"]).toBe("unregistered");
+  });
+});
+
 describe("createComboboxMachine — watchOutside activity config callbacks", () => {
   afterEach(() => clearRegistry());
 

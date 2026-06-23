@@ -150,6 +150,16 @@ describe("connectCollapsible — getContentProps", () => {
     const { api } = makeApi();
     expect(api.getContentProps()["data-forge-scope"]).toBe("collapsible");
   });
+
+  it("data-disabled present when disabled=true (line 62)", () => {
+    const { api } = makeApi({ disabled: true });
+    expect(api.getContentProps()["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when disabled=false", () => {
+    const { api } = makeApi({ disabled: false });
+    expect(api.getContentProps()["data-disabled"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------

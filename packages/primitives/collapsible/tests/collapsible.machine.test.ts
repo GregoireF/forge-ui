@@ -22,6 +22,21 @@ afterEach(() => {
 // Initial state
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// id fallback (lines 36-38: `options.id ?? "root"` appears twice — in the
+// machine id string AND in context.id)
+// ---------------------------------------------------------------------------
+
+describe("createCollapsibleMachine — id fallback", () => {
+  it("defaults machine id and context.id to 'root' when id is omitted", () => {
+    const m = createCollapsibleMachine({ open: false });
+    m.start();
+    active.push(m);
+    expect(m.id).toContain("root");
+    expect(m.getSnapshot().context.id).toBe("root");
+  });
+});
+
 describe("createCollapsibleMachine — initial state", () => {
   it("starts closed (context.open=false) by default", () => {
     const m = make();

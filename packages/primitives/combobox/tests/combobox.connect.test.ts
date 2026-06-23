@@ -333,6 +333,18 @@ describe("connectCombobox — getClearTriggerProps", () => {
     api.getClearTriggerProps().onClick();
     expect(send).toHaveBeenCalledWith("CLEAR");
   });
+
+  it("onClick does NOT send CLEAR when disabled (line 222)", () => {
+    const { api, send } = makeApi({ disabled: true });
+    api.getClearTriggerProps().onClick();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onClick does NOT send CLEAR when readOnly (line 222)", () => {
+    const { api, send } = makeApi({ readOnly: true });
+    api.getClearTriggerProps().onClick();
+    expect(send).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -450,6 +462,18 @@ describe("connectCombobox — onKeydown keyboard interactions", () => {
     fire(api, "ArrowDown");
     expect(send).not.toHaveBeenCalled();
   });
+
+  it("End when closed does nothing (guard isOpen=false, line 129)", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "End");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("Tab when closed does nothing (guard isOpen=false, line 145)", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "Tab");
+    expect(send).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -550,6 +574,23 @@ describe("connectCombobox — getOptionProps mouse events", () => {
     api.getOptionProps({ value: "react" }).onMouseleave();
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
   });
+
+  // WHY: getOptionProps.onClick has its own `if (!context.multiple) send("CLOSE")` guard
+  // (line 209) — separate from the keyboard handler. Multiple=true means the dropdown
+  // stays open after clicking an option.
+  it("onClick with multiple=true sends SELECT_OPTION but NOT CLOSE (line 209)", () => {
+    const { api, send } = makeApi({ multiple: true }, "open");
+    api.getOptionProps({ value: "react" }).onClick();
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_OPTION", value: "react" });
+    expect(send).not.toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("onClick with multiple=false sends SELECT_OPTION then CLOSE", () => {
+    const { api, send } = makeApi({ multiple: false }, "open");
+    api.getOptionProps({ value: "react" }).onClick();
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_OPTION", value: "react" });
+    expect(send).toHaveBeenCalledWith("CLOSE");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -592,6 +633,70 @@ describe("connectCombobox — value and valueLabel", () => {
   it("valueLabel is resolved from options label", () => {
     const { api } = makeApi({ value: ["react"], options: OPTIONS });
     expect(api.valueLabel).toBe("React");
+  });
+
+  // WHY: When value[0] is not present in the options list (e.g. async options not yet
+  // loaded, or a stale value), the optional-chain `?.label` returns undefined →
+  // nullish-coalescing fallback is the raw value string (line 47).
+  it("valueLabel falls back to raw value when option not found in options (line 47)", () => {
+    const { api } = makeApi({ value: ["unknown-framework"], options: OPTIONS });
+    expect(api.valueLabel).toBe("unknown-framework");
+  });
+
+  // WHY: valueLabels (lines 49-50) is only computed when value is non-empty;
+  // the inner map lambda is never invoked when value=[].
+  it("valueLabels resolves labels for each selected value (lines 49-50)", () => {
+    const { api } = makeApi({
+      value: ["react", "vue"],
+      options: OPTIONS,
+      selectedLabels: {},
+    });
+    expect(api.valueLabels).toEqual(["React", "Vue"]);
+  });
+
+  it("valueLabels prefers selectedLabels map over options lookup", () => {
+    const { api } = makeApi({
+      value: ["react"],
+      options: OPTIONS,
+      selectedLabels: { react: "React (cached)" },
+    });
+    expect(api.valueLabels).toEqual(["React (cached)"]);
+  });
+
+  it("valueLabels falls back to raw value when not in selectedLabels or options", () => {
+    const { api } = makeApi({
+      value: ["ghost"],
+      options: OPTIONS,
+      selectedLabels: {},
+    });
+    expect(api.valueLabels).toEqual(["ghost"]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getInputProps — placeholder in multi-select mode (line 92)
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getInputProps placeholder (multiple mode)", () => {
+  it("shows selected value labels as placeholder when multiple=true, closed, and has values (line 92)", () => {
+    const { api } = makeApi(
+      { multiple: true, value: ["react", "vue"], options: OPTIONS, selectedLabels: {} },
+      "closed",
+    );
+    expect(api.getInputProps().placeholder).toBe("React, Vue");
+  });
+
+  it("shows default placeholder when multiple=true but no values selected", () => {
+    const { api } = makeApi({ multiple: true, value: [], placeholder: "Pick..." }, "closed");
+    expect(api.getInputProps().placeholder).toBe("Pick...");
+  });
+
+  it("shows default placeholder when multiple=true, has values, but is open (input editable)", () => {
+    const { api } = makeApi(
+      { multiple: true, value: ["react"], options: OPTIONS, selectedLabels: {}, placeholder: "Search..." },
+      "open",
+    );
+    expect(api.getInputProps().placeholder).toBe("Search...");
   });
 });
 

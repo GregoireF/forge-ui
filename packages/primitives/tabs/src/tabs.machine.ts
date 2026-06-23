@@ -8,9 +8,8 @@ function selectTab({
 }: {
   context: TabsContext;
   setContext: (u: Partial<TabsContext>) => void;
-  event: TabsEvent;
+  event: Extract<TabsEvent, { type: "SELECT_TAB" }>;
 }) {
-  if (event.type !== "SELECT_TAB") return;
   if (context.disabled) return;
   setContext({ value: event.value });
   context.onValueChange?.(event.value);
@@ -22,9 +21,8 @@ function setValue({
 }: {
   context: TabsContext;
   setContext: (u: Partial<TabsContext>) => void;
-  event: TabsEvent;
+  event: Extract<TabsEvent, { type: "SET_VALUE" }>;
 }) {
-  if (event.type !== "SET_VALUE") return;
   setContext({ value: event.value });
 }
 

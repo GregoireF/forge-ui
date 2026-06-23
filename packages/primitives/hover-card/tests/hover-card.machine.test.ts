@@ -209,3 +209,27 @@ describe("createHoverCardMachine — custom delays", () => {
     expect(m.getSnapshot().context.closeDelay).toBe(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// positioning options — boundary and middleware (lines 37-38)
+// WHY: These optional floating-UI options use conditional spreads:
+// `...(pos.boundary !== undefined && { boundary: pos.boundary })`.
+// The TRUE branches are never triggered by default tests since no test
+// passes a boundary element or custom middleware array.
+// ---------------------------------------------------------------------------
+
+describe("createHoverCardMachine — positioning boundary/middleware", () => {
+  it("boundary is stored in positioning context when provided (line 37)", () => {
+    const boundary = document.createElement("div");
+    const m = make({ id: "test", positioning: { boundary } });
+    m.start();
+    expect(m.getSnapshot().context.positioning.boundary).toBe(boundary);
+  });
+
+  it("middleware array is stored in positioning context when provided (line 38)", () => {
+    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createHoverCardMachine>[0]["positioning"]["middleware"];
+    const m = make({ id: "test", positioning: { middleware } });
+    m.start();
+    expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
+  });
+});

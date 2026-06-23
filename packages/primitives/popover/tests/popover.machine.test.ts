@@ -291,6 +291,52 @@ describe("createPopoverMachine — focus management (WAI-ARIA §6.2)", () => {
 // stub rAF synchronously, then dispatch the event that triggers the callback.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Optional callback spreads — lines 152-164 (initialFocusEl, onPointerDownOutside,
+// onFocusOutside, onInteractOutside) + positioning boundary/middleware (149-150)
+// WHY: These optional options use conditional spreads that only add the key
+// when the value is defined. The TRUE branches are only hit when the option IS
+// passed. The existing tests cover most but not all of these.
+// ---------------------------------------------------------------------------
+
+describe("createPopoverMachine — optional spread options", () => {
+  it("initialFocusEl stored in context when provided (line 152)", () => {
+    const getFocus = () => document.createElement("button");
+    const m = makeMachine({ initialFocusEl: getFocus });
+    expect(m.getSnapshot().context.initialFocusEl).toBe(getFocus);
+  });
+
+  it("onPointerDownOutside stored in context when provided (line 156)", () => {
+    const cb = vi.fn();
+    const m = makeMachine({ onPointerDownOutside: cb });
+    expect(m.getSnapshot().context.onPointerDownOutside).toBe(cb);
+  });
+
+  it("onFocusOutside stored in context when provided (line 159)", () => {
+    const cb = vi.fn();
+    const m = makeMachine({ onFocusOutside: cb });
+    expect(m.getSnapshot().context.onFocusOutside).toBe(cb);
+  });
+
+  it("onInteractOutside stored in context when provided (line 161)", () => {
+    const cb = vi.fn();
+    const m = makeMachine({ onInteractOutside: cb });
+    expect(m.getSnapshot().context.onInteractOutside).toBe(cb);
+  });
+
+  it("positioning boundary stored when provided (line 149)", () => {
+    const boundary = document.createElement("div");
+    const m = makeMachine({ positioning: { boundary } });
+    expect(m.getSnapshot().context.positioning.boundary).toBe(boundary);
+  });
+
+  it("positioning middleware stored when provided (line 150)", () => {
+    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createPopoverMachine>[0]["positioning"]["middleware"];
+    const m = makeMachine({ positioning: { middleware } });
+    expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
+  });
+});
+
 describe("createPopoverMachine — activity config callbacks (contentEl required)", () => {
   beforeEach(() => {
     vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });

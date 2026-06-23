@@ -43,9 +43,8 @@ function setValueFromPointerDown({
 }: {
   context: SliderContext;
   setContext: (u: Partial<SliderContext>) => void;
-  event: SliderEvent;
+  event: Extract<SliderEvent, { type: "POINTER_DOWN" }>;
 }) {
-  if (event.type !== "POINTER_DOWN") return;
   if (context.disabled) return;
   const next = clamp(event.value, context.min, context.max);
   setContext({ value: next });
@@ -120,9 +119,8 @@ function setValue({
 }: {
   context: SliderContext;
   setContext: (u: Partial<SliderContext>) => void;
-  event: SliderEvent;
+  event: Extract<SliderEvent, { type: "SET_VALUE" }>;
 }) {
-  if (event.type !== "SET_VALUE") return;
   setContext({ value: event.value });
 }
 

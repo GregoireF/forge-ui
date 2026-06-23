@@ -338,6 +338,59 @@ describe("createSliderMachine — drag activity (document events)", () => {
 // Callbacks — INCREMENT calls both onValueChange AND onValueCommit
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// DECREMENT_PAGE disabled guard (line 108)
+// WHY: INCREMENT_PAGE disabled is tested but DECREMENT_PAGE disabled is not.
+// Both call the same guard pattern `if (context.disabled) return;`.
+// ---------------------------------------------------------------------------
+
+describe("createSliderMachine — DECREMENT_PAGE disabled", () => {
+  it("DECREMENT_PAGE is no-op when disabled (line 108)", () => {
+    const m = make({ defaultValue: 50, disabled: true });
+    m.send("DECREMENT_PAGE");
+    expect(m.getSnapshot().context.value).toBe(50);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// id fallback (line 174: `options.id ?? "root"`)
+// ---------------------------------------------------------------------------
+
+describe("createSliderMachine — id fallback", () => {
+  it("defaults id to 'root' in machine id when omitted (line 174)", () => {
+    const m = createSliderMachine({});
+    m.start();
+    active.push(m);
+    expect(m.id).toContain("root");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SSR guard in drag activity (line 132)
+// WHY: The `if (typeof document === "undefined") return;` guard bails the
+// drag activity in server-rendered environments. In jsdom this path is
+// never taken. vi.stubGlobal('document', undefined) simulates SSR and
+// verifies the activity exits without error.
+// ---------------------------------------------------------------------------
+
+describe("createSliderMachine — drag activity SSR guard (line 132)", () => {
+  it("drag activity exits early when document is undefined (SSR environment)", () => {
+    const origDocument = global.document;
+    try {
+      // @ts-expect-error — intentional undefined to simulate SSR
+      global.document = undefined;
+      const m = make({ defaultValue: 50 });
+      // POINTER_DOWN transitions to dragging which starts the drag activity.
+      // With document=undefined, the activity returns immediately — no event
+      // listeners are added and no error is thrown.
+      m.send({ type: "POINTER_DOWN", value: 50 });
+      expect(m.getSnapshot().matches("dragging")).toBe(true);
+    } finally {
+      global.document = origDocument;
+    }
+  });
+});
+
 describe("createSliderMachine — callbacks", () => {
   it("onValueChange called on INCREMENT", () => {
     const onChange = vi.fn();

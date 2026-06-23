@@ -59,6 +59,16 @@ describe("connectAccordion — getItemProps", () => {
     const { api } = makeApi({ value: ["a"] });
     expect(api.getItemProps("a")["data-state"]).toBe("open");
   });
+
+  it("data-disabled present when accordion is disabled", () => {
+    const { api } = makeApi({ disabled: true });
+    expect(api.getItemProps("a")["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when accordion is enabled", () => {
+    const { api } = makeApi({ disabled: false });
+    expect(api.getItemProps("a")["data-disabled"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -293,5 +303,63 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     props["onKeydown"](e);
     expect(send).not.toHaveBeenCalled();
     cleanup();
+  });
+
+  it("onKeydown (Vue alias): Space sends TOGGLE_ITEM (covers Space branch of || condition)", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "a" });
+    cleanup();
+  });
+
+  it("onKeydown (Vue alias): Escape (not Enter/Space, not arrow) does nothing (false || false branch)", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    // navigateAccordion returns false (Escape is not arrow/home/end), Enter||Space both false → no action
+    expect(send).not.toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("onKeydown (Vue alias): ArrowDown navigates triggers (navigateAccordion returns true → early return)", () => {
+    const { api, send, triggerEls, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
+    const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    // navigateAccordion returns true (handled ArrowDown) → early return in onKeydown; no send
+    expect(send).not.toHaveBeenCalled();
+    cleanup();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// navigateAccordion branch coverage
+//
+// WHY: navigateAccordion uses closest() to find the accordion root. When the
+// trigger is not inside an accordion root (no-root guard), the function returns
+// false early — letting the Enter/Space handler take over for TOGGLE_ITEM.
+// ---------------------------------------------------------------------------
+
+describe("connectAccordion — navigateAccordion branch coverage", () => {
+  it("ArrowDown when trigger has no parent accordion root: returns false, does NOT move focus", () => {
+    const { api, send } = makeApi();
+
+    // Trigger NOT inside [data-forge-scope="accordion"][data-forge-part="root"]
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: trigger });
+    api.getTriggerProps("item-a").onKeyDown(e);
+
+    // navigateAccordion returned false → fell through to Enter/Space check (ArrowDown is not handled)
+    expect(send).not.toHaveBeenCalled();
+    trigger.remove();
   });
 });

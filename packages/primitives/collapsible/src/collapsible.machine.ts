@@ -26,9 +26,8 @@ function setOpen({
 }: {
   context: CollapsibleContext;
   setContext: (u: Partial<CollapsibleContext>) => void;
-  event: CollapsibleEvent;
+  event: Extract<CollapsibleEvent, { type: "SET_OPEN" }>;
 }) {
-  if (event.type !== "SET_OPEN") return;
   setContext({ open: event.open });
 }
 

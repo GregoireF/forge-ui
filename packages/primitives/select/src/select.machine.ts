@@ -204,7 +204,6 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
           TOGGLE: { target: "open", actions: [setHighlightedToDefault, invokeOnOpenChange(true)] },
           REGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "REGISTER_OPTION") return;
               const exists = context.options.some((o) => o.value === event.option.value);
               if (!exists) setContext({ options: [...context.options, event.option] });
               // Always keep labels in the persistent map for value display after close.
@@ -215,7 +214,6 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
           },
           UNREGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "UNREGISTER_OPTION") return;
               setContext({ options: context.options.filter((o) => o.value !== event.value) });
               // Intentionally DO NOT remove from valueLabelMap — label must survive close.
             }],
@@ -236,7 +234,6 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
             // Stays "open" — the connect layer sends CLOSE after this for single-select.
             actions: [
               ({ context, setContext, event }) => {
-                if (event.type !== "SELECT_OPTION") return;
                 const { value } = event;
                 let next: string[];
                 if (context.multiple) {
@@ -275,7 +272,6 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
           HIGHLIGHT_OPTION: {
             actions: [
               ({ setContext, event }) => {
-                if (event.type !== "HIGHLIGHT_OPTION") return;
                 setContext({ highlighted: event.value });
               },
               invokeOnHighlightChange,
@@ -288,7 +284,6 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
 
           REGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "REGISTER_OPTION") return;
               const exists = context.options.some((o) => o.value === event.option.value);
               if (!exists) setContext({ options: [...context.options, event.option] });
               if (context.valueLabelMap[event.option.value] !== event.option.label) {
@@ -298,7 +293,6 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
           },
           UNREGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "UNREGISTER_OPTION") return;
               setContext({ options: context.options.filter((o) => o.value !== event.value) });
               // Intentionally DO NOT remove from valueLabelMap — label must survive close.
             }],

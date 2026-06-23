@@ -79,6 +79,15 @@ describe("connectSelect — valueLabel", () => {
     const { api } = makeApi({ value: ["unknown"], valueLabelMap: {} });
     expect(api.valueLabel).toBe("unknown");
   });
+
+  it("joins multiple selected values with comma separator (multiple=true, line 162)", () => {
+    const { api } = makeApi({
+      multiple: true,
+      value: ["react", "vue"],
+      valueLabelMap: { react: "React", vue: "Vue" },
+    });
+    expect(api.valueLabel).toBe("React, Vue");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -167,6 +176,11 @@ describe("connectSelect — getTriggerProps", () => {
   it("data-placeholder when value is empty", () => {
     const { api } = makeApi({ value: [] });
     expect(api.getTriggerProps()["data-placeholder"]).toBe("");
+  });
+
+  it("data-placeholder absent when value is selected (line 195)", () => {
+    const { api } = makeApi({ value: ["react"] });
+    expect(api.getTriggerProps()["data-placeholder"]).toBeUndefined();
   });
 
   // WAI-ARIA §6.8.1: the trigger's accessible name must reference both the
@@ -417,6 +431,21 @@ describe("connectSelect — onKeyDown keyboard interactions", () => {
     fire(api, "r");
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
   });
+
+  // WHY: When matches.length > 1 but current highlighted is NOT one of those matches
+  // (e.g. "vue" highlighted but only "react"+"redux" match "r"), idx=-1 → the
+  // if(idx !== -1) guard is FALSE → falls through to onMatch(matches[0]) = "react".
+  it("typeahead cycle: current not in matches (idx=-1) → first match highlighted (line 54)", () => {
+    const options: SelectOption[] = [
+      { value: "react", label: "React", disabled: false },
+      { value: "redux", label: "Redux", disabled: false },
+      { value: "vue", label: "Vue", disabled: false },
+    ];
+    // highlighted="vue" — not in matches=[React,Redux] for "r" → idx=-1 → react
+    const { api, send } = makeApi({ options, highlighted: "vue" }, "open");
+    fire(api, "r");
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -505,6 +534,20 @@ describe("connectSelect — getPositionerProps", () => {
     const { api } = makeApi({ positioned: true });
     expect(api.getPositionerProps().style.pointerEvents).toBeUndefined();
   });
+
+  it("width is triggerEl.offsetWidth in px when sameWidth=true (line 215)", () => {
+    const { api } = makeApi({
+      positioning: { strategy: "absolute", placement: "bottom", sameWidth: true } as SelectContext["positioning"],
+      triggerEl: null,
+    });
+    // triggerEl is null → offsetWidth ?? 0 → "0px"
+    expect(api.getPositionerProps().style.width).toBe("0px");
+  });
+
+  it("width is max-content when sameWidth=false (default)", () => {
+    const { api } = makeApi();
+    expect(api.getPositionerProps().style.width).toBe("max-content");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -571,5 +614,69 @@ describe("connectSelect — ref callbacks", () => {
     const el = document.createElement("div");
     (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
     expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Keyboard branch coverage — untested paths
+//
+// WHY: V8 counts each branch of if/ternary separately. The tests above cover
+// the common paths; these cover the guards that are valid but rarely exercised:
+// typeahead early-returns, closed-state no-ops, and multiple-mode selection.
+// fire is redefined here so this describe stays self-contained.
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — keyboard branch coverage", () => {
+  function fire(api: ReturnType<typeof connectSelect>, key: string) {
+    const e = { key, ctrlKey: false, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    return e;
+  }
+
+  it("typeahead: all options disabled → no HIGHLIGHT_OPTION (options.length===0 guard)", () => {
+    const allDisabled: SelectOption[] = [
+      { value: "react", label: "React", disabled: true },
+      { value: "vue", label: "Vue", disabled: true },
+    ];
+    const { api, send } = makeApi({ options: allDisabled }, "open");
+    fire(api, "r");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("typeahead: no matching option → no HIGHLIGHT_OPTION (matches.length===0 guard)", () => {
+    const { api, send } = makeApi({ options: OPTIONS }, "open");
+    fire(api, "z"); // no option label starts with "z"
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("Enter when open with highlighted and multiple=true: SELECT_OPTION sent but NOT CLOSE", () => {
+    const { api, send } = makeApi({ highlighted: "react", multiple: true }, "open");
+    fire(api, "Enter");
+    expect(send).toHaveBeenCalledWith({ type: "SELECT_OPTION", value: "react" });
+    expect(send).not.toHaveBeenCalledWith("CLOSE");
+  });
+
+  it("Home when closed: does nothing (guard isOpen===false)", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "Home");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("End when closed: does nothing (guard isOpen===false)", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "End");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("Enter when open but highlighted=null: does nothing (no selection possible)", () => {
+    const { api, send } = makeApi({ highlighted: null }, "open");
+    fire(api, "Enter");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("Tab when closed: does nothing (guard isOpen===false)", () => {
+    const { api, send } = makeApi({}, "closed");
+    fire(api, "Tab");
+    expect(send).not.toHaveBeenCalled();
   });
 });

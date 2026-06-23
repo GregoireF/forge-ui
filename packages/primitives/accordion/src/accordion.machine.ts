@@ -12,9 +12,8 @@ function toggle({
 }: {
   context: AccordionContext;
   setContext: (u: Partial<AccordionContext>) => void;
-  event: AccordionEvent;
+  event: Extract<AccordionEvent, { type: "TOGGLE_ITEM" }>;
 }) {
-  if (event.type !== "TOGGLE_ITEM") return;
   const { value: itemValue } = event;
   const { value, type, collapsible, disabled } = context;
 
@@ -50,9 +49,8 @@ function setValue({
 }: {
   context: AccordionContext;
   setContext: (u: Partial<AccordionContext>) => void;
-  event: AccordionEvent;
+  event: Extract<AccordionEvent, { type: "SET_VALUE" }>;
 }) {
-  if (event.type !== "SET_VALUE") return;
   setContext({ value: event.value });
   context.onValueChange?.(event.value);
 }
@@ -69,9 +67,7 @@ export function createAccordionMachine(options: CreateAccordionOptions) {
   const rawDefault = options.defaultValue ?? [];
   const initialValue = Array.isArray(rawDefault) ? rawDefault : [rawDefault];
   // In uncontrolled mode, start with defaultValue. Controlled value is synced externally.
-  const startValue = options.value !== undefined
-    ? (Array.isArray(options.value) ? options.value : [options.value])
-    : initialValue;
+  const startValue = options.value !== undefined ? options.value : initialValue;
 
   return createMachine<AccordionContext, "idle", AccordionEvent>({
     id: `forge-accordion:${options.id ?? "root"}`,

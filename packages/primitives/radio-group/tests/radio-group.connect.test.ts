@@ -81,6 +81,16 @@ describe("connectRadioGroup — getItemProps", () => {
     const { api } = makeApi({ value: "a" });
     expect(api.getItemProps("b")["data-state"]).toBe("unchecked");
   });
+
+  it("data-disabled present when item is per-item disabled", () => {
+    const { api } = makeApi();
+    expect(api.getItemProps("a", true)["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when item is enabled", () => {
+    const { api } = makeApi();
+    expect(api.getItemProps("a", false)["data-disabled"]).toBeUndefined();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -181,6 +191,11 @@ describe("connectRadioGroup — getHiddenInputProps", () => {
   it("name reflects group name", () => {
     const { api } = makeApi({ name: "choice" });
     expect(api.getHiddenInputProps("a").name).toBe("choice");
+  });
+
+  it("name is undefined when no name set (nullish-coalescing guard)", () => {
+    const { api } = makeApi({ name: undefined });
+    expect(api.getHiddenInputProps("a").name).toBeUndefined();
   });
 });
 
@@ -295,6 +310,15 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     cleanup();
   });
 
+  it("onKeyDown: Enter on disabled item does NOT send SELECT (!isItemDisabled guard)", () => {
+    const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
+    api.getRadioProps("a", true).onKeyDown(e);
+    expect(send).not.toHaveBeenCalled();
+    cleanup();
+  });
+
   // onKeydown (Vue lowercase alias) — same logic, different event name binding
   it("onKeydown (Vue alias): Space selects the focused radio", () => {
     const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b"]);
@@ -314,5 +338,99 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     props["onKeydown"](e);
     expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
     cleanup();
+  });
+
+  it("onKeydown (Vue alias): Enter on disabled item does NOT send (!isItemDisabled guard)", () => {
+    const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b"]);
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
+    const props = api.getRadioProps("a", true) as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    expect(send).not.toHaveBeenCalled();
+    cleanup();
+  });
+
+  it("onKeydown (Vue alias): ArrowDown navigates (navigateRadioGroup returns true → early return in alias)", () => {
+    const { api, send, radioEls, cleanup } = buildDomAndApi(["a", "b", "c"]);
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
+    const props = api.getRadioProps("a") as Record<string, (e: unknown) => void>;
+    props["onKeydown"](e);
+    // navigateRadioGroup returns true (handled ArrowDown) → early return; SELECT sent via navigateRadioGroup
+    expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "b" });
+    cleanup();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// navigateRadioGroup branch coverage
+//
+// WHY: navigateRadioGroup uses closest() and querySelectorAll() to find the
+// group root and sibling radios. Unit tests without a matching ancestor expose
+// three branches: no-root guard, no-target guard, and missing data-value.
+// ---------------------------------------------------------------------------
+
+describe("connectRadioGroup — navigateRadioGroup branch coverage", () => {
+  it("ArrowDown when radio has no parent radio-group root: returns true early (no-root guard)", () => {
+    const { api, send } = makeApi();
+
+    // Radio NOT inside [data-forge-scope="radio-group"][data-forge-part="root"]
+    const radio = document.createElement("button");
+    document.body.appendChild(radio);
+
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radio });
+    api.getRadioProps("x").onKeyDown(e);
+
+    // navigateRadioGroup returned true without sending (no root found)
+    expect(send).not.toHaveBeenCalled();
+    radio.remove();
+  });
+
+  it("ArrowDown when root has no enabled radios: returns true without SELECT (no-target guard)", () => {
+    const { api, send } = makeApi();
+
+    const root = document.createElement("div");
+    root.setAttribute("data-forge-scope", "radio-group");
+    root.setAttribute("data-forge-part", "root");
+
+    // Radio with disabled attr — excluded from querySelectorAll ':not([disabled])'
+    const radio = document.createElement("button");
+    radio.setAttribute("data-forge-part", "radio");
+    radio.setAttribute("disabled", "");
+    root.appendChild(radio);
+    document.body.appendChild(root);
+
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radio });
+    api.getRadioProps("x").onKeyDown(e);
+
+    expect(send).not.toHaveBeenCalled();
+    root.remove();
+  });
+
+  it("ArrowDown when target radio has no [data-forge-part=item] parent: does not send SELECT (val guard)", () => {
+    const { api, send } = makeApi();
+
+    const root = document.createElement("div");
+    root.setAttribute("data-forge-scope", "radio-group");
+    root.setAttribute("data-forge-part", "root");
+
+    // Two radios directly in root — NOT wrapped in [data-forge-part="item"]
+    const radio1 = document.createElement("button");
+    radio1.setAttribute("data-forge-part", "radio");
+    const radio2 = document.createElement("button");
+    radio2.setAttribute("data-forge-part", "radio");
+    root.appendChild(radio1);
+    root.appendChild(radio2);
+    document.body.appendChild(root);
+
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+    Object.defineProperty(e, "currentTarget", { value: radio1 });
+    api.getRadioProps("x").onKeyDown(e);
+
+    // target found (radio2), focus moved, but closest('[data-forge-part="item"]') = null → no SELECT
+    expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ type: "SELECT" }));
+    root.remove();
   });
 });

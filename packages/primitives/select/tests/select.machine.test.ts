@@ -446,6 +446,131 @@ describe("createSelectMachine — SELECT_HIGHLIGHTED", () => {
 // activity), so no manual pushLayer is needed — opening the select suffices.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// getNextHighlighted / getPrevHighlighted edge cases (lines 20-29)
+// WHY: existing tests always call HIGHLIGHT_OPTION first so `current` is set.
+// Lines 20-21 and 28-29 are only hit when no enabled options exist OR
+// current===null with enabled options present.
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — highlight navigation edge cases", () => {
+  it("HIGHLIGHT_NEXT returns null when no enabled options (line 20)", () => {
+    const m = make({ defaultOpen: true });
+    // No options registered → enabled=[] → returns null
+    m.send("HIGHLIGHT_NEXT");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_PREV returns null when no enabled options (line 28)", () => {
+    const m = make({ defaultOpen: true });
+    m.send("HIGHLIGHT_PREV");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_NEXT when current=null selects first enabled (line 21)", () => {
+    const m = make({ defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B" } });
+    // highlighted=null (default) → returns first enabled
+    m.send("HIGHLIGHT_NEXT");
+    expect(m.getSnapshot().context.highlighted).toBe("a");
+  });
+
+  it("HIGHLIGHT_PREV when current=null selects last enabled (line 29)", () => {
+    const m = make({ defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B" } });
+    m.send("HIGHLIGHT_PREV");
+    expect(m.getSnapshot().context.highlighted).toBe("b");
+  });
+
+  it("HIGHLIGHT_FIRST returns null when no enabled options (line 106)", () => {
+    const m = make({ defaultOpen: true });
+    m.send("HIGHLIGHT_FIRST");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+
+  it("HIGHLIGHT_LAST returns null when no enabled options (line 112)", () => {
+    const m = make({ defaultOpen: true });
+    m.send("HIGHLIGHT_LAST");
+    expect(m.getSnapshot().context.highlighted).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getDefaultHighlighted when selected value is disabled (line 38)
+// WHY: value[0] exists in options but is disabled → `if (selected)` is FALSE
+// → falls through to first enabled option.
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — getDefaultHighlighted with disabled selected", () => {
+  it("OPEN falls back to first enabled option when selected value is disabled (line 38)", () => {
+    const m = make({ defaultValue: "b" });
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B", disabled: true } });
+    m.send("OPEN");
+    expect(m.getSnapshot().context.highlighted).toBe("a");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// defaultLabel with fewer items than defaultValue (line 155)
+// WHY: `if (rawLabels[i] !== undefined)` FALSE branch fires when
+// defaultLabel array has fewer entries than defaultValue array.
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — defaultLabel partial match", () => {
+  it("only seeds labels that have a corresponding defaultLabel entry (line 155)", () => {
+    const m = make({ defaultValue: ["react", "vue", "angular"], defaultLabel: ["React"] });
+    const map = m.getSnapshot().context.valueLabelMap;
+    expect(map["react"]).toBe("React");
+    expect(map["vue"]).toBeUndefined();
+    expect(map["angular"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// positioning boundary / middleware options (lines 184-185)
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — positioning boundary/middleware", () => {
+  it("boundary stored in positioning context when provided (line 184)", () => {
+    const boundary = document.createElement("div");
+    const m = make({ positioning: { boundary } });
+    expect(m.getSnapshot().context.positioning.boundary).toBe(boundary);
+  });
+
+  it("middleware array stored in positioning context when provided (line 185)", () => {
+    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createSelectMachine>[0]["positioning"]["middleware"];
+    const m = make({ positioning: { middleware } });
+    expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// REGISTER_OPTION in open state — duplicate / label-unchanged branches (288-289)
+// WHY: closed-state REGISTER_OPTION duplicate is tested, but the open-state
+// handler is separate code. Both `if (!exists)` FALSE and `valueLabelMap`
+// label-unchanged FALSE branches need a duplicate registration in open state.
+// ---------------------------------------------------------------------------
+
+describe("createSelectMachine — REGISTER_OPTION open state idempotency", () => {
+  it("duplicate REGISTER_OPTION in open state keeps one entry (line 288 FALSE)", () => {
+    const m = make({ defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    expect(m.getSnapshot().context.options.filter((o) => o.value === "x")).toHaveLength(1);
+  });
+
+  it("duplicate REGISTER_OPTION in open state does not update unchanged label (line 289 FALSE)", () => {
+    const m = make({ defaultOpen: true });
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    const mapBefore = { ...m.getSnapshot().context.valueLabelMap };
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    expect(m.getSnapshot().context.valueLabelMap).toEqual(mapBefore);
+  });
+});
+
 describe("createSelectMachine — watchOutside activity config callbacks", () => {
   beforeEach(() => {
     vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });

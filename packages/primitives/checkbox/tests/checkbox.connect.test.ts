@@ -217,4 +217,56 @@ describe("connectCheckbox — getHiddenInputProps", () => {
     const { api } = makeApi({}, "checked");
     expect(api.getHiddenInputProps().checked).toBe(true);
   });
+
+  it("form attribute present when form is set", () => {
+    const props = makeApi({ form: "my-form" }).api.getHiddenInputProps();
+    expect((props as Record<string, unknown>)["form"]).toBe("my-form");
+  });
+
+  it("form attribute absent when form is undefined", () => {
+    const props = makeApi({ form: undefined }).api.getHiddenInputProps();
+    expect((props as Record<string, unknown>)["form"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getRootProps — readOnly branch (line 35)
+// ---------------------------------------------------------------------------
+
+describe("connectCheckbox — getRootProps readOnly", () => {
+  it("data-readonly present when readOnly=true", () => {
+    expect(makeApi({ readOnly: true }).api.getRootProps()["data-readonly"]).toBe("");
+  });
+
+  it("data-readonly absent when readOnly=false", () => {
+    expect(makeApi({ readOnly: false }).api.getRootProps()["data-readonly"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getIndicatorProps — disabled branch (line 70)
+// ---------------------------------------------------------------------------
+
+describe("connectCheckbox — getIndicatorProps disabled", () => {
+  it("data-disabled present when disabled=true", () => {
+    expect(makeApi({ disabled: true }).api.getIndicatorProps()["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when disabled=false", () => {
+    expect(makeApi({ disabled: false }).api.getIndicatorProps()["data-disabled"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getLabelProps — disabled branch (line 80)
+// ---------------------------------------------------------------------------
+
+describe("connectCheckbox — getLabelProps disabled", () => {
+  it("data-disabled present when disabled=true", () => {
+    expect(makeApi({ disabled: true }).api.getLabelProps()["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when disabled=false", () => {
+    expect(makeApi({ disabled: false }).api.getLabelProps()["data-disabled"]).toBeUndefined();
+  });
 });

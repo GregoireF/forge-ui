@@ -115,6 +115,19 @@ describe("createRadioGroupMachine — SET_VALUE", () => {
 // onValueChange callback
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// id fallback (line 31: `options.id ?? "root"`)
+// ---------------------------------------------------------------------------
+
+describe("createRadioGroupMachine — id fallback", () => {
+  it("defaults id to 'root' in machine id when omitted", () => {
+    const m = createRadioGroupMachine({});
+    m.start();
+    active.push(m);
+    expect(m.id).toContain("root");
+  });
+});
+
 describe("createRadioGroupMachine — onValueChange", () => {
   it("called with new value on SELECT", () => {
     const cb = vi.fn();

@@ -83,6 +83,19 @@ describe("connectPopover — getContentProps", () => {
     expect(updated.getContentProps()["aria-labelledby"]).toBe("test-title");
   });
 
+  it("omits aria-describedby when description is not registered", () => {
+    const { api } = makeOpenApi();
+    expect(api.getContentProps()["aria-describedby"]).toBeUndefined();
+  });
+
+  it("aria-describedby set when description is registered (line 91)", () => {
+    const { machine } = makeOpenApi();
+    machine.send("REGISTER_DESCRIPTION");
+    const snapshot = machine.getSnapshot();
+    const updated = connectPopover(snapshot, machine.send.bind(machine), machine);
+    expect(updated.getContentProps()["aria-describedby"]).toBe("test-description");
+  });
+
   it("has data-forge-scope='popover'", () => {
     const { api } = makeOpenApi();
     expect(api.getContentProps()["data-forge-scope"]).toBe("popover");

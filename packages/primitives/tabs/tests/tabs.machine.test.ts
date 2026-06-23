@@ -151,6 +151,21 @@ describe("createTabsMachine — onValueChange", () => {
 // IDs (listId, triggerId, panelId) are derived in the connect layer, not in context.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// id fallback (line 31: `options.id ?? "root"`)
+// WHY: make() always spreads { id: "test" }. Need a raw call without id to
+// cover the "root" fallback branch.
+// ---------------------------------------------------------------------------
+
+describe("createTabsMachine — id fallback", () => {
+  it("defaults id to 'root' in machine id when omitted", () => {
+    const m = createTabsMachine({});
+    m.start();
+    active.push(m);
+    expect(m.id).toContain("root");
+  });
+});
+
 describe("createTabsMachine — context defaults", () => {
   it("orientation defaults to 'horizontal'", () => {
     const m = make();

@@ -209,6 +209,88 @@ describe("connectSwitch — getThumbProps", () => {
 });
 
 // ---------------------------------------------------------------------------
+// getRootProps — readOnly branch (line 31)
+// ---------------------------------------------------------------------------
+
+describe("connectSwitch — getRootProps readOnly", () => {
+  it("data-readonly present when readOnly=true", () => {
+    expect(makeApi({ readOnly: true }).api.getRootProps()["data-readonly"]).toBe("");
+  });
+
+  it("data-readonly absent when readOnly=false", () => {
+    expect(makeApi({ readOnly: false }).api.getRootProps()["data-readonly"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getThumbProps — disabled / readOnly / invalid branches (lines 69-71)
+// ---------------------------------------------------------------------------
+
+describe("connectSwitch — getThumbProps state attributes", () => {
+  it("data-disabled present when disabled=true", () => {
+    expect(makeApi({ disabled: true }).api.getThumbProps()["data-disabled"]).toBe("");
+  });
+
+  it("data-disabled absent when disabled=false", () => {
+    expect(makeApi({ disabled: false }).api.getThumbProps()["data-disabled"]).toBeUndefined();
+  });
+
+  it("data-readonly present when readOnly=true", () => {
+    expect(makeApi({ readOnly: true }).api.getThumbProps()["data-readonly"]).toBe("");
+  });
+
+  it("data-readonly absent when readOnly=false", () => {
+    expect(makeApi({ readOnly: false }).api.getThumbProps()["data-readonly"]).toBeUndefined();
+  });
+
+  it("data-invalid present when invalid=true", () => {
+    expect(makeApi({ invalid: true }).api.getThumbProps()["data-invalid"]).toBe("");
+  });
+
+  it("data-invalid absent when invalid=false", () => {
+    expect(makeApi({ invalid: false }).api.getThumbProps()["data-invalid"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getLabelProps — readOnly / invalid branches (lines 82-83)
+// ---------------------------------------------------------------------------
+
+describe("connectSwitch — getLabelProps state attributes", () => {
+  it("data-readonly present when readOnly=true", () => {
+    expect(makeApi({ readOnly: true }).api.getLabelProps()["data-readonly"]).toBe("");
+  });
+
+  it("data-readonly absent when readOnly=false", () => {
+    expect(makeApi({ readOnly: false }).api.getLabelProps()["data-readonly"]).toBeUndefined();
+  });
+
+  it("data-invalid present when invalid=true", () => {
+    expect(makeApi({ invalid: true }).api.getLabelProps()["data-invalid"]).toBe("");
+  });
+
+  it("data-invalid absent when invalid=false", () => {
+    expect(makeApi({ invalid: false }).api.getLabelProps()["data-invalid"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getHiddenInputProps — form spread (line 100)
+// ---------------------------------------------------------------------------
+
+describe("connectSwitch — getHiddenInputProps form", () => {
+  it("form attribute present when form is set", () => {
+    const props = makeApi({ form: "signup-form" }).api.getHiddenInputProps();
+    expect((props as Record<string, unknown>)["form"]).toBe("signup-form");
+  });
+
+  it("form attribute absent when form is undefined", () => {
+    const props = makeApi({ form: undefined }).api.getHiddenInputProps();
+    expect((props as Record<string, unknown>)["form"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getRootProps ref callback
 //
 // WHY: The ref arrow function registers the root DOM element on the machine

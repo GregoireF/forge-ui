@@ -309,3 +309,55 @@ describe("createTagsInputMachine — onValueChange", () => {
     expect(cb).not.toHaveBeenCalled();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Default id (line 22)
+// ---------------------------------------------------------------------------
+
+describe("createTagsInputMachine — default id", () => {
+  it("defaults id to 'tags-input' when none provided (line 22)", () => {
+    const m = createTagsInputMachine();
+    m.start();
+    active.push(m);
+    expect(m.getSnapshot().context.id).toBe("tags-input");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// delimiter option (line 41)
+// ---------------------------------------------------------------------------
+
+describe("createTagsInputMachine — delimiter option", () => {
+  it("stores delimiter in context when provided (line 41)", () => {
+    const m = make({ delimiter: "," });
+    expect(m.getSnapshot().context.delimiter).toBe(",");
+  });
+
+  it("delimiter is absent from context when not provided", () => {
+    const m = make();
+    expect(m.getSnapshot().context.delimiter).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// focused.REMOVE_TAG — disabled/readOnly guard (line 99)
+// WHY: The focused.REMOVE_TAG action has its own guard separate from
+// idle.REMOVE_TAG. Tests above only exercise idle.REMOVE_TAG for disabled
+// and readOnly paths; this covers the same guard in the focused state.
+// ---------------------------------------------------------------------------
+
+describe("createTagsInputMachine — focused.REMOVE_TAG guard", () => {
+  it("REMOVE_TAG in focused state is no-op when disabled (line 99)", () => {
+    const m = make({ defaultValue: ["a", "b"], disabled: true });
+    m.send("FOCUS");
+    m.send({ type: "REMOVE_TAG", value: "a" });
+    expect(m.getSnapshot().context.value).toEqual(["a", "b"]);
+  });
+
+  it("REMOVE_TAG in focused state is no-op when readOnly (line 99)", () => {
+    const m = make({ defaultValue: ["a", "b"], readOnly: true });
+    m.send("FOCUS");
+    m.send({ type: "REMOVE_TAG", value: "a" });
+    expect(m.getSnapshot().context.value).toEqual(["a", "b"]);
+  });
+});

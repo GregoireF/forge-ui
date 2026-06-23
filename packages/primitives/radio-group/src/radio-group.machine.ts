@@ -8,9 +8,8 @@ function select({
 }: {
   context: RadioGroupContext;
   setContext: (u: Partial<RadioGroupContext>) => void;
-  event: RadioGroupEvent;
+  event: Extract<RadioGroupEvent, { type: "SELECT" }>;
 }) {
-  if (event.type !== "SELECT") return;
   if (context.disabled) return;
   setContext({ value: event.value });
   context.onValueChange?.(event.value);
@@ -22,9 +21,8 @@ function setValue({
 }: {
   context: RadioGroupContext;
   setContext: (u: Partial<RadioGroupContext>) => void;
-  event: RadioGroupEvent;
+  event: Extract<RadioGroupEvent, { type: "SET_VALUE" }>;
 }) {
-  if (event.type !== "SET_VALUE") return;
   setContext({ value: event.value });
 }
 

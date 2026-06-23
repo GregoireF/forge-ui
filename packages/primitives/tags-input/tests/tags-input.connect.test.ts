@@ -146,6 +146,16 @@ describe("connectTagsInput — getInputProps", () => {
     expect((api.getInputProps() as Record<string, unknown>).readOnly).toBeUndefined();
   });
 
+  it("disabled=true sets disabled attribute on input (line 52)", () => {
+    const { api } = makeApi({ disabled: true });
+    expect((api.getInputProps() as Record<string, unknown>).disabled).toBe(true);
+  });
+
+  it("disabled=false does NOT set disabled attribute", () => {
+    const { api } = makeApi({ disabled: false });
+    expect((api.getInputProps() as Record<string, unknown>).disabled).toBeUndefined();
+  });
+
   // WAI-ARIA: the input must be labelled so AT can announce what the field is.
   it("aria-labelledby points to the label id", () => {
     const { api } = makeApi({ labelId: "my-label" });

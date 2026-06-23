@@ -131,3 +131,27 @@ describe("createTooltipMachine — custom delays", () => {
     expect(m.getSnapshot().context.closeDelay).toBe(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// positioning options — boundary and middleware (lines 58-59)
+// WHY: These optional floating-UI options are spread-conditional:
+// `...(pos.boundary !== undefined && { boundary: pos.boundary })`.
+// The TRUE branch (option provided) is never triggered by the default tests
+// because no test passes a boundary or custom middleware array.
+// ---------------------------------------------------------------------------
+
+describe("createTooltipMachine — positioning boundary/middleware", () => {
+  it("boundary is stored in positioning context when provided (line 58)", () => {
+    const boundary = document.createElement("div");
+    const m = make({ id: "test", positioning: { boundary } });
+    m.start();
+    expect(m.getSnapshot().context.positioning.boundary).toBe(boundary);
+  });
+
+  it("middleware array is stored in positioning context when provided (line 59)", () => {
+    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createTooltipMachine>[0]["positioning"]["middleware"];
+    const m = make({ id: "test", positioning: { middleware } });
+    m.start();
+    expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
+  });
+});

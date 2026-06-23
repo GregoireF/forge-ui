@@ -180,7 +180,6 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
             target: "open",
             actions: [
               ({ setContext, event }) => {
-                if (event.type !== "INPUT_CHANGE") return;
                 setContext({ inputValue: event.value, highlighted: null });
               },
               ({ context }) => { context.onInputChange?.(context.inputValue); },
@@ -197,14 +196,12 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
 
           REGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "REGISTER_OPTION") return;
               const exists = context.options.some((o) => o.value === event.option.value);
               if (!exists) setContext({ options: [...context.options, event.option] });
             }],
           },
           UNREGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "UNREGISTER_OPTION") return;
               setContext({ options: context.options.filter((o) => o.value !== event.value) });
             }],
           },
@@ -259,7 +256,6 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           INPUT_CHANGE: {
             actions: [
               ({ setContext, event }) => {
-                if (event.type !== "INPUT_CHANGE") return;
                 setContext({ inputValue: event.value, highlighted: null });
               },
               ({ context }) => { context.onInputChange?.(context.inputValue); },
@@ -271,7 +267,6 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           SELECT_OPTION: {
             actions: [
               ({ context, setContext, event }) => {
-                if (event.type !== "SELECT_OPTION") return;
                 const { value } = event;
                 const opt = context.options.find((o) => o.value === value);
                 if (context.multiple) {
@@ -319,7 +314,6 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           HIGHLIGHT_OPTION: {
             actions: [
               ({ setContext, event }) => {
-                if (event.type !== "HIGHLIGHT_OPTION") return;
                 setContext({ highlighted: event.value });
               },
               invokeOnHighlightChange,
@@ -384,14 +378,12 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
 
           REGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "REGISTER_OPTION") return;
               const exists = context.options.some((o) => o.value === event.option.value);
               if (!exists) setContext({ options: [...context.options, event.option] });
             }],
           },
           UNREGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {
-              if (event.type !== "UNREGISTER_OPTION") return;
               setContext({ options: context.options.filter((o) => o.value !== event.value) });
             }],
           },
