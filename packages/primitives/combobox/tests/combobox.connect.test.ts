@@ -594,3 +594,77 @@ describe("connectCombobox — value and valueLabel", () => {
     expect(api.valueLabel).toBe("React");
   });
 });
+
+// ---------------------------------------------------------------------------
+// getInputProps — onInput handler + ref callback
+//
+// WHY: The onInput handler is the Vue-native path for controlled input updates
+// (Vue fires the native `input` DOM event, not React's synthetic `onChange`).
+// The ref callback registers the input element so the machine can measure it.
+// Both were systematically uncovered because connect tests only exercised
+// the camelCase onKeyDown path and static ARIA attributes.
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — getInputProps onInput handler", () => {
+  it("onInput sends INPUT_CHANGE with the current input value", () => {
+    const { api, send } = makeApi();
+    const e = { target: { value: "typescript" } as HTMLInputElement } as Event;
+    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    expect(send).toHaveBeenCalledWith({ type: "INPUT_CHANGE", value: "typescript" });
+  });
+
+  it("onInput when disabled does nothing", () => {
+    const { api, send } = makeApi({ disabled: true });
+    const e = { target: { value: "x" } as HTMLInputElement } as Event;
+    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onInput when readOnly does nothing", () => {
+    const { api, send } = makeApi({ readOnly: true });
+    const e = { target: { value: "x" } as HTMLInputElement } as Event;
+    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ref callbacks — getInputProps, getContentProps, getTriggerProps
+//
+// WHY: ref callbacks (arrow functions on the returned prop object) register DOM
+// elements on the machine so activities like computePosition and watchOutside
+// can access them. These lines are only executed when the framework calls the
+// ref function — never reached by static prop-getter tests alone.
+// ---------------------------------------------------------------------------
+
+describe("connectCombobox — ref callbacks", () => {
+  it("getInputProps ref registers triggerEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectCombobox(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("input");
+    (api.getInputProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+  });
+
+  it("getContentProps ref registers contentEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectCombobox(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("div");
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+  });
+
+  it("getTriggerProps ref registers buttonEl on machine", () => {
+    const ctx = makeCtx();
+    const send = vi.fn();
+    const machine = { setContext: vi.fn() };
+    const api = connectCombobox(makeSnapshot(ctx), send, machine);
+    const el = document.createElement("button");
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    expect(machine.setContext).toHaveBeenCalledWith({ buttonEl: el });
+  });
+});

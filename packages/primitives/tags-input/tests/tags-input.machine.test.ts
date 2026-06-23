@@ -259,6 +259,25 @@ describe("createTagsInputMachine — REMOVE_LAST_TAG", () => {
 // onValueChange callback
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// SET_VALUE — controlled value override in idle and focused states
+// ---------------------------------------------------------------------------
+
+describe("createTagsInputMachine — SET_VALUE", () => {
+  it("SET_VALUE in idle state replaces value array", () => {
+    const m = make({ defaultValue: ["a", "b"] });
+    m.send({ type: "SET_VALUE", value: ["x", "y", "z"] });
+    expect(m.getSnapshot().context.value).toEqual(["x", "y", "z"]);
+  });
+
+  it("SET_VALUE in focused state replaces value array", () => {
+    const m = make({ defaultValue: ["a"] });
+    m.send("FOCUS");
+    m.send({ type: "SET_VALUE", value: ["p", "q"] });
+    expect(m.getSnapshot().context.value).toEqual(["p", "q"]);
+  });
+});
+
 describe("createTagsInputMachine — onValueChange", () => {
   it("called when ADD_TAG succeeds", () => {
     const cb = vi.fn();

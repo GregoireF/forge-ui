@@ -214,6 +214,13 @@ describe("connectTagsInput — getInputProps", () => {
     expect(send).not.toHaveBeenCalledWith({ type: "ADD_TAG" });
     expect(send).toHaveBeenCalledWith({ type: "BLUR" });
   });
+
+  it("onInput sends INPUT_CHANGE with the current input value", () => {
+    const { api, send } = makeApi();
+    const e = { target: { value: "typed text" } as HTMLInputElement } as Event;
+    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    expect(send).toHaveBeenCalledWith({ type: "INPUT_CHANGE", value: "typed text" });
+  });
 });
 
 // ---------------------------------------------------------------------------

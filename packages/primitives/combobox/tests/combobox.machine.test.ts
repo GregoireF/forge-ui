@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { pushLayer, clearRegistry } from "@forge-ui/core";
 import { createComboboxMachine } from "../src/combobox.machine.js";
 
 let active: ReturnType<typeof createComboboxMachine>[] = [];
@@ -617,5 +618,110 @@ describe("createComboboxMachine — onHighlightChange callback", () => {
     m.send({ type: "REGISTER_OPTION", option: { value: "z", label: "Z" } });
     m.send("HIGHLIGHT_FIRST");
     expect(cb).toHaveBeenCalledWith("z");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// onHighlightedScroll callback
+//
+// WHY: invokeOnHighlightedScroll (machine.ts ~63-65) is called after every
+// highlight action but only when the callback is registered AND highlighted≠null.
+// Existing tests use onHighlightChange but not onHighlightedScroll, so lines
+// 63-65 are unreachable without a test that passes the callback.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — onHighlightedScroll callback", () => {
+  it("HIGHLIGHT_OPTION calls onHighlightedScroll with value and 0-based index", () => {
+    const cb = vi.fn();
+    const m = make({ onHighlightedScroll: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "A" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "B" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "b" });
+    expect(cb).toHaveBeenCalledWith("b", 1);
+  });
+
+  it("HIGHLIGHT_FIRST calls onHighlightedScroll with first option (index 0)", () => {
+    const cb = vi.fn();
+    const m = make({ onHighlightedScroll: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "first", label: "First" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "second", label: "Second" } });
+    m.send("HIGHLIGHT_FIRST");
+    expect(cb).toHaveBeenCalledWith("first", 0);
+  });
+
+  it("HIGHLIGHT_NEXT calls onHighlightedScroll with new highlighted value", () => {
+    const cb = vi.fn();
+    const m = make({ onHighlightedScroll: cb });
+    m.send("OPEN");
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "y", label: "Y" } });
+    m.send({ type: "HIGHLIGHT_OPTION", value: "x" });
+    cb.mockClear();
+    m.send("HIGHLIGHT_NEXT");
+    expect(cb).toHaveBeenCalledWith("y", 1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// REGISTER_OPTION / UNREGISTER_OPTION in CLOSED state
+//
+// WHY: React frameworks register options on mount (before the combobox opens)
+// so the machine already knows all options when HIGHLIGHT_FIRST/LAST is called.
+// The closed-state handlers (machine.ts ~200-209) are entirely separate from
+// the open-state ones and were untested — every previous test called OPEN first.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — REGISTER/UNREGISTER in closed state", () => {
+  it("REGISTER_OPTION in closed state adds the option", () => {
+    const m = make();
+    m.send({ type: "REGISTER_OPTION", option: { value: "preloaded", label: "Preloaded" } });
+    expect(m.getSnapshot().context.options.some((o) => o.value === "preloaded")).toBe(true);
+  });
+
+  it("REGISTER_OPTION in closed state is idempotent (no duplicates)", () => {
+    const m = make();
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    m.send({ type: "REGISTER_OPTION", option: { value: "x", label: "X" } });
+    expect(m.getSnapshot().context.options.filter((o) => o.value === "x")).toHaveLength(1);
+  });
+
+  it("UNREGISTER_OPTION in closed state removes the option", () => {
+    const m = make();
+    m.send({ type: "REGISTER_OPTION", option: { value: "y", label: "Y" } });
+    m.send({ type: "UNREGISTER_OPTION", value: "y" });
+    expect(m.getSnapshot().context.options.some((o) => o.value === "y")).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// watchOutside activity config callbacks (lines 76-80)
+//
+// WHY: The getId and getContainers lambdas inside makeWatchOutsideActivity's
+// config object are only called when the pointerdown/focusin listener fires
+// AND the combobox is the top layer. The layer registry (pushLayer) is normally
+// managed by hideBackground — since combobox has no hideBackground activity,
+// we must push manually in the test to make isTopLayer return true.
+// ---------------------------------------------------------------------------
+
+describe("createComboboxMachine — watchOutside activity config callbacks", () => {
+  afterEach(() => clearRegistry());
+
+  it("getId and getContainers called on outside pointerdown when combobox is top layer", () => {
+    const m = make();
+    // Register combobox in the layer stack so isTopLayer returns true
+    pushLayer("test", null);
+    m.send("OPEN");
+    expect(m.getSnapshot().matches("open")).toBe(true);
+
+    // Dispatch a pointerdown on a truly outside element
+    const outsideEl = document.createElement("button");
+    document.body.appendChild(outsideEl);
+    outsideEl.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true }));
+
+    // watchOutside fires INTERACT_OUTSIDE → machine closes
+    expect(m.getSnapshot().matches("closed")).toBe(true);
+    outsideEl.remove();
   });
 });
