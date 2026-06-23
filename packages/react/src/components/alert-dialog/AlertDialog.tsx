@@ -1,9 +1,9 @@
-import { mergeRefs } from "@forge-ui/core";
+﻿import { mergeRefs } from "@forge-ui/core";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useEffect, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseAlertDialogOptions } from "./use-alert-dialog.js";
 import { useAlertDialog } from "./use-alert-dialog.js";
 
@@ -98,7 +98,7 @@ function Overlay({ asChild, forceMount, children, ...rest }: AlertDialogOverlayP
 // ---------------------------------------------------------------------------
 // Content
 // Accepts onOpenAutoFocus / onCloseAutoFocus overrides only.
-// Interaction-outside and Escape callbacks are NOT exposed on Content —
+// Interaction-outside and Escape callbacks are NOT exposed on Content â€”
 // alertdialog always blocks those, making per-content overrides meaningless.
 // ---------------------------------------------------------------------------
 
@@ -203,7 +203,7 @@ function Description({ asChild, children, ...rest }: AlertDialogDescriptionProps
 }
 
 // ---------------------------------------------------------------------------
-// Cancel — dismisses the alert dialog without acting.
+// Cancel â€” dismisses the alert dialog without acting.
 // ---------------------------------------------------------------------------
 
 export interface AlertDialogCancelProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -218,7 +218,7 @@ function Cancel({ asChild, children, ...rest }: AlertDialogCancelProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Action — the destructive / confirm button. Does NOT auto-close.
+// Action â€” the destructive / confirm button. Does NOT auto-close.
 // ---------------------------------------------------------------------------
 
 export interface AlertDialogActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {

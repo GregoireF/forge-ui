@@ -1,10 +1,10 @@
-import { mergeRefs } from "@forge-ui/core";
+﻿import { mergeRefs } from "@forge-ui/core";
 import type { TooltipPositioning, TooltipProviderContext } from "@forge-ui/tooltip";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useMemo, useRef } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { TooltipProviderCtx } from "./use-tooltip-provider.js";
 import type { UseTooltipOptions } from "./use-tooltip.js";
 import { useTooltip } from "./use-tooltip.js";
@@ -26,7 +26,7 @@ function useCtx(): TooltipApiReturn {
 }
 
 // ---------------------------------------------------------------------------
-// Provider — optional global delay management.
+// Provider â€” optional global delay management.
 // Uses a per-instance ref (not module singleton) so multiple Provider groups
 // and SSR are both safe.
 // ---------------------------------------------------------------------------
@@ -119,7 +119,7 @@ function Portal({ children, container, forceMount }: TooltipPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware.
+// Content â€” Presence-aware.
 // Positioner div (position:fixed) wraps the tooltip div (role="tooltip").
 // During exit: aria-hidden + pointer-events:none keep content inert.
 // ---------------------------------------------------------------------------
@@ -166,7 +166,7 @@ function Content({ asChild, forceMount, children, ...rest }: TooltipContentProps
 }
 
 // ---------------------------------------------------------------------------
-// Anchor — makes computePosition use this element as reference instead of trigger.
+// Anchor â€” makes computePosition use this element as reference instead of trigger.
 // ---------------------------------------------------------------------------
 
 export interface TooltipAnchorProps extends HTMLAttributes<HTMLDivElement> {
@@ -181,7 +181,7 @@ function Anchor({ asChild, children, ...rest }: TooltipAnchorProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless: always Slot, merges getArrowProps onto child.
+// Arrow â€” renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface TooltipArrowProps {

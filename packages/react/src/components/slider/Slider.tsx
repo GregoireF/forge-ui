@@ -1,6 +1,6 @@
-import type { HTMLAttributes, ReactNode } from "react";
+﻿import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseSliderOptions } from "./use-slider.js";
 import { useSlider } from "./use-slider.js";
 
@@ -90,7 +90,7 @@ function Track({ children, asChild, ...rest }: SliderTrackProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Range — the filled portion
+// Range â€” the filled portion
 // ---------------------------------------------------------------------------
 
 export interface SliderRangeProps extends HTMLAttributes<HTMLDivElement> {
@@ -123,7 +123,7 @@ function Thumb({ asChild, name, ...rest }: SliderThumbProps) {
 }
 
 // ---------------------------------------------------------------------------
-// HiddenInput — for form submission
+// HiddenInput â€” for form submission
 // ---------------------------------------------------------------------------
 
 export interface SliderHiddenInputProps {

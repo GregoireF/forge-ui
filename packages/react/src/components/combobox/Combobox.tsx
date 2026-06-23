@@ -1,9 +1,9 @@
-import { mergeRefs } from "@forge-ui/core";
+﻿import { mergeRefs } from "@forge-ui/core";
 import type { CSSProperties, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseComboboxOptions } from "./use-combobox.js";
 import { useCombobox } from "./use-combobox.js";
 
@@ -57,7 +57,7 @@ function Label({ asChild, children, ...rest }: ComboboxLabelProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Input — <input role="combobox">
+// Input â€” <input role="combobox">
 // ---------------------------------------------------------------------------
 
 export interface ComboboxInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "role"> {
@@ -93,7 +93,7 @@ function Input({ asChild, ...rest }: ComboboxInputProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Trigger — optional toggle button (open/close chevron icon)
+// Trigger â€” optional toggle button (open/close chevron icon)
 // ---------------------------------------------------------------------------
 
 export interface ComboboxTriggerProps extends HTMLAttributes<HTMLButtonElement> {
@@ -108,7 +108,7 @@ function Trigger({ asChild, children, ...rest }: ComboboxTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// ClearTrigger — button to clear selection + input
+// ClearTrigger â€” button to clear selection + input
 // ---------------------------------------------------------------------------
 
 export interface ComboboxClearTriggerProps extends HTMLAttributes<HTMLButtonElement> {
@@ -142,7 +142,7 @@ function Portal({ children, container, forceMount }: ComboboxPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content — presence-aware. Positioner div wraps listbox.
+// Content â€” presence-aware. Positioner div wraps listbox.
 // ---------------------------------------------------------------------------
 
 export interface ComboboxContentProps extends HTMLAttributes<HTMLUListElement> {
@@ -205,7 +205,7 @@ function Item({ value, label, disabled = false, asChild, children, ...rest }: Co
   const api = useCtx();
   const resolvedLabel = label ?? (typeof children === "string" ? children : value);
 
-  // Always register — even when filtered out — so keyboard navigation can traverse all options.
+  // Always register â€” even when filtered out â€” so keyboard navigation can traverse all options.
   useLayoutEffect(() => {
     api.send({ type: "REGISTER_OPTION", option: { value, label: resolvedLabel, disabled } });
     return () => api.send({ type: "UNREGISTER_OPTION", value });
@@ -232,7 +232,7 @@ function Item({ value, label, disabled = false, asChild, children, ...rest }: Co
 }
 
 // ---------------------------------------------------------------------------
-// ItemText — semantic label span
+// ItemText â€” semantic label span
 // ---------------------------------------------------------------------------
 
 export interface ComboboxItemTextProps { children: ReactNode }
@@ -242,7 +242,7 @@ function ItemText({ children }: ComboboxItemTextProps) {
 }
 
 // ---------------------------------------------------------------------------
-// ItemIndicator — shown when item is selected
+// ItemIndicator â€” shown when item is selected
 // ---------------------------------------------------------------------------
 
 export interface ComboboxItemIndicatorProps {
@@ -298,7 +298,7 @@ function CreateOption({ children, ...rest }: ComboboxCreateOptionProps) {
   const api = useCtx();
   if (!api.hasCreateOption) return null;
   const label = api.createOptionLabel;
-  const content = typeof children === "function" ? children(label) : (children ?? `Créer "${label}"`);
+  const content = typeof children === "function" ? children(label) : (children ?? `CrÃ©er "${label}"`);
   return (
     <li {...api.getCreateOptionProps()} {...rest}>
       {content}

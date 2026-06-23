@@ -1,5 +1,6 @@
 import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
+import { Slot } from "../shared/Slot.js";
 import type { UseSwitchOptions, UseSwitchReturn } from "./use-switch.js";
 import { useSwitch } from "./use-switch.js";
 
@@ -42,11 +43,14 @@ function Root({ children, name, ...opts }: SwitchRootProps) {
 // Control — <button role="switch">
 // ---------------------------------------------------------------------------
 
-export interface SwitchControlProps extends HTMLAttributes<HTMLButtonElement> {}
+export interface SwitchControlProps extends HTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean;
+}
 
-function Control({ children, ...rest }: SwitchControlProps) {
+function Control({ asChild, children, ...rest }: SwitchControlProps) {
   const api = useCtx();
   const props = { ...api.getControlProps(), ...rest };
+  if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;
 }
 

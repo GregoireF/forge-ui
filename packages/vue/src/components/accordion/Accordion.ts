@@ -1,6 +1,6 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseAccordionReturn } from "./use-accordion.js";
 import { useAccordion } from "./use-accordion.js";
 

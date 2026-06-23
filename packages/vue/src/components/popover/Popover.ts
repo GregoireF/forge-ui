@@ -1,9 +1,9 @@
-import type { PopoverPositioning } from "@forge-ui/popover";
+﻿import type { PopoverPositioning } from "@forge-ui/popover";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { cloneVNode, defineComponent, h, inject, mergeProps, onMounted, onUnmounted, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { popoverKey } from "./popover-context.js";
 import { usePopover } from "./use-popover.js";
 
@@ -155,7 +155,7 @@ const PopoverPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware. Positioner div wraps content div.
+// Content â€” Presence-aware. Positioner div wraps content div.
 // During exit: aria-hidden + pointer-events:none keep content inert.
 // ---------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ const PopoverContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless, always Slot.
+// Arrow â€” renderless, always Slot.
 // ---------------------------------------------------------------------------
 
 const PopoverArrow = defineComponent({
@@ -213,7 +213,7 @@ const PopoverArrow = defineComponent({
       // h(Slot, { ref }, slots) attaches the ref to the Slot component
       // instance (a Vue proxy), not the underlying DOM node. Floating UI's
       // arrow() middleware then receives the proxy and getBoundingClientRect
-      // is undefined → arrow never positioned.
+      // is undefined â†’ arrow never positioned.
       const rawProps = api.getArrowProps() as Record<string, unknown> & {
         ref?: (el: HTMLElement | null) => void;
       };

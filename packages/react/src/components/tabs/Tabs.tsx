@@ -1,6 +1,6 @@
-import type { HTMLAttributes, ReactNode } from "react";
+﻿import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseTabsOptions } from "./use-tabs.js";
 import { useTabs } from "./use-tabs.js";
 
@@ -34,7 +34,7 @@ function Root({ children, asChild, ...opts }: TabsRootProps) {
 }
 
 // ---------------------------------------------------------------------------
-// List — the tablist container
+// List â€” the tablist container
 // ---------------------------------------------------------------------------
 
 export interface TabsListProps extends HTMLAttributes<HTMLDivElement> {
@@ -50,7 +50,7 @@ function List({ children, asChild, ...rest }: TabsListProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Trigger — a tab button
+// Trigger â€” a tab button
 // ---------------------------------------------------------------------------
 
 export interface TabsTriggerProps extends HTMLAttributes<HTMLButtonElement> {
@@ -69,7 +69,7 @@ function Trigger({ value, children, asChild, ...rest }: TabsTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Panel — the tab content panel
+// Panel â€” the tab content panel
 // ---------------------------------------------------------------------------
 
 export interface TabsPanelProps extends HTMLAttributes<HTMLDivElement> {

@@ -1,6 +1,6 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseTabsReturn } from "./use-tabs.js";
 import { useTabs } from "./use-tabs.js";
 

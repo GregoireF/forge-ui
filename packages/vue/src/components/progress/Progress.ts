@@ -1,6 +1,6 @@
-import { connectProgress } from "@forge-ui/progress";
+﻿import { connectProgress } from "@forge-ui/progress";
 import { defineComponent, h } from "vue";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 
 // ---------------------------------------------------------------------------
 // Root

@@ -1,6 +1,6 @@
-import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
+﻿import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseSliderReturn } from "./use-slider.js";
 import { useSlider } from "./use-slider.js";
 

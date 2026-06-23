@@ -1,6 +1,6 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseRadioGroupReturn } from "./use-radio-group.js";
 import { useRadioGroup } from "./use-radio-group.js";
 

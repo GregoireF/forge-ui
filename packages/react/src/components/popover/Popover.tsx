@@ -1,9 +1,9 @@
-import { mergeRefs } from "@forge-ui/core";
+﻿import { mergeRefs } from "@forge-ui/core";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UsePopoverOptions } from "./use-popover.js";
 import { usePopover } from "./use-popover.js";
 
@@ -67,7 +67,7 @@ function Trigger({ asChild, children, ...rest }: PopoverTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Anchor — always Slot, no own DOM element.
+// Anchor â€” always Slot, no own DOM element.
 // ---------------------------------------------------------------------------
 
 export interface PopoverAnchorProps {
@@ -98,7 +98,7 @@ function Portal({ children, container, forceMount }: PopoverPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware.
+// Content â€” Presence-aware.
 // The positioner div provides position:fixed + top/left from @floating-ui.
 // The content div stays clean for animation support.
 // During exit: aria-hidden + pointer-events:none keep content inert.
@@ -145,7 +145,7 @@ function Content({ asChild, forceMount, children, ...rest }: PopoverContentProps
 }
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless: always Slot, merges getArrowProps onto child.
+// Arrow â€” renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface PopoverArrowProps {

@@ -1,4 +1,4 @@
-import type { ComboboxOption, ComboboxPositioning, ComboboxTranslations } from "@forge-ui/combobox";
+﻿import type { ComboboxOption, ComboboxPositioning, ComboboxTranslations } from "@forge-ui/combobox";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref, VNodeRef } from "vue";
 import {
   defineComponent,
@@ -10,7 +10,7 @@ import {
 } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { comboboxKey } from "./combobox-context.js";
 import { useCombobox } from "./use-combobox.js";
 import type { UseComboboxOptions } from "./use-combobox.js";
@@ -120,7 +120,7 @@ const ComboboxLabel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Input — <input role="combobox"> + keyboard navigation
+// Input â€” <input role="combobox"> + keyboard navigation
 // ---------------------------------------------------------------------------
 
 const ComboboxInput = defineComponent({
@@ -131,7 +131,7 @@ const ComboboxInput = defineComponent({
     return () => {
       const raw = api.getInputProps();
       // Vue's change event fires on blur. Use onInput for real-time updates.
-      // The connect's onInput handler sends INPUT_CHANGE — safe to bind directly.
+      // The connect's onInput handler sends INPUT_CHANGE â€” safe to bind directly.
       const { ref: machineRef, ...restProps } = patchVueEvents(raw as Record<string, unknown>);
       const inputProps = {
         ...restProps,
@@ -145,7 +145,7 @@ const ComboboxInput = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Trigger — optional open/close toggle button
+// Trigger â€” optional open/close toggle button
 // ---------------------------------------------------------------------------
 
 const ComboboxTrigger = defineComponent({
@@ -162,7 +162,7 @@ const ComboboxTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// ClearTrigger — button to clear selection + input value
+// ClearTrigger â€” button to clear selection + input value
 // ---------------------------------------------------------------------------
 
 const ComboboxClearTrigger = defineComponent({
@@ -204,7 +204,7 @@ const ComboboxPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — presence-aware. Positioner div wraps listbox ul.
+// Content â€” presence-aware. Positioner div wraps listbox ul.
 // ---------------------------------------------------------------------------
 
 const ComboboxContent = defineComponent({
@@ -301,7 +301,7 @@ const ComboboxItemText = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// ItemIndicator — shown only when the item is selected
+// ItemIndicator â€” shown only when the item is selected
 // ---------------------------------------------------------------------------
 
 const ComboboxItemIndicator = defineComponent({
@@ -348,7 +348,7 @@ const ComboboxCreateOption = defineComponent({
       const label = api.createOptionLabel.value;
       const createProps = { ...api.getCreateOptionProps(), ...attrs };
       if (props.asChild) return h(Slot, createProps, slots.default);
-      const content = slots.default?.() ?? [`Créer "${label}"`];
+      const content = slots.default?.() ?? [`CrÃ©er "${label}"`];
       return h("li", createProps, content);
     };
   },

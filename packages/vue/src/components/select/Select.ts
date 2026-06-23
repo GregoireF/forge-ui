@@ -1,9 +1,9 @@
-import type { SelectPositioning } from "@forge-ui/select";
+﻿import type { SelectPositioning } from "@forge-ui/select";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, onMounted, onScopeDispose, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { selectKey } from "./select-context.js";
 import { useSelect } from "./use-select.js";
 
@@ -107,7 +107,7 @@ const SelectTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Value — slot that shows selected label or placeholder
+// Value â€” slot that shows selected label or placeholder
 // ---------------------------------------------------------------------------
 
 const SelectValue = defineComponent({
@@ -119,7 +119,7 @@ const SelectValue = defineComponent({
     const api = useCtx();
     return () => {
       const label = api.getValueLabel();
-      // When a value is selected, always show the label — default slot acts as a placeholder slot.
+      // When a value is selected, always show the label â€” default slot acts as a placeholder slot.
       if (label) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, label);
       if (slots.default) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, slots.default?.());
       return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, props.placeholder);
@@ -128,7 +128,7 @@ const SelectValue = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Placeholder — renders only when no value is selected.
+// Placeholder â€” renders only when no value is selected.
 // ---------------------------------------------------------------------------
 
 const SelectPlaceholder = defineComponent({
@@ -165,7 +165,7 @@ const SelectPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — positioner div + listbox ul
+// Content â€” positioner div + listbox ul
 // inheritAttrs: false prevents double application of attrs (same as Popover)
 // ---------------------------------------------------------------------------
 
@@ -259,7 +259,7 @@ const SelectItemText = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// ItemIndicator — shown when item is selected
+// ItemIndicator â€” shown when item is selected
 // ---------------------------------------------------------------------------
 
 const SelectItemIndicator = defineComponent({
@@ -300,7 +300,7 @@ const SelectGroupLabel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Indicator — visual chevron/arrow inside the trigger; reflects open/closed.
+// Indicator â€” visual chevron/arrow inside the trigger; reflects open/closed.
 // ---------------------------------------------------------------------------
 
 const SelectIndicator = defineComponent({

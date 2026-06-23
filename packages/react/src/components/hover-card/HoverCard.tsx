@@ -1,10 +1,10 @@
-import { mergeRefs } from "@forge-ui/core";
+﻿import { mergeRefs } from "@forge-ui/core";
 import type { HoverCardPositioning } from "@forge-ui/hover-card";
 import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseHoverCardOptions } from "./use-hover-card.js";
 import { useHoverCard } from "./use-hover-card.js";
 
@@ -79,7 +79,7 @@ function Portal({ children, container, forceMount }: HoverCardPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware.
+// Content â€” Presence-aware.
 // Positioner div (position:fixed) wraps the content div (role="dialog").
 // During exit: aria-hidden + pointer-events:none keep content inert.
 // Mouse events on content keep the card open (via connect).
@@ -127,7 +127,7 @@ function Content({ asChild, forceMount, children, ...rest }: HoverCardContentPro
 }
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless: always Slot, merges getArrowProps onto child.
+// Arrow â€” renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface HoverCardArrowProps {

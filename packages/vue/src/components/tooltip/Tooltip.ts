@@ -1,8 +1,8 @@
-import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
+﻿import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { cloneVNode, defineComponent, h, inject, mergeProps, provide, reactive, ref, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { tooltipKey } from "./tooltip-context.js";
 import { tooltipProviderKey } from "./use-tooltip-provider.js";
 import { useTooltip } from "./use-tooltip.js";
@@ -22,7 +22,7 @@ function useCtx(): TooltipApi {
 }
 
 // ---------------------------------------------------------------------------
-// Provider — optional global delay management (SSR-safe, instance-isolated).
+// Provider â€” optional global delay management (SSR-safe, instance-isolated).
 // ---------------------------------------------------------------------------
 
 const TooltipProvider = defineComponent({
@@ -118,7 +118,7 @@ const TooltipRoot = defineComponent({
 // Trigger
 // ---------------------------------------------------------------------------
 
-// Vue's h() uses hyphenate() to convert prop keys: onPointerEnter → "pointer-enter"
+// Vue's h() uses hyphenate() to convert prop keys: onPointerEnter â†’ "pointer-enter"
 // (not the DOM event "pointerenter"). Remap multi-word pointer/keyboard events to all-
 // lowercase-after-on form so hyphenate yields the correct DOM event name.
 function patchVueEvents(props: Record<string, unknown>): Record<string, unknown> {
@@ -174,7 +174,7 @@ const TooltipPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware. Positioner div wraps content div.
+// Content â€” Presence-aware. Positioner div wraps content div.
 // ---------------------------------------------------------------------------
 
 const TooltipContent = defineComponent({
@@ -220,7 +220,7 @@ const TooltipContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Anchor — makes computePosition use this element as reference instead of trigger.
+// Anchor â€” makes computePosition use this element as reference instead of trigger.
 // ---------------------------------------------------------------------------
 
 const TooltipAnchor = defineComponent({
@@ -237,7 +237,7 @@ const TooltipAnchor = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless, always Slot.
+// Arrow â€” renderless, always Slot.
 // ---------------------------------------------------------------------------
 
 const TooltipArrow = defineComponent({

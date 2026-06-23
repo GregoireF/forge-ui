@@ -1,13 +1,13 @@
-import type { HTMLAttributes, ReactNode } from "react";
+﻿import type { HTMLAttributes, ReactNode } from "react";
 import { connectProgress } from "@forge-ui/progress";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
 
 export interface ProgressRootProps extends HTMLAttributes<HTMLDivElement> {
-  /** Current value 0–max. null = indeterminate. */
+  /** Current value 0â€“max. null = indeterminate. */
   value?: number | null;
   /** @default 100 */
   max?: number;

@@ -1,5 +1,6 @@
 import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
+import { Slot } from "../shared/Slot.js";
 import type { UseSwitchReturn } from "./use-switch.js";
 import { useSwitch } from "./use-switch.js";
 
@@ -72,9 +73,14 @@ const SwitchRoot = defineComponent({
 
 const SwitchControl = defineComponent({
   name: "ForgeSwitchControl",
-  setup(_props, { slots }) {
+  props: { asChild: { type: Boolean, default: false } },
+  setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", api.getControlProps(), slots.default?.());
+    return () => {
+      const controlProps = { ...api.getControlProps(), ...attrs };
+      if (props.asChild) return h(Slot, controlProps, slots.default);
+      return h("button", controlProps, slots.default?.());
+    };
   },
 });
 

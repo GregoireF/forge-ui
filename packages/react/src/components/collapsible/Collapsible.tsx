@@ -1,7 +1,7 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+﻿import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseCollapsibleOptions } from "./use-collapsible.js";
 import { useCollapsible } from "./use-collapsible.js";
 
@@ -52,7 +52,7 @@ function Trigger({ asChild, children, ...rest }: CollapsibleTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware, supports forceMount for CSS exit animations.
+// Content â€” Presence-aware, supports forceMount for CSS exit animations.
 // ---------------------------------------------------------------------------
 
 export interface CollapsibleContentProps extends HTMLAttributes<HTMLDivElement> {

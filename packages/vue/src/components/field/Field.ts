@@ -1,7 +1,7 @@
-import type { FieldApi } from "@forge-ui/field";
+﻿import type { FieldApi } from "@forge-ui/field";
 import type { InjectionKey, PropType } from "vue";
 import { defineComponent, getCurrentInstance, h, inject, onMounted, onUnmounted, provide } from "vue";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { fieldKey } from "./field-context.js";
 import { useField } from "./use-field.js";
 
@@ -31,7 +31,7 @@ const FieldRoot = defineComponent({
     // would freeze the values at setup time and break reactivity.
     // Cast needed: Vue LooseRequired<> always includes undefined in value types,
     // but exactOptionalPropertyTypes expects optional keys to be absent, not present
-    // as string | undefined. The cast is safe — useField handles undefined via ?? false.
+    // as string | undefined. The cast is safe â€” useField handles undefined via ?? false.
     const api = useField(props as Parameters<typeof useField>[0]);
     provide(fieldKey, api);
     return () => slots.default?.();
@@ -56,7 +56,7 @@ const FieldLabel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// RequiredIndicator — visual marker (*) hidden from screen readers.
+// RequiredIndicator â€” visual marker (*) hidden from screen readers.
 // ---------------------------------------------------------------------------
 
 const FieldRequiredIndicator = defineComponent({
@@ -74,7 +74,7 @@ const FieldRequiredIndicator = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Control — always renderless Slot.
+// Control â€” always renderless Slot.
 // ---------------------------------------------------------------------------
 
 const FieldControl = defineComponent({
@@ -86,7 +86,7 @@ const FieldControl = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Description — auto-registers for aria-describedby.
+// Description â€” auto-registers for aria-describedby.
 // ---------------------------------------------------------------------------
 
 const FieldDescription = defineComponent({
@@ -107,7 +107,7 @@ const FieldDescription = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Error — renders only when invalid; auto-registers.
+// Error â€” renders only when invalid; auto-registers.
 // Named FieldError internally to avoid shadowing globalThis.Error.
 // ---------------------------------------------------------------------------
 
@@ -130,7 +130,7 @@ const FieldError = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Group — wraps checkboxes / radios with role="group" + aria-labelledby.
+// Group â€” wraps checkboxes / radios with role="group" + aria-labelledby.
 // Generates a stable label ID from the component instance UID (SSR-safe).
 // ---------------------------------------------------------------------------
 

@@ -18,8 +18,6 @@ function mergeProps(slot: AnyProps, child: AnyProps): AnyProps {
     } else if (key === "style") {
       merged[key] = { ...(s as object), ...(c as object) };
     } else {
-      // child-specific props (e.g. `to` on Link) are preserved; forge's aria/data
-      // props were already in `slot` and remain unless child explicitly overrides
       merged[key] = c;
     }
   }
@@ -33,7 +31,6 @@ export interface SlotProps {
 
 export function Slot({ children, ...slotProps }: SlotProps) {
   if (!isValidElement(children)) {
-    // Fallback: render nothing or a bare fragment if children isn't an element
     // biome-ignore lint/complexity/noUselessFragments: children may contain multiple nodes
     return Children.count(children) > 0 ? <>{children}</> : null;
   }

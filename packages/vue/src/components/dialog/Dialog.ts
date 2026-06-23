@@ -1,9 +1,9 @@
-import type { ComponentPublicInstance, PropType } from "vue";
+﻿import type { ComponentPublicInstance, PropType } from "vue";
 import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch, watchEffect } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "./DialogPortal.js";
 import { dialogKey } from "./dialog-context.js";
-import { Slot } from "./Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { useDialog } from "./use-dialog.js";
 
 type DialogApi = ReturnType<typeof useDialog>;
@@ -134,7 +134,7 @@ const DialogPortalCompound = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Overlay — Presence-aware.
+// Overlay â€” Presence-aware.
 // ---------------------------------------------------------------------------
 
 const DialogOverlay = defineComponent({
@@ -168,7 +168,7 @@ const DialogOverlay = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware.
+// Content â€” Presence-aware.
 // Accepts event callbacks that override Root-level ones when provided.
 // ---------------------------------------------------------------------------
 

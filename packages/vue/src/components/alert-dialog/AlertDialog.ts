@@ -1,4 +1,4 @@
-import type { ComponentPublicInstance, PropType } from "vue";
+﻿import type { ComponentPublicInstance, PropType } from "vue";
 import {
   defineComponent,
   h,
@@ -10,7 +10,7 @@ import {
 } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { alertDialogKey } from "./alert-dialog-context.js";
 import { useAlertDialog } from "./use-alert-dialog.js";
 
@@ -39,7 +39,7 @@ const AlertDialogRoot = defineComponent({
     onOpenChange: { type: Function as PropType<(open: boolean) => void>, default: undefined },
     onOpenAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
     onCloseAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
-    /** Informational — fires when Escape is pressed, but alertdialog never closes from it. */
+    /** Informational â€” fires when Escape is pressed, but alertdialog never closes from it. */
     onEscapeKeyDown: { type: Function as PropType<(e: KeyboardEvent) => void>, default: undefined },
     initialFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
     finalFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
@@ -254,7 +254,7 @@ const AlertDialogDescription = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Cancel — dismisses without acting.
+// Cancel â€” dismisses without acting.
 // ---------------------------------------------------------------------------
 
 const AlertDialogCancel = defineComponent({
@@ -271,7 +271,7 @@ const AlertDialogCancel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Action — destructive / confirm button. Does NOT auto-close.
+// Action â€” destructive / confirm button. Does NOT auto-close.
 // ---------------------------------------------------------------------------
 
 const AlertDialogAction = defineComponent({

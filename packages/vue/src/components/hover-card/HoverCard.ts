@@ -1,9 +1,9 @@
-import type { HoverCardPositioning } from "@forge-ui/hover-card";
+﻿import type { HoverCardPositioning } from "@forge-ui/hover-card";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { cloneVNode, defineComponent, h, inject, mergeProps, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import { hoverCardKey } from "./hover-card-context.js";
 import { useHoverCard } from "./use-hover-card.js";
 
@@ -77,7 +77,7 @@ const HoverCardRoot = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Trigger — defaults to <a> element (typical HoverCard usage)
+// Trigger â€” defaults to <a> element (typical HoverCard usage)
 // ---------------------------------------------------------------------------
 
 const HoverCardTrigger = defineComponent({
@@ -143,7 +143,7 @@ const HoverCardPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware. Positioner div wraps content div (role="dialog").
+// Content â€” Presence-aware. Positioner div wraps content div (role="dialog").
 // Mouse enter/leave on content are handled by the connect (keeps card open).
 // ---------------------------------------------------------------------------
 
@@ -193,7 +193,7 @@ const HoverCardContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Arrow — renderless, always Slot.
+// Arrow â€” renderless, always Slot.
 // ---------------------------------------------------------------------------
 
 const HoverCardArrow = defineComponent({

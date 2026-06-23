@@ -1,7 +1,7 @@
-import type { FieldApi } from "@forge-ui/field";
+﻿import type { FieldApi } from "@forge-ui/field";
 import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useId, useLayoutEffect } from "react";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { CreateFieldOptions } from "./use-field.js";
 import { useField } from "./use-field.js";
 
@@ -43,7 +43,7 @@ function Label({ asChild, children, ...rest }: FieldLabelProps) {
 }
 
 // ---------------------------------------------------------------------------
-// RequiredIndicator — visual marker (*) hidden from screen readers.
+// RequiredIndicator â€” visual marker (*) hidden from screen readers.
 // Screen readers get the required status via aria-required on the control.
 // ---------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ function RequiredIndicator({ asChild, children = "*", ...rest }: FieldRequiredIn
 }
 
 // ---------------------------------------------------------------------------
-// Control — always renderless Slot. Merges accessible control props onto child.
+// Control â€” always renderless Slot. Merges accessible control props onto child.
 // The child element (input, select, textarea, or custom trigger) keeps its own
 // semantics; Field.Control only contributes IDs and ARIA attributes.
 // ---------------------------------------------------------------------------
@@ -75,7 +75,7 @@ function Control({ children }: FieldControlProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Description — registers itself so aria-describedby is auto-populated.
+// Description â€” registers itself so aria-describedby is auto-populated.
 // ---------------------------------------------------------------------------
 
 export interface FieldDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {
@@ -96,7 +96,7 @@ function Description({ asChild, children, ...rest }: FieldDescriptionProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Error — renders only when invalid; auto-registers for aria-describedby.
+// Error â€” renders only when invalid; auto-registers for aria-describedby.
 // Named FieldError internally to avoid shadowing the global Error constructor.
 // ---------------------------------------------------------------------------
 
@@ -120,7 +120,7 @@ function FieldError({ asChild, children, ...rest }: FieldErrorProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Group — wraps a set of form controls (checkboxes, radios) with role="group"
+// Group â€” wraps a set of form controls (checkboxes, radios) with role="group"
 // and aria-labelledby so screen readers announce the group label.
 // ---------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
-import { Slot } from "../dialog/Slot.js";
+import { Slot } from "../shared/Slot.js";
 import type { UseCollapsibleReturn } from "./use-collapsible.js";
 import { useCollapsible } from "./use-collapsible.js";
 
@@ -64,7 +64,7 @@ const CollapsibleTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content — Presence-aware. Supports forceMount for CSS exit animations.
+// Content â€” Presence-aware. Supports forceMount for CSS exit animations.
 // ---------------------------------------------------------------------------
 
 const CollapsibleContent = defineComponent({
