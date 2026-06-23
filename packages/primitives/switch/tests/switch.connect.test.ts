@@ -122,6 +122,18 @@ describe("connectSwitch — getControlProps", () => {
     expect(api.getControlProps()["aria-invalid"]).toBe(true);
   });
 
+  // WAI-ARIA: aria-readonly informs AT the switch value cannot be changed
+  // even though it is visible and receives focus.
+  it("aria-readonly=true when readOnly", () => {
+    const { api } = makeApi({ readOnly: true });
+    expect(api.getControlProps()["aria-readonly"]).toBe(true);
+  });
+
+  it("aria-readonly absent when not readOnly", () => {
+    const { api } = makeApi({ readOnly: false });
+    expect((api.getControlProps() as Record<string, unknown>)["aria-readonly"]).toBeUndefined();
+  });
+
   it("onClick sends TOGGLE when enabled", () => {
     const { api, send } = makeApi();
     api.getControlProps().onClick({ preventDefault: vi.fn() });

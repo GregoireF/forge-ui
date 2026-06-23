@@ -53,6 +53,18 @@ describe("connectRadioGroup — getRootProps", () => {
     const { api } = makeApi({ orientation: "horizontal" });
     expect(api.getRootProps()["data-orientation"]).toBe("horizontal");
   });
+
+  // WAI-ARIA §6.3.2: aria-orientation tells AT the axis of navigation
+  // so arrow key announcements match the physical layout.
+  it("aria-orientation reflects orientation", () => {
+    const { api } = makeApi({ orientation: "vertical" });
+    expect(api.getRootProps()["aria-orientation"]).toBe("vertical");
+  });
+
+  it("aria-orientation=horizontal by default", () => {
+    const { api } = makeApi({ orientation: "horizontal" });
+    expect(api.getRootProps()["aria-orientation"]).toBe("horizontal");
+  });
 });
 
 // ---------------------------------------------------------------------------

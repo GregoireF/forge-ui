@@ -314,6 +314,13 @@ describe("connectCombobox — getClearTriggerProps", () => {
     expect(api.getClearTriggerProps().type).toBe("button");
   });
 
+  // WAI-ARIA: the clear button must have an accessible name so AT can
+  // announce its purpose without relying on an icon or visual context.
+  it("aria-label=Clear", () => {
+    const { api } = makeApi();
+    expect(api.getClearTriggerProps()["aria-label"]).toBe("Clear");
+  });
+
   it("onClick sends CLEAR when not disabled", () => {
     const { api, send } = makeApi();
     api.getClearTriggerProps().onClick();
