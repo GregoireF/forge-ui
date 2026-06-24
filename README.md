@@ -7,19 +7,44 @@
 
 Composants headless accessibles pour React 19 et Vue 3. Zéro style — vous gérez le CSS.
 
-> **Statut : pré-release (alpha).** API en cours de stabilisation. Pas encore publié sur npm.
+> **Statut : pré-release (alpha).** API en cours de stabilisation. Pas encore publié sur npm.  
 > **Badges** : remplacez `OWNER/REPO` et `TOKEN` par vos valeurs et ajoutez le secret `CODECOV_TOKEN` dans les settings GitHub.
 
 ---
 
 ## Primitives
 
-| Primitive | Package | React | Vue | Nuxt | WAI-ARIA |
-|-----------|---------|:-----:|:---:|:----:|----------|
-| Dialog | `@forge-ui/dialog` | ✅ | ✅ | ✅ | [Dialog Modal](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) |
-| AlertDialog | `@forge-ui/alert-dialog` | ✅ | ✅ | ✅ | [Alert Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) |
-| Popover | `@forge-ui/popover` | ✅ | ✅ | ✅ | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) |
-| Select | `@forge-ui/select` | ✅ | ✅ | ✅ | [Select-Only Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/) |
+### Disponibles (React · Vue · Nuxt)
+
+| Primitive | Package | WAI-ARIA |
+|-----------|---------|----------|
+| Dialog | `@forge-ui/dialog` | [Dialog Modal](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) |
+| AlertDialog | `@forge-ui/alert-dialog` | [Alert Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) |
+| Popover | `@forge-ui/popover` | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) |
+| Select | `@forge-ui/select` | [Select-Only Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/) |
+| Combobox | `@forge-ui/combobox` | [Combobox Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) |
+| Checkbox | `@forge-ui/checkbox` | [Checkbox](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/) |
+| RadioGroup | `@forge-ui/radio-group` | [Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) |
+| Switch | `@forge-ui/switch` | [Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/) |
+| Tooltip | `@forge-ui/tooltip` | [Tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/) |
+| HoverCard | `@forge-ui/hover-card` | Popover non-modal au survol |
+| Accordion | `@forge-ui/accordion` | [Accordion](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/) |
+| Collapsible | `@forge-ui/collapsible` | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) |
+| Tabs | `@forge-ui/tabs` | [Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) |
+| TagsInput | `@forge-ui/tags-input` | Live region `role=status` |
+| Field | `@forge-ui/field` | Label · aria-describedby · aria-invalid |
+| Progress | `@forge-ui/progress` | [Progressbar](https://www.w3.org/WAI/ARIA/apg/patterns/meter/) |
+| Slider | `@forge-ui/slider` | [Slider (multi-thumb)](https://www.w3.org/WAI/ARIA/apg/patterns/slider/) |
+| NumberInput | `@forge-ui/number-input` | [Spinbutton §3.21](https://www.w3.org/TR/wai-aria-1.2/#spinbutton) |
+
+### Primitives disponibles (machine + connect — bindings framework à venir)
+
+| Primitive | Package | WAI-ARIA |
+|-----------|---------|----------|
+| DatePicker | `@forge-ui/date-picker` | [Date Picker Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/) |
+| DateRangePicker | `@forge-ui/date-range-picker` | Date Picker (dual input) |
+| DateField | `@forge-ui/date-field` | Spinbutton §3.21 |
+| TimePicker | `@forge-ui/time-picker` | Spinbutton §3.21 |
 
 ---
 
@@ -29,21 +54,40 @@ Inspirée de [Zag.js](https://zagjs.com) — notre propre implémentation FSM (~
 
 ```
 packages/
-  core/                  # FSM engine + a11y (focus-trap, scroll-lock, aria-hidden, stack-registry)
-  floating/              # @floating-ui/dom wrapper (makeComputePositionActivity)
-  field/                 # Field / FieldLabel / FieldControl / FieldDescription / FieldError
+  core/                        # FSM engine + a11y (focus-trap, scroll-lock, aria-hidden, stack-registry)
+  floating/                    # @floating-ui/dom wrapper (makeComputePositionActivity)
   primitives/
-    dialog/              # createDialogMachine + connectDialog
-    alert-dialog/        # createAlertDialogMachine + connectAlertDialog
-    popover/             # createPopoverMachine + connectPopover
-    select/              # createSelectMachine + connectSelect
-  react/                 # Bindings React 19 (compound components + hooks)
-  vue/                   # Bindings Vue 3.5 (defineComponent + provide/inject)
-  nuxt/                  # Module Nuxt 3 (auto-import)
+    dialog/                    # @forge-ui/dialog          — machine + connect
+    alert-dialog/              # @forge-ui/alert-dialog    — machine + connect
+    popover/                   # @forge-ui/popover         — machine + connect
+    select/                    # @forge-ui/select          — machine + connect
+    combobox/                  # @forge-ui/combobox        — machine + connect (groups, creatable)
+    checkbox/                  # @forge-ui/checkbox        — machine + connect (tri-state, group)
+    radio-group/               # @forge-ui/radio-group     — machine + connect
+    switch/                    # @forge-ui/switch          — machine + connect
+    tooltip/                   # @forge-ui/tooltip         — machine + connect (provider, skip-delay)
+    hover-card/                # @forge-ui/hover-card      — machine + connect
+    accordion/                 # @forge-ui/accordion       — machine + connect (single/multiple)
+    collapsible/               # @forge-ui/collapsible     — machine + connect
+    tabs/                      # @forge-ui/tabs            — machine + connect
+    tags-input/                # @forge-ui/tags-input      — machine + connect
+    field/                     # @forge-ui/field           — provider pur (pas de FSM)
+    progress/                  # @forge-ui/progress        — machine + connect
+    slider/                    # @forge-ui/slider          — machine + connect (multi-thumb, range)
+    number-input/              # @forge-ui/number-input    — machine + connect (spinbutton, spin-repeat)
+    date-picker/               # @forge-ui/date-picker     — machine + connect (calendar grid)
+    date-range-picker/         # @forge-ui/date-range-picker
+    date-field/                # @forge-ui/date-field
+    time-picker/               # @forge-ui/time-picker
+  react/                       # Bindings React 19 (compound components + hooks)
+  vue/                         # Bindings Vue 3.5 (defineComponent + provide/inject)
+  nuxt/                        # Module Nuxt 3 (auto-import)
 apps/
-  playground-react/      # Vite + React 19
-  playground-vue/        # Vite + Vue 3
-  playground-nuxt/       # Nuxt 3 — aucun import manuel
+  playground-react/            # Vite + React 19 (localhost:3000)
+  playground-vue/              # Vite + Vue 3   (localhost:3001)
+  playground-nuxt/             # Nuxt 3         (localhost:3002) — aucun import manuel
+e2e/
+  react/  vue/  nuxt/          # Playwright — specs par composant × framework
 ```
 
 ### Pattern machine → connect → binding
@@ -63,7 +107,35 @@ useX() + X.Root / X.Trigger / …     # Binding React ou Vue
 ### React
 
 ```tsx
-import { Dialog, AlertDialog, Popover, Select } from '@forge-ui/react'
+import { NumberInput, Slider, Tabs, Dialog, Select, Combobox } from '@forge-ui/react'
+
+// NumberInput — WAI-ARIA §3.21 spinbutton
+<NumberInput.Root defaultValue={50} min={0} max={100} step={1} onValueChange={console.log}>
+  <NumberInput.Label>Quantité</NumberInput.Label>
+  <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+  <NumberInput.Input aria-label="Quantité" />
+  <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  <NumberInput.HiddenInput name="quantity" />
+</NumberInput.Root>
+
+// Slider — multi-thumb, range support
+<Slider.Root value={[20, 80]} onValueChange={console.log} min={0} max={100}>
+  <Slider.Track>
+    <Slider.Range />
+  </Slider.Track>
+  <Slider.Thumb index={0} aria-label="Minimum" />
+  <Slider.Thumb index={1} aria-label="Maximum" />
+</Slider.Root>
+
+// Tabs — WAI-ARIA tablist pattern
+<Tabs.Root defaultValue="react">
+  <Tabs.List>
+    <Tabs.Trigger value="react">React</Tabs.Trigger>
+    <Tabs.Trigger value="vue">Vue</Tabs.Trigger>
+  </Tabs.List>
+  <Tabs.Panel value="react">Contenu React</Tabs.Panel>
+  <Tabs.Panel value="vue">Contenu Vue</Tabs.Panel>
+</Tabs.Root>
 
 // Dialog
 <Dialog.Root>
@@ -78,25 +150,13 @@ import { Dialog, AlertDialog, Popover, Select } from '@forge-ui/react'
   </Dialog.Portal>
 </Dialog.Root>
 
-// AlertDialog — Escape et outside-click bloqués
-<AlertDialog.Root>
-  <AlertDialog.Trigger>Supprimer</AlertDialog.Trigger>
-  <AlertDialog.Portal>
-    <AlertDialog.Overlay />
-    <AlertDialog.Content>
-      <AlertDialog.Title>Confirmer la suppression ?</AlertDialog.Title>
-      <AlertDialog.Description>Action irréversible.</AlertDialog.Description>
-      <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <AlertDialog.Action>Supprimer</AlertDialog.Action>
-    </AlertDialog.Content>
-  </AlertDialog.Portal>
-</AlertDialog.Root>
-
 // Select — WAI-ARIA 1.2 Select-Only Combobox
-<Select.Root onValueChange={(v) => console.log(v)}>
+<Select.Root onValueChange={console.log}>
   <Select.Label>Framework</Select.Label>
   <Select.Trigger>
-    <Select.Value placeholder="Choisir…" />
+    <Select.Value>
+      <Select.Placeholder>Choisir…</Select.Placeholder>
+    </Select.Value>
   </Select.Trigger>
   <Select.Portal>
     <Select.Content>
@@ -106,16 +166,39 @@ import { Dialog, AlertDialog, Popover, Select } from '@forge-ui/react'
     </Select.Content>
   </Select.Portal>
 </Select.Root>
+
+// Combobox — filtre client-side, multi-select, creatable, groups
+<Combobox.Root onValueChange={console.log}>
+  <Combobox.Label>Langage</Combobox.Label>
+  <Combobox.Input />
+  <Combobox.Trigger>▾</Combobox.Trigger>
+  <Combobox.Portal>
+    <Combobox.Content>
+      <Combobox.Item value="ts" label="TypeScript">
+        <Combobox.ItemText>TypeScript</Combobox.ItemText>
+      </Combobox.Item>
+    </Combobox.Content>
+  </Combobox.Portal>
+</Combobox.Root>
 ```
 
 ### Vue
 
 ```vue
 <script setup>
-import { Dialog, AlertDialog, Select } from '@forge-ui/vue'
+import { NumberInput, Slider, Tabs, Dialog, Select } from '@forge-ui/vue'
 </script>
 
 <template>
+  <!-- NumberInput -->
+  <NumberInput.Root :default-value="50" :min="0" :max="100" :step="1">
+    <NumberInput.Label>Quantité</NumberInput.Label>
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.Input aria-label="Quantité" />
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+    <NumberInput.HiddenInput name="quantity" />
+  </NumberInput.Root>
+
   <!-- Dialog -->
   <Dialog.Root>
     <Dialog.Trigger>Ouvrir</Dialog.Trigger>
@@ -156,6 +239,15 @@ export default defineNuxtConfig({
 ```vue
 <!-- app.vue — aucun import, tout est auto-importé -->
 <template>
+  <!-- NumberInput -->
+  <NumberInput.Root :default-value="50" :min="0" :max="100">
+    <NumberInput.Label>Quantité</NumberInput.Label>
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.Input aria-label="Quantité" />
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Root>
+
+  <!-- Dialog -->
   <Dialog.Root>
     <Dialog.Trigger>Ouvrir</Dialog.Trigger>
     <Dialog.Portal>
@@ -173,36 +265,54 @@ export default defineNuxtConfig({
 
 ## Styling
 
-Chaque élément expose `data-state` et `data-forge-part` :
+Chaque élément expose des attributs `data-*` pour piloter le CSS et Tailwind :
 
 ```
-data-state          "open" | "closed"
-data-forge-part     "trigger" | "overlay" | "content" | "title" | "description" | "close"
-                    "positioner" | "option" | "item-text" | "separator" | "group-label"
-data-selected       présent sur les options sélectionnées (Select)
-data-highlighted    présent sur l'option survolée/clavier (Select)
-data-disabled       présent sur les éléments désactivés
-data-side           "top" | "bottom" | "left" | "right" (Popover, Select)
-data-align          "start" | "center" | "end" (Popover, Select)
+data-state           "open" | "closed" | "checked" | "unchecked" | "indeterminate"
+data-forge-scope     nom de la primitive  ("dialog" | "select" | "slider" | "number-input" …)
+data-forge-part      anatomie de l'élément ("trigger" | "content" | "input" | "thumb" …)
+data-selected        présent sur les options sélectionnées (Select, Combobox, RadioGroup)
+data-highlighted     présent sur l'option courante au clavier (Select, Combobox)
+data-disabled        présent sur les éléments désactivés
+data-readonly        présent sur les éléments en lecture seule (NumberInput, Slider)
+data-focused         présent quand le composant a le focus (NumberInput)
+data-invalid         présent sur les éléments en état invalide (Switch, Field)
+data-required        présent quand le champ est requis (NumberInput, Field)
+data-side            "top" | "bottom" | "left" | "right" (Popover, Select, Tooltip…)
+data-align           "start" | "center" | "end" (Popover, Select…)
+data-orientation     "horizontal" | "vertical" (Slider, Tabs)
 ```
 
 **Tailwind**
 
 ```html
-<button data-forge-part="trigger"
-        class="px-4 py-2 bg-slate-900 text-white rounded data-[state=open]:ring-2" />
+<!-- Slider thumb -->
+<div data-forge-part="thumb"
+     class="w-5 h-5 rounded-full bg-white border-2 border-slate-900
+            data-[disabled]:opacity-40 data-[disabled]:pointer-events-none" />
 
+<!-- Select option -->
 <li data-forge-part="option"
     class="px-3 py-1.5 rounded cursor-pointer
            data-[highlighted]:bg-blue-50 data-[selected]:font-semibold
            data-[disabled]:opacity-40 data-[disabled]:pointer-events-none" />
+
+<!-- NumberInput input -->
+<input data-forge-part="input"
+       class="w-20 text-center border rounded
+              data-[disabled]:opacity-40 data-[readonly]:cursor-default" />
 ```
 
-**Animations CSS avec `forceMount`**
+**Animations CSS (data-state)**
 
 ```css
-[data-forge-part="content"][data-state="open"]   { animation: fadeIn  150ms ease; }
-[data-forge-part="content"][data-state="closed"] { animation: fadeOut 150ms ease forwards; }
+/* Entrée/sortie sans forceMount — watchPresence retarde le démontage */
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="open"] {
+  animation: fade-in 150ms ease;
+}
+[data-forge-scope="dialog"][data-forge-part="content"][data-state="closed"] {
+  animation: fade-out 150ms ease forwards;
+}
 ```
 
 ---
@@ -213,15 +323,16 @@ data-align          "start" | "center" | "end" (Popover, Select)
 bun install
 
 # Playgrounds
-bun --filter @forge-ui/playground-react dev
-bun --filter @forge-ui/playground-vue dev
-bun --filter @forge-ui/playground-nuxt dev
+bun --filter @forge-ui/playground-react dev   # localhost:3000
+bun --filter @forge-ui/playground-vue dev     # localhost:3001
+bun --filter @forge-ui/playground-nuxt dev    # localhost:3002
 
-# Tests
+# Tests unitaires
 bun run test               # tous les packages (turbo)
 bun run test:coverage      # + rapport de couverture lcov + json-summary
-cd packages/react && bun run test
-cd packages/vue   && bun run test
+
+# E2E Playwright (nécessite les 3 serveurs dev lancés)
+bun run test:e2e
 
 # Build + typecheck
 bun run build
@@ -237,12 +348,19 @@ bun run lint
 |---|---|---|---|---|
 | React | ✅ | ✅ | ✅ | ✅ |
 | Vue | ✅ | ❌ | ✅ | ✅ |
+| Nuxt (auto-import) | ✅ | ❌ | ❌ | ❌ |
 | FSM partagé React+Vue | ✅ | — | ✅ (Zag) | ❌ |
 | Zero runtime deps | ✅ | — | ❌ (Zag) | — |
 | Select-Only Combobox WAI-ARIA 1.2 | ✅ | ✅ | ✅ | ❌ |
+| Combobox groups + creatable | ✅ | ❌ | ✅ | ❌ |
 | AlertDialog séparé du Dialog | ✅ | ✅ | ✅ | ❌ |
 | Floating positioning intégré | ✅ | ✅ | ✅ | ❌ |
 | Stack registry (dialogs imbriqués) | ✅ | ✅ | ✅ | ⚠️ |
+| Slider multi-thumb / range | ✅ | ✅ | ✅ | ❌ |
+| NumberInput (spinbutton WAI-ARIA) | ✅ | ❌ | ✅ | ❌ |
+| Date Picker (machine) | ✅¹ | ❌ | ✅ | ❌ |
+
+> ¹ Machine + connect disponibles ; bindings React/Vue en cours.
 
 ---
 

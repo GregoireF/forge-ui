@@ -13,7 +13,7 @@ Ce document explique les choix d'architecture de forge-ui, le flux de données e
        ↓
 @forge-ui/react             binding React 19
 @forge-ui/vue               binding Vue 3.5
-@forge-ui/nuxt              module Nuxt 4 (re-exporte @forge-ui/vue)
+@forge-ui/nuxt              module Nuxt 3 (re-exporte @forge-ui/vue)
 ```
 
 **Règle fondamentale** : chaque couche ne connaît que la couche immédiatement inférieure. `@forge-ui/core` n'a aucune notion de Dialog. `@forge-ui/dialog` n'a aucune notion de React. Les bindings framework ne contiennent aucune logique de comportement — uniquement de la "plomberie réactive".
@@ -24,13 +24,31 @@ Ce document explique les choix d'architecture de forge-ui, le flux de données e
 
 | Package | Rôle |
 |---------|------|
-| `@forge-ui/core` | Machine FSM, activités réutilisables, utilitaires a11y |
+| `@forge-ui/core` | Machine FSM, activités réutilisables, utilitaires a11y, `machine.update()` |
 | `@forge-ui/floating` | Infrastructure positionnement floating-ui (pas une primitive) |
-| `@forge-ui/field` | Contexte form field sans FSM — provider pur |
-| `@forge-ui/dialog` | Primitive Dialog/AlertDialog |
+| `@forge-ui/dialog` | Primitive Dialog + AlertDialog |
 | `@forge-ui/popover` | Primitive Popover |
-| `@forge-ui/react` | Bindings React pour toutes les primitives |
-| `@forge-ui/vue` | Bindings Vue pour toutes les primitives |
+| `@forge-ui/select` | Primitive Select (Select-Only Combobox WAI-ARIA 1.2) |
+| `@forge-ui/combobox` | Primitive Combobox (éditable, groups, creatable) |
+| `@forge-ui/checkbox` | Primitive Checkbox (tri-state) + CheckboxGroup |
+| `@forge-ui/radio-group` | Primitive RadioGroup |
+| `@forge-ui/switch` | Primitive Switch |
+| `@forge-ui/tooltip` | Primitive Tooltip + Provider (skip-delay, interactive) |
+| `@forge-ui/hover-card` | Primitive HoverCard (popover non-modal au survol) |
+| `@forge-ui/accordion` | Primitive Accordion (single/multiple/collapsible) |
+| `@forge-ui/collapsible` | Primitive Collapsible |
+| `@forge-ui/tabs` | Primitive Tabs |
+| `@forge-ui/tags-input` | Primitive TagsInput (live region) |
+| `@forge-ui/field` | Contexte form field sans FSM — provider pur |
+| `@forge-ui/progress` | Primitive Progress (déterminé + indéterminé) |
+| `@forge-ui/slider` | Primitive Slider (multi-thumb, range, drag + clavier) |
+| `@forge-ui/number-input` | Primitive NumberInput (spinbutton WAI-ARIA §3.21, spin-repeat) |
+| `@forge-ui/date-picker` | Primitive DatePicker (calendrier grille, localisation) |
+| `@forge-ui/date-range-picker` | Primitive DateRangePicker (dual input, range selection) |
+| `@forge-ui/date-field` | Primitive DateField (spinbutton segmenté) |
+| `@forge-ui/time-picker` | Primitive TimePicker (spinbutton heures/minutes/secondes) |
+| `@forge-ui/react` | Bindings React pour toutes les primitives (sauf date/time à venir) |
+| `@forge-ui/vue` | Bindings Vue pour toutes les primitives (sauf date/time à venir) |
 | `@forge-ui/nuxt` | Module Nuxt — auto-imports de @forge-ui/vue |
 
 ---
@@ -156,8 +174,27 @@ function Content({ children, ...rest }: DialogContentProps) {
 - Abonne le composant aux changements de snapshot (useSyncExternalStore, watch)
 - Intègre Presence pour les animations de sortie
 - Orchestre les compound parts via Context React/Vue
+- Synchronise les props contrôlées via `machine.update(partial)` (voir ci-dessous)
 
 **Ce que le binding ne fait pas** : aucune logique de comportement. Si un comportement manque, il faut l'ajouter dans la machine et exposer via le connect.
+
+---
+
+## machine.setContext vs machine.update
+
+Deux méthodes sur `MachineInstance` pour modifier le context, avec des sémantiques différentes :
+
+```ts
+/** Modifie le context en place SANS notifier les subscribers. Usage : refs DOM internes. */
+machine.setContext({ contentEl: el });
+
+/** Modifie le context ET notifie les subscribers. Usage : sync props contrôlées. */
+machine.update({ value: props.value });
+```
+
+`setContext` est utilisé par les ref callbacks du connect (remplir `contentEl`, `triggerEl`, etc.) — des mutations DOM qui ne doivent pas déclencher de re-render.
+
+`machine.update` est utilisé par les bindings framework pour synchroniser les props contrôlées (React `useLayoutEffect`, Vue `watch` sur `props.*`) — ces mutations DOIVENT déclencher un re-render pour que le snapshot reflète la nouvelle valeur.
 
 ---
 
@@ -173,7 +210,6 @@ export function makeKeyboardActivity<TContext extends object>(
   return (ctx, { send }) => {
     function handler(e: KeyboardEvent) {
       if (e.key === "Escape" && isTopLayer(opts.getId(ctx))) {
-        // ...
         send(opts.sendEscape);
       }
     }
@@ -195,23 +231,49 @@ export function makeKeyboardActivity<TContext extends object>(
 | `makeFocusActivity` | Focus management open/close avec callbacks preventable |
 | `makeComputePositionActivity` | Positionnement floating-ui (dans `@forge-ui/floating`) |
 
+**Activité spin-repeat (NumberInput)** — activité locale, non partagée :
+
+```ts
+// Démarre sur SPIN_START_UP/DOWN ; s'arrête sur SPIN_STOP
+function makeSpinActivity(direction: "up" | "down"): ActivityFn<NumberInputContext> {
+  return (ctx, { send }) => {
+    let rafId: number;
+    let startTime: number | null = null;
+    const DELAY = 300;   // délai avant répétition (ms)
+    const INTERVAL = 50; // intervalle de répétition (ms)
+
+    function tick(now: number) {
+      if (startTime === null) startTime = now;
+      if (now - startTime > DELAY) {
+        send({ type: direction === "up" ? "INCREMENT" : "DECREMENT" });
+        startTime = now - DELAY - INTERVAL; // répétition immédiate
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  };
+}
+```
+
 **Ordre obligatoire** : `makeLayerActivity` TOUJOURS en premier dans `activities[]`. Les autres activités lisent le registry au moment de l'événement (pas au montage), donc l'ordre relatif entre elles importe peu — sauf `registerLayer` qui doit pousser avant que `hideBackground` lise.
 
 ---
 
 ## Stack Registry
 
-Le registry est un singleton module-level qui track toutes les couches flottantes ouvertes (Dialogs, Popovers, Tooltips futurs...).
+Le registry est un singleton module-level qui track toutes les couches flottantes ouvertes (Dialogs, Popovers, Tooltips...).
 
 ```ts
 // packages/core/src/utils/stack-registry.ts
 const layers = new Map<string, { contentEl: HTMLElement | null }>();
 
-pushLayer(id, contentEl)    // appelé par makeLayerActivity au setup
-popLayer(id)                // appelé par makeLayerActivity au cleanup
-isTopLayer(id)              // true si id est le dernier inséré dans la Map
-getLayerContentEls()        // tous les contentEl — passés à hideOthers()
+pushLayer(id, contentEl)     // appelé par makeLayerActivity au setup
+popLayer(id)                 // appelé par makeLayerActivity au cleanup
+isTopLayer(id)               // true si id est le dernier inséré dans la Map
+getLayerContentEls()         // tous les contentEl — passés à hideOthers()
 updateLayerContentEl(id, el) // mis à jour par le ref callback du connect
+clearRegistry()              // à appeler dans afterEach des tests
 ```
 
 **Pourquoi singleton ?** Dialog → Popover → Dialog imbriqués doivent tous partager la même pile. Un registry par instance est impossible.
@@ -275,7 +337,7 @@ interface FloatingPositioning {
 }
 ```
 
-`makeComputePositionActivity` — activité clé-en-main. Ajoute à la machine Popover (et future Tooltip, DropdownMenu) :
+`makeComputePositionActivity` — activité clé-en-main. Ajoute à la machine Popover / Tooltip / HoverCard / Select / Combobox :
 - `--forge-floating-transform-origin` CSS var sur le content
 - `data-side`, `data-align`, `data-placement` sur le content et positioner
 
@@ -326,99 +388,114 @@ Les composants Vue sont écrits en `.ts` avec `defineComponent`, pas en `.vue` (
 
 ## Ajouter une primitive
 
-Exemple concret : ajouter un **Tooltip**.
+Exemple concret : ajouter un **ColorPicker**.
 
 ### 1. Créer le package primitif
 
 ```
-packages/primitives/tooltip/
+packages/primitives/color-picker/
   src/
-    tooltip.types.ts    — TooltipContext, TooltipEvent, TooltipState
-    tooltip.machine.ts  — createTooltipMachine(options)
-    tooltip.connect.ts  — connectTooltip(snapshot, send, machine)
+    color-picker.types.ts    — ColorPickerContext, ColorPickerEvent, ColorPickerState
+    color-picker.machine.ts  — createColorPickerMachine(options)
+    color-picker.connect.ts  — connectColorPicker(snapshot, send, machine)
     index.ts
   tests/
-    tooltip.machine.test.ts
-    tooltip.connect.test.ts
-  package.json          — "@forge-ui/tooltip", deps: @forge-ui/core + @forge-ui/floating
+    color-picker.machine.test.ts
+    color-picker.connect.test.ts
+    setup.ts
+  package.json          — "@forge-ui/color-picker", deps: @forge-ui/core
   tsconfig.json
   vitest.config.ts
 ```
 
-**Types** (`tooltip.types.ts`) :
+**Types** (`color-picker.types.ts`) :
 ```ts
-interface TooltipContext {
+interface ColorPickerContext {
   id: string;
+  value: string;          // "#rrggbb" ou "hsl(...)"
+  format: "hex" | "hsl" | "rgb";
   open: boolean;
   contentEl: HTMLElement | null;
-  triggerEl: HTMLElement | null;
-  positioning: ResolvedFloatingPositioning;  // depuis @forge-ui/floating
-  openDelay: number;
-  closeDelay: number;
   // ...
 }
 ```
 
-**Machine** (`tooltip.machine.ts`) :
+**Machine** (`color-picker.machine.ts`) :
 ```ts
-const registerLayer = makeLayerActivity<TooltipContext>({ ... }); // PREMIER
-const computePosition = makeComputePositionActivity<TooltipContext>();
+const registerLayer = makeLayerActivity<ColorPickerContext>({ ... }); // PREMIER
+const computePosition = makeComputePositionActivity<ColorPickerContext>();
 
 activities: {
   registerLayer,       // TOUJOURS premier
   computePosition,
-  trapKeyboard,        // Escape → close
   watchOutside,
 }
 ```
 
-**Connect** (`tooltip.connect.ts`) :
-- `getTriggerProps()` → `aria-describedby`, `onMouseEnter`, `onFocus`, ref callback
-- `getContentProps()` → `role="tooltip"`, `id`, ref callback → `updateLayerContentEl`
-- `getPositionerProps()` → style position top/left (via context.x/y)
+**Connect** (`color-picker.connect.ts`) :
+- `getTriggerProps()` → `aria-haspopup`, `aria-expanded`, onClick → TOGGLE
+- `getContentProps()` → `role="dialog"`, `aria-label`, ref callback → `updateLayerContentEl`
+- `getChannelSliderProps(channel)` → `role="slider"`, `aria-valuenow`, onKeyDown, onPointerDown
 
 ### 2. Binding React
 
 ```
-packages/react/src/components/tooltip/
-  use-tooltip.ts   — useMemo(createTooltipMachine) + useSyncExternalStore + connectTooltip
-  Tooltip.tsx      — Tooltip.Root, Trigger, Portal, Content (Presence-aware)
+packages/react/src/components/color-picker/
+  use-color-picker.ts   — useState(createColorPickerMachine) + useSyncExternalStore + connectColorPicker
+  ColorPicker.tsx       — ColorPicker.Root, Trigger, Portal, Content, ChannelSlider, Swatch...
 ```
 
-- Ajouter `@forge-ui/tooltip: workspace:*` dans `packages/react/package.json`
-- Ajouter path alias dans `packages/react/tsconfig.json` et `vitest.config.ts`
+- Ajouter `@forge-ui/color-picker: workspace:*` dans `packages/react/package.json`
+- Ajouter path alias dans `packages/react/tsconfig.json`
 - Exporter depuis `packages/react/src/index.ts`
+- Pour les props contrôlées, utiliser `machine.update({ value: props.value })` dans `useLayoutEffect`
 
 ### 3. Binding Vue
 
-Même structure dans `packages/vue/src/components/tooltip/`.
+Même structure dans `packages/vue/src/components/color-picker/`.
 
-`Field` et les primitives sans machine suivent le même pattern mais sans machine ni connect — juste `provide`/`inject` autour d'un composable.
+**Pattern controlled Vue** : ne pas mettre le watch dans `use-color-picker.ts` (options est un snapshot statique). Mettre le watch dans `ColorPicker.ts` Root sur `() => props.value` :
+
+```ts
+// ColorPicker.ts — Root setup()
+watch(
+  () => props.value,
+  (v) => { if (v !== undefined) api.machine.update({ value: v }); },
+);
+```
 
 ### 4. Nuxt
 
 Dans `packages/nuxt/src/module.ts` :
 ```ts
-addImports({ name: "useTooltip", from });
-addImports({ name: "Tooltip", from });
-const tooltipComponents = ["TooltipRoot", "TooltipTrigger", "TooltipContent"];
-for (const name of tooltipComponents) addComponent({ name, export: name, filePath: from });
+addImports({ name: "useColorPicker", from });
+addImports({ name: "ColorPicker", from });
+const components = ["ColorPickerRoot", "ColorPickerTrigger", "ColorPickerContent", ...];
+for (const name of components) addComponent({ name, export: name, filePath: from });
 ```
 
 ### 5. Tests
 
 Chaque couche a ses propres tests :
-- **Machine** : transitions d'états, callbacks, options modales
-- **Connect** : prop-getters, IDs générés, ref callbacks
+- **Machine** : transitions d'états, callbacks, valeurs initiales, clamp/snap
+- **Connect** : prop-getters, IDs générés, ref callbacks, aria-* attrs
 - **React/Vue** : render, interaction, ARIA avec Testing Library
+- **E2E** : specs Playwright dans `e2e/react/`, `e2e/vue/`, `e2e/nuxt/`
 
 **Règle tests** : toujours appeler `clearRegistry()` dans `afterEach` quand les tests créent des machines. Toujours stopper les machines (`m.stop()`) pour éviter que les handlers d'événements saignent entre tests.
 
-### 6. Changeset
+### 6. Playground
+
+Ajouter une section dans les 3 playgrounds :
+- `apps/playground-react/src/App.tsx` — `<Section>` + composant `<ColorPickerDemo />`
+- `apps/playground-vue/src/App.vue` — section template + state réactif
+- `apps/playground-nuxt/app.vue` — idem Nuxt (auto-import, no manual import)
+
+### 7. Changeset
 
 ```bash
 bun run changeset
-# Sélectionner @forge-ui/tooltip, @forge-ui/react, @forge-ui/vue, @forge-ui/nuxt
+# Sélectionner @forge-ui/color-picker, @forge-ui/react, @forge-ui/vue, @forge-ui/nuxt
 # Niveau : minor (nouvelle feature)
 # Description : courte en anglais
 ```
@@ -428,11 +505,11 @@ bun run changeset
 ## Flux de données résumé
 
 ```
-User action (click, keydown)
+User action (click, keydown, pointerdown)
        ↓
-Activity listener (document keydown) ou Event handler (onClick dans getTriggerProps)
+Activity listener (document keydown) ou Event handler (onClick dans prop-getter)
        ↓
-machine.send("EVENT")
+machine.send({ type: "EVENT" })
        ↓
 machine.ts — transition d'état → nouveau context
        ↓
@@ -442,5 +519,19 @@ binding re-render (useSyncExternalStore en React, watch en Vue)
        ↓
 connectXxx(snapshot, send, machine) → nouveaux prop-getters
        ↓
-DOM mis à jour (aria-*, data-*, style, visibility)
+DOM mis à jour (aria-*, data-*, style, value)
+```
+
+**Cas contrôlé (props externes) :**
+
+```
+Parent re-render (props.value change)
+       ↓
+React useLayoutEffect / Vue watch(() => props.value)
+       ↓
+machine.update({ value: newVal })    — setContext + emit()
+       ↓
+snapshot émis → binding re-render
+       ↓
+DOM mis à jour
 ```
