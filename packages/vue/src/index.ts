@@ -150,6 +150,7 @@ export {
   SelectContent,
   SelectGroup,
   SelectGroupLabel,
+  SelectIndicator,
   SelectItem,
   SelectItemIndicator,
   SelectItemText,

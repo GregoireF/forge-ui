@@ -1,0 +1,195 @@
+---
+title: NumberInput
+description: A spinbutton for numeric entry with stepper buttons, keyboard navigation, and full WAI-ARIA §3.21 compliance.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { NumberInputDemoReact } from "../../../components/examples/number-input/NumberInputDemoReact.tsx";
+import NumberInputDemoVue from "../../../components/examples/number-input/NumberInputDemoVue.vue";
+
+A **NumberInput** (spinbutton) allows users to select a numeric value by typing, clicking stepper buttons, or using the keyboard. It renders `role="spinbutton"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and `aria-valuetext` per [WAI-ARIA §3.21](https://www.w3.org/TR/wai-aria-1.2/#spinbutton).
+
+## Example
+
+<Tabs>
+  <TabItem label="React">
+    <NumberInputDemoReact client:visible />
+  </TabItem>
+  <TabItem label="Vue">
+    <NumberInputDemoVue client:visible />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs>
+  <TabItem label="React">
+    ```tsx
+    import { NumberInput } from "@forge-ui/react";
+
+    export function QuantityInput() {
+      return (
+        <NumberInput.Root defaultValue={1} min={0} max={99} step={1}>
+          <NumberInput.Label>Quantity</NumberInput.Label>
+          <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+          <NumberInput.Input aria-label="Quantity" />
+          <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          <NumberInput.HiddenInput name="quantity" />
+        </NumberInput.Root>
+      );
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup lang="ts">
+    import {
+      NumberInputDecrementTrigger,
+      NumberInputHiddenInput,
+      NumberInputIncrementTrigger,
+      NumberInputInput,
+      NumberInputLabel,
+      NumberInputRoot,
+    } from "@forge-ui/vue";
+    </script>
+
+    <template>
+      <NumberInputRoot :default-value="1" :min="0" :max="99" :step="1">
+        <NumberInputLabel>Quantity</NumberInputLabel>
+        <NumberInputDecrementTrigger>−</NumberInputDecrementTrigger>
+        <NumberInputInput aria-label="Quantity" />
+        <NumberInputIncrementTrigger>+</NumberInputIncrementTrigger>
+        <NumberInputHiddenInput name="quantity" />
+      </NumberInputRoot>
+    </template>
+    ```
+  </TabItem>
+</Tabs>
+
+## Controlled
+
+```tsx
+const [qty, setQty] = useState<number | null>(1);
+
+<NumberInput.Root
+  value={qty}
+  onValueChange={(v) => setQty(v)}
+  min={0}
+  max={99}
+>
+  ...
+</NumberInput.Root>
+```
+
+## Custom step
+
+```tsx
+// step=0.1, largeStep (PageUp/Down) = 1 (step × 10)
+<NumberInput.Root defaultValue={1.0} min={0} max={10} step={0.1} fractionDigits={1}>
+  ...
+</NumberInput.Root>
+```
+
+## Localized formatting
+
+```tsx
+// Displays as "1.234,56 €" in French locale (on blur)
+<NumberInput.Root
+  defaultValue={1234.56}
+  locale="fr-FR"
+  fractionDigits={2}
+>
+  ...
+</NumberInput.Root>
+```
+
+## Styling
+
+```css
+[data-forge-scope="number-input"][data-forge-part="input"] {
+  width: 70px;
+  text-align: center;
+  padding: 0.4rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+/* Disable pointer events when the trigger is at its limit */
+[data-forge-scope="number-input"][data-forge-part="decrement-trigger"][aria-disabled="true"],
+[data-forge-scope="number-input"][data-forge-part="increment-trigger"][aria-disabled="true"] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Disabled state */
+[data-forge-scope="number-input"][data-disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+```
+
+## API Reference
+
+### NumberInput.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number \| null` | — | Controlled value |
+| `defaultValue` | `number \| null` | `null` | Uncontrolled initial value |
+| `min` | `number` | `-Infinity` | Minimum allowed value |
+| `max` | `number` | `Infinity` | Maximum allowed value |
+| `step` | `number` | `1` | ArrowUp/Down increment |
+| `largeStep` | `number` | `step × 10` | PageUp/Down increment |
+| `fractionDigits` | `number` | `0` | Decimal digits for display |
+| `locale` | `string` | browser locale | `Intl.NumberFormat` locale |
+| `allowEmpty` | `boolean` | `true` | Allow null / empty input |
+| `disabled` | `boolean` | `false` | Disable all interaction |
+| `readOnly` | `boolean` | `false` | Prevent editing |
+| `required` | `boolean` | `false` | Mark as required |
+| `onValueChange` | `(value: number \| null) => void` | — | Fires on every committed change |
+
+### NumberInput.Input
+
+Renders `<input type="text" role="spinbutton">` with full ARIA attributes.
+
+### NumberInput.IncrementTrigger / DecrementTrigger
+
+Renders `<button>`. Applies `aria-disabled="true"` when at max/min. Supports pointer hold for spin-repeat (300ms delay, 50ms interval).
+
+### NumberInput.HiddenInput
+
+Renders `<input type="hidden">` for native form submission.
+
+## Data attributes
+
+| Attribute | Element | Values |
+|-----------|---------|--------|
+| `data-forge-scope` | All parts | `"number-input"` |
+| `data-forge-part` | All parts | `"root"` \| `"label"` \| `"input"` \| `"increment-trigger"` \| `"decrement-trigger"` |
+| `data-disabled` | All parts | `""` |
+| `data-readonly` | All parts | `""` |
+| `data-focused` | Root | `""` |
+| `data-invalid` | Root | `""` |
+| `data-required` | Root | `""` |
+
+## Accessibility
+
+- Renders `role="spinbutton"` on the input
+- `aria-valuenow`, `aria-valuemin`, `aria-valuemax` always present
+- `aria-valuetext` shows the formatted string (e.g. `"1,234.56"`)
+- `aria-disabled` on increment/decrement triggers when at boundary
+- `aria-required`, `aria-invalid` forwarded from props
+- Follows [WAI-ARIA §3.21 Spinbutton](https://www.w3.org/TR/wai-aria-1.2/#spinbutton)
+
+## Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `ArrowUp` | Increment by step |
+| `ArrowDown` | Decrement by step |
+| `PageUp` | Increment by largeStep (default: step × 10) |
+| `PageDown` | Decrement by largeStep |
+| `Home` | Set to min |
+| `End` | Set to max |
+| `Enter` | Commit typed value |
+| `Escape` | Revert to last committed value |

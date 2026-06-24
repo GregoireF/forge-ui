@@ -15,7 +15,7 @@ export function SliderDemoReact() {
         </div>
         <Slider.Root
           value={value}
-          onValueChange={setValue}
+          onValueChange={(vals) => setValue(vals[0])}
           style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}
         >
           <Slider.Track

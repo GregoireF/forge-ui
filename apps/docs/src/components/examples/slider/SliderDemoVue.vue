@@ -14,7 +14,7 @@
 
       <SliderRoot
         :value="value"
-        :on-value-change="(v) => (value = v)"
+        :on-value-change="(vals) => (value = vals[0])"
         style="position: relative; height: 20px; display: flex; align-items: center"
       >
         <SliderTrack
