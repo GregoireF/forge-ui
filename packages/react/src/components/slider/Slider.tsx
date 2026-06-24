@@ -99,9 +99,10 @@ export interface SliderRangeProps extends HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
 }
 
-function Range({ asChild, ...rest }: SliderRangeProps) {
+function Range({ asChild, style: userStyle, ...rest }: SliderRangeProps) {
   const api = useCtx();
-  const props = { ...api.getRangeProps(), ...rest };
+  const { style: connectStyle, ...rangeAttrs } = api.getRangeProps();
+  const props = { ...rangeAttrs, ...rest, style: { ...connectStyle, ...userStyle } };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }
@@ -116,11 +117,11 @@ export interface SliderThumbProps extends Omit<HTMLAttributes<HTMLDivElement>, "
   index?: number;
 }
 
-function Thumb({ asChild, index = 0, ...rest }: SliderThumbProps) {
+function Thumb({ asChild, index = 0, style: userStyle, ...rest }: SliderThumbProps) {
   const api = useCtx();
-  const { onKeydown: _kd, onKeyDown, ...thumbAttrs } = api.getThumbProps(index);
+  const { onKeydown: _kd, onKeyDown, style: connectStyle, ...thumbAttrs } = api.getThumbProps(index);
   const onKD = onKeyDown as unknown as React.KeyboardEventHandler<HTMLDivElement>;
-  const props = { ...thumbAttrs, onKeyDown: onKD, ...rest };
+  const props = { ...thumbAttrs, onKeyDown: onKD, ...rest, style: { ...connectStyle, ...userStyle } };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }

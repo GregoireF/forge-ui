@@ -98,7 +98,9 @@ const SliderRange = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const merged = { ...api.getRangeProps(), ...attrs };
+      const { style: connectStyle, ...rangeAttrs } = api.getRangeProps();
+      const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
+      const merged = { ...rangeAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged);
     };
@@ -120,8 +122,9 @@ const SliderThumb = defineComponent({
     const api = useCtx();
     return () => {
       // Strip React-only onKeyDown (Vue uses onKeydown from connect)
-      const { onKeyDown: _kd, ...thumbAttrs } = api.getThumbProps(props.index);
-      const merged = { ...thumbAttrs, ...attrs };
+      const { onKeyDown: _kd, style: connectStyle, ...thumbAttrs } = api.getThumbProps(props.index);
+      const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
+      const merged = { ...thumbAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged, slots.default?.());
     };

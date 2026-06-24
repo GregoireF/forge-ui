@@ -1206,25 +1206,37 @@ function ProgressDemo() {
 function RadioGroupDemo() {
   const [value, setValue] = useState<string>("react");
   return (
-    <RadioGroup.Root value={value} onValueChange={setValue} name="framework" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-      {[
-        { value: "react", label: "React" },
-        { value: "vue", label: "Vue" },
-        { value: "angular", label: "Angular" },
-      ].map((opt) => (
-        <RadioGroup.Item key={opt.value} value={opt.value} data-testid={`radio-item-${opt.value}`}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-            <RadioGroup.Radio style={{ width: "18px", height: "18px", borderRadius: "50%", border: "2px solid #cbd5e1", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span data-forge-part="indicator" style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1e293b", display: "none" }} />
-            </RadioGroup.Radio>
-            <RadioGroup.Label style={{ fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" }}>
-              {opt.label}
-            </RadioGroup.Label>
-          </div>
-          <RadioGroup.HiddenInput />
-        </RadioGroup.Item>
-      ))}
-    </RadioGroup.Root>
+    <>
+      <style>{`
+        [data-forge-part="radio"] {
+          width: 18px; height: 18px; border-radius: 50%;
+          border: 2px solid #cbd5e1; background: #fff;
+          display: flex; align-items: center; justify-content: center;
+          transition: border-color 0.15s;
+        }
+        [data-forge-part="radio"][data-state="checked"] {
+          border-color: #1e293b;
+          box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 9px #1e293b;
+        }
+      `}</style>
+      <RadioGroup.Root value={value} onValueChange={setValue} name="framework" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        {[
+          { value: "react", label: "React" },
+          { value: "vue", label: "Vue" },
+          { value: "angular", label: "Angular" },
+        ].map((opt) => (
+          <RadioGroup.Item key={opt.value} value={opt.value} data-testid={`radio-item-${opt.value}`}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <RadioGroup.Radio />
+              <RadioGroup.Label style={{ fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" }}>
+                {opt.label}
+              </RadioGroup.Label>
+            </div>
+            <RadioGroup.HiddenInput />
+          </RadioGroup.Item>
+        ))}
+      </RadioGroup.Root>
+    </>
   );
 }
 

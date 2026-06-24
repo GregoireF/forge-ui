@@ -998,9 +998,7 @@ const radioGroupValue = ref<string>("react");
           :data-testid="`radio-item-${opt.value}`"
         >
           <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
-            <RadioGroup.Radio style="width:18px;height:18px;border-radius:50%;border:2px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center">
-              <span data-forge-part="indicator" style="width:8px;height:8px;border-radius:50%;background:#1e293b;display:none" />
-            </RadioGroup.Radio>
+            <RadioGroup.Radio />
             <RadioGroup.Label style="font-size:0.875rem;color:#1e293b;cursor:pointer">
               {{ opt.label }}
             </RadioGroup.Label>
@@ -1179,5 +1177,17 @@ const radioGroupValue = ref<string>("react");
 }
 [data-forge-scope="tooltip"][data-forge-part="content"][data-state="closed"] {
   animation: forge-fade-scale-out 80ms ease forwards;
+}
+
+/* RadioGroup */
+[data-forge-part="radio"] {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #cbd5e1; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s;
+}
+[data-forge-part="radio"][data-state="checked"] {
+  border-color: #1e293b;
+  box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 9px #1e293b;
 }
 </style>
