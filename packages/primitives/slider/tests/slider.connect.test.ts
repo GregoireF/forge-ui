@@ -193,16 +193,18 @@ describe("connectSlider — getThumbProps", () => {
     expect(api.getThumbProps(0)["aria-orientation"]).toBe("vertical");
   });
 
-  it("horizontal thumb style: left uses percent, transform translateX(-50%)", () => {
+  it("horizontal thumb style: position absolute, left uses percent, transform translateX(-50%)", () => {
     const { api } = makeApi({ values: [25] });
     const style = api.getThumbProps(0).style as Record<string, string>;
+    expect(style.position).toBe("absolute");
     expect(style.left).toBe("25%");
     expect(style.transform).toBe("translateX(-50%)");
   });
 
-  it("vertical thumb style: bottom uses percent, transform translateY(50%)", () => {
+  it("vertical thumb style: position absolute, bottom uses percent, transform translateY(50%)", () => {
     const { api } = makeApi({ values: [75], orientation: "vertical" });
     const style = api.getThumbProps(0).style as Record<string, string>;
+    expect(style.position).toBe("absolute");
     expect(style.bottom).toBe("75%");
     expect(style.transform).toBe("translateY(50%)");
   });

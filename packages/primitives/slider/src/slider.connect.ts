@@ -128,8 +128,8 @@ export function connectSlider(
             : undefined,
         style:
           orientation === "horizontal"
-            ? { left: `${percent}%`, transform: "translateX(-50%)" }
-            : { bottom: `${percent}%`, transform: "translateY(50%)" },
+            ? { position: "absolute" as const, left: `${percent}%`, transform: "translateX(-50%)" }
+            : { position: "absolute" as const, bottom: `${percent}%`, transform: "translateY(50%)" },
         onKeyDown(e: KeyboardEvent) {
           if (disabled) return;
           switch (e.key) {

@@ -100,7 +100,8 @@ const SliderRange = defineComponent({
     return () => {
       const { style: connectStyle, ...rangeAttrs } = api.getRangeProps();
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
-      const merged = { ...rangeAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } };
+      // connect styles (left/right) must win over user styles
+      const merged = { ...rangeAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged);
     };
@@ -124,7 +125,8 @@ const SliderThumb = defineComponent({
       // Strip React-only onKeyDown (Vue uses onKeydown from connect)
       const { onKeyDown: _kd, style: connectStyle, ...thumbAttrs } = api.getThumbProps(props.index);
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
-      const merged = { ...thumbAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } };
+      // connect styles (position/left/transform) must win over user styles
+      const merged = { ...thumbAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged, slots.default?.());
     };

@@ -102,7 +102,8 @@ export interface SliderRangeProps extends HTMLAttributes<HTMLDivElement> {
 function Range({ asChild, style: userStyle, ...rest }: SliderRangeProps) {
   const api = useCtx();
   const { style: connectStyle, ...rangeAttrs } = api.getRangeProps();
-  const props = { ...rangeAttrs, ...rest, style: { ...connectStyle, ...userStyle } };
+  // connect styles (left/right) must win over user styles to keep positioning correct
+  const props = { ...rangeAttrs, ...rest, style: { ...userStyle, ...connectStyle } };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }
@@ -121,7 +122,8 @@ function Thumb({ asChild, index = 0, style: userStyle, ...rest }: SliderThumbPro
   const api = useCtx();
   const { onKeydown: _kd, onKeyDown, style: connectStyle, ...thumbAttrs } = api.getThumbProps(index);
   const onKD = onKeyDown as unknown as React.KeyboardEventHandler<HTMLDivElement>;
-  const props = { ...thumbAttrs, onKeyDown: onKD, ...rest, style: { ...connectStyle, ...userStyle } };
+  // connect styles (position/left/transform) must win over user styles
+  const props = { ...thumbAttrs, onKeyDown: onKD, ...rest, style: { ...userStyle, ...connectStyle } };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }
