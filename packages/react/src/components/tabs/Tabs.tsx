@@ -34,7 +34,7 @@ function Root({ children, asChild, ...opts }: TabsRootProps) {
 }
 
 // ---------------------------------------------------------------------------
-// List â€” the tablist container
+// List â€" the tablist container
 // ---------------------------------------------------------------------------
 
 export interface TabsListProps extends HTMLAttributes<HTMLDivElement> {
@@ -50,7 +50,7 @@ function List({ children, asChild, ...rest }: TabsListProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Trigger â€” a tab button
+// Trigger â€" a tab button
 // ---------------------------------------------------------------------------
 
 export interface TabsTriggerProps extends HTMLAttributes<HTMLButtonElement> {
@@ -69,7 +69,7 @@ function Trigger({ value, children, asChild, ...rest }: TabsTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Panel â€” the tab content panel
+// Panel â€" the tab content panel
 // ---------------------------------------------------------------------------
 
 export interface TabsPanelProps extends HTMLAttributes<HTMLDivElement> {

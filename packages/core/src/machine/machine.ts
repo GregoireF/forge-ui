@@ -196,5 +196,12 @@ export function createMachine<
     listeners.clear();
   }
 
-  return { id: config.id, send, subscribe, getSnapshot, setContext, start, stop };
+  // update: sets context AND emits so framework hooks detect controlled prop changes.
+  // Distinct from setContext (used for DOM refs internally) which does NOT emit.
+  function update(updates: Partial<TContext>): void {
+    setContext(updates);
+    emit();
+  }
+
+  return { id: config.id, send, subscribe, getSnapshot, setContext, update, start, stop };
 }

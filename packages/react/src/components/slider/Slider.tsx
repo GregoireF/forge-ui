@@ -1,7 +1,6 @@
-﻿import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { Slot } from "../shared/Slot.js";
-import type { UseSliderOptions } from "./use-slider.js";
 import { useSlider } from "./use-slider.js";
 
 type SliderApi = ReturnType<typeof useSlider>;
@@ -18,18 +17,19 @@ function useCtx(): SliderApi {
 // Root
 // ---------------------------------------------------------------------------
 
-export interface SliderRootProps extends Omit<HTMLAttributes<HTMLDivElement>, keyof UseSliderOptions | "defaultValue" | "defaultChecked"> {
+export interface SliderRootProps extends Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "defaultChecked"> {
   children: ReactNode;
   asChild?: boolean;
-  value?: number;
-  defaultValue?: number;
+  value?: number | number[];
+  defaultValue?: number | number[];
   min?: number;
   max?: number;
   step?: number;
   orientation?: "horizontal" | "vertical";
   disabled?: boolean;
-  onValueChange?: (value: number) => void;
-  onValueCommit?: (value: number) => void;
+  getValueLabel?: (value: number, index: number) => string;
+  onValueChange?: (values: number[]) => void;
+  onValueCommit?: (values: number[]) => void;
   id?: string;
 }
 
@@ -43,6 +43,7 @@ function Root({
   step,
   orientation,
   disabled,
+  getValueLabel,
   onValueChange,
   onValueCommit,
   id,
@@ -57,6 +58,7 @@ function Root({
     ...(step !== undefined && { step }),
     ...(orientation !== undefined && { orientation }),
     ...(disabled !== undefined && { disabled }),
+    ...(getValueLabel !== undefined && { getValueLabel }),
     ...(onValueChange !== undefined && { onValueChange }),
     ...(onValueCommit !== undefined && { onValueCommit }),
   });
@@ -90,7 +92,7 @@ function Track({ children, asChild, ...rest }: SliderTrackProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Range â€” the filled portion
+// Range — the filled portion
 // ---------------------------------------------------------------------------
 
 export interface SliderRangeProps extends HTMLAttributes<HTMLDivElement> {
@@ -105,17 +107,18 @@ function Range({ asChild, ...rest }: SliderRangeProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Thumb
+// Thumb — index identifies which value this thumb controls
 // ---------------------------------------------------------------------------
 
 export interface SliderThumbProps extends Omit<HTMLAttributes<HTMLDivElement>, "onKeyDown"> {
   asChild?: boolean;
-  name?: string;
+  /** Which value index this thumb controls. @default 0 */
+  index?: number;
 }
 
-function Thumb({ asChild, name, ...rest }: SliderThumbProps) {
+function Thumb({ asChild, index = 0, ...rest }: SliderThumbProps) {
   const api = useCtx();
-  const { onKeydown: _kd, onKeyDown, ...thumbAttrs } = api.getThumbProps();
+  const { onKeydown: _kd, onKeyDown, ...thumbAttrs } = api.getThumbProps(index);
   const onKD = onKeyDown as unknown as React.KeyboardEventHandler<HTMLDivElement>;
   const props = { ...thumbAttrs, onKeyDown: onKD, ...rest };
   if (asChild) return <Slot {...props} />;
@@ -123,16 +126,18 @@ function Thumb({ asChild, name, ...rest }: SliderThumbProps) {
 }
 
 // ---------------------------------------------------------------------------
-// HiddenInput â€” for form submission
+// HiddenInput — for form submission
 // ---------------------------------------------------------------------------
 
 export interface SliderHiddenInputProps {
   name?: string;
+  /** Which value index to serialize. @default 0 */
+  index?: number;
 }
 
-function HiddenInput({ name }: SliderHiddenInputProps) {
+function HiddenInput({ name, index = 0 }: SliderHiddenInputProps) {
   const api = useCtx();
-  const props = api.getHiddenInputProps(name);
+  const props = api.getHiddenInputProps(name, index);
   return <input {...props} />;
 }
 

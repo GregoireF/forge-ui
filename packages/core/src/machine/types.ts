@@ -101,8 +101,10 @@ export interface MachineInstance<
   send(event: TEvent | TEvent["type"]): void;
   subscribe(listener: SnapshotListener<TContext, TState>): () => void;
   getSnapshot(): MachineSnapshot<TContext, TState>;
-  /** Update context fields in-place (used by connectXxx to set DOM refs). */
+  /** Update context fields in-place without notifying subscribers (for DOM refs). */
   setContext(updates: Partial<TContext>): void;
+  /** Update context fields and notify subscribers — use for controlled prop sync. */
+  update(updates: Partial<TContext>): void;
   start(): void;
   stop(): void;
 }

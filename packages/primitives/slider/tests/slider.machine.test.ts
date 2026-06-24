@@ -20,38 +20,43 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe("createSliderMachine — initial state", () => {
-  it("defaults: min=0, max=100, step=1, value=0", () => {
+  it("defaults: min=0, max=100, step=1, values=[0]", () => {
     const m = make();
     const ctx = m.getSnapshot().context;
     expect(ctx.min).toBe(0);
     expect(ctx.max).toBe(100);
     expect(ctx.step).toBe(1);
-    expect(ctx.value).toBe(0);
+    expect(ctx.values).toEqual([0]);
   });
 
-  it("defaultValue sets initial value", () => {
+  it("single defaultValue → values=[defaultValue]", () => {
     const m = make({ defaultValue: 50 });
-    expect(m.getSnapshot().context.value).toBe(50);
+    expect(m.getSnapshot().context.values).toEqual([50]);
+  });
+
+  it("array defaultValue → multi-thumb", () => {
+    const m = make({ defaultValue: [20, 80] });
+    expect(m.getSnapshot().context.values).toEqual([20, 80]);
   });
 
   it("value (controlled) overrides defaultValue", () => {
     const m = make({ value: 30, defaultValue: 70 });
-    expect(m.getSnapshot().context.value).toBe(30);
+    expect(m.getSnapshot().context.values).toEqual([30]);
   });
 
-  it("value is clamped to min", () => {
-    const m = make({ min: 10, defaultValue: 5 });
-    expect(m.getSnapshot().context.value).toBe(10);
-  });
-
-  it("value is clamped to max", () => {
-    const m = make({ max: 80, defaultValue: 90 });
-    expect(m.getSnapshot().context.value).toBe(80);
+  it("values are clamped to [min, max]", () => {
+    const m = make({ min: 10, max: 80, defaultValue: [5, 90] });
+    expect(m.getSnapshot().context.values).toEqual([10, 80]);
   });
 
   it("starts in idle state", () => {
     const m = make();
     expect(m.getSnapshot().matches("idle")).toBe(true);
+  });
+
+  it("activeThumb defaults to -1", () => {
+    const m = make();
+    expect(m.getSnapshot().context.activeThumb).toBe(-1);
   });
 
   it("disabled defaults to false", () => {
@@ -70,40 +75,54 @@ describe("createSliderMachine — initial state", () => {
 // ---------------------------------------------------------------------------
 
 describe("createSliderMachine — INCREMENT / DECREMENT", () => {
-  it("INCREMENT adds one step", () => {
+  it("INCREMENT thumb 0 adds one step", () => {
     const m = make({ defaultValue: 30, step: 5 });
-    m.send("INCREMENT");
-    expect(m.getSnapshot().context.value).toBe(35);
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(35);
   });
 
-  it("DECREMENT subtracts one step", () => {
+  it("DECREMENT thumb 0 subtracts one step", () => {
     const m = make({ defaultValue: 30, step: 5 });
-    m.send("DECREMENT");
-    expect(m.getSnapshot().context.value).toBe(25);
+    m.send({ type: "DECREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(25);
   });
 
   it("INCREMENT clamps at max", () => {
     const m = make({ defaultValue: 98, max: 100, step: 5 });
-    m.send("INCREMENT");
-    expect(m.getSnapshot().context.value).toBe(100);
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(100);
   });
 
   it("DECREMENT clamps at min", () => {
     const m = make({ defaultValue: 2, min: 0, step: 5 });
-    m.send("DECREMENT");
-    expect(m.getSnapshot().context.value).toBe(0);
+    m.send({ type: "DECREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(0);
   });
 
   it("INCREMENT is no-op when disabled", () => {
     const m = make({ defaultValue: 50, disabled: true });
-    m.send("INCREMENT");
-    expect(m.getSnapshot().context.value).toBe(50);
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(50);
   });
 
   it("DECREMENT is no-op when disabled", () => {
     const m = make({ defaultValue: 50, disabled: true });
-    m.send("DECREMENT");
-    expect(m.getSnapshot().context.value).toBe(50);
+    m.send({ type: "DECREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(50);
+  });
+
+  it("range: INCREMENT on thumb 1 does not go past max", () => {
+    const m = make({ defaultValue: [20, 95], max: 100 });
+    m.send({ type: "INCREMENT", thumbIndex: 1 });
+    expect(m.getSnapshot().context.values[1]).toBe(96);
+  });
+
+  it("range: INCREMENT on thumb 0 clamps against thumb 1's value", () => {
+    const m = make({ defaultValue: [49, 50] });
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    // next = 50, but hi = values[1] = 50, clamped to 50
+    expect(m.getSnapshot().context.values[0]).toBe(50);
+    expect(m.getSnapshot().context.values[1]).toBe(50);
   });
 });
 
@@ -114,63 +133,74 @@ describe("createSliderMachine — INCREMENT / DECREMENT", () => {
 describe("createSliderMachine — INCREMENT_PAGE / DECREMENT_PAGE", () => {
   it("INCREMENT_PAGE adds 10% of range", () => {
     const m = make({ min: 0, max: 100, defaultValue: 50 });
-    m.send("INCREMENT_PAGE");
-    // pageStep = (100 - 0) / 10 = 10
-    expect(m.getSnapshot().context.value).toBe(60);
+    m.send({ type: "INCREMENT_PAGE", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(60);
   });
 
   it("DECREMENT_PAGE subtracts 10% of range", () => {
     const m = make({ min: 0, max: 100, defaultValue: 50 });
-    m.send("DECREMENT_PAGE");
-    expect(m.getSnapshot().context.value).toBe(40);
-  });
-
-  it("INCREMENT_PAGE with min=20 max=120: pageStep=10", () => {
-    const m = make({ min: 20, max: 120, defaultValue: 50 });
-    m.send("INCREMENT_PAGE");
-    expect(m.getSnapshot().context.value).toBe(60);
+    m.send({ type: "DECREMENT_PAGE", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(40);
   });
 
   it("INCREMENT_PAGE clamps at max", () => {
     const m = make({ min: 0, max: 100, defaultValue: 95 });
-    m.send("INCREMENT_PAGE");
-    expect(m.getSnapshot().context.value).toBe(100);
+    m.send({ type: "INCREMENT_PAGE", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(100);
   });
 
   it("DECREMENT_PAGE clamps at min", () => {
     const m = make({ min: 0, max: 100, defaultValue: 5 });
-    m.send("DECREMENT_PAGE");
-    expect(m.getSnapshot().context.value).toBe(0);
+    m.send({ type: "DECREMENT_PAGE", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(0);
   });
 
   it("INCREMENT_PAGE is no-op when disabled", () => {
     const m = make({ defaultValue: 50, disabled: true });
-    m.send("INCREMENT_PAGE");
-    expect(m.getSnapshot().context.value).toBe(50);
+    m.send({ type: "INCREMENT_PAGE", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(50);
+  });
+
+  it("DECREMENT_PAGE is no-op when disabled", () => {
+    const m = make({ defaultValue: 50, disabled: true });
+    m.send({ type: "DECREMENT_PAGE", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(50);
   });
 });
 
 // ---------------------------------------------------------------------------
-// SET_VALUE — Home/End + controlled mode
+// SET_VALUE / SET_MIN / SET_MAX — Home/End + controlled mode
 // ---------------------------------------------------------------------------
 
-describe("createSliderMachine — SET_VALUE", () => {
-  it("sets an explicit value", () => {
+describe("createSliderMachine — SET_VALUE / SET_MIN / SET_MAX", () => {
+  it("SET_VALUE sets explicit value for thumb 0", () => {
     const m = make({ defaultValue: 30 });
-    m.send({ type: "SET_VALUE", value: 75 });
-    expect(m.getSnapshot().context.value).toBe(75);
+    m.send({ type: "SET_VALUE", value: 75, thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(75);
   });
 
-  it("SET_VALUE to min = Home key behaviour", () => {
+  it("SET_MIN sets thumb to min", () => {
     const m = make({ min: 10, max: 90, defaultValue: 50 });
-    m.send({ type: "SET_VALUE", value: 10 });
-    expect(m.getSnapshot().context.value).toBe(10);
+    m.send({ type: "SET_MIN", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(10);
   });
 
-  it("SET_VALUE to max = End key behaviour", () => {
+  it("SET_MAX sets thumb to max", () => {
     const m = make({ min: 10, max: 90, defaultValue: 50 });
-    m.send({ type: "SET_VALUE", value: 90 });
-    expect(m.getSnapshot().context.value).toBe(90);
+    m.send({ type: "SET_MAX", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(90);
+  });
+
+  it("range: SET_VALUE for thumb 1 does not cross max", () => {
+    const m = make({ defaultValue: [20, 60], max: 100 });
+    m.send({ type: "SET_VALUE", value: 200, thumbIndex: 1 });
+    expect(m.getSnapshot().context.values[1]).toBe(100);
+  });
+
+  it("range: SET_VALUE for thumb 0 cannot exceed thumb 1", () => {
+    const m = make({ defaultValue: [20, 60] });
+    m.send({ type: "SET_VALUE", value: 80, thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(60);
   });
 });
 
@@ -181,15 +211,14 @@ describe("createSliderMachine — SET_VALUE", () => {
 describe("createSliderMachine — step snapping", () => {
   it("INCREMENT snaps value to step grid (step=0.1)", () => {
     const m = make({ min: 0, max: 1, step: 0.1, defaultValue: 0.1 });
-    m.send("INCREMENT");
-    // Without fix: 0.1 + 0.1 = 0.20000000000000001
-    expect(m.getSnapshot().context.value).toBe(0.2);
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(0.2);
   });
 
   it("DECREMENT snaps value to step grid (step=0.25)", () => {
     const m = make({ min: 0, max: 1, step: 0.25, defaultValue: 0.75 });
-    m.send("DECREMENT");
-    expect(m.getSnapshot().context.value).toBe(0.5);
+    m.send({ type: "DECREMENT", thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(0.5);
   });
 });
 
@@ -200,41 +229,42 @@ describe("createSliderMachine — step snapping", () => {
 describe("createSliderMachine — POINTER_DOWN → dragging", () => {
   it("transitions to dragging state", () => {
     const m = make({ defaultValue: 30 });
-    m.send({ type: "POINTER_DOWN", value: 50 });
+    m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
     expect(m.getSnapshot().matches("dragging")).toBe(true);
   });
 
-  it("sets value from pointer", () => {
+  it("sets value and activeThumb from pointer", () => {
     const m = make({ defaultValue: 30 });
-    m.send({ type: "POINTER_DOWN", value: 60 });
-    expect(m.getSnapshot().context.value).toBe(60);
+    m.send({ type: "POINTER_DOWN", value: 60, thumbIndex: 0 });
+    expect(m.getSnapshot().context.values[0]).toBe(60);
+    expect(m.getSnapshot().context.activeThumb).toBe(0);
   });
 
-  it("POINTER_DOWN when disabled still transitions to dragging (value update is guarded, not the transition)", () => {
+  it("POINTER_DOWN when disabled transitions but does not update value", () => {
     const m = make({ defaultValue: 30, disabled: true });
-    m.send({ type: "POINTER_DOWN", value: 60 });
-    // The FSM transition target is unconditional; the action guard prevents value update.
-    // This is intentional: drag activity manages pointermove/pointerup cleanup on state exit.
+    m.send({ type: "POINTER_DOWN", value: 60, thumbIndex: 0 });
     expect(m.getSnapshot().matches("dragging")).toBe(true);
-    expect(m.getSnapshot().context.value).toBe(30); // value NOT changed
+    expect(m.getSnapshot().context.values[0]).toBe(30);
   });
 
   it("POINTER_UP → back to idle", () => {
     const m = make({ defaultValue: 30 });
-    m.send({ type: "POINTER_DOWN", value: 50 });
+    m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
     m.send("POINTER_UP");
     expect(m.getSnapshot().matches("idle")).toBe(true);
+  });
+
+  it("range: POINTER_DOWN on thumb 1 sets correct thumb", () => {
+    const m = make({ defaultValue: [20, 80] });
+    m.send({ type: "POINTER_DOWN", value: 85, thumbIndex: 1 });
+    expect(m.getSnapshot().context.values[1]).toBe(85);
+    expect(m.getSnapshot().context.values[0]).toBe(20);
+    expect(m.getSnapshot().context.activeThumb).toBe(1);
   });
 });
 
 // ---------------------------------------------------------------------------
-// Callbacks — INCREMENT calls both onValueChange AND onValueCommit
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Drag activity — document pointermove / pointerup events
-// The drag activity registers global DOM listeners when the machine enters
-// "dragging". Setting trackEl lets computeValueFromPointer do real geometry.
+// Drag activity
 // ---------------------------------------------------------------------------
 
 describe("createSliderMachine — drag activity (document events)", () => {
@@ -245,24 +275,21 @@ describe("createSliderMachine — drag activity (document events)", () => {
   it("pointermove updates value via document event", () => {
     const onChange = vi.fn();
     const m = make({ defaultValue: 30, onValueChange: onChange });
-    // Set trackEl on the live context (activity receives the same object reference)
     m.setContext({ trackEl: makeMockTrackEl() });
-    m.send({ type: "POINTER_DOWN", value: 30 });
+    m.send({ type: "POINTER_DOWN", value: 30, thumbIndex: 0 });
 
     document.dispatchEvent(new PointerEvent("pointermove", { clientX: 75, clientY: 0 }));
-    expect(m.getSnapshot().context.value).toBe(75);
-    expect(onChange).toHaveBeenCalledWith(75);
+    expect(m.getSnapshot().context.values[0]).toBe(75);
+    expect(onChange).toHaveBeenCalledWith([75]);
   });
 
   it("pointermove is no-op when computed value equals current value", () => {
     const onChange = vi.fn();
     const m = make({ defaultValue: 50, onValueChange: onChange });
     m.setContext({ trackEl: makeMockTrackEl() });
-    m.send({ type: "POINTER_DOWN", value: 50 });
-    // POINTER_DOWN itself triggers onValueChange — clear it before asserting pointermove
+    m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
     onChange.mockClear();
 
-    // clientX=50 on a 100px track → value=50 (unchanged) → early return in onPointerMove
     document.dispatchEvent(new PointerEvent("pointermove", { clientX: 50, clientY: 0 }));
     expect(onChange).not.toHaveBeenCalled();
   });
@@ -271,24 +298,10 @@ describe("createSliderMachine — drag activity (document events)", () => {
     const onChange = vi.fn();
     const m = make({ defaultValue: 50, disabled: true, onValueChange: onChange });
     m.setContext({ trackEl: makeMockTrackEl() });
-    // POINTER_DOWN transitions to dragging regardless of disabled (by design)
-    m.send({ type: "POINTER_DOWN", value: 50 });
+    m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
 
     document.dispatchEvent(new PointerEvent("pointermove", { clientX: 75, clientY: 0 }));
-    expect(m.getSnapshot().context.value).toBe(50);
-    expect(onChange).not.toHaveBeenCalled();
-  });
-
-  it("pointermove: trackEl=null → computeValueFromPointer returns current value (no-op)", () => {
-    const onChange = vi.fn();
-    const m = make({ defaultValue: 50, onValueChange: onChange });
-    // trackEl remains null — computeValueFromPointer returns ctx.value without geometry
-    m.send({ type: "POINTER_DOWN", value: 50 });
-    // POINTER_DOWN itself triggers onValueChange — clear before the pointermove assertion
-    onChange.mockClear();
-
-    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 75, clientY: 0 }));
-    // newValue=50 (same as ctx.value) → early return in onPointerMove → no onChange
+    expect(m.getSnapshot().context.values[0]).toBe(50);
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -296,27 +309,17 @@ describe("createSliderMachine — drag activity (document events)", () => {
     const onCommit = vi.fn();
     const m = make({ defaultValue: 30, onValueCommit: onCommit });
     m.setContext({ trackEl: makeMockTrackEl() });
-    m.send({ type: "POINTER_DOWN", value: 30 });
+    m.send({ type: "POINTER_DOWN", value: 30, thumbIndex: 0 });
 
     document.dispatchEvent(new PointerEvent("pointerup", { clientX: 80, clientY: 0 }));
-    expect(onCommit).toHaveBeenCalledWith(80);
+    expect(onCommit).toHaveBeenCalledWith([80]);
     expect(m.getSnapshot().matches("idle")).toBe(true);
-  });
-
-  it("pointerup: trackEl=null commits current value (early return in computeValueFromPointer)", () => {
-    const onCommit = vi.fn();
-    const m = make({ defaultValue: 40, onValueCommit: onCommit });
-    m.send({ type: "POINTER_DOWN", value: 40 });
-
-    // trackEl null → computeValueFromPointer returns ctx.value (40)
-    document.dispatchEvent(new PointerEvent("pointerup", { clientX: 80, clientY: 0 }));
-    expect(onCommit).toHaveBeenCalledWith(40);
   });
 
   it("pointercancel returns to idle without commit", () => {
     const onCommit = vi.fn();
     const m = make({ defaultValue: 50, onValueCommit: onCommit });
-    m.send({ type: "POINTER_DOWN", value: 50 });
+    m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
 
     document.dispatchEvent(new PointerEvent("pointercancel"));
     expect(m.getSnapshot().matches("idle")).toBe(true);
@@ -326,26 +329,64 @@ describe("createSliderMachine — drag activity (document events)", () => {
   it("vertical: pointermove uses inverted clientY axis", () => {
     const m = make({ defaultValue: 50, orientation: "vertical" });
     m.setContext({ trackEl: makeMockTrackEl({ left: 0, top: 0, width: 20, height: 100 }) });
-    m.send({ type: "POINTER_DOWN", value: 50 });
+    m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
 
-    // clientY=25 → percent = 1 - 25/100 = 0.75 → value = 75
     document.dispatchEvent(new PointerEvent("pointermove", { clientX: 0, clientY: 25 }));
-    expect(m.getSnapshot().context.value).toBe(75);
+    expect(m.getSnapshot().context.values[0]).toBe(75);
+  });
+
+  it("range: drag on thumb 1 stays between thumb 0 and max", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: [30, 70], onValueChange: onChange });
+    m.setContext({ trackEl: makeMockTrackEl() });
+    m.send({ type: "POINTER_DOWN", value: 70, thumbIndex: 1 });
+    onChange.mockClear();
+
+    // Move thumb 1 toward min — but it can't go past thumb 0 (30)
+    document.dispatchEvent(new PointerEvent("pointermove", { clientX: 10, clientY: 0 }));
+    expect(m.getSnapshot().context.values[1]).toBe(30);
+    expect(m.getSnapshot().context.values[0]).toBe(30);
   });
 });
 
 // ---------------------------------------------------------------------------
-// Callbacks — INCREMENT calls both onValueChange AND onValueCommit
+// Callbacks
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// DECREMENT_PAGE disabled guard (line 108)
-// WHY: INCREMENT_PAGE disabled is tested but DECREMENT_PAGE disabled is not.
-// Both call the same guard pattern `if (context.disabled) return;`.
-// ---------------------------------------------------------------------------
+describe("createSliderMachine — callbacks", () => {
+  it("onValueChange called on INCREMENT with full values array", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 50, onValueChange: onChange });
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(onChange).toHaveBeenCalledWith([51]);
+  });
+
+  it("onValueCommit called on INCREMENT (keyboard = immediate commit)", () => {
+    const onCommit = vi.fn();
+    const m = make({ defaultValue: 50, onValueCommit: onCommit });
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(onCommit).toHaveBeenCalledWith([51]);
+  });
+
+  it("onValueChange called on POINTER_DOWN", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 30, onValueChange: onChange });
+    m.send({ type: "POINTER_DOWN", value: 60, thumbIndex: 0 });
+    expect(onChange).toHaveBeenCalledWith([60]);
+  });
+
+  it("callbacks NOT called when disabled", () => {
+    const onChange = vi.fn();
+    const onCommit = vi.fn();
+    const m = make({ defaultValue: 50, disabled: true, onValueChange: onChange, onValueCommit: onCommit });
+    m.send({ type: "INCREMENT", thumbIndex: 0 });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+});
 
 // ---------------------------------------------------------------------------
-// getValueLabel prop — stored in context for aria-valuetext in connect
+// getValueLabel
 // ---------------------------------------------------------------------------
 
 describe("createSliderMachine — getValueLabel prop", () => {
@@ -361,46 +402,18 @@ describe("createSliderMachine — getValueLabel prop", () => {
   });
 });
 
-describe("createSliderMachine — DECREMENT_PAGE disabled", () => {
-  it("DECREMENT_PAGE is no-op when disabled (line 108)", () => {
-    const m = make({ defaultValue: 50, disabled: true });
-    m.send("DECREMENT_PAGE");
-    expect(m.getSnapshot().context.value).toBe(50);
-  });
-});
-
 // ---------------------------------------------------------------------------
-// id fallback (line 174: `options.id ?? "root"`)
+// SSR guard
 // ---------------------------------------------------------------------------
 
-describe("createSliderMachine — id fallback", () => {
-  it("defaults id to 'root' in machine id when omitted (line 174)", () => {
-    const m = createSliderMachine({});
-    m.start();
-    active.push(m);
-    expect(m.id).toContain("root");
-  });
-});
-
-// ---------------------------------------------------------------------------
-// SSR guard in drag activity (line 132)
-// WHY: The `if (typeof document === "undefined") return;` guard bails the
-// drag activity in server-rendered environments. In jsdom this path is
-// never taken. vi.stubGlobal('document', undefined) simulates SSR and
-// verifies the activity exits without error.
-// ---------------------------------------------------------------------------
-
-describe("createSliderMachine — drag activity SSR guard (line 132)", () => {
+describe("createSliderMachine — drag activity SSR guard", () => {
   it("drag activity exits early when document is undefined (SSR environment)", () => {
     const origDocument = global.document;
     try {
       // @ts-expect-error — intentional undefined to simulate SSR
       global.document = undefined;
       const m = make({ defaultValue: 50 });
-      // POINTER_DOWN transitions to dragging which starts the drag activity.
-      // With document=undefined, the activity returns immediately — no event
-      // listeners are added and no error is thrown.
-      m.send({ type: "POINTER_DOWN", value: 50 });
+      m.send({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
       expect(m.getSnapshot().matches("dragging")).toBe(true);
     } finally {
       global.document = origDocument;
@@ -408,34 +421,15 @@ describe("createSliderMachine — drag activity SSR guard (line 132)", () => {
   });
 });
 
-describe("createSliderMachine — callbacks", () => {
-  it("onValueChange called on INCREMENT", () => {
-    const onChange = vi.fn();
-    const m = make({ defaultValue: 50, onValueChange: onChange });
-    m.send("INCREMENT");
-    expect(onChange).toHaveBeenCalledWith(51);
-  });
+// ---------------------------------------------------------------------------
+// id fallback
+// ---------------------------------------------------------------------------
 
-  it("onValueCommit called on INCREMENT (keyboard = immediate commit)", () => {
-    const onCommit = vi.fn();
-    const m = make({ defaultValue: 50, onValueCommit: onCommit });
-    m.send("INCREMENT");
-    expect(onCommit).toHaveBeenCalledWith(51);
-  });
-
-  it("onValueChange called on POINTER_DOWN", () => {
-    const onChange = vi.fn();
-    const m = make({ defaultValue: 30, onValueChange: onChange });
-    m.send({ type: "POINTER_DOWN", value: 60 });
-    expect(onChange).toHaveBeenCalledWith(60);
-  });
-
-  it("callbacks NOT called when disabled", () => {
-    const onChange = vi.fn();
-    const onCommit = vi.fn();
-    const m = make({ defaultValue: 50, disabled: true, onValueChange: onChange, onValueCommit: onCommit });
-    m.send("INCREMENT");
-    expect(onChange).not.toHaveBeenCalled();
-    expect(onCommit).not.toHaveBeenCalled();
+describe("createSliderMachine — id fallback", () => {
+  it("defaults id to 'root' in machine id when omitted", () => {
+    const m = createSliderMachine({});
+    m.start();
+    active.push(m);
+    expect(m.id).toContain("root");
   });
 });

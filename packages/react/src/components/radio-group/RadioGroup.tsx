@@ -47,7 +47,7 @@ function Root({ children, asChild, ...opts }: RadioGroupRootProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Item â€” provides value context to Radio + Label
+// Item â€" provides value context to Radio + Label
 // ---------------------------------------------------------------------------
 
 export interface RadioGroupItemProps extends HTMLAttributes<HTMLDivElement> {
@@ -68,7 +68,7 @@ function Item({ value, disabled = false, children, asChild, ...rest }: RadioGrou
 }
 
 // ---------------------------------------------------------------------------
-// Radio â€” the actual radio button (role="radio")
+// Radio â€" the actual radio button (role="radio")
 // ---------------------------------------------------------------------------
 
 export interface RadioGroupRadioProps extends HTMLAttributes<HTMLButtonElement> {
@@ -85,7 +85,7 @@ function Radio({ asChild, ...rest }: RadioGroupRadioProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Label â€” <label> for the radio
+// Label â€" <label> for the radio
 // ---------------------------------------------------------------------------
 
 export interface RadioGroupLabelProps extends HTMLAttributes<HTMLLabelElement> {
@@ -104,7 +104,7 @@ function Label({ children, asChild, ...rest }: RadioGroupLabelProps) {
 }
 
 // ---------------------------------------------------------------------------
-// HiddenInput â€” for form submission
+// HiddenInput â€" for form submission
 // ---------------------------------------------------------------------------
 
 function HiddenInput() {

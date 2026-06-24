@@ -52,7 +52,7 @@ function Trigger({ asChild, children, ...rest }: CollapsibleTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware, supports forceMount for CSS exit animations.
+// Content â€" Presence-aware, supports forceMount for CSS exit animations.
 // ---------------------------------------------------------------------------
 
 export interface CollapsibleContentProps extends HTMLAttributes<HTMLDivElement> {

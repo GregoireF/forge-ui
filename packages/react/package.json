@@ -77,6 +77,10 @@
     "./tags-input": {
       "types": "./dist/tags-input/index.d.ts",
       "import": "./dist/tags-input/index.js"
+    },
+    "./number-input": {
+      "types": "./dist/number-input/index.d.ts",
+      "import": "./dist/number-input/index.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -115,7 +119,8 @@
     "@forge-ui/switch": "workspace:*",
     "@forge-ui/hover-card": "workspace:*",
     "@forge-ui/tags-input": "workspace:*",
-    "@forge-ui/tooltip": "workspace:*"
+    "@forge-ui/tooltip": "workspace:*",
+    "@forge-ui/number-input": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",

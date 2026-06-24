@@ -7,7 +7,7 @@ import { Slot } from "../shared/Slot.js";
 // ---------------------------------------------------------------------------
 
 export interface ProgressRootProps extends HTMLAttributes<HTMLDivElement> {
-  /** Current value 0â€“max. null = indeterminate. */
+  /** Current value 0â€"max. null = indeterminate. */
   value?: number | null;
   /** @default 100 */
   max?: number;

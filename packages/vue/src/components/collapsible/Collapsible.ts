@@ -64,7 +64,7 @@ const CollapsibleTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware. Supports forceMount for CSS exit animations.
+// Content â€" Presence-aware. Supports forceMount for CSS exit animations.
 // ---------------------------------------------------------------------------
 
 const CollapsibleContent = defineComponent({

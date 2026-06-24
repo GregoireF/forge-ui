@@ -107,7 +107,7 @@ const SelectTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Value â€” slot that shows selected label or placeholder
+// Value â€" slot that shows selected label or placeholder
 // ---------------------------------------------------------------------------
 
 const SelectValue = defineComponent({
@@ -119,7 +119,7 @@ const SelectValue = defineComponent({
     const api = useCtx();
     return () => {
       const label = api.getValueLabel();
-      // When a value is selected, always show the label â€” default slot acts as a placeholder slot.
+      // When a value is selected, always show the label â€" default slot acts as a placeholder slot.
       if (label) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, label);
       if (slots.default) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, slots.default?.());
       return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, props.placeholder);
@@ -128,7 +128,7 @@ const SelectValue = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Placeholder â€” renders only when no value is selected.
+// Placeholder â€" renders only when no value is selected.
 // ---------------------------------------------------------------------------
 
 const SelectPlaceholder = defineComponent({
@@ -165,7 +165,7 @@ const SelectPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” positioner div + listbox ul
+// Content â€" positioner div + listbox ul
 // inheritAttrs: false prevents double application of attrs (same as Popover)
 // ---------------------------------------------------------------------------
 
@@ -259,7 +259,7 @@ const SelectItemText = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// ItemIndicator â€” shown when item is selected
+// ItemIndicator â€" shown when item is selected
 // ---------------------------------------------------------------------------
 
 const SelectItemIndicator = defineComponent({
@@ -300,7 +300,7 @@ const SelectGroupLabel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Indicator â€” visual chevron/arrow inside the trigger; reflects open/closed.
+// Indicator â€" visual chevron/arrow inside the trigger; reflects open/closed.
 // ---------------------------------------------------------------------------
 
 const SelectIndicator = defineComponent({

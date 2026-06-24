@@ -17,6 +17,8 @@ function useCtx(): AlertDialogApi {
   return ctx;
 }
 
+const AlertDialogPresenceCtx = createContext<ReturnType<typeof usePresence> | null>(null);
+
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
@@ -27,7 +29,14 @@ export interface AlertDialogRootProps extends UseAlertDialogOptions {
 
 function Root({ children, defaultOpen, ...opts }: AlertDialogRootProps) {
   const api = useAlertDialog({ ...(defaultOpen !== undefined && { defaultOpen }), ...opts });
-  return <AlertDialogCtx.Provider value={api}>{children}</AlertDialogCtx.Provider>;
+  const presence = usePresence(api.isOpen);
+  return (
+    <AlertDialogCtx.Provider value={api}>
+      <AlertDialogPresenceCtx.Provider value={presence}>
+        {children}
+      </AlertDialogPresenceCtx.Provider>
+    </AlertDialogCtx.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -62,7 +71,9 @@ export interface AlertDialogPortalProps {
 
 function Portal({ children, container, forceMount }: AlertDialogPortalProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const presence = useContext(AlertDialogPresenceCtx);
+  const isPresent = presence?.isPresent ?? api.isOpen;
+  if (!forceMount && !isPresent) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
@@ -98,7 +109,7 @@ function Overlay({ asChild, forceMount, children, ...rest }: AlertDialogOverlayP
 // ---------------------------------------------------------------------------
 // Content
 // Accepts onOpenAutoFocus / onCloseAutoFocus overrides only.
-// Interaction-outside and Escape callbacks are NOT exposed on Content â€”
+// Interaction-outside and Escape callbacks are NOT exposed on Content â€"
 // alertdialog always blocks those, making per-content overrides meaningless.
 // ---------------------------------------------------------------------------
 
@@ -118,7 +129,9 @@ function Content({
   ...rest
 }: AlertDialogContentProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const injectedPresence = useContext(AlertDialogPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   // Dev-only: a11y warnings (same pattern as Dialog.Content).
   useEffect(() => {
@@ -203,7 +216,7 @@ function Description({ asChild, children, ...rest }: AlertDialogDescriptionProps
 }
 
 // ---------------------------------------------------------------------------
-// Cancel â€” dismisses the alert dialog without acting.
+// Cancel â€" dismisses the alert dialog without acting.
 // ---------------------------------------------------------------------------
 
 export interface AlertDialogCancelProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -218,7 +231,7 @@ function Cancel({ asChild, children, ...rest }: AlertDialogCancelProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Action â€” the destructive / confirm button. Does NOT auto-close.
+// Action â€" the destructive / confirm button. Does NOT auto-close.
 // ---------------------------------------------------------------------------
 
 export interface AlertDialogActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {

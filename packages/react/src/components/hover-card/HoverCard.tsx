@@ -79,7 +79,7 @@ function Portal({ children, container, forceMount }: HoverCardPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware.
+// Content â€" Presence-aware.
 // Positioner div (position:fixed) wraps the content div (role="dialog").
 // During exit: aria-hidden + pointer-events:none keep content inert.
 // Mouse events on content keep the card open (via connect).
@@ -127,7 +127,7 @@ function Content({ asChild, forceMount, children, ...rest }: HoverCardContentPro
 }
 
 // ---------------------------------------------------------------------------
-// Arrow â€” renderless: always Slot, merges getArrowProps onto child.
+// Arrow â€" renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface HoverCardArrowProps {

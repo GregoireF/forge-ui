@@ -1,4 +1,4 @@
-﻿import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { Slot } from "../shared/Slot.js";
 import type { UseSliderReturn } from "./use-slider.js";
@@ -20,18 +20,20 @@ const SliderRoot = defineComponent({
   name: "ForgeSliderRoot",
   props: {
     id: { type: String, default: undefined },
-    value: { type: Number, default: undefined },
-    defaultValue: { type: Number, default: undefined },
+    value: { type: [Number, Array] as PropType<number | number[]>, default: undefined },
+    defaultValue: { type: [Number, Array] as PropType<number | number[]>, default: undefined },
     min: { type: Number, default: undefined },
     max: { type: Number, default: undefined },
     step: { type: Number, default: undefined },
     orientation: { type: String as PropType<"horizontal" | "vertical">, default: undefined },
     disabled: { type: Boolean, default: undefined },
-    onValueChange: { type: Function as PropType<(v: number) => void>, default: undefined },
-    onValueCommit: { type: Function as PropType<(v: number) => void>, default: undefined },
+    getValueLabel: { type: Function as PropType<(v: number, i: number) => string>, default: undefined },
+    onValueChange: { type: Function as PropType<(v: number[]) => void>, default: undefined },
+    onValueCommit: { type: Function as PropType<(v: number[]) => void>, default: undefined },
     asChild: { type: Boolean, default: false },
   },
-  setup(props, { slots, attrs }) {
+  emits: ["update:value"],
+  setup(props, { slots, attrs, emit }) {
     const api = useSlider({
       ...(props.id !== undefined && { id: props.id }),
       ...(props.value !== undefined && { value: props.value }),
@@ -41,17 +43,22 @@ const SliderRoot = defineComponent({
       ...(props.step !== undefined && { step: props.step }),
       ...(props.orientation !== undefined && { orientation: props.orientation }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
+      ...(props.getValueLabel !== undefined && { getValueLabel: props.getValueLabel }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
       ...(props.onValueCommit !== undefined && { onValueCommit: props.onValueCommit }),
     });
-    // Sync controlled value prop changes after initial mount
+
+    // Sync controlled value from props into machine context + notify subscribers.
     watch(
       () => props.value,
       (v) => {
         if (v === undefined) return;
-        api.send({ type: "SET_VALUE", value: v });
+        const vals = Array.isArray(v) ? v : [v];
+        api.machine.update({ values: vals });
       },
     );
+
+    watch(api.values, (vals) => emit("update:value", vals));
 
     provide(sliderKey, api);
     return () => {
@@ -99,17 +106,21 @@ const SliderRange = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Thumb
+// Thumb — index identifies which value this thumb controls
 // ---------------------------------------------------------------------------
 
 const SliderThumb = defineComponent({
   name: "ForgeSliderThumb",
-  props: { asChild: { type: Boolean, default: false } },
+  props: {
+    asChild: { type: Boolean, default: false },
+    /** Which value index this thumb controls. @default 0 */
+    index: { type: Number, default: 0 },
+  },
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      // Strip React-only onKeyDown (Vue uses onKeydown)
-      const { onKeyDown: _kd, ...thumbAttrs } = api.getThumbProps();
+      // Strip React-only onKeyDown (Vue uses onKeydown from connect)
+      const { onKeyDown: _kd, ...thumbAttrs } = api.getThumbProps(props.index);
       const merged = { ...thumbAttrs, ...attrs };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged, slots.default?.());
@@ -123,10 +134,13 @@ const SliderThumb = defineComponent({
 
 const SliderHiddenInput = defineComponent({
   name: "ForgeSliderHiddenInput",
-  props: { name: { type: String, default: undefined } },
+  props: {
+    name: { type: String, default: undefined },
+    index: { type: Number, default: 0 },
+  },
   setup(props) {
     const api = useCtx();
-    return () => h("input", api.getHiddenInputProps(props.name));
+    return () => h("input", api.getHiddenInputProps(props.name, props.index));
   },
 });
 

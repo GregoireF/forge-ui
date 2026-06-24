@@ -43,7 +43,7 @@ function Label({ asChild, children, ...rest }: FieldLabelProps) {
 }
 
 // ---------------------------------------------------------------------------
-// RequiredIndicator â€” visual marker (*) hidden from screen readers.
+// RequiredIndicator â€" visual marker (*) hidden from screen readers.
 // Screen readers get the required status via aria-required on the control.
 // ---------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ function RequiredIndicator({ asChild, children = "*", ...rest }: FieldRequiredIn
 }
 
 // ---------------------------------------------------------------------------
-// Control â€” always renderless Slot. Merges accessible control props onto child.
+// Control â€" always renderless Slot. Merges accessible control props onto child.
 // The child element (input, select, textarea, or custom trigger) keeps its own
 // semantics; Field.Control only contributes IDs and ARIA attributes.
 // ---------------------------------------------------------------------------
@@ -75,7 +75,7 @@ function Control({ children }: FieldControlProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Description â€” registers itself so aria-describedby is auto-populated.
+// Description â€" registers itself so aria-describedby is auto-populated.
 // ---------------------------------------------------------------------------
 
 export interface FieldDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {
@@ -96,7 +96,7 @@ function Description({ asChild, children, ...rest }: FieldDescriptionProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Error â€” renders only when invalid; auto-registers for aria-describedby.
+// Error â€" renders only when invalid; auto-registers for aria-describedby.
 // Named FieldError internally to avoid shadowing the global Error constructor.
 // ---------------------------------------------------------------------------
 
@@ -120,7 +120,7 @@ function FieldError({ asChild, children, ...rest }: FieldErrorProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Group â€” wraps a set of form controls (checkboxes, radios) with role="group"
+// Group â€" wraps a set of form controls (checkboxes, radios) with role="group"
 // and aria-labelledby so screen readers announce the group label.
 // ---------------------------------------------------------------------------
 

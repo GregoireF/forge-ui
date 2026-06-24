@@ -17,6 +17,10 @@ function useCtx(): DialogApi {
   return ctx;
 }
 
+// Shared presence so Portal and Content coordinate: Portal stays mounted while
+// Content's exit animation runs (presenceRef attached to Content element).
+const DialogPresenceCtx = createContext<ReturnType<typeof usePresence> | null>(null);
+
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
@@ -31,8 +35,15 @@ function Root({ children, open: openProp, defaultOpen, ...opts }: DialogRootProp
     ...opts,
     ...(openProp !== undefined && { open: openProp }),
   });
+  const presence = usePresence(api.isOpen);
 
-  return <DialogCtx.Provider value={api}>{children}</DialogCtx.Provider>;
+  return (
+    <DialogCtx.Provider value={api}>
+      <DialogPresenceCtx.Provider value={presence}>
+        {children}
+      </DialogPresenceCtx.Provider>
+    </DialogCtx.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -46,7 +57,7 @@ export interface DialogTriggerProps extends ButtonHTMLAttributes<HTMLButtonEleme
 function Trigger({ asChild, children, ...rest }: DialogTriggerProps) {
   const api = useCtx();
   const { "aria-haspopup": hasPopup, ...triggerRest } = api.getTriggerProps();
-  // React's aria-haspopup type set omits "alertdialog" â€” cast to widen for WAI-ARIA compliance.
+  // React's aria-haspopup type set omits "alertdialog" â€" cast to widen for WAI-ARIA compliance.
   const props = { ...triggerRest, "aria-haspopup": hasPopup as ButtonHTMLAttributes<HTMLButtonElement>["aria-haspopup"], ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;
@@ -64,7 +75,9 @@ export interface DialogPortalCompoundProps {
 
 function Portal({ children, container, forceMount }: DialogPortalCompoundProps) {
   const api = useCtx();
-  if (!forceMount && !api.isOpen) return null;
+  const presence = useContext(DialogPresenceCtx);
+  const isPresent = presence?.isPresent ?? api.isOpen;
+  if (!forceMount && !isPresent) return null;
   return <DialogPortal {...(container !== undefined && { container })}>{children}</DialogPortal>;
 }
 
@@ -137,7 +150,9 @@ function Content({
   ...rest
 }: DialogContentProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const injectedPresence = useContext(DialogPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   // Dev-only: warn when the dialog opens and no accessible title is registered.
   // Fires via rAF so Dialog.Title has had a chance to mount and send REGISTER_TITLE.

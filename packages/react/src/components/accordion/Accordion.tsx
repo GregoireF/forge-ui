@@ -41,7 +41,7 @@ function Root({ children, asChild, ...opts }: AccordionRootProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Item â€” provides item value context to its children
+// Item â€" provides item value context to its children
 // ---------------------------------------------------------------------------
 
 export interface AccordionItemProps extends HTMLAttributes<HTMLDivElement> {
@@ -61,7 +61,7 @@ function Item({ value, children, asChild, ...rest }: AccordionItemProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Header â€” semantic heading wrapper
+// Header â€" semantic heading wrapper
 // ---------------------------------------------------------------------------
 
 export interface AccordionHeaderProps extends HTMLAttributes<HTMLHeadingElement> {
@@ -78,7 +78,7 @@ function Header({ children, asChild, ...rest }: AccordionHeaderProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Trigger â€” the button that opens/closes the item
+// Trigger â€" the button that opens/closes the item
 // ---------------------------------------------------------------------------
 
 export interface AccordionTriggerProps extends HTMLAttributes<HTMLButtonElement> {
@@ -89,7 +89,7 @@ export interface AccordionTriggerProps extends HTMLAttributes<HTMLButtonElement>
 function Trigger({ children, asChild, ...rest }: AccordionTriggerProps) {
   const api = useCtx();
   const value = useItemValue();
-  // Strip Vue-cased event handler â€” React uses onKeyDown only
+  // Strip Vue-cased event handler â€" React uses onKeyDown only
   const { onKeydown: _kd, ...triggerProps } = api.getTriggerProps(value);
   const props = { ...triggerProps, ...rest } as HTMLAttributes<HTMLButtonElement>;
   if (asChild) return <Slot {...props}>{children}</Slot>;
@@ -97,7 +97,7 @@ function Trigger({ children, asChild, ...rest }: AccordionTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content â€” the collapsible region
+// Content â€" the collapsible region
 // ---------------------------------------------------------------------------
 
 export interface AccordionContentProps extends HTMLAttributes<HTMLDivElement> {

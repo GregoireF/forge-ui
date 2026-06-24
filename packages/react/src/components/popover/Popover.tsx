@@ -67,7 +67,7 @@ function Trigger({ asChild, children, ...rest }: PopoverTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Anchor â€” always Slot, no own DOM element.
+// Anchor â€" always Slot, no own DOM element.
 // ---------------------------------------------------------------------------
 
 export interface PopoverAnchorProps {
@@ -98,7 +98,7 @@ function Portal({ children, container, forceMount }: PopoverPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware.
+// Content â€" Presence-aware.
 // The positioner div provides position:fixed + top/left from @floating-ui.
 // The content div stays clean for animation support.
 // During exit: aria-hidden + pointer-events:none keep content inert.
@@ -145,7 +145,7 @@ function Content({ asChild, forceMount, children, ...rest }: PopoverContentProps
 }
 
 // ---------------------------------------------------------------------------
-// Arrow â€” renderless: always Slot, merges getArrowProps onto child.
+// Arrow â€" renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface PopoverArrowProps {

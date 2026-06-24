@@ -120,7 +120,7 @@ const ComboboxLabel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Input â€” <input role="combobox"> + keyboard navigation
+// Input â€" <input role="combobox"> + keyboard navigation
 // ---------------------------------------------------------------------------
 
 const ComboboxInput = defineComponent({
@@ -131,7 +131,7 @@ const ComboboxInput = defineComponent({
     return () => {
       const raw = api.getInputProps();
       // Vue's change event fires on blur. Use onInput for real-time updates.
-      // The connect's onInput handler sends INPUT_CHANGE â€” safe to bind directly.
+      // The connect's onInput handler sends INPUT_CHANGE â€" safe to bind directly.
       const { ref: machineRef, ...restProps } = patchVueEvents(raw as Record<string, unknown>);
       const inputProps = {
         ...restProps,
@@ -145,7 +145,7 @@ const ComboboxInput = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Trigger â€” optional open/close toggle button
+// Trigger â€" optional open/close toggle button
 // ---------------------------------------------------------------------------
 
 const ComboboxTrigger = defineComponent({
@@ -162,7 +162,7 @@ const ComboboxTrigger = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// ClearTrigger â€” button to clear selection + input value
+// ClearTrigger â€" button to clear selection + input value
 // ---------------------------------------------------------------------------
 
 const ComboboxClearTrigger = defineComponent({
@@ -204,7 +204,7 @@ const ComboboxPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” presence-aware. Positioner div wraps listbox ul.
+// Content â€" presence-aware. Positioner div wraps listbox ul.
 // ---------------------------------------------------------------------------
 
 const ComboboxContent = defineComponent({
@@ -301,7 +301,7 @@ const ComboboxItemText = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// ItemIndicator â€” shown only when the item is selected
+// ItemIndicator â€" shown only when the item is selected
 // ---------------------------------------------------------------------------
 
 const ComboboxItemIndicator = defineComponent({

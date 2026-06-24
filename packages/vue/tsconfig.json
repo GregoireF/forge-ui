@@ -23,7 +23,8 @@
       "@forge-ui/hover-card": ["../primitives/hover-card/src/index.ts"],
       "@forge-ui/tags-input": ["../primitives/tags-input/src/index.ts"],
       "@forge-ui/slider": ["../primitives/slider/src/index.ts"],
-      "@forge-ui/tooltip": ["../primitives/tooltip/src/index.ts"]
+      "@forge-ui/tooltip": ["../primitives/tooltip/src/index.ts"],
+      "@forge-ui/number-input": ["../primitives/number-input/src/index.ts"]
     }
   },
   "include": ["src"],
@@ -47,6 +48,7 @@
     { "path": "../primitives/switch" },
     { "path": "../primitives/tags-input" },
     { "path": "../primitives/slider" },
-    { "path": "../primitives/tooltip" }
+    { "path": "../primitives/tooltip" },
+    { "path": "../primitives/number-input" }
   ]
 }

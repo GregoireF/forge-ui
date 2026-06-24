@@ -14,11 +14,13 @@ export function useSlider(options: UseSliderOptions = {}): SliderApi {
   const [machine] = useState(() => createSliderMachine({ id, ...options }));
   const [snapshot, send] = useMachine(machine);
 
-  // Sync controlled value
+  // Sync controlled values into the machine context directly.
   useLayoutEffect(() => {
     if (options.value !== undefined) {
-      machine.send({ type: "SET_VALUE", value: options.value });
+      const vals = Array.isArray(options.value) ? options.value : [options.value];
+      machine.update({ values: vals });
     }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: options.value identity change triggers sync
   }, [options.value]);
 
   return connectSlider(snapshot, send, machine);

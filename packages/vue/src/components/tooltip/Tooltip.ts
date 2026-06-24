@@ -22,7 +22,7 @@ function useCtx(): TooltipApi {
 }
 
 // ---------------------------------------------------------------------------
-// Provider â€” optional global delay management (SSR-safe, instance-isolated).
+// Provider â€" optional global delay management (SSR-safe, instance-isolated).
 // ---------------------------------------------------------------------------
 
 const TooltipProvider = defineComponent({
@@ -174,7 +174,7 @@ const TooltipPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware. Positioner div wraps content div.
+// Content â€" Presence-aware. Positioner div wraps content div.
 // ---------------------------------------------------------------------------
 
 const TooltipContent = defineComponent({
@@ -220,7 +220,7 @@ const TooltipContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Anchor â€” makes computePosition use this element as reference instead of trigger.
+// Anchor â€" makes computePosition use this element as reference instead of trigger.
 // ---------------------------------------------------------------------------
 
 const TooltipAnchor = defineComponent({
@@ -237,7 +237,7 @@ const TooltipAnchor = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Arrow â€” renderless, always Slot.
+// Arrow â€" renderless, always Slot.
 // ---------------------------------------------------------------------------
 
 const TooltipArrow = defineComponent({

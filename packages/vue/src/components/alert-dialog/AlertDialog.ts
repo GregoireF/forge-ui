@@ -1,4 +1,4 @@
-﻿import type { ComponentPublicInstance, PropType } from "vue";
+﻿import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import {
   defineComponent,
   h,
@@ -22,6 +22,9 @@ function useCtx(): AlertDialogApi {
   return ctx;
 }
 
+type AlertDialogPresenceContext = { isPresent: Ref<boolean>; presenceRef: Ref<HTMLElement | null> };
+const alertDialogPresenceKey: InjectionKey<AlertDialogPresenceContext> = Symbol("forge-alert-dialog-presence");
+
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
@@ -39,7 +42,7 @@ const AlertDialogRoot = defineComponent({
     onOpenChange: { type: Function as PropType<(open: boolean) => void>, default: undefined },
     onOpenAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
     onCloseAutoFocus: { type: Function as PropType<(e: Event) => void>, default: undefined },
-    /** Informational â€” fires when Escape is pressed, but alertdialog never closes from it. */
+    /** Informational â€" fires when Escape is pressed, but alertdialog never closes from it. */
     onEscapeKeyDown: { type: Function as PropType<(e: KeyboardEvent) => void>, default: undefined },
     initialFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
     finalFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
@@ -62,6 +65,9 @@ const AlertDialogRoot = defineComponent({
       ...(props.finalFocusEl !== undefined && { finalFocusEl: props.finalFocusEl }),
     });
     provide(alertDialogKey, api);
+
+    const presence = usePresence(api.isOpen);
+    provide(alertDialogPresenceKey, presence);
 
     watchEffect(() => {
       if (props.open === undefined) return;
@@ -106,8 +112,10 @@ const AlertDialogPortalCompound = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
+    const presence = inject(alertDialogPresenceKey, null);
     return () => {
-      if (!props.forceMount && !api.isOpen.value) return null;
+      const isPresent = presence?.isPresent.value ?? api.isOpen.value;
+      if (!props.forceMount && !isPresent) return null;
       return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
@@ -159,7 +167,9 @@ const AlertDialogContent = defineComponent({
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    const injectedPresence = inject(alertDialogPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
     // Dev-only a11y warnings.
     if (process.env.NODE_ENV !== "production") {
@@ -254,7 +264,7 @@ const AlertDialogDescription = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Cancel â€” dismisses without acting.
+// Cancel â€" dismisses without acting.
 // ---------------------------------------------------------------------------
 
 const AlertDialogCancel = defineComponent({
@@ -271,7 +281,7 @@ const AlertDialogCancel = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Action â€” destructive / confirm button. Does NOT auto-close.
+// Action â€" destructive / confirm button. Does NOT auto-close.
 // ---------------------------------------------------------------------------
 
 const AlertDialogAction = defineComponent({

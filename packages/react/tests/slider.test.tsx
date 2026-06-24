@@ -14,7 +14,7 @@ interface FixtureProps {
   max?: number;
   step?: number;
   disabled?: boolean;
-  onValueChange?: (v: number) => void;
+  onValueChange?: (v: number[]) => void;
 }
 
 function makeFixture({
@@ -178,7 +178,7 @@ describe("Slider (React)", () => {
       const thumb = screen.getByRole("slider");
       thumb.focus();
       await user.keyboard("{ArrowRight}");
-      expect(onChange).toHaveBeenCalledWith(51);
+      expect(onChange).toHaveBeenCalledWith([51]);
     });
 
     it("onValueChange does not fire when disabled", async () => {

@@ -1,4 +1,4 @@
-﻿import type { ComponentPublicInstance, PropType } from "vue";
+﻿import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, onMounted, onUnmounted, provide, watch, watchEffect } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "./DialogPortal.js";
@@ -13,6 +13,9 @@ function useCtx(): DialogApi {
   if (!ctx) throw new Error("Dialog compound parts must be inside <Dialog.Root>");
   return ctx;
 }
+
+type DialogPresenceContext = { isPresent: Ref<boolean>; presenceRef: Ref<HTMLElement | null> };
+const dialogPresenceKey: InjectionKey<DialogPresenceContext> = Symbol("forge-dialog-presence");
 
 // ---------------------------------------------------------------------------
 // Root
@@ -80,6 +83,9 @@ const DialogRoot = defineComponent({
     });
     provide(dialogKey, api);
 
+    const presence = usePresence(api.isOpen);
+    provide(dialogPresenceKey, presence);
+
     watch(
       () => props.open,
       (open) => {
@@ -126,15 +132,17 @@ const DialogPortalCompound = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
+    const presence = inject(dialogPresenceKey, null);
     return () => {
-      if (!props.forceMount && !api.isOpen.value) return null;
+      const isPresent = presence?.isPresent.value ?? api.isOpen.value;
+      if (!props.forceMount && !isPresent) return null;
       return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// Overlay â€” Presence-aware.
+// Overlay â€" Presence-aware.
 // ---------------------------------------------------------------------------
 
 const DialogOverlay = defineComponent({
@@ -168,7 +176,7 @@ const DialogOverlay = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware.
+// Content â€" Presence-aware.
 // Accepts event callbacks that override Root-level ones when provided.
 // ---------------------------------------------------------------------------
 
@@ -195,7 +203,9 @@ const DialogContent = defineComponent({
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    const injectedPresence = inject(dialogPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
     // Dev-only: warn when the dialog opens without an accessible name or description.
     if (process.env.NODE_ENV !== "production") {

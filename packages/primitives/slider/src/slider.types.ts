@@ -1,36 +1,37 @@
 export interface SliderContext {
-  value: number;
+  values: number[];
   min: number;
   max: number;
   step: number;
   orientation: "horizontal" | "vertical";
   disabled: boolean;
   trackEl: Element | null;
-  /** Produces aria-valuetext for the thumb — use for non-numeric labels ("low", "medium", "high"). */
-  getValueLabel?: (value: number) => string;
-  onValueChange?: (value: number) => void;
-  onValueCommit?: (value: number) => void;
+  /** Index of the thumb currently being dragged. -1 when not dragging. */
+  activeThumb: number;
+  getValueLabel?: (value: number, index: number) => string;
+  onValueChange?: (values: number[]) => void;
+  onValueCommit?: (values: number[]) => void;
 }
 
 export type SliderState = "idle" | "dragging";
 
 export type SliderEvent =
-  | { type: "POINTER_DOWN"; value: number }
+  | { type: "POINTER_DOWN"; value: number; thumbIndex: number }
   | { type: "POINTER_UP" }
-  | { type: "SET_VALUE"; value: number }
-  | { type: "INCREMENT" }
-  | { type: "DECREMENT" }
-  | { type: "INCREMENT_PAGE" }
-  | { type: "DECREMENT_PAGE" }
-  | { type: "SET_MIN" }
-  | { type: "SET_MAX" };
+  | { type: "SET_VALUE"; value: number; thumbIndex: number }
+  | { type: "INCREMENT"; thumbIndex: number }
+  | { type: "DECREMENT"; thumbIndex: number }
+  | { type: "INCREMENT_PAGE"; thumbIndex: number }
+  | { type: "DECREMENT_PAGE"; thumbIndex: number }
+  | { type: "SET_MIN"; thumbIndex: number }
+  | { type: "SET_MAX"; thumbIndex: number };
 
 export interface CreateSliderOptions {
   id?: string;
-  /** Controlled value. */
-  value?: number;
-  /** Default value (uncontrolled). @default min */
-  defaultValue?: number;
+  /** Controlled values. Single number accepted as shorthand for a one-thumb slider. */
+  value?: number | number[];
+  /** Default value (uncontrolled). @default [min] */
+  defaultValue?: number | number[];
   /** @default 0 */
   min?: number;
   /** @default 100 */
@@ -41,9 +42,9 @@ export interface CreateSliderOptions {
   orientation?: "horizontal" | "vertical";
   /** @default false */
   disabled?: boolean;
-  /** Produces aria-valuetext for the thumb — use for non-numeric labels ("low", "medium", "high"). */
-  getValueLabel?: (value: number) => string;
-  onValueChange?: (value: number) => void;
+  /** Produces aria-valuetext for a thumb — use for non-numeric labels ("low", "medium", "high"). */
+  getValueLabel?: (value: number, index: number) => string;
+  onValueChange?: (values: number[]) => void;
   /** Fires on pointerup / keyboard commit. */
-  onValueCommit?: (value: number) => void;
+  onValueCommit?: (values: number[]) => void;
 }

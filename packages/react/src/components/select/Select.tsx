@@ -75,7 +75,7 @@ export interface SelectTriggerProps extends ButtonHTMLAttributes<HTMLButtonEleme
 
 function Trigger({ asChild, children, ...rest }: SelectTriggerProps) {
   const api = useCtx();
-  // Strip Vue-specific casing (onKeydown) â€” React uses onKeyDown only.
+  // Strip Vue-specific casing (onKeydown) â€" React uses onKeyDown only.
   const { onKeydown: _kd, ...triggerProps } = api.getTriggerProps();
   const props = { ...triggerProps, ...rest } as ButtonHTMLAttributes<HTMLButtonElement>;
   if (asChild) return <Slot {...props}>{children}</Slot>;
@@ -83,7 +83,7 @@ function Trigger({ asChild, children, ...rest }: SelectTriggerProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Value â€” renders the selected value label inside the trigger
+// Value â€" renders the selected value label inside the trigger
 // ---------------------------------------------------------------------------
 
 export interface SelectValueProps {
@@ -95,14 +95,14 @@ function Value({ placeholder, children }: SelectValueProps) {
   const api = useCtx();
   const label = api.valueLabel;
   const scope = { "data-forge-scope": "select", "data-forge-part": "value" } as const;
-  // When a value is selected, always show the label â€” children act as a placeholder slot.
+  // When a value is selected, always show the label â€" children act as a placeholder slot.
   if (label) return <span {...scope}>{label}</span>;
   if (children !== undefined) return <>{children}</>;
   return <span {...scope}>{placeholder || api.placeholder}</span>;
 }
 
 // ---------------------------------------------------------------------------
-// Placeholder â€” renders only when no value is selected.
+// Placeholder â€" renders only when no value is selected.
 // Use inside Trigger instead of a static string to get data-placeholder styling hooks.
 // ---------------------------------------------------------------------------
 
@@ -210,7 +210,7 @@ function Item({ value, disabled = false, label, asChild, children, ...rest }: Se
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, resolvedLabel, disabled]);
 
-  // Strip Vue-specific casing (onMousemove / onMouseleave) â€” React uses camelCase.
+  // Strip Vue-specific casing (onMousemove / onMouseleave) â€" React uses camelCase.
   const { onMousemove: _mm, onMouseleave: _ml, ...optionProps } = api.getOptionProps({ value, disabled });
   const props = { ...optionProps, ...rest } as LiHTMLAttributes<HTMLLIElement>;
 
@@ -219,7 +219,7 @@ function Item({ value, disabled = false, label, asChild, children, ...rest }: Se
 }
 
 // ---------------------------------------------------------------------------
-// ItemText â€” renders the option label text (semantic, for SR)
+// ItemText â€" renders the option label text (semantic, for SR)
 // ---------------------------------------------------------------------------
 
 export interface SelectItemTextProps {
@@ -231,7 +231,7 @@ function ItemText({ children }: SelectItemTextProps) {
 }
 
 // ---------------------------------------------------------------------------
-// ItemIndicator â€” shown only when the item is selected
+// ItemIndicator â€" shown only when the item is selected
 // ---------------------------------------------------------------------------
 
 export interface SelectItemIndicatorProps {
@@ -283,7 +283,7 @@ function GroupLabel({ children, ...rest }: SelectGroupLabelProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
-// Indicator â€” visual chevron/arrow inside the trigger; reflects open/closed.
+// Indicator â€" visual chevron/arrow inside the trigger; reflects open/closed.
 // ---------------------------------------------------------------------------
 
 export interface SelectIndicatorProps extends HTMLAttributes<HTMLSpanElement> {

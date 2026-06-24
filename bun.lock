@@ -245,6 +245,16 @@
         "typescript": "^5.8.3",
       },
     },
+    "packages/primitives/number-input": {
+      "name": "@forge-ui/number-input",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/popover": {
       "name": "@forge-ui/popover",
       "version": "0.0.0",
@@ -358,6 +368,7 @@
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
+        "@forge-ui/number-input": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/progress": "workspace:*",
         "@forge-ui/radio-group": "workspace:*",
@@ -397,6 +408,7 @@
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
+        "@forge-ui/number-input": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/progress": "workspace:*",
         "@forge-ui/radio-group": "workspace:*",
@@ -744,6 +756,8 @@
     "@forge-ui/floating": ["@forge-ui/floating@workspace:packages/floating"],
 
     "@forge-ui/hover-card": ["@forge-ui/hover-card@workspace:packages/primitives/hover-card"],
+
+    "@forge-ui/number-input": ["@forge-ui/number-input@workspace:packages/primitives/number-input"],
 
     "@forge-ui/nuxt": ["@forge-ui/nuxt@workspace:packages/nuxt"],
 

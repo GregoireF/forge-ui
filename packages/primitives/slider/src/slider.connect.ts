@@ -1,16 +1,10 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
 import type { SliderContext, SliderEvent, SliderState } from "./slider.types.js";
 
-type SliderSend = (event: SliderEvent) => void;
+export type SliderSend = (event: SliderEvent) => void;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
-}
-
-function snapToStep(value: number, min: number, step: number): number {
-  const snapped = Math.round((value - min) / step) * step + min;
-  const decimals = String(step).split(".")[1]?.length ?? 0;
-  return Number(snapped.toFixed(decimals));
 }
 
 function computeValueFromPointer(
@@ -27,7 +21,22 @@ function computeValueFromPointer(
   }
   percent = clamp(percent, 0, 1);
   const raw = ctx.min + percent * (ctx.max - ctx.min);
-  return clamp(snapToStep(raw, ctx.min, ctx.step), ctx.min, ctx.max);
+  const snapped = Math.round((raw - ctx.min) / ctx.step) * ctx.step + ctx.min;
+  const decimals = String(ctx.step).split(".")[1]?.length ?? 0;
+  return clamp(Number(snapped.toFixed(decimals)), ctx.min, ctx.max);
+}
+
+function closestThumbIndex(pointerValue: number, values: number[]): number {
+  let closest = 0;
+  let minDist = Math.abs((values[0] ?? 0) - pointerValue);
+  for (let i = 1; i < values.length; i++) {
+    const dist = Math.abs((values[i] ?? 0) - pointerValue);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = i;
+    }
+  }
+  return closest;
 }
 
 export function connectSlider(
@@ -36,13 +45,15 @@ export function connectSlider(
   machine: Pick<MachineInstance<SliderContext, SliderState, SliderEvent>, "setContext">,
 ) {
   const { context } = snapshot;
-  const { value, min, max, step, orientation, disabled } = context;
-  const percent = ((value - min) / (max - min)) * 100;
+  const { values, min, max, step, orientation, disabled } = context;
+
+  const percents = values.map((v) => ((v - min) / (max - min)) * 100);
 
   return {
-    value,
-    percent,
+    values,
+    percents,
     isDragging: snapshot.value === "dragging",
+    activeThumb: context.activeThumb,
 
     getRootProps() {
       return {
@@ -73,37 +84,48 @@ export function connectSlider(
           if (!trackEl) return;
           e.preventDefault();
           const computedValue = computeValueFromPointer(e, trackEl, context);
-          send({ type: "POINTER_DOWN", value: computedValue });
+          const thumbIndex = closestThumbIndex(computedValue, values);
+          send({ type: "POINTER_DOWN", value: computedValue, thumbIndex });
         },
       };
     },
 
+    // Range fill: for single thumb fills from 0 to thumb; for multi fills between min/max thumb.
     getRangeProps() {
+      const low = values.length > 1 ? Math.min(...percents) : 0;
+      const high = Math.max(...percents);
       return {
         "data-forge-scope": "slider",
         "data-forge-part": "range",
         "data-orientation": orientation,
         style:
           orientation === "horizontal"
-            ? { left: "0%", right: `${100 - percent}%` }
-            : { bottom: "0%", top: `${100 - percent}%` },
+            ? { left: `${low}%`, right: `${100 - high}%` }
+            : { bottom: `${low}%`, top: `${100 - high}%` },
       };
     },
 
-    getThumbProps() {
+    getThumbProps(thumbIndex: number) {
+      const value = values[thumbIndex] ?? min;
+      const percent = percents[thumbIndex] ?? 0;
       return {
         role: "slider" as const,
         tabIndex: disabled ? -1 : 0,
         "aria-valuemin": min,
         "aria-valuemax": max,
         "aria-valuenow": value,
-        "aria-valuetext": context.getValueLabel?.(value),
+        "aria-valuetext": context.getValueLabel?.(value, thumbIndex),
         "aria-orientation": orientation,
         "aria-disabled": disabled || undefined,
         "data-forge-scope": "slider",
         "data-forge-part": "thumb",
+        "data-index": thumbIndex,
         "data-orientation": orientation,
         "data-disabled": disabled ? ("" as const) : undefined,
+        "data-active":
+          context.activeThumb === thumbIndex && snapshot.value === "dragging"
+            ? ("" as const)
+            : undefined,
         style:
           orientation === "horizontal"
             ? { left: `${percent}%`, transform: "translateX(-50%)" }
@@ -114,28 +136,28 @@ export function connectSlider(
             case "ArrowRight":
             case "ArrowUp":
               e.preventDefault();
-              send({ type: "INCREMENT" });
+              send({ type: "INCREMENT", thumbIndex });
               break;
             case "ArrowLeft":
             case "ArrowDown":
               e.preventDefault();
-              send({ type: "DECREMENT" });
+              send({ type: "DECREMENT", thumbIndex });
               break;
             case "PageUp":
               e.preventDefault();
-              send({ type: "INCREMENT_PAGE" });
+              send({ type: "INCREMENT_PAGE", thumbIndex });
               break;
             case "PageDown":
               e.preventDefault();
-              send({ type: "DECREMENT_PAGE" });
+              send({ type: "DECREMENT_PAGE", thumbIndex });
               break;
             case "Home":
               e.preventDefault();
-              send({ type: "SET_VALUE", value: min });
+              send({ type: "SET_MIN", thumbIndex });
               break;
             case "End":
               e.preventDefault();
-              send({ type: "SET_VALUE", value: max });
+              send({ type: "SET_MAX", thumbIndex });
               break;
           }
         },
@@ -145,38 +167,39 @@ export function connectSlider(
             case "ArrowRight":
             case "ArrowUp":
               e.preventDefault();
-              send({ type: "INCREMENT" });
+              send({ type: "INCREMENT", thumbIndex });
               break;
             case "ArrowLeft":
             case "ArrowDown":
               e.preventDefault();
-              send({ type: "DECREMENT" });
+              send({ type: "DECREMENT", thumbIndex });
               break;
             case "PageUp":
               e.preventDefault();
-              send({ type: "INCREMENT_PAGE" });
+              send({ type: "INCREMENT_PAGE", thumbIndex });
               break;
             case "PageDown":
               e.preventDefault();
-              send({ type: "DECREMENT_PAGE" });
+              send({ type: "DECREMENT_PAGE", thumbIndex });
               break;
             case "Home":
               e.preventDefault();
-              send({ type: "SET_VALUE", value: min });
+              send({ type: "SET_MIN", thumbIndex });
               break;
             case "End":
               e.preventDefault();
-              send({ type: "SET_VALUE", value: max });
+              send({ type: "SET_MAX", thumbIndex });
               break;
           }
         },
       };
     },
 
-    getHiddenInputProps(name?: string) {
+    getHiddenInputProps(name?: string, thumbIndex = 0) {
+      const value = values[thumbIndex] ?? min;
       return {
         type: "range" as const,
-        name: name ?? undefined,
+        ...(name !== undefined && { name }),
         value,
         min,
         max,

@@ -26,7 +26,7 @@ function useCtx(): TooltipApiReturn {
 }
 
 // ---------------------------------------------------------------------------
-// Provider â€” optional global delay management.
+// Provider â€" optional global delay management.
 // Uses a per-instance ref (not module singleton) so multiple Provider groups
 // and SSR are both safe.
 // ---------------------------------------------------------------------------
@@ -119,7 +119,7 @@ function Portal({ children, container, forceMount }: TooltipPortalProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware.
+// Content â€" Presence-aware.
 // Positioner div (position:fixed) wraps the tooltip div (role="tooltip").
 // During exit: aria-hidden + pointer-events:none keep content inert.
 // ---------------------------------------------------------------------------
@@ -166,7 +166,7 @@ function Content({ asChild, forceMount, children, ...rest }: TooltipContentProps
 }
 
 // ---------------------------------------------------------------------------
-// Anchor â€” makes computePosition use this element as reference instead of trigger.
+// Anchor â€" makes computePosition use this element as reference instead of trigger.
 // ---------------------------------------------------------------------------
 
 export interface TooltipAnchorProps extends HTMLAttributes<HTMLDivElement> {
@@ -181,7 +181,7 @@ function Anchor({ asChild, children, ...rest }: TooltipAnchorProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Arrow â€” renderless: always Slot, merges getArrowProps onto child.
+// Arrow â€" renderless: always Slot, merges getArrowProps onto child.
 // ---------------------------------------------------------------------------
 
 export interface TooltipArrowProps {

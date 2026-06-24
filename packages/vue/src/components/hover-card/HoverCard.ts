@@ -77,7 +77,7 @@ const HoverCardRoot = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Trigger â€” defaults to <a> element (typical HoverCard usage)
+// Trigger â€" defaults to <a> element (typical HoverCard usage)
 // ---------------------------------------------------------------------------
 
 const HoverCardTrigger = defineComponent({
@@ -143,7 +143,7 @@ const HoverCardPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware. Positioner div wraps content div (role="dialog").
+// Content â€" Presence-aware. Positioner div wraps content div (role="dialog").
 // Mouse enter/leave on content are handled by the connect (keeps card open).
 // ---------------------------------------------------------------------------
 
@@ -193,7 +193,7 @@ const HoverCardContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Arrow â€” renderless, always Slot.
+// Arrow â€" renderless, always Slot.
 // ---------------------------------------------------------------------------
 
 const HoverCardArrow = defineComponent({

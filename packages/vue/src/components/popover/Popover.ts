@@ -155,7 +155,7 @@ const PopoverPortal = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€” Presence-aware. Positioner div wraps content div.
+// Content â€" Presence-aware. Positioner div wraps content div.
 // During exit: aria-hidden + pointer-events:none keep content inert.
 // ---------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ const PopoverContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Arrow â€” renderless, always Slot.
+// Arrow â€" renderless, always Slot.
 // ---------------------------------------------------------------------------
 
 const PopoverArrow = defineComponent({

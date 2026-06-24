@@ -196,5 +196,17 @@ export {
 } from "./components/tags-input/TagsInput.js";
 export type { UseTagsInputOptions } from "./components/tags-input/use-tags-input.js";
 export { useTagsInput } from "./components/tags-input/use-tags-input.js";
+export {
+  NumberInput,
+  NumberInputControl,
+  NumberInputDecrementTrigger,
+  NumberInputHiddenInput,
+  NumberInputIncrementTrigger,
+  NumberInputInput,
+  NumberInputLabel,
+  NumberInputRoot,
+} from "./components/number-input/NumberInput.js";
+export type { UseNumberInputOptions, UseNumberInputReturn } from "./components/number-input/use-number-input.js";
+export { useNumberInput } from "./components/number-input/use-number-input.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";
