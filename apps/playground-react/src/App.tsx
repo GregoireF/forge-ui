@@ -1,4 +1,4 @@
-import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, Dialog, DialogPortal, Field, HoverCard, Popover, Progress, RadioGroup, Select, Slider, Switch, Tabs, TagsInput, Tooltip, useDialog } from "@forge-ui/react";
+import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, Dialog, DialogPortal, Field, HoverCard, NumberInput, Popover, Progress, RadioGroup, Select, Slider, Switch, Tabs, TagsInput, Tooltip, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -130,6 +130,13 @@ export default function App() {
 
       <Section title="Slider" description="Curseur draggable. Arrow keys pour incrémenter/décrémenter.">
         <SliderDemo />
+      </Section>
+
+      <Section
+        title="NumberInput"
+        description="Saisie numérique. WAI-ARIA §3.21 spinbutton — ArrowUp/Down, PageUp/Down, Home/End."
+      >
+        <NumberInputDemo />
       </Section>
     </main>
   );
@@ -1237,6 +1244,81 @@ function SliderDemo() {
         </Slider.Track>
         <Slider.Thumb aria-label="Valeur" data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
       </Slider.Root>
+    </div>
+  );
+}
+
+/* ── NumberInput ─────────────────────────────────────────────────────────────── */
+
+function NumberInputDemo() {
+  const [value, setValue] = useState<number | null>(50);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div>
+        <NumberInput.Root
+          defaultValue={50}
+          min={0}
+          max={100}
+          step={1}
+          onValueChange={(v) => setValue(v)}
+        >
+          <NumberInput.Label style={labelStyle}>Quantité</NumberInput.Label>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.35rem" }}>
+            <NumberInput.DecrementTrigger data-testid="number-input-decrement" style={btnGhostStyle}>
+              −
+            </NumberInput.DecrementTrigger>
+            <NumberInput.Input
+              data-testid="number-input-input"
+              aria-label="Quantité"
+              style={{
+                width: "80px",
+                textAlign: "center",
+                padding: "0.45rem",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+              }}
+            />
+            <NumberInput.IncrementTrigger data-testid="number-input-increment" style={btnGhostStyle}>
+              +
+            </NumberInput.IncrementTrigger>
+          </div>
+          <code
+            data-testid="number-input-value"
+            style={{ fontSize: "0.8rem", color: "#64748b", display: "block", marginTop: "0.35rem" }}
+          >
+            valeur: {value ?? "vide"}
+          </code>
+          <NumberInput.HiddenInput name="quantity" />
+        </NumberInput.Root>
+      </div>
+
+      <div>
+        <NumberInput.Root defaultValue={25} min={0} max={100} disabled>
+          <NumberInput.Label style={{ ...labelStyle, opacity: 0.5 }}>Désactivé</NumberInput.Label>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.35rem", opacity: 0.5 }}>
+            <NumberInput.DecrementTrigger data-testid="number-input-decrement-disabled" style={btnGhostStyle}>
+              −
+            </NumberInput.DecrementTrigger>
+            <NumberInput.Input
+              data-testid="number-input-input-disabled"
+              aria-label="Quantité désactivée"
+              style={{
+                width: "80px",
+                textAlign: "center",
+                padding: "0.45rem",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+              }}
+            />
+            <NumberInput.IncrementTrigger data-testid="number-input-increment-disabled" style={btnGhostStyle}>
+              +
+            </NumberInput.IncrementTrigger>
+          </div>
+        </NumberInput.Root>
+      </div>
     </div>
   );
 }

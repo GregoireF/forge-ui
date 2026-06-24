@@ -2,7 +2,7 @@
 // Explicit imports for dot-notation namespaces used in templates.
 // Without these, the Vue template compiler emits resolveComponent("HoverCard.Root")
 // which fails in SSR because no component is registered under that dot-notation name.
-import { Accordion, Collapsible, Combobox, HoverCard, Progress, RadioGroup, Slider, Tabs, TagsInput } from "@forge-ui/vue";
+import { Accordion, Collapsible, Combobox, HoverCard, NumberInput, Progress, RadioGroup, Slider, Tabs, TagsInput } from "@forge-ui/vue";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
@@ -124,6 +124,7 @@ const cbSelected = ref<string[]>([]);
 const tagsInputTags = ref<string[]>(["TypeScript", "Nuxt"]);
 const progressValue = ref(42);
 const sliderValue = ref(50);
+const numberInputValue = ref<number | null>(50);
 const radioGroupValue = ref<string[]>(["react"]);
 const alertConfirming = ref(false);
 function handleDeleteConfirm() {
@@ -955,6 +956,53 @@ function handleDeleteConfirm() {
           </Slider.Track>
           <Slider.Thumb aria-label="Valeur" data-testid="slider-thumb" style="display:block;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #1e293b;box-shadow:0 1px 4px rgb(0 0 0 / 0.15);cursor:grab" />
         </Slider.Root>
+      </div>
+    </section>
+
+    <!-- ── NumberInput ───────────────────────────────────────────────────────── -->
+    <section :style="section">
+      <h2 :style="sectionTitle">NumberInput</h2>
+      <p :style="sectionDesc">Saisie numérique. WAI-ARIA §3.21 spinbutton — ArrowUp/Down, PageUp/Down, Home/End.</p>
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        <div>
+          <NumberInput.Root
+            :default-value="50"
+            :min="0"
+            :max="100"
+            :step="1"
+            :on-value-change="(v) => numberInputValue = v"
+          >
+            <NumberInput.Label :style="labelS">Quantité</NumberInput.Label>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem">
+              <NumberInput.DecrementTrigger data-testid="number-input-decrement" :style="btnGhost">−</NumberInput.DecrementTrigger>
+              <NumberInput.Input
+                data-testid="number-input-input"
+                aria-label="Quantité"
+                style="width:80px;text-align:center;padding:0.45rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem"
+              />
+              <NumberInput.IncrementTrigger data-testid="number-input-increment" :style="btnGhost">+</NumberInput.IncrementTrigger>
+            </div>
+            <code data-testid="number-input-value" style="font-size:0.8rem;color:#64748b;display:block;margin-top:0.35rem">
+              valeur: {{ numberInputValue ?? 'vide' }}
+            </code>
+            <NumberInput.HiddenInput name="quantity" />
+          </NumberInput.Root>
+        </div>
+
+        <div>
+          <NumberInput.Root :default-value="25" :min="0" :max="100" :disabled="true">
+            <NumberInput.Label :style="{ ...labelS, opacity: 0.5 }">Désactivé</NumberInput.Label>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem;opacity:0.5">
+              <NumberInput.DecrementTrigger data-testid="number-input-decrement-disabled" :style="btnGhost">−</NumberInput.DecrementTrigger>
+              <NumberInput.Input
+                data-testid="number-input-input-disabled"
+                aria-label="Quantité désactivée"
+                style="width:80px;text-align:center;padding:0.45rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.875rem"
+              />
+              <NumberInput.IncrementTrigger data-testid="number-input-increment-disabled" :style="btnGhost">+</NumberInput.IncrementTrigger>
+            </div>
+          </NumberInput.Root>
+        </div>
       </div>
     </section>
   </main>
