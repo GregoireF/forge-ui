@@ -108,4 +108,66 @@ test.describe("Slider — Vue (forge-ui)", () => {
     const label = await thumb(page).getAttribute("aria-label");
     expect(label).toBeTruthy();
   });
+
+  // ---------------------------------------------------------------------------
+  // Drag interaction (pointer events)
+  // ---------------------------------------------------------------------------
+
+  test("drag thumb toward max increases value", async ({ page }) => {
+    const thumbEl = thumb(page);
+    const trackEl = track(page);
+
+    const trackBox = await trackEl.boundingBox();
+    const thumbBox = await thumbEl.boundingBox();
+    if (!trackBox || !thumbBox) throw new Error("bounding box unavailable");
+
+    const startX = thumbBox.x + thumbBox.width / 2;
+    const startY = thumbBox.y + thumbBox.height / 2;
+    const endX = trackBox.x + trackBox.width * 0.8;
+
+    await page.mouse.move(startX, startY);
+    await page.mouse.down();
+    await page.mouse.move(endX, startY, { steps: 5 });
+    await page.mouse.up();
+
+    const valuenow = parseInt(await thumbEl.getAttribute("aria-valuenow") ?? "0");
+    expect(valuenow).toBeGreaterThan(60);
+  });
+
+  test("drag thumb toward min decreases value", async ({ page }) => {
+    const thumbEl = thumb(page);
+    const trackEl = track(page);
+
+    const trackBox = await trackEl.boundingBox();
+    const thumbBox = await thumbEl.boundingBox();
+    if (!trackBox || !thumbBox) throw new Error("bounding box unavailable");
+
+    const startX = thumbBox.x + thumbBox.width / 2;
+    const startY = thumbBox.y + thumbBox.height / 2;
+    const endX = trackBox.x + trackBox.width * 0.2;
+
+    await page.mouse.move(startX, startY);
+    await page.mouse.down();
+    await page.mouse.move(endX, startY, { steps: 5 });
+    await page.mouse.up();
+
+    const valuenow = parseInt(await thumbEl.getAttribute("aria-valuenow") ?? "100");
+    expect(valuenow).toBeLessThan(40);
+  });
+
+  test("click on track positions thumb at clicked location", async ({ page }) => {
+    const thumbEl = thumb(page);
+    const trackEl = track(page);
+
+    const trackBox = await trackEl.boundingBox();
+    if (!trackBox) throw new Error("track bounding box unavailable");
+
+    const clickX = trackBox.x + trackBox.width * 0.9;
+    const clickY = trackBox.y + trackBox.height / 2;
+
+    await page.mouse.click(clickX, clickY);
+
+    const valuenow = parseInt(await thumbEl.getAttribute("aria-valuenow") ?? "0");
+    expect(valuenow).toBeGreaterThan(75);
+  });
 });

@@ -4,11 +4,13 @@
 [![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg?token=TOKEN)](https://codecov.io/gh/OWNER/REPO)
 [![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
 [![E2E Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33)](e2e/)
+[![axe-core WCAG 2.1 AA](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/OWNER/REPO/main/axe-badge.json)](e2e/react/a11y.spec.ts)
 
 Composants headless accessibles pour React 19 et Vue 3. Zéro style — vous gérez le CSS.
 
 > **Statut : pré-release (alpha).** API en cours de stabilisation. Pas encore publié sur npm.  
-> **Badges** : remplacez `OWNER/REPO` et `TOKEN` par vos valeurs et ajoutez le secret `CODECOV_TOKEN` dans les settings GitHub.
+> **Badges** : remplacez `OWNER/REPO` et `TOKEN` par vos valeurs et ajoutez le secret `CODECOV_TOKEN` dans les settings GitHub.  
+> **Badge axe-core** : après chaque run CI, le script `e2e/update-axe-badge.mjs` met à jour `axe-badge.json` et le commit automatiquement. Shields.io lit le JSON via l'endpoint `raw.githubusercontent.com`.
 
 ---
 
