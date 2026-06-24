@@ -1,16 +1,24 @@
 # forge-ui
 
+<!-- Dynamic badges (updated by CI) -->
 [![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![E2E](https://github.com/OWNER/REPO/actions/workflows/e2e.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/e2e.yml)
 [![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg?token=TOKEN)](https://codecov.io/gh/OWNER/REPO)
-[![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
-[![E2E Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33)](e2e/)
 [![axe-core WCAG 2.1 AA](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/OWNER/REPO/main/axe-badge.json)](e2e/react/a11y.spec.ts)
+[![Bundle size](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/OWNER/REPO/main/bundle-size-badge.json)](tooling/scripts/bundle-size.ts)
+<!-- Static badges (always valid) -->
+[![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
+[![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Composants headless accessibles pour React 19 et Vue 3. Zéro style — vous gérez le CSS.
 
 > **Statut : pré-release (alpha).** API en cours de stabilisation. Pas encore publié sur npm.  
-> **Badges** : remplacez `OWNER/REPO` et `TOKEN` par vos valeurs et ajoutez le secret `CODECOV_TOKEN` dans les settings GitHub.  
-> **Badge axe-core** : après chaque run CI, le script `e2e/update-axe-badge.mjs` met à jour `axe-badge.json` et le commit automatiquement. Shields.io lit le JSON via l'endpoint `raw.githubusercontent.com`.
+> **Setup badges** : remplacez `OWNER/REPO` et `TOKEN` par vos valeurs réelles, ajoutez le secret `CODECOV_TOKEN` dans les settings GitHub.  
+> **Badge CI** : `ci.yml` — qualité du code (lint · typecheck · tests unitaires · build). Stable.  
+> **Badge E2E** : `e2e.yml` — 3 browsers (Chromium · Firefox · WebKit) × 3 playgrounds.  
+> **Badge axe-core** : mis à jour automatiquement à chaque push sur main via `e2e/update-axe-badge.mjs`.  
+> **Badge bundle size** : mis à jour par `bundle-size.yml` via `tooling/scripts/bundle-size.ts --fail-on-threshold`.
 
 ---
 

@@ -1,0 +1,126 @@
+# Why Dependabot and not Renovate:
+# Renovate is more powerful for monorepos (groups related PRs, understands
+# workspace protocols) but requires installing a GitHub App or running a
+# self-hosted bot — setup cost is non-trivial.
+# Dependabot is zero-config, native to GitHub, and integrates directly with
+# GitHub Security Advisories (auto-closes advisory PRs when patched).
+# For a pre-release project, Dependabot's simplicity wins over Renovate's power.
+#
+# Known limitation: Dependabot doesn't understand bun workspaces fully.
+# It will open PRs at the package level it discovers, not as workspace-wide
+# bumps. Accept this tradeoff: security patches still land automatically.
+#
+# Why npm ecosystem (not bun):
+# Dependabot has no Bun-specific ecosystem support as of 2025.
+# It reads package.json files via the "npm" ecosystem, which correctly identifies
+# dependencies. Lock file updates (bun.lockb) won't be committed — acceptable.
+#
+# Schedule: weekly on Monday, time-shifted per directory to avoid PR flood.
+
+version: 2
+
+updates:
+  # GitHub Actions — highest priority: SHA-pinned actions need security updates.
+  # An outdated action with a known CVE in the runner could compromise CI secrets.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Root package.json — devDependencies (TypeScript, Biome, Vitest, Turbo…)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:15"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+    ignore:
+      # Managed by changesets — do not auto-update workspace packages
+      - dependency-name: "@forge-ui/*"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      # Group all Playwright updates into one PR (they move in lockstep)
+      playwright:
+        patterns:
+          - "@playwright/*"
+          - "playwright"
+      # Group all Vitest updates (vitest + @vitest/* + happy-dom move together)
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "happy-dom"
+      # Group TypeScript toolchain
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+          - "@biomejs/biome"
+
+  # e2e workspace
+  - package-ecosystem: "npm"
+    directory: "/e2e"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+      - "e2e"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # React playground
+  - package-ecosystem: "npm"
+    directory: "/apps/playground-react"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:45"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+      - "playground"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Vue playground
+  - package-ecosystem: "npm"
+    directory: "/apps/playground-vue"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:50"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+      - "playground"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Nuxt playground
+  - package-ecosystem: "npm"
+    directory: "/apps/playground-nuxt"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:55"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+      - "playground"
+    commit-message:
+      prefix: "chore(deps)"

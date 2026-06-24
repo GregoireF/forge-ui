@@ -1,0 +1,44 @@
+name: Dependency Review
+
+# Why this exists:
+# Any PR that adds or updates a dependency could silently introduce a package
+# with a known CVE. The GitHub dependency-review-action compares the dependency
+# graph before and after the PR and fails if a new vulnerability is introduced.
+#
+# This is NOT the same as Dependabot alerts (which are async, post-merge).
+# Dependency review is synchronous: it BLOCKS the merge before the CVE lands.
+#
+# Why on pull_request only:
+# The review compares HEAD to the base branch. It's meaningless on push to main
+# because there's no "before" to compare to — the CVE is already merged.
+#
+# Why allow-licenses matters:
+# We are building a library that will be distributed. We cannot include
+# GPL-3.0 or AGPL code because it would force our consumers to open-source their
+# apps. Allowlist: MIT, ISC, Apache-2.0, BSD-2-Clause, BSD-3-Clause, 0BSD.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions: read-all
+
+jobs:
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@3b139cfc5fae8b618d3eae3675e383bb1769c019 # v4.5.0
+        with:
+          fail-on-severity: high
+          # Block GPL and AGPL: incompatible with commercial distribution.
+          # We cannot redistribute code under copyleft licenses in a library.
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0, LGPL-2.0, LGPL-2.1, LGPL-3.0
+          comment-summary-in-pr: always
