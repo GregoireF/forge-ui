@@ -208,6 +208,53 @@ describe("connectSlider — getThumbProps", () => {
     expect(style.bottom).toBe("75%");
     expect(style.transform).toBe("translateY(50%)");
   });
+
+  it("onPointerDown sends POINTER_DOWN with current thumb value", () => {
+    const { api, send } = makeApi({ values: [40] });
+    const props = api.getThumbProps(0) as Record<string, (e: unknown) => void>;
+    const el = document.createElement("div");
+    const e = new PointerEvent("pointerdown", { button: 0, bubbles: true });
+    Object.defineProperty(e, "currentTarget", { value: el });
+    vi.spyOn(el, "focus").mockImplementation(() => {});
+    props.onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 40, thumbIndex: 0 });
+  });
+
+  it("onPointerDown does nothing when disabled", () => {
+    const { api, send } = makeApi({ disabled: true, values: [40] });
+    const props = api.getThumbProps(0) as Record<string, (e: unknown) => void>;
+    props.onPointerDown(new PointerEvent("pointerdown", { button: 0 }));
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onPointerDown ignores non-primary button (button !== 0)", () => {
+    const { api, send } = makeApi({ values: [40] });
+    const props = api.getThumbProps(0) as Record<string, (e: unknown) => void>;
+    props.onPointerDown(new PointerEvent("pointerdown", { button: 2 }));
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onPointerdown (Vue alias) sends POINTER_DOWN", () => {
+    const { api, send } = makeApi({ values: [60] });
+    const props = api.getThumbProps(0) as Record<string, (e: unknown) => void>;
+    const el = document.createElement("div");
+    const e = new PointerEvent("pointerdown", { button: 0, bubbles: true });
+    Object.defineProperty(e, "currentTarget", { value: el });
+    vi.spyOn(el, "focus").mockImplementation(() => {});
+    props.onPointerdown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 60, thumbIndex: 0 });
+  });
+
+  it("multi-thumb: onPointerDown on thumb 1 sends correct thumbIndex", () => {
+    const { api, send } = makeApi({ values: [20, 80] });
+    const props = api.getThumbProps(1) as Record<string, (e: unknown) => void>;
+    const el = document.createElement("div");
+    const e = new PointerEvent("pointerdown", { button: 0, bubbles: true });
+    Object.defineProperty(e, "currentTarget", { value: el });
+    vi.spyOn(el, "focus").mockImplementation(() => {});
+    props.onPointerDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 80, thumbIndex: 1 });
+  });
 });
 
 // ---------------------------------------------------------------------------

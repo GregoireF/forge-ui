@@ -120,10 +120,11 @@ export interface SliderThumbProps extends Omit<HTMLAttributes<HTMLDivElement>, "
 
 function Thumb({ asChild, index = 0, style: userStyle, ...rest }: SliderThumbProps) {
   const api = useCtx();
-  const { onKeydown: _kd, onKeyDown, style: connectStyle, ...thumbAttrs } = api.getThumbProps(index);
+  const { onKeydown: _kd, onPointerdown: _pd, onKeyDown, onPointerDown, style: connectStyle, ...thumbAttrs } = api.getThumbProps(index);
   const onKD = onKeyDown as unknown as React.KeyboardEventHandler<HTMLDivElement>;
+  const onPD = onPointerDown as unknown as React.PointerEventHandler<HTMLDivElement>;
   // connect styles (position/left/transform) must win over user styles
-  const props = { ...thumbAttrs, onKeyDown: onKD, ...rest, style: { ...userStyle, ...connectStyle } };
+  const props = { ...thumbAttrs, onKeyDown: onKD, onPointerDown: onPD, ...rest, style: { ...userStyle, ...connectStyle } };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }

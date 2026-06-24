@@ -130,6 +130,20 @@ export function connectSlider(
           orientation === "horizontal"
             ? { position: "absolute" as const, left: `${percent}%`, transform: "translateX(-50%)" }
             : { position: "absolute" as const, bottom: `${percent}%`, transform: "translateY(50%)" },
+        onPointerDown(e: PointerEvent) {
+          if (disabled || e.button !== 0) return;
+          e.preventDefault();
+          e.stopPropagation(); // prevent track handler from double-firing when thumb overlaps track
+          (e.currentTarget as HTMLElement).focus();
+          send({ type: "POINTER_DOWN", value: values[thumbIndex] ?? min, thumbIndex });
+        },
+        onPointerdown(e: PointerEvent) {
+          if (disabled || e.button !== 0) return;
+          e.preventDefault();
+          e.stopPropagation();
+          (e.currentTarget as HTMLElement).focus();
+          send({ type: "POINTER_DOWN", value: values[thumbIndex] ?? min, thumbIndex });
+        },
         onKeyDown(e: KeyboardEvent) {
           if (disabled) return;
           switch (e.key) {

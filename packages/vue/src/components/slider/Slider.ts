@@ -122,8 +122,8 @@ const SliderThumb = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      // Strip React-only onKeyDown (Vue uses onKeydown from connect)
-      const { onKeyDown: _kd, style: connectStyle, ...thumbAttrs } = api.getThumbProps(props.index);
+      // Strip React-only handlers (Vue uses lowercase variants from connect)
+      const { onKeyDown: _kd, onPointerDown: _pd, style: connectStyle, ...thumbAttrs } = api.getThumbProps(props.index);
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
       // connect styles (position/left/transform) must win over user styles
       const merged = { ...thumbAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
