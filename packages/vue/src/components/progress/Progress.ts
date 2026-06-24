@@ -1,6 +1,25 @@
-﻿import { connectProgress } from "@forge-ui/progress";
-import { defineComponent, h } from "vue";
+import { connectProgress } from "@forge-ui/progress";
+import type { ComputedRef, InjectionKey } from "vue";
+import { computed, defineComponent, h, inject, provide } from "vue";
 import { Slot } from "../shared/Slot.js";
+
+// ---------------------------------------------------------------------------
+// Context — Root provides a ComputedRef so children stay reactive
+// ---------------------------------------------------------------------------
+
+interface ProgressCtx {
+  value: number | null;
+  max: number;
+  min: number;
+}
+
+const progressKey: InjectionKey<ComputedRef<ProgressCtx>> = Symbol("forge-progress");
+
+const defaultCtx = computed<ProgressCtx>(() => ({ value: null, max: 100, min: 0 }));
+
+function useProgressCtx(): ComputedRef<ProgressCtx> {
+  return inject(progressKey, defaultCtx);
+}
 
 // ---------------------------------------------------------------------------
 // Root
@@ -15,6 +34,14 @@ const ProgressRoot = defineComponent({
     asChild: { type: Boolean, default: false },
   },
   setup(props, { slots, attrs }) {
+    // provide must be called in setup(), not in the render closure
+    const ctx = computed<ProgressCtx>(() => ({
+      value: props.value,
+      max: props.max,
+      min: props.min,
+    }));
+    provide(progressKey, ctx);
+
     return () => {
       const api = connectProgress({ value: props.value, max: props.max, min: props.min });
       const merged = { ...api.getRootProps(), ...attrs };
@@ -31,14 +58,13 @@ const ProgressRoot = defineComponent({
 const ProgressTrack = defineComponent({
   name: "ForgeProgressTrack",
   props: {
-    value: { type: Number, default: null },
-    max: { type: Number, default: 100 },
-    min: { type: Number, default: 0 },
     asChild: { type: Boolean, default: false },
   },
   setup(props, { slots, attrs }) {
+    const ctx = useProgressCtx();
     return () => {
-      const api = connectProgress({ value: props.value, max: props.max, min: props.min });
+      const { value, max, min } = ctx.value;
+      const api = connectProgress({ value, max, min });
       const merged = { ...api.getTrackProps(), ...attrs };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged, slots.default?.());
@@ -53,14 +79,13 @@ const ProgressTrack = defineComponent({
 const ProgressFill = defineComponent({
   name: "ForgeProgressFill",
   props: {
-    value: { type: Number, default: null },
-    max: { type: Number, default: 100 },
-    min: { type: Number, default: 0 },
     asChild: { type: Boolean, default: false },
   },
   setup(props, { slots, attrs }) {
+    const ctx = useProgressCtx();
     return () => {
-      const api = connectProgress({ value: props.value, max: props.max, min: props.min });
+      const { value, max, min } = ctx.value;
+      const api = connectProgress({ value, max, min });
       const merged = { ...api.getFillProps(), ...attrs };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged);
@@ -92,15 +117,14 @@ const ProgressLabel = defineComponent({
 const ProgressValueText = defineComponent({
   name: "ForgeProgressValueText",
   props: {
-    value: { type: Number, default: null },
-    max: { type: Number, default: 100 },
-    min: { type: Number, default: 0 },
     asChild: { type: Boolean, default: false },
   },
   setup(props, { slots, attrs }) {
+    const ctx = useProgressCtx();
     return () => {
-      const api = connectProgress({ value: props.value, max: props.max, min: props.min });
-      const text = props.value !== null ? `${api.percent}%` : "loading";
+      const { value, max, min } = ctx.value;
+      const api = connectProgress({ value, max, min });
+      const text = value !== null ? `${api.percent}%` : "loading";
       const merged = { ...api.getValueTextProps(), ...attrs };
       if (props.asChild) return h(Slot, merged, slots.default);
       return h("span", merged, text);

@@ -186,7 +186,7 @@ const tagsInputTags = ref<string[]>(["TypeScript", "Vue"]);
 const progressValue = ref(42);
 const sliderValue = ref(50);
 const numberInputValue = ref<number | null>(50);
-const radioGroupValue = ref<string[]>(["react"]);
+const radioGroupValue = ref<string>("react");
 </script>
 
 <template>
@@ -1021,7 +1021,7 @@ const radioGroupValue = ref<string[]>(["react"]);
         </div>
         <Slider.Root
           :value="sliderValue"
-          :on-value-change="(v) => sliderValue = v"
+          :on-value-change="(v) => sliderValue = v[0]"
           :min="0"
           :max="100"
           :step="1"

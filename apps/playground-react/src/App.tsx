@@ -1204,7 +1204,7 @@ function ProgressDemo() {
 /* ── RadioGroup ──────────────────────────────────────────────────────────────── */
 
 function RadioGroupDemo() {
-  const [value, setValue] = useState<string[]>(["react"]);
+  const [value, setValue] = useState<string>("react");
   return (
     <RadioGroup.Root value={value} onValueChange={setValue} name="framework" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       {[
@@ -1238,7 +1238,7 @@ function SliderDemo() {
         <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Volume</span>
         <code data-testid="slider-value" style={{ fontSize: "0.875rem", color: "#64748b" }}>{value}</code>
       </div>
-      <Slider.Root value={value} onValueChange={setValue} min={0} max={100} step={1} style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}>
+      <Slider.Root value={value} onValueChange={(vals) => setValue(vals[0])} min={0} max={100} step={1} style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}>
         <Slider.Track data-testid="slider-track" style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
           <Slider.Range style={{ position: "absolute", height: "100%", background: "#1e293b", borderRadius: "2px" }} />
         </Slider.Track>
