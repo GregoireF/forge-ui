@@ -2,27 +2,33 @@
  * Date Picker connect layer — machine snapshot → framework-agnostic DOM props.
  *
  * WAI-ARIA references:
- * - §3.4  Date Picker Dialog Pattern: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/
+ * - §3.4  Date Picker Dialog Pattern
  * - §3.15 Grid Pattern: role=grid, role=row, role=gridcell, role=columnheader
- * - Keyboard: ArrowKeys=day nav, PageUp/Down=month nav, Shift+Page=year nav, Home/End=week bounds
+ * - Keyboard: Arrow=day nav, PageUp/Down=month, Shift+Page=year, Home/End=week bounds
  *
  * Design decisions:
- * - The calendar is a true grid (role=grid), not a list. This matches the WAI-ARIA APG
- *   reference implementation and gives AT users proper grid navigation semantics.
- * - Each day cell has tabindex="0" only for the focused date; all others are tabindex="-1".
- *   This implements roving tabindex — standard for grid navigation.
- * - aria-selected is on the gridcell, NOT a child button. The WAI-ARIA APG spec says
- *   gridcell is the interaction target; putting a button inside adds extra tab stops.
- * - getCalendarCellProps() accepts a CalendarDate object so the consumer can pass the
- *   cells returned by getCalendarWeeks() directly.
+ * - role=grid on calendar (not list) — gives AT grid navigation semantics per WAI-ARIA APG
+ * - Roving tabindex: tabIndex=0 on focused cell only, -1 on all others
+ * - aria-selected on gridcell (not a child button) per WAI-ARIA APG reference
+ * - aria-live="polite" + aria-atomic="true" on header so SR reads full "June 2024" on month change
+ * - aria-haspopup="dialog" (not "listbox") on trigger — correct for date picker dialogs
+ * - data-outside-month on adjacent-month cells (exposed, not hidden as null)
+ * - "today" suffix in cell aria-label from context.today (SSR-safe, not new Date())
+ * - formattedValue for trigger display text in consumer's locale
+ * - View switching: day ↔ month ↔ year (drill-down; back with VIEW_DAYS/VIEW_MONTHS)
  */
 
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
 import {
+  addMonths,
   formatDateLabel,
+  formatDateMedium,
   formatMonthYear,
   getCalendarWeeks,
+  getMonthsOfYear,
+  getTodayLabel,
   getWeekdayHeaders,
+  getYearRange,
   isDateDisabled,
   isSameDate,
 } from "./calendar.js";
@@ -31,6 +37,7 @@ import type {
   DatePickerContext,
   DatePickerEvent,
   DatePickerState,
+  DatePreset,
 } from "./date-picker.types.js";
 
 export type DatePickerSend = (event: DatePickerEvent | DatePickerEvent["type"]) => void;
@@ -42,8 +49,30 @@ export function connectDatePicker(
   machine: Pick<MachineInstance<DatePickerContext, DatePickerState, DatePickerEvent>, "setContext">,
 ) {
   const { context } = snapshot;
-  const isOpen = snapshot.matches("open");
-  const { id, locale, focusedDate, value, firstDayOfWeek, disabled, readOnly, min, max, isDateUnavailable } = context;
+
+  const isOpenDay = snapshot.matches("open.day");
+  const isOpenMonth = snapshot.matches("open.month");
+  const isOpenYear = snapshot.matches("open.year");
+  const isOpen = isOpenDay || isOpenMonth || isOpenYear;
+  const view = isOpenDay ? ("day" as const) : isOpenMonth ? ("month" as const) : isOpenYear ? ("year" as const) : null;
+
+  const {
+    id,
+    locale,
+    focusedDate,
+    value,
+    firstDayOfWeek,
+    disabled,
+    readOnly,
+    min,
+    max,
+    isDateUnavailable,
+    disabledWeekdays,
+    today,
+    yearGridStart,
+    presets,
+    numberOfMonths,
+  } = context;
 
   const contentId = `${id}-content`;
   const triggerId = `${id}-trigger`;
@@ -51,23 +80,52 @@ export function connectDatePicker(
   const headerId = `${id}-header`;
 
   const isDisabledDate = (date: CalendarDate) =>
-    isDateDisabled(date, min, max, isDateUnavailable);
+    isDateDisabled(date, min, max, isDateUnavailable, disabledWeekdays);
+
+  const todayLabel = getTodayLabel(locale);
 
   return {
     isOpen,
+    view,
     focusedDate,
     value,
+    today,
 
-    /** Calendar grid weeks, ready to render */
+    /** Locale-formatted selected date for use in the trigger button label */
+    formattedValue: value ? formatDateMedium(value, locale) : "",
+
+    /** Calendar weeks for the primary (first) visible month */
     weeks: getCalendarWeeks(focusedDate.year, focusedDate.month, firstDayOfWeek),
 
-    /** Ordered weekday headers (Sunday-first or Monday-first per firstDayOfWeek) */
+    /**
+     * One `CalendarCell[][]` per visible month.
+     * When numberOfMonths=1 this is identical to `weeks`.
+     * When numberOfMonths=2 consumers render a side-by-side dual-month layout.
+     */
+    weeksPerMonth: Array.from({ length: numberOfMonths }, (_, i) => {
+      const d = addMonths(focusedDate, i);
+      return getCalendarWeeks(d.year, d.month, firstDayOfWeek);
+    }),
+
+    /** Ordered weekday headers (Sunday-first or locale-first per firstDayOfWeek) */
     weekdays: getWeekdayHeaders(firstDayOfWeek, locale),
 
-    /** Formatted month/year string for the calendar header aria-label */
+    /** Formatted month/year for the header and dialog aria-label */
     monthYearLabel: formatMonthYear(focusedDate.year, focusedDate.month, locale),
 
-    /** Trigger button that opens the date picker dialog */
+    /** All 12 months of the year for the month picker view */
+    months: getMonthsOfYear(locale),
+
+    /** 12 years starting at yearGridStart for the year picker view */
+    yearRange: getYearRange(yearGridStart),
+
+    /** Configured presets (empty array when none provided) */
+    presets: presets ?? [],
+
+    // -------------------------------------------------------------------------
+    // Trigger
+    // -------------------------------------------------------------------------
+
     getTriggerProps() {
       return {
         id: triggerId,
@@ -90,11 +148,10 @@ export function connectDatePicker(
       };
     },
 
-    /**
-     * Content / popover container.
-     * role="dialog" + aria-modal="true" — the calendar is a modal dialog per WAI-ARIA §3.4.
-     * This means keyboard and AT focus is trapped within the dialog until dismissed.
-     */
+    // -------------------------------------------------------------------------
+    // Content dialog
+    // -------------------------------------------------------------------------
+
     getContentProps() {
       return {
         id: contentId,
@@ -102,6 +159,7 @@ export function connectDatePicker(
         "aria-modal": true as const,
         "aria-label": formatMonthYear(focusedDate.year, focusedDate.month, locale),
         "data-state": isOpen ? "open" : "closed",
+        "data-view": view ?? undefined,
         "data-forge-scope": "date-picker",
         "data-forge-part": "content",
         ref: (el: unknown) => {
@@ -110,31 +168,54 @@ export function connectDatePicker(
       };
     },
 
-    /** Header showing the current month/year with navigation buttons */
+    // -------------------------------------------------------------------------
+    // Calendar header (with live-region for SR month announcements)
+    // -------------------------------------------------------------------------
+
     getCalendarHeaderProps() {
       return {
         id: headerId,
         "aria-live": "polite" as const,
+        "aria-atomic": true as const,
         "data-forge-scope": "date-picker",
         "data-forge-part": "calendar-header",
       };
     },
 
-    /** "Previous month" navigation button */
+    /**
+     * The "June 2024" clickable button in the header.
+     * Opens month picker; second click opens year picker.
+     */
+    getViewSwitchButtonProps() {
+      return {
+        type: "button" as const,
+        "aria-label": `${formatMonthYear(focusedDate.year, focusedDate.month, locale)}, select month`,
+        "aria-pressed": isOpenMonth || isOpenYear,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "view-switch-button",
+        onClick() {
+          if (disabled) return;
+          if (isOpenDay) send("VIEW_MONTHS");
+          else if (isOpenMonth) send("VIEW_YEARS");
+          else send("VIEW_DAYS");
+        },
+      };
+    },
+
+    // -------------------------------------------------------------------------
+    // Month navigation buttons
+    // -------------------------------------------------------------------------
+
     getPrevMonthButtonProps() {
-      const prevMonth = (() => {
-        let m = focusedDate.month - 1;
-        let y = focusedDate.year;
-        if (m < 1) { m = 12; y--; }
-        return { y, m };
-      })();
+      const prevY = focusedDate.month === 1 ? focusedDate.year - 1 : focusedDate.year;
+      const prevM = focusedDate.month === 1 ? 12 : focusedDate.month - 1;
       const isAtMin = min
-        ? prevMonth.y < min.year || (prevMonth.y === min.year && prevMonth.m < min.month)
+        ? prevY < min.year || (prevY === min.year && prevM < min.month)
         : false;
 
       return {
         type: "button" as const,
-        "aria-label": `Go to previous month`,
+        "aria-label": "Go to previous month",
         "aria-disabled": isAtMin || undefined,
         disabled: isAtMin || undefined,
         "data-forge-scope": "date-picker",
@@ -146,21 +227,16 @@ export function connectDatePicker(
       };
     },
 
-    /** "Next month" navigation button */
     getNextMonthButtonProps() {
-      const nextMonth = (() => {
-        let m = focusedDate.month + 1;
-        let y = focusedDate.year;
-        if (m > 12) { m = 1; y++; }
-        return { y, m };
-      })();
+      const nextY = focusedDate.month === 12 ? focusedDate.year + 1 : focusedDate.year;
+      const nextM = focusedDate.month === 12 ? 1 : focusedDate.month + 1;
       const isAtMax = max
-        ? nextMonth.y > max.year || (nextMonth.y === max.year && nextMonth.m > max.month)
+        ? nextY > max.year || (nextY === max.year && nextM > max.month)
         : false;
 
       return {
         type: "button" as const,
-        "aria-label": `Go to next month`,
+        "aria-label": "Go to next month",
         "aria-disabled": isAtMax || undefined,
         disabled: isAtMax || undefined,
         "data-forge-scope": "date-picker",
@@ -172,11 +248,40 @@ export function connectDatePicker(
       };
     },
 
-    /**
-     * The calendar grid container.
-     * role="grid" — the calendar is a 7-column grid per WAI-ARIA §3.15.
-     * Grid keyboard navigation is handled here (roving tabindex per cell via tabIndex prop).
-     */
+    // -------------------------------------------------------------------------
+    // Year range navigation (for year picker view)
+    // -------------------------------------------------------------------------
+
+    getPrevYearRangeButtonProps() {
+      return {
+        type: "button" as const,
+        "aria-label": `Go to years ${yearGridStart - 12}–${yearGridStart - 1}`,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "prev-year-range-button",
+        onClick() {
+          if (disabled) return;
+          send("NAVIGATE_PREV_YEAR_RANGE");
+        },
+      };
+    },
+
+    getNextYearRangeButtonProps() {
+      return {
+        type: "button" as const,
+        "aria-label": `Go to years ${yearGridStart + 12}–${yearGridStart + 23}`,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "next-year-range-button",
+        onClick() {
+          if (disabled) return;
+          send("NAVIGATE_NEXT_YEAR_RANGE");
+        },
+      };
+    },
+
+    // -------------------------------------------------------------------------
+    // Day grid (main calendar view)
+    // -------------------------------------------------------------------------
+
     getCalendarGridProps() {
       return {
         id: gridId,
@@ -187,9 +292,6 @@ export function connectDatePicker(
         "data-forge-scope": "date-picker",
         "data-forge-part": "calendar-grid",
         onKeyDown(e: KeyboardEvent) {
-          if (disabled || readOnly && e.key !== "Tab") {
-            // In readOnly, allow Tab but block selection/navigation keys
-          }
           switch (e.key) {
             case "ArrowLeft":
               e.preventDefault();
@@ -233,10 +335,6 @@ export function connectDatePicker(
       };
     },
 
-    /**
-     * Props for each week row.
-     * role="row" is required inside role="grid" for proper grid semantics.
-     */
     getCalendarRowProps(weekIndex: number) {
       return {
         role: "row" as const,
@@ -246,10 +344,6 @@ export function connectDatePicker(
       };
     },
 
-    /**
-     * Props for weekday column header cells.
-     * role="columnheader" + abbr attribute per ARIA grid spec.
-     */
     getWeekdayHeaderProps(dayIndex: number) {
       const headers = getWeekdayHeaders(firstDayOfWeek, locale);
       const header = headers[dayIndex % 7];
@@ -264,34 +358,38 @@ export function connectDatePicker(
 
     /**
      * Props for each calendar day cell.
-     * - role="gridcell": the cell is an interactive grid item
-     * - aria-selected: true when this day is the selected value
-     * - aria-disabled: true for out-of-range or unavailable dates
+     *
+     * @param date         The date for this cell.
+     * @param isOutsideMonth  True for leading/trailing cells from adjacent months.
+     *                     Pass `cell.isOutsideMonth` when iterating `api.weeks`.
+     *
+     * WAI-ARIA attributes:
+     * - role="gridcell": interactive grid item
+     * - aria-selected: true when this is the selected date
+     * - aria-disabled: true for out-of-range / unavailable dates
+     * - aria-label: full accessible date + ", today" suffix when applicable
      * - tabIndex: 0 for focused date (roving tabindex), -1 for all others
-     * - aria-label: full date in user's locale (e.g. "Monday, June 10, 2024")
-     * - data-today / data-selected / data-disabled / data-focused: for CSS styling
+     * - data-outside-month: present for adjacent-month cells (style them faded)
+     * - data-today: present for today's date (highlight ring)
      */
-    getCalendarCellProps(date: CalendarDate) {
-      const isSelected = value ? isSameDate(date, value) : false;
+    getCalendarCellProps(date: CalendarDate, isOutsideMonth = false) {
+      const isSelected = value !== null && isSameDate(date, value);
       const isFocused = isSameDate(date, focusedDate);
       const isUnavailable = isDisabledDate(date);
-      const today = new Date();
-      const isToday =
-        date.year === today.getFullYear() &&
-        date.month === today.getMonth() + 1 &&
-        date.day === today.getDate();
+      const isToday = isSameDate(date, today);
 
       return {
         role: "gridcell" as const,
         "aria-selected": isSelected,
-        "aria-disabled": (isUnavailable || disabled) || undefined,
-        "aria-label": formatDateLabel(date, locale),
+        "aria-disabled": isUnavailable || disabled || undefined,
+        "aria-label": `${formatDateLabel(date, locale)}${isToday ? `, ${todayLabel}` : ""}`,
         tabIndex: isFocused ? 0 : -1,
         "data-state": isSelected ? "selected" : "idle",
         "data-today": isToday ? "" : undefined,
         "data-selected": isSelected ? "" : undefined,
         "data-focused": isFocused ? "" : undefined,
-        "data-disabled": (isUnavailable || disabled) ? "" : undefined,
+        "data-disabled": isUnavailable || disabled ? "" : undefined,
+        "data-outside-month": isOutsideMonth ? "" : undefined,
         "data-forge-scope": "date-picker",
         "data-forge-part": "calendar-cell",
         onClick() {
@@ -305,10 +403,104 @@ export function connectDatePicker(
       };
     },
 
+    // -------------------------------------------------------------------------
+    // Month picker grid
+    // -------------------------------------------------------------------------
+
+    getMonthGridProps() {
+      return {
+        role: "grid" as const,
+        "aria-label": String(focusedDate.year),
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "month-grid",
+      };
+    },
+
     /**
-     * Hidden input for form integration.
-     * Value is an ISO date string (YYYY-MM-DD) for form submission compatibility.
+     * Props for each month cell in the month picker.
+     * @param month  1-indexed (1=January … 12=December)
      */
+    getMonthCellProps(month: number) {
+      const isSelected = value !== null && value?.year === focusedDate.year && value?.month === month;
+      const isFocused = focusedDate.month === month;
+      const monthInfo = getMonthsOfYear(locale)[month - 1];
+      const monthLabel = monthInfo?.label ?? "";
+
+      return {
+        role: "gridcell" as const,
+        "aria-selected": isSelected === true,
+        "aria-label": `${monthLabel} ${focusedDate.year}`,
+        "data-state": isSelected ? "selected" : "idle",
+        "data-focused": isFocused ? "" : undefined,
+        "data-selected": isSelected ? "" : undefined,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "month-cell",
+        onClick() {
+          if (disabled || readOnly) return;
+          send({ type: "SELECT_MONTH", month });
+        },
+      };
+    },
+
+    // -------------------------------------------------------------------------
+    // Year picker grid
+    // -------------------------------------------------------------------------
+
+    getYearGridProps() {
+      return {
+        role: "grid" as const,
+        "aria-label": `${yearGridStart}–${yearGridStart + 11}`,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "year-grid",
+      };
+    },
+
+    getYearCellProps(year: number) {
+      const isSelected = value !== null && value?.year === year;
+      const isFocused = focusedDate.year === year;
+
+      return {
+        role: "gridcell" as const,
+        "aria-selected": isSelected === true,
+        "aria-label": String(year),
+        "data-state": isSelected ? "selected" : "idle",
+        "data-focused": isFocused ? "" : undefined,
+        "data-selected": isSelected ? "" : undefined,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "year-cell",
+        onClick() {
+          if (disabled || readOnly) return;
+          send({ type: "SELECT_YEAR", year });
+        },
+      };
+    },
+
+    // -------------------------------------------------------------------------
+    // Presets
+    // -------------------------------------------------------------------------
+
+    /**
+     * Props for a preset button (e.g. "Today", "Yesterday").
+     * The date is resolved from `today` at click time — never stale.
+     */
+    getPresetProps(preset: DatePreset) {
+      return {
+        type: "button" as const,
+        "aria-label": preset.label,
+        "data-forge-scope": "date-picker",
+        "data-forge-part": "preset",
+        onClick() {
+          if (disabled || readOnly) return;
+          const date = preset.getValue(today);
+          send({ type: "SELECT_PRESET", date });
+        },
+      };
+    },
+
+    // -------------------------------------------------------------------------
+    // Hidden form input
+    // -------------------------------------------------------------------------
+
     getHiddenInputProps(name: string) {
       const isoValue = value
         ? `${value.year}-${String(value.month).padStart(2, "0")}-${String(value.day).padStart(2, "0")}`

@@ -1,0 +1,34 @@
+{
+  "name": "@forge-ui/time-picker",
+  "version": "0.0.0",
+  "private": false,
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun run ../../../tooling/scripts/build.ts",
+    "dev": "tsc --watch --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@forge-ui/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "*"
+  }
+}

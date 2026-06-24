@@ -185,6 +185,38 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/date-field": {
+      "name": "@forge-ui/date-field",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/date-picker": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/date-picker": {
+      "name": "@forge-ui/date-picker",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/date-range-picker": {
+      "name": "@forge-ui/date-range-picker",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/date-picker": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/dialog": {
       "name": "@forge-ui/dialog",
       "version": "0.0.0",
@@ -284,6 +316,16 @@
     },
     "packages/primitives/tags-input": {
       "name": "@forge-ui/tags-input",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/time-picker": {
+      "name": "@forge-ui/time-picker",
       "version": "0.0.0",
       "dependencies": {
         "@forge-ui/core": "workspace:*",
@@ -689,6 +731,12 @@
 
     "@forge-ui/core": ["@forge-ui/core@workspace:packages/core"],
 
+    "@forge-ui/date-field": ["@forge-ui/date-field@workspace:packages/primitives/date-field"],
+
+    "@forge-ui/date-picker": ["@forge-ui/date-picker@workspace:packages/primitives/date-picker"],
+
+    "@forge-ui/date-range-picker": ["@forge-ui/date-range-picker@workspace:packages/primitives/date-range-picker"],
+
     "@forge-ui/dialog": ["@forge-ui/dialog@workspace:packages/primitives/dialog"],
 
     "@forge-ui/field": ["@forge-ui/field@workspace:packages/primitives/field"],
@@ -716,6 +764,8 @@
     "@forge-ui/tabs": ["@forge-ui/tabs@workspace:packages/primitives/tabs"],
 
     "@forge-ui/tags-input": ["@forge-ui/tags-input@workspace:packages/primitives/tags-input"],
+
+    "@forge-ui/time-picker": ["@forge-ui/time-picker@workspace:packages/primitives/time-picker"],
 
     "@forge-ui/tooltip": ["@forge-ui/tooltip@workspace:packages/primitives/tooltip"],
 
