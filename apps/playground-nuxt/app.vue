@@ -2,7 +2,7 @@
 // Explicit imports for dot-notation namespaces used in templates.
 // Without these, the Vue template compiler emits resolveComponent("HoverCard.Root")
 // which fails in SSR because no component is registered under that dot-notation name.
-import { Accordion, Collapsible, Combobox, HoverCard, NumberInput, Progress, RadioGroup, Slider, Tabs, TagsInput } from "@forge-ui/vue";
+import { Accordion, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, HoverCard, NumberInput, Progress, RadioGroup, Slider, Tabs, TagsInput, TimePicker } from "@forge-ui/vue";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
@@ -11,6 +11,10 @@ const hookDialog = useDialog({
 const controlledOpen = ref(false);
 const selectedValue = ref<string[]>([]);
 const selectedMultiple = ref<string[]>([]);
+const dateFieldValue = ref<{ year: number; month: number; day: number } | null>(null);
+const timePickerValue = ref<{ hours: number; minutes: number; seconds: number } | null>(null);
+const datePickerSelected = ref<string | null>(null);
+const dateRangePickerRange = ref<string | null>(null);
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -1001,6 +1005,115 @@ function handleDeleteConfirm() {
             </div>
           </NumberInput.Root>
         </div>
+      </div>
+    </section>
+
+    <!-- ── DateField ─────────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
+      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">DateField</h2>
+      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">Saisie de date en segments indépendants (MM/JJ/AAAA). WAI-ARIA spinbutton par segment.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <DateField.Root data-testid="date-field-root" @value-change="(d) => dateFieldValue = d">
+          <DateField.Group
+            data-testid="date-field-group"
+            :style="{ display:'inline-flex', alignItems:'center', gap:'2px', padding:'0.45rem 0.75rem', border:'1px solid #cbd5e1', borderRadius:'6px', fontSize:'0.875rem', background:'#fff' }"
+          >
+            <DateField.MonthSegment data-testid="date-field-month" :style="{ minWidth:'3ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+            <DateField.Separator :style="{ color:'#94a3b8', userSelect:'none' }" />
+            <DateField.DaySegment data-testid="date-field-day" :style="{ minWidth:'2ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+            <DateField.Separator :style="{ color:'#94a3b8', userSelect:'none' }" />
+            <DateField.YearSegment data-testid="date-field-year" :style="{ minWidth:'4ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+          </DateField.Group>
+          <DateField.HiddenInput name="date" />
+        </DateField.Root>
+        <p v-if="dateFieldValue" data-testid="date-field-value" style="margin:0;font-size:0.8rem;color:#64748b">
+          Date : {{ dateFieldValue.year }}-{{ String(dateFieldValue.month).padStart(2, '0') }}-{{ String(dateFieldValue.day).padStart(2, '0') }}
+        </p>
+      </div>
+    </section>
+
+    <!-- ── TimePicker ─────────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
+      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">TimePicker</h2>
+      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">Saisie d'heure en segments (HH:MM:SS AM/PM). WAI-ARIA spinbutton par segment.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <TimePicker.Root data-testid="time-picker-root" @value-change="(t) => timePickerValue = t">
+          <TimePicker.Group
+            data-testid="time-picker-group"
+            :style="{ display:'inline-flex', alignItems:'center', gap:'2px', padding:'0.45rem 0.75rem', border:'1px solid #cbd5e1', borderRadius:'6px', fontSize:'0.875rem', background:'#fff' }"
+          >
+            <TimePicker.HoursSegment data-testid="time-picker-hours" :style="{ minWidth:'2ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+            <TimePicker.Separator :style="{ color:'#94a3b8', userSelect:'none' }" />
+            <TimePicker.MinutesSegment data-testid="time-picker-minutes" :style="{ minWidth:'2ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+            <TimePicker.Separator :style="{ color:'#94a3b8', userSelect:'none' }" />
+            <TimePicker.SecondsSegment data-testid="time-picker-seconds" :style="{ minWidth:'2ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+            <span style="margin-left:4px" />
+            <TimePicker.PeriodSegment data-testid="time-picker-period" :style="{ minWidth:'2ch', outline:'none', padding:'1px 2px', borderRadius:'3px' }" />
+          </TimePicker.Group>
+          <TimePicker.HiddenInput name="time" />
+        </TimePicker.Root>
+        <p v-if="timePickerValue" data-testid="time-picker-value" style="margin:0;font-size:0.8rem;color:#64748b">
+          Heure : {{ String(timePickerValue.hours).padStart(2,'0') }}:{{ String(timePickerValue.minutes).padStart(2,'0') }}:{{ String(timePickerValue.seconds).padStart(2,'0') }}
+        </p>
+      </div>
+    </section>
+
+    <!-- ── DatePicker ─────────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
+      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">DatePicker</h2>
+      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">Calendrier popup pour sélectionner une date. Vues jour/mois/année.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <DatePicker.Root
+          data-testid="date-picker-root"
+          @value-change="(d) => datePickerSelected = d ? `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}` : null"
+        >
+          <DatePicker.Trigger data-testid="date-picker-trigger" :style="btn">{{ datePickerSelected ?? 'Choisir une date' }}</DatePicker.Trigger>
+          <DatePicker.Content
+            data-testid="date-picker-content"
+            :style="{ position:'fixed', top:'50%', left:'50%', transform:'translate(-50%,-50%)', background:'#fff', border:'1px solid #e2e8f0', borderRadius:'10px', padding:'1rem', boxShadow:'0 8px 30px rgb(0 0 0 / 0.12)', zIndex:50, minWidth:'280px' }"
+          >
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+              <DatePicker.PrevMonthButton data-testid="date-picker-prev" :style="{ ...btnGhost, padding:'0.25rem 0.6rem' }">←</DatePicker.PrevMonthButton>
+              <DatePicker.CalendarHeader data-testid="date-picker-header" :style="{ fontWeight:600, fontSize:'0.875rem' }" />
+              <DatePicker.NextMonthButton data-testid="date-picker-next" :style="{ ...btnGhost, padding:'0.25rem 0.6rem' }">→</DatePicker.NextMonthButton>
+            </div>
+            <DatePicker.CalendarGrid data-testid="date-picker-grid" :style="{ display:'grid', gap:'2px' }" />
+          </DatePicker.Content>
+          <DatePicker.HiddenInput name="date" />
+        </DatePicker.Root>
+        <p v-if="datePickerSelected" data-testid="date-picker-value" style="margin:0;font-size:0.8rem;color:#64748b">
+          Sélectionné : {{ datePickerSelected }}
+        </p>
+      </div>
+    </section>
+
+    <!-- ── DateRangePicker ────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0">
+      <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">DateRangePicker</h2>
+      <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">Sélection d'une plage de dates (début → fin). Double calendrier, presets.</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <DateRangePicker.Root
+          data-testid="date-range-picker-root"
+          @value-change="(r) => dateRangePickerRange = r ? `${r.start?.year ?? '?'} → ${r.end?.year ?? '?'}` : null"
+        >
+          <DateRangePicker.Trigger data-testid="date-range-picker-trigger" :style="btn">{{ dateRangePickerRange ?? 'Choisir une plage' }}</DateRangePicker.Trigger>
+          <DateRangePicker.Content
+            data-testid="date-range-picker-content"
+            :style="{ position:'fixed', top:'50%', left:'50%', transform:'translate(-50%,-50%)', background:'#fff', border:'1px solid #e2e8f0', borderRadius:'10px', padding:'1rem', boxShadow:'0 8px 30px rgb(0 0 0 / 0.12)', zIndex:50, minWidth:'300px' }"
+          >
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+              <DateRangePicker.PrevMonthButton data-testid="date-range-picker-prev" :style="{ ...btnGhost, padding:'0.25rem 0.6rem' }">←</DateRangePicker.PrevMonthButton>
+              <DateRangePicker.CalendarHeader data-testid="date-range-picker-header" :style="{ fontWeight:600, fontSize:'0.875rem' }" />
+              <DateRangePicker.NextMonthButton data-testid="date-range-picker-next" :style="{ ...btnGhost, padding:'0.25rem 0.6rem' }">→</DateRangePicker.NextMonthButton>
+            </div>
+            <DateRangePicker.CalendarGrid data-testid="date-range-picker-grid" :style="{ display:'grid', gap:'2px' }" />
+            <DateRangePicker.ClearButton data-testid="date-range-picker-clear" :style="{ ...btnGhost, marginTop:'0.75rem', width:'100%' }">Effacer</DateRangePicker.ClearButton>
+          </DateRangePicker.Content>
+          <DateRangePicker.HiddenInputs start-name="start" end-name="end" />
+        </DateRangePicker.Root>
+        <p v-if="dateRangePickerRange" data-testid="date-range-picker-value" style="margin:0;font-size:0.8rem;color:#64748b">
+          Plage : {{ dateRangePickerRange }}
+        </p>
       </div>
     </section>
   </main>

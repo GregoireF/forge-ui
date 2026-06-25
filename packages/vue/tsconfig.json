@@ -24,7 +24,11 @@
       "@forge-ui/tags-input": ["../primitives/tags-input/src/index.ts"],
       "@forge-ui/slider": ["../primitives/slider/src/index.ts"],
       "@forge-ui/tooltip": ["../primitives/tooltip/src/index.ts"],
-      "@forge-ui/number-input": ["../primitives/number-input/src/index.ts"]
+      "@forge-ui/number-input": ["../primitives/number-input/src/index.ts"],
+      "@forge-ui/date-field": ["../primitives/date-field/src/index.ts"],
+      "@forge-ui/time-picker": ["../primitives/time-picker/src/index.ts"],
+      "@forge-ui/date-picker": ["../primitives/date-picker/src/index.ts"],
+      "@forge-ui/date-range-picker": ["../primitives/date-range-picker/src/index.ts"]
     }
   },
   "include": ["src"],
@@ -49,6 +53,10 @@
     { "path": "../primitives/tags-input" },
     { "path": "../primitives/slider" },
     { "path": "../primitives/tooltip" },
-    { "path": "../primitives/number-input" }
+    { "path": "../primitives/number-input" },
+    { "path": "../primitives/date-field" },
+    { "path": "../primitives/time-picker" },
+    { "path": "../primitives/date-picker" },
+    { "path": "../primitives/date-range-picker" }
   ]
 }

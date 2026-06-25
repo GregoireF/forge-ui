@@ -209,5 +209,72 @@ export {
 } from "./components/number-input/NumberInput.js";
 export type { UseNumberInputOptions, UseNumberInputReturn } from "./components/number-input/use-number-input.js";
 export { useNumberInput } from "./components/number-input/use-number-input.js";
+export {
+  DateField,
+  DateFieldRoot,
+  DateFieldGroup,
+  DateFieldMonthSegment,
+  DateFieldDaySegment,
+  DateFieldYearSegment,
+  DateFieldSeparator,
+  DateFieldHiddenInput,
+} from "./components/date-field/DateField.js";
+export { useDateField, useDateFieldControlled } from "./components/date-field/use-date-field.js";
+export type { UseDateFieldOptions, UseDateFieldReturn } from "./components/date-field/use-date-field.js";
+export {
+  TimePicker,
+  TimePickerRoot,
+  TimePickerGroup,
+  TimePickerHoursSegment,
+  TimePickerMinutesSegment,
+  TimePickerSecondsSegment,
+  TimePickerPeriodSegment,
+  TimePickerSeparator,
+  TimePickerHiddenInput,
+} from "./components/time-picker/TimePicker.js";
+export { useTimePicker } from "./components/time-picker/use-time-picker.js";
+export type { UseTimePickerOptions, UseTimePickerReturn } from "./components/time-picker/use-time-picker.js";
+export {
+  DatePicker,
+  DatePickerRoot,
+  DatePickerTrigger,
+  DatePickerContent,
+  DatePickerCalendarHeader,
+  DatePickerViewSwitchButton,
+  DatePickerPrevMonthButton,
+  DatePickerNextMonthButton,
+  DatePickerPrevYearRangeButton,
+  DatePickerNextYearRangeButton,
+  DatePickerCalendarGrid,
+  DatePickerCalendarRow,
+  DatePickerWeekdayHeader,
+  DatePickerCalendarCell,
+  DatePickerMonthGrid,
+  DatePickerMonthCell,
+  DatePickerYearGrid,
+  DatePickerYearCell,
+  DatePickerPreset,
+  DatePickerHiddenInput,
+} from "./components/date-picker/DatePicker.js";
+export { useDatePicker, useDatePickerControlled } from "./components/date-picker/use-date-picker.js";
+export type { UseDatePickerOptions, UseDatePickerReturn } from "./components/date-picker/use-date-picker.js";
+export {
+  DateRangePicker,
+  DateRangePickerRoot,
+  DateRangePickerTrigger,
+  DateRangePickerContent,
+  DateRangePickerCalendarHeader,
+  DateRangePickerPrevMonthButton,
+  DateRangePickerNextMonthButton,
+  DateRangePickerCalendarGrid,
+  DateRangePickerCalendarRow,
+  DateRangePickerWeekdayHeader,
+  DateRangePickerCalendarCell,
+  DateRangePickerClearButton,
+  DateRangePickerPreset,
+  DateRangePickerHiddenInputs,
+} from "./components/date-range-picker/DateRangePicker.js";
+export { useDateRangePicker, useDateRangePickerControlled } from "./components/date-range-picker/use-date-range-picker.js";
+export type { UseDateRangePickerOptions, UseDateRangePickerReturn } from "./components/date-range-picker/use-date-range-picker.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

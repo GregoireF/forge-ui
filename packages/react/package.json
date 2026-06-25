@@ -81,6 +81,22 @@
     "./number-input": {
       "types": "./dist/number-input/index.d.ts",
       "import": "./dist/number-input/index.js"
+    },
+    "./date-field": {
+      "types": "./dist/date-field/index.d.ts",
+      "import": "./dist/date-field/index.js"
+    },
+    "./time-picker": {
+      "types": "./dist/time-picker/index.d.ts",
+      "import": "./dist/time-picker/index.js"
+    },
+    "./date-picker": {
+      "types": "./dist/date-picker/index.d.ts",
+      "import": "./dist/date-picker/index.js"
+    },
+    "./date-range-picker": {
+      "types": "./dist/date-range-picker/index.d.ts",
+      "import": "./dist/date-range-picker/index.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -120,7 +136,11 @@
     "@forge-ui/hover-card": "workspace:*",
     "@forge-ui/tags-input": "workspace:*",
     "@forge-ui/tooltip": "workspace:*",
-    "@forge-ui/number-input": "workspace:*"
+    "@forge-ui/number-input": "workspace:*",
+    "@forge-ui/date-field": "workspace:*",
+    "@forge-ui/time-picker": "workspace:*",
+    "@forge-ui/date-picker": "workspace:*",
+    "@forge-ui/date-range-picker": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",

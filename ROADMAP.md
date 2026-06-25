@@ -131,10 +131,10 @@ Les activities (pattern Zag.js) sont des effets longs liés à un état — dém
 
 ## PHASE 5 — Primitives avancées
 
-- [x] **Date Picker** — machine + connect (calendrier grille WAI-ARIA, navigation clavier, localisation) — *bindings React/Vue à faire*
-- [x] **Date Range Picker** — machine + connect (dual input, range selection) — *bindings React/Vue à faire*
-- [x] **Date Field** — machine + connect (spinbutton segmenté jour/mois/année) — *bindings React/Vue à faire*
-- [x] **Time Picker** — machine + connect (spinbutton heures/minutes/secondes) — *bindings React/Vue à faire*
+- [x] **Date Picker** — machine + connect + React + Vue + Nuxt ✅ complet
+- [x] **Date Range Picker** — machine + connect + React + Vue + Nuxt ✅ complet
+- [x] **Date Field** — machine + connect + React + Vue + Nuxt ✅ complet
+- [x] **Time Picker** — machine + connect + React + Vue + Nuxt ✅ complet
 - [x] **Number Input** — machine + connect + React + Vue + Nuxt ✅ complet
 - [ ] Color Picker
 - [ ] File Upload (drag & drop)
@@ -151,12 +151,12 @@ Les activities (pattern Zag.js) sont des effets longs liés à un état — dém
 |---------|----------------|-----------|
 | `@forge-ui/core` | ~80 | — |
 | `@forge-ui/primitives/*` | ~500+ | — |
-| `@forge-ui/react` | ~400 | 20+ specs × 3 browsers |
-| `@forge-ui/vue` | ~400 | 20+ specs × 3 browsers |
-| `@forge-ui/nuxt` | ~20 | 20+ specs × 3 browsers |
-| **Total** | **~1400+** | **~180+ specs** |
+| `@forge-ui/react` | ~440 | 28+ specs × 3 browsers |
+| `@forge-ui/vue` | ~440 | 28+ specs × 3 browsers |
+| `@forge-ui/nuxt` | ~20 | 28+ specs × 3 browsers |
+| **Total** | **~1500+** | **~250+ specs** |
 
-Couverture V8 : 100% branch coverage sur les 18 primitives avec bindings complets.
+Couverture V8 : 100% branch coverage sur les 22 primitives avec bindings complets.
 
 ---
 
@@ -166,5 +166,5 @@ Couverture V8 : 100% branch coverage sur les 18 primitives avec bindings complet
 |---|---|---|
 | Changesets + Bun `workspace:*` non résolu | Publish manuel | Moyen |
 | Firefox / WebKit Playwright browsers à installer en CI | E2E partielle (Chromium only en local) | Bas |
-| Date/Time picker sans bindings React/Vue | Primitives inutilisables en prod | Haut |
+| DatePicker portal React — reuse DialogPortal sans teleport Vue natif | Légère incohérence DX React/Vue | Bas |
 | Pas de virtualizer intégré | Select/Combobox sans virtual scroll | Moyen |

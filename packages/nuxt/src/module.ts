@@ -40,6 +40,13 @@ export default defineNuxtModule({
       { name: "useMachine", from },
       { name: "usePresence", from },
       { name: "useTagsInput", from },
+      { name: "useDateField", from },
+      { name: "useDateFieldControlled", from },
+      { name: "useTimePicker", from },
+      { name: "useDatePicker", from },
+      { name: "useDatePickerControlled", from },
+      { name: "useDateRangePicker", from },
+      { name: "useDateRangePickerControlled", from },
     ]);
 
     // Namespace objects — enable <Dialog.Root> / <Popover.Root> / etc. in templates
@@ -54,6 +61,10 @@ export default defineNuxtModule({
     addImports({ name: "HoverCard", from });
     addImports({ name: "Combobox", from });
     addImports({ name: "TagsInput", from });
+    addImports({ name: "DateField", from });
+    addImports({ name: "TimePicker", from });
+    addImports({ name: "DatePicker", from });
+    addImports({ name: "DateRangePicker", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -220,6 +231,81 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of tagsInputComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const dateFieldComponents = [
+      "DateFieldRoot",
+      "DateFieldGroup",
+      "DateFieldMonthSegment",
+      "DateFieldDaySegment",
+      "DateFieldYearSegment",
+      "DateFieldSeparator",
+      "DateFieldHiddenInput",
+    ] as const;
+
+    for (const name of dateFieldComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const timePickerComponents = [
+      "TimePickerRoot",
+      "TimePickerGroup",
+      "TimePickerHoursSegment",
+      "TimePickerMinutesSegment",
+      "TimePickerSecondsSegment",
+      "TimePickerPeriodSegment",
+      "TimePickerSeparator",
+      "TimePickerHiddenInput",
+    ] as const;
+
+    for (const name of timePickerComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const datePickerComponents = [
+      "DatePickerRoot",
+      "DatePickerTrigger",
+      "DatePickerContent",
+      "DatePickerCalendarHeader",
+      "DatePickerViewSwitchButton",
+      "DatePickerPrevMonthButton",
+      "DatePickerNextMonthButton",
+      "DatePickerPrevYearRangeButton",
+      "DatePickerNextYearRangeButton",
+      "DatePickerCalendarGrid",
+      "DatePickerCalendarRow",
+      "DatePickerWeekdayHeader",
+      "DatePickerCalendarCell",
+      "DatePickerMonthGrid",
+      "DatePickerMonthCell",
+      "DatePickerYearGrid",
+      "DatePickerYearCell",
+      "DatePickerPreset",
+      "DatePickerHiddenInput",
+    ] as const;
+
+    for (const name of datePickerComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const dateRangePickerComponents = [
+      "DateRangePickerRoot",
+      "DateRangePickerTrigger",
+      "DateRangePickerContent",
+      "DateRangePickerCalendarHeader",
+      "DateRangePickerPrevMonthButton",
+      "DateRangePickerNextMonthButton",
+      "DateRangePickerCalendarGrid",
+      "DateRangePickerCalendarRow",
+      "DateRangePickerWeekdayHeader",
+      "DateRangePickerCalendarCell",
+      "DateRangePickerClearButton",
+      "DateRangePickerPreset",
+      "DateRangePickerHiddenInputs",
+    ] as const;
+
+    for (const name of dateRangePickerComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },
