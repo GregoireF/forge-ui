@@ -281,5 +281,26 @@ export {
 } from "./components/date-range-picker/DateRangePicker.js";
 export { useDateRangePicker, useDateRangePickerControlled } from "./components/date-range-picker/use-date-range-picker.js";
 export type { UseDateRangePickerOptions, UseDateRangePickerReturn } from "./components/date-range-picker/use-date-range-picker.js";
+export {
+  Toggle,
+  ToggleRoot,
+} from "./components/toggle/Toggle.js";
+export type { UseToggleOptions, UseToggleReturn } from "./components/toggle/use-toggle.js";
+export { useToggle } from "./components/toggle/use-toggle.js";
+export {
+  ToggleGroup,
+  ToggleGroupRoot,
+  ToggleGroupItem,
+} from "./components/toggle-group/ToggleGroup.js";
+export type { UseToggleGroupOptions, UseToggleGroupReturn } from "./components/toggle-group/use-toggle-group.js";
+export { useToggleGroup } from "./components/toggle-group/use-toggle-group.js";
+export {
+  Separator,
+  SeparatorRoot,
+} from "./components/separator/Separator.js";
+export {
+  VisuallyHidden,
+  VisuallyHiddenRoot,
+} from "./components/visually-hidden/VisuallyHidden.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

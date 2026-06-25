@@ -1,0 +1,139 @@
+/* forge-ui/css — overlay animation primitives
+ *
+ * Convention: all forge-ui overlays set data-state="open"|"closed" on their
+ * content element. Presence (usePresence / watchPresence) keeps the element in
+ * the DOM until the animation completes, so the "closed" keyframe runs fully.
+ *
+ * Import this file (or motion-safe.css) and customise the values with CSS
+ * custom properties — all durations and easings are overridable per component.
+ */
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────── */
+
+@keyframes forge-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes forge-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes forge-slide-up-and-fade {
+  from { opacity: 0; transform: translateY(var(--forge-slide-offset, 4px)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes forge-slide-down-and-fade {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(var(--forge-slide-offset, 4px)); }
+}
+
+@keyframes forge-slide-right-and-fade {
+  from { opacity: 0; transform: translateX(calc(-1 * var(--forge-slide-offset, 4px))); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes forge-slide-left-and-fade {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(calc(-1 * var(--forge-slide-offset, 4px))); }
+}
+
+@keyframes forge-zoom-in {
+  from { opacity: 0; transform: scale(var(--forge-zoom-from, 0.96)); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes forge-zoom-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(var(--forge-zoom-from, 0.96)); }
+}
+
+/* ─── Custom properties (override per component) ─────────────────────────── */
+
+:root {
+  --forge-overlay-duration: 150ms;
+  --forge-overlay-ease-in:  cubic-bezier(0.16, 1, 0.3, 1);
+  --forge-overlay-ease-out: cubic-bezier(0.4, 0, 1, 1);
+  --forge-slide-offset: 4px;
+  --forge-zoom-from: 0.96;
+}
+
+/* ─── Backdrop / Overlay ─────────────────────────────────────────────────── */
+
+[data-forge-part="overlay"][data-state="open"] {
+  animation: forge-fade-in var(--forge-overlay-duration) var(--forge-overlay-ease-in);
+}
+[data-forge-part="overlay"][data-state="closed"] {
+  animation: forge-fade-out var(--forge-overlay-duration) var(--forge-overlay-ease-out) forwards;
+}
+
+/* ─── Content panels (Dialog, Popover, Select, Combobox, DatePicker…) ───── */
+
+[data-forge-part="content"][data-state="open"] {
+  animation: forge-slide-up-and-fade var(--forge-overlay-duration) var(--forge-overlay-ease-in);
+}
+[data-forge-part="content"][data-state="closed"] {
+  animation: forge-slide-down-and-fade var(--forge-overlay-duration) var(--forge-overlay-ease-out) forwards;
+}
+
+/* Tooltip — fade only, no slide (too small for slide to feel right) */
+[data-forge-scope="tooltip"][data-forge-part="content"][data-state="open"] {
+  animation: forge-fade-in 100ms var(--forge-overlay-ease-in);
+}
+[data-forge-scope="tooltip"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-fade-out 100ms var(--forge-overlay-ease-out) forwards;
+}
+
+/* HoverCard — slightly slower than tooltip */
+[data-forge-scope="hover-card"][data-forge-part="content"][data-state="open"] {
+  animation: forge-slide-up-and-fade 120ms var(--forge-overlay-ease-in);
+}
+[data-forge-scope="hover-card"][data-forge-part="content"][data-state="closed"] {
+  animation: forge-slide-down-and-fade 120ms var(--forge-overlay-ease-out) forwards;
+}
+
+/* ─── Accordion / Collapsible content ────────────────────────────────────── */
+
+[data-forge-part="content"][data-state="open"]:where(
+  [data-forge-scope="accordion"] *,
+  [data-forge-scope="collapsible"] *
+) {
+  animation: forge-fade-in var(--forge-overlay-duration) var(--forge-overlay-ease-in);
+}
+[data-forge-part="content"][data-state="closed"]:where(
+  [data-forge-scope="accordion"] *,
+  [data-forge-scope="collapsible"] *
+) {
+  animation: forge-fade-out var(--forge-overlay-duration) var(--forge-overlay-ease-out) forwards;
+}
+
+/* ─── Visually hidden utility class ─────────────────────────────────────── */
+
+.forge-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip-link variant: becomes visible on focus (consumer adds :focus-visible styles) */
+.forge-sr-only-focusable:not(:focus-visible) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -1,0 +1,102 @@
+/* forge-ui/css — motion-safe variant
+ *
+ * Same as animations.css but ALL animations are wrapped in:
+ *   @media (prefers-reduced-motion: no-preference)
+ *
+ * Use this file instead of animations.css when you want the safest default:
+ * users who have requested reduced motion get instant transitions, no flicker.
+ *
+ * WCAG 2.1 §2.3.3 (AAA): provide a way to disable motion-based animation.
+ * This file satisfies it at the AA level by fully suppressing animations
+ * for users who set "Reduce Motion" in their OS preferences.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes forge-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes forge-fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+  @keyframes forge-slide-up-and-fade {
+    from { opacity: 0; transform: translateY(var(--forge-slide-offset, 4px)); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes forge-slide-down-and-fade {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(var(--forge-slide-offset, 4px)); }
+  }
+  @keyframes forge-zoom-in {
+    from { opacity: 0; transform: scale(var(--forge-zoom-from, 0.96)); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes forge-zoom-out {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(var(--forge-zoom-from, 0.96)); }
+  }
+
+  :root {
+    --forge-overlay-duration: 150ms;
+    --forge-overlay-ease-in:  cubic-bezier(0.16, 1, 0.3, 1);
+    --forge-overlay-ease-out: cubic-bezier(0.4, 0, 1, 1);
+    --forge-slide-offset: 4px;
+    --forge-zoom-from: 0.96;
+  }
+
+  [data-forge-part="overlay"][data-state="open"] {
+    animation: forge-fade-in var(--forge-overlay-duration) var(--forge-overlay-ease-in);
+  }
+  [data-forge-part="overlay"][data-state="closed"] {
+    animation: forge-fade-out var(--forge-overlay-duration) var(--forge-overlay-ease-out) forwards;
+  }
+
+  [data-forge-part="content"][data-state="open"] {
+    animation: forge-slide-up-and-fade var(--forge-overlay-duration) var(--forge-overlay-ease-in);
+  }
+  [data-forge-part="content"][data-state="closed"] {
+    animation: forge-slide-down-and-fade var(--forge-overlay-duration) var(--forge-overlay-ease-out) forwards;
+  }
+
+  [data-forge-scope="tooltip"][data-forge-part="content"][data-state="open"] {
+    animation: forge-fade-in 100ms var(--forge-overlay-ease-in);
+  }
+  [data-forge-scope="tooltip"][data-forge-part="content"][data-state="closed"] {
+    animation: forge-fade-out 100ms var(--forge-overlay-ease-out) forwards;
+  }
+
+  [data-forge-scope="hover-card"][data-forge-part="content"][data-state="open"] {
+    animation: forge-slide-up-and-fade 120ms var(--forge-overlay-ease-in);
+  }
+  [data-forge-scope="hover-card"][data-forge-part="content"][data-state="closed"] {
+    animation: forge-slide-down-and-fade 120ms var(--forge-overlay-ease-out) forwards;
+  }
+}
+
+/* sr-only is not motion — always apply regardless of prefers-reduced-motion */
+.forge-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.forge-sr-only-focusable:not(:focus-visible) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}

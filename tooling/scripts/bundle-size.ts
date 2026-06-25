@@ -63,6 +63,12 @@ const THRESHOLDS: Record<string, { warn: number; fail: number }> = {
   select:      { warn: 6_000,  fail: 10_000 },
   combobox:    { warn: 7_000,  fail: 12_000 },
   field:       { warn: 2_000,  fail: 3_500  },
+  // Stateful but lightweight — no floating
+  toggle:             { warn: 1_000,  fail: 2_000  },
+  "toggle-group":     { warn: 1_500,  fail: 2_500  },
+  // Stateless / zero-machine
+  separator:          { warn: 500,    fail: 1_000  },
+  "visually-hidden":  { warn: 500,    fail: 1_000  },
 };
 
 const PACKAGES = Object.keys(THRESHOLDS);

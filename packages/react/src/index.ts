@@ -235,5 +235,20 @@ export { DateRangePicker } from "./components/date-range-picker/DateRangePicker.
 export type { DateRangePickerRootProps, DateRangePickerTriggerProps, DateRangePickerContentProps, DateRangePickerCalendarGridProps, DateRangePickerCalendarCellProps, DateRangePickerHiddenInputsProps } from "./components/date-range-picker/DateRangePicker.js";
 export { useDateRangePicker } from "./components/date-range-picker/use-date-range-picker.js";
 export type { UseDateRangePickerOptions, UseDateRangePickerReturn } from "./components/date-range-picker/use-date-range-picker.js";
+export type { ToggleProps } from "./components/toggle/Toggle.js";
+export { Toggle } from "./components/toggle/Toggle.js";
+export type { UseToggleOptions, UseToggleReturn } from "./components/toggle/use-toggle.js";
+export { useToggle } from "./components/toggle/use-toggle.js";
+export type {
+  ToggleGroupRootProps,
+  ToggleGroupItemProps,
+} from "./components/toggle-group/ToggleGroup.js";
+export { ToggleGroup } from "./components/toggle-group/ToggleGroup.js";
+export type { UseToggleGroupOptions, UseToggleGroupReturn } from "./components/toggle-group/use-toggle-group.js";
+export { useToggleGroup } from "./components/toggle-group/use-toggle-group.js";
+export type { SeparatorProps } from "./components/separator/Separator.js";
+export { Separator } from "./components/separator/Separator.js";
+export type { VisuallyHiddenProps } from "./components/visually-hidden/VisuallyHidden.js";
+export { VisuallyHidden } from "./components/visually-hidden/VisuallyHidden.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";

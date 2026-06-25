@@ -47,6 +47,8 @@ export default defineNuxtModule({
       { name: "useDatePickerControlled", from },
       { name: "useDateRangePicker", from },
       { name: "useDateRangePickerControlled", from },
+      { name: "useToggle", from },
+      { name: "useToggleGroup", from },
     ]);
 
     // Namespace objects — enable <Dialog.Root> / <Popover.Root> / etc. in templates
@@ -66,6 +68,10 @@ export default defineNuxtModule({
     addImports({ name: "TimePicker", from });
     addImports({ name: "DatePicker", from });
     addImports({ name: "DateRangePicker", from });
+    addImports({ name: "Toggle", from });
+    addImports({ name: "ToggleGroup", from });
+    addImports({ name: "Separator", from });
+    addImports({ name: "VisuallyHidden", from });
 
     // ---------------------------------------------------------------------------
     // Individual named components (PascalCase, no prefix collision)
@@ -324,6 +330,26 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of dateRangePickerComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const toggleComponents = ["ToggleRoot"] as const;
+    for (const name of toggleComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const toggleGroupComponents = ["ToggleGroupRoot", "ToggleGroupItem"] as const;
+    for (const name of toggleGroupComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const separatorComponents = ["SeparatorRoot"] as const;
+    for (const name of separatorComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const visuallyHiddenComponents = ["VisuallyHiddenRoot"] as const;
+    for (const name of visuallyHiddenComponents) {
       addComponent({ name, export: name, filePath: from });
     }
   },

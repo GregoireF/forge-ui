@@ -97,6 +97,22 @@
     "./date-range-picker": {
       "types": "./dist/date-range-picker/index.d.ts",
       "import": "./dist/date-range-picker/index.js"
+    },
+    "./toggle": {
+      "types": "./dist/toggle/index.d.ts",
+      "import": "./dist/toggle/index.js"
+    },
+    "./toggle-group": {
+      "types": "./dist/toggle-group/index.d.ts",
+      "import": "./dist/toggle-group/index.js"
+    },
+    "./separator": {
+      "types": "./dist/separator/index.d.ts",
+      "import": "./dist/separator/index.js"
+    },
+    "./visually-hidden": {
+      "types": "./dist/visually-hidden/index.d.ts",
+      "import": "./dist/visually-hidden/index.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -140,7 +156,11 @@
     "@forge-ui/date-field": "workspace:*",
     "@forge-ui/time-picker": "workspace:*",
     "@forge-ui/date-picker": "workspace:*",
-    "@forge-ui/date-range-picker": "workspace:*"
+    "@forge-ui/date-range-picker": "workspace:*",
+    "@forge-ui/toggle": "workspace:*",
+    "@forge-ui/toggle-group": "workspace:*",
+    "@forge-ui/separator": "workspace:*",
+    "@forge-ui/visually-hidden": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",

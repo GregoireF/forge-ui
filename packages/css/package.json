@@ -1,0 +1,20 @@
+{
+  "name": "@forge-ui/css",
+  "version": "0.0.0",
+  "private": false,
+  "sideEffects": ["*.css"],
+  "type": "module",
+  "exports": {
+    ".": "./index.css",
+    "./animations": "./animations.css",
+    "./motion-safe": "./motion-safe.css"
+  },
+  "files": [
+    "index.css",
+    "animations.css",
+    "motion-safe.css"
+  ],
+  "scripts": {
+    "typecheck": "echo 'CSS package — no typecheck'"
+  }
+}

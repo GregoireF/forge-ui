@@ -1,4 +1,4 @@
-import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, NumberInput, Popover, Progress, RadioGroup, Select, Slider, Switch, Tabs, TagsInput, TimePicker, Tooltip, useDialog } from "@forge-ui/react";
+import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, NumberInput, Popover, Progress, RadioGroup, Select, Separator, Slider, Switch, Tabs, TagsInput, TimePicker, Toggle, ToggleGroup, Tooltip, VisuallyHidden, useDialog } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -165,6 +165,34 @@ export default function App() {
         description="Sélection d'une plage de dates (début → fin). Double calendrier, presets."
       >
         <DateRangePickerDemo />
+      </Section>
+
+      <Section
+        title="Toggle"
+        description="Bouton bascule — role=button + aria-pressed. WAI-ARIA Button Pattern §3.5."
+      >
+        <ToggleDemo />
+      </Section>
+
+      <Section
+        title="ToggleGroup"
+        description="Barre d'outils de toggles — role=toolbar + roving tabindex. WAI-ARIA APG Toolbar Pattern."
+      >
+        <ToggleGroupDemo />
+      </Section>
+
+      <Section
+        title="Separator"
+        description="Séparateur sémantique (role=separator) ou décoratif (role=none + aria-hidden)."
+      >
+        <SeparatorDemo />
+      </Section>
+
+      <Section
+        title="VisuallyHidden"
+        description="Contenu visible pour les lecteurs d'écran, invisible visuellement. Utile pour les labels SR."
+      >
+        <VisuallyHiddenDemo />
       </Section>
     </main>
   );
@@ -1686,6 +1714,135 @@ function Section({
       <p style={sectionDescStyle}>{description}</p>
       {children}
     </section>
+  );
+}
+
+/* ── Toggle ─────────────────────────────────────────────────────────────────── */
+
+function ToggleDemo() {
+  return (
+    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+      <Toggle
+        data-testid="toggle-bold"
+        defaultPressed={false}
+        onPressedChange={(p) => console.log("[Toggle] bold:", p)}
+        aria-label="Gras"
+        style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer", background: "transparent", fontWeight: "bold" }}
+      >
+        <VisuallyHidden>Activer le</VisuallyHidden>
+        B
+      </Toggle>
+
+      <Toggle
+        data-testid="toggle-italic"
+        defaultPressed={true}
+        aria-label="Italique"
+        style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer", background: "transparent", fontStyle: "italic" }}
+      >
+        I
+      </Toggle>
+
+      <Toggle
+        data-testid="toggle-disabled"
+        disabled
+        aria-label="Souligné (désactivé)"
+        style={{ padding: "0.5rem 1rem", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "not-allowed", background: "transparent", opacity: 0.4 }}
+      >
+        U
+      </Toggle>
+    </div>
+  );
+}
+
+/* ── ToggleGroup ─────────────────────────────────────────────────────────────── */
+
+function ToggleGroupDemo() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <ToggleGroup.Root
+        data-testid="toggle-group-text-align"
+        type="single"
+        aria-label="Alignement du texte"
+        style={{ display: "inline-flex", gap: "0.25rem", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem" }}
+      >
+        <ToggleGroup.Item
+          value="left"
+          aria-label="Aligner à gauche"
+          style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent" }}
+        >
+          ←
+        </ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="center"
+          aria-label="Centrer"
+          style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent" }}
+        >
+          ↔
+        </ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="right"
+          aria-label="Aligner à droite"
+          style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent" }}
+        >
+          →
+        </ToggleGroup.Item>
+      </ToggleGroup.Root>
+
+      <ToggleGroup.Root
+        data-testid="toggle-group-formatting"
+        type="multiple"
+        aria-label="Formatage du texte"
+        style={{ display: "inline-flex", gap: "0.25rem", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem" }}
+      >
+        <ToggleGroup.Item value="bold" aria-label="Gras" style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent", fontWeight: "bold" }}>B</ToggleGroup.Item>
+        <ToggleGroup.Item value="italic" aria-label="Italique" style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent", fontStyle: "italic" }}>I</ToggleGroup.Item>
+        <ToggleGroup.Item value="underline" aria-label="Souligné" style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent", textDecoration: "underline" }}>U</ToggleGroup.Item>
+      </ToggleGroup.Root>
+    </div>
+  );
+}
+
+/* ── Separator ───────────────────────────────────────────────────────────────── */
+
+function SeparatorDemo() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", maxWidth: "400px" }}>
+      <p style={{ margin: 0 }}>Contenu au-dessus</p>
+
+      <Separator
+        data-testid="separator-semantic"
+        style={{ border: "none", borderTop: "1px solid #e2e8f0", margin: 0 }}
+      />
+
+      <p style={{ margin: 0 }}>Séparateur sémantique (role=separator)</p>
+
+      <Separator
+        data-testid="separator-decorative"
+        decorative
+        style={{ border: "none", borderTop: "1px dashed #e2e8f0", margin: 0 }}
+      />
+
+      <p style={{ margin: 0 }}>Séparateur décoratif (role=none, aria-hidden)</p>
+    </div>
+  );
+}
+
+/* ── VisuallyHidden ──────────────────────────────────────────────────────────── */
+
+function VisuallyHiddenDemo() {
+  return (
+    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+      <button
+        data-testid="icon-button-with-visually-hidden"
+        style={btnStyle}
+        aria-label={undefined}
+      >
+        ✕ <VisuallyHidden>Fermer la fenêtre</VisuallyHidden>
+      </button>
+      <span style={{ fontSize: "0.875rem", color: "#64748b" }}>
+        Le bouton ci-dessus a un label SR "Fermer la fenêtre" invisible visuellement.
+      </span>
+    </div>
   );
 }
 

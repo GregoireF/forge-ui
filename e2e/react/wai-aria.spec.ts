@@ -306,6 +306,158 @@ test.describe("WAI-ARIA compliance — React playground", () => {
     expect(results.violations).toEqual([]);
   });
 
+  // ── Toggle (WAI-ARIA Button Pattern §3.5) ─────────────────────────────────
+  // A toggle is a button that maintains a pressed/not-pressed state.
+  // It must use role="button" (native <button>) + aria-pressed, NOT role="checkbox".
+  // APG §3.5: "A toggle button is created by setting the aria-pressed attribute on a button."
+
+  test("Toggle: has type=button (native element)", async ({ page }) => {
+    const toggle = page.locator('[data-testid="toggle-bold"]');
+    await expect(toggle).toHaveAttribute("type", "button");
+  });
+
+  test("Toggle unpressed: aria-pressed=false", async ({ page }) => {
+    const toggle = page.locator('[data-testid="toggle-bold"]');
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("Toggle: aria-pressed=true after click", async ({ page }) => {
+    const toggle = page.locator('[data-testid="toggle-bold"]');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("Toggle defaultPressed=true: aria-pressed=true initially", async ({ page }) => {
+    const toggle = page.locator('[data-testid="toggle-italic"]');
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("Toggle disabled: aria-disabled=true", async ({ page }) => {
+    const toggle = page.locator('[data-testid="toggle-disabled"]');
+    await expect(toggle).toHaveAttribute("aria-disabled", "true");
+  });
+
+  test("Toggle disabled: click does not change pressed state", async ({ page }) => {
+    const toggle = page.locator('[data-testid="toggle-disabled"]');
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await toggle.click({ force: true });
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("Toggle: no axe violations (WCAG2A + WCAG21AA)", async ({ page }) => {
+    const results = await new AxeBuilder({ page })
+      .include('[data-testid="toggle-bold"]')
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  // ── ToggleGroup / Toolbar (WAI-ARIA APG Toolbar Pattern) ─────────────────
+  // A toolbar is a container for a group of controls — typically toggle buttons.
+  // APG mandates role="toolbar" (not role="group") when arrow-key navigation applies.
+  // Each item keeps role="button" + aria-pressed; roving tabindex handles focus.
+
+  test("ToggleGroup: root has role=toolbar", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-text-align"]');
+    await expect(toolbar).toHaveAttribute("role", "toolbar");
+  });
+
+  test("ToggleGroup: root has aria-label", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-text-align"]');
+    const label = await toolbar.getAttribute("aria-label");
+    expect(label).toBeTruthy();
+  });
+
+  test("ToggleGroup: items have aria-pressed attribute", async ({ page }) => {
+    const items = page.locator('[data-testid="toggle-group-text-align"] [data-forge-part="item"]');
+    const count = await items.count();
+    for (let i = 0; i < count; i++) {
+      await expect(items.nth(i)).toHaveAttribute("aria-pressed");
+    }
+  });
+
+  test("ToggleGroup single: click selects item, aria-pressed=true", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-text-align"]');
+    const items = toolbar.locator('[data-forge-part="item"]');
+    await items.nth(0).click();
+    await expect(items.nth(0)).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("ToggleGroup single: switching selection leaves only one pressed", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-text-align"]');
+    const items = toolbar.locator('[data-forge-part="item"]');
+    await items.nth(0).click();
+    await items.nth(1).click();
+    const pressedItems = toolbar.locator('[aria-pressed="true"]');
+    await expect(pressedItems).toHaveCount(1);
+  });
+
+  test("ToggleGroup multiple: multiple items can be aria-pressed=true", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-formatting"]');
+    const items = toolbar.locator('[data-forge-part="item"]');
+    await items.nth(0).click();
+    await items.nth(1).click();
+    const pressedItems = toolbar.locator('[aria-pressed="true"]');
+    await expect(pressedItems).toHaveCount(2);
+  });
+
+  test("ToggleGroup: roving tabindex — only one item has tabindex=0", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-text-align"]');
+    const items = toolbar.locator('[data-forge-part="item"]');
+    const tabIndices = await items.evaluateAll((els) => els.map((el) => el.getAttribute("tabindex")));
+    const zeroCount = tabIndices.filter((t) => t === "0").length;
+    expect(zeroCount).toBe(1);
+  });
+
+  test("ToggleGroup: ArrowRight moves focus to next item", async ({ page }) => {
+    const toolbar = page.locator('[data-testid="toggle-group-text-align"]');
+    const items = toolbar.locator('[data-forge-part="item"]');
+    await items.first().focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(items.nth(1)).toBeFocused();
+  });
+
+  test("ToggleGroup: no axe violations (WCAG2A + WCAG21AA)", async ({ page }) => {
+    const results = await new AxeBuilder({ page })
+      .include('[data-testid="toggle-group-text-align"]')
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  // ── Separator (WAI-ARIA §6.15) ────────────────────────────────────────────
+  // A semantic separator carries role=separator + aria-orientation.
+  // A decorative separator must have role=none + aria-hidden=true
+  // so AT skips it entirely (it conveys no structural information).
+
+  test("Separator semantic: has role=separator", async ({ page }) => {
+    const sep = page.locator('[data-testid="separator-semantic"]');
+    await expect(sep).toHaveAttribute("role", "separator");
+  });
+
+  test("Separator semantic: has aria-orientation=horizontal (default)", async ({ page }) => {
+    const sep = page.locator('[data-testid="separator-semantic"]');
+    await expect(sep).toHaveAttribute("aria-orientation", "horizontal");
+  });
+
+  test("Separator decorative: has role=none", async ({ page }) => {
+    const sep = page.locator('[data-testid="separator-decorative"]');
+    await expect(sep).toHaveAttribute("role", "none");
+  });
+
+  test("Separator decorative: has aria-hidden=true", async ({ page }) => {
+    const sep = page.locator('[data-testid="separator-decorative"]');
+    await expect(sep).toHaveAttribute("aria-hidden", "true");
+  });
+
+  test("Separator: no axe violations (WCAG2A + WCAG21AA)", async ({ page }) => {
+    const results = await new AxeBuilder({ page })
+      .include('[data-testid="separator-semantic"]')
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
   // ── TagsInput (WAI-ARIA live region §7.4.3) ───────────────────────────────
   // TagsInput uses a live region (role=status, aria-live=polite) to announce
   // tag additions/removals to screen readers without requiring focus.
