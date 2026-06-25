@@ -11,7 +11,7 @@
   "dependencies": {
     "@astrojs/react": "^4.2.0",
     "@astrojs/starlight": "^0.33.0",
-    "@astrojs/vue": "^5.0.0",
+    "@astrojs/vue": "^7.0.0",
     "@forge-ui/react": "workspace:*",
     "@forge-ui/vue": "workspace:*",
     "astro": "^5.0.0",
