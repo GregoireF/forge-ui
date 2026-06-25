@@ -78,8 +78,11 @@ export function connectSelect(
   const side = getSideFromPlacement(context.currentPlacement);
   const align = getAlignFromPlacement(context.currentPlacement);
 
+  // When allOptions is provided (virtual scrolling), typeahead traverses the full set.
+  const effectiveOpts = context.allOptions ?? context.options;
+
   const typeahead = createTypeahead(
-    () => context.options,
+    () => effectiveOpts,
     () => context.highlighted,
     (value) => send({ type: "HIGHLIGHT_OPTION", value }),
   );
@@ -155,6 +158,13 @@ export function connectSelect(
 
   return {
     isOpen,
+
+    /**
+     * Effective options list — equals `allOptions` when provided (virtual scroll mode),
+     * otherwise equals the DOM-registered `options`.
+     * Bindings use this to iterate visible options.
+     */
+    options: effectiveOpts,
 
     /** The label text for the currently selected value(s). Empty string when nothing is selected. */
     valueLabel: context.value.length === 0

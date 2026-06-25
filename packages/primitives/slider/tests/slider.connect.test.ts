@@ -544,3 +544,100 @@ describe("connectSlider — aria-valuetext via getValueLabel", () => {
     expect((api.getThumbProps(1) as Record<string, unknown>)["aria-valuetext"]).toBe("end: 80");
   });
 });
+
+// ---------------------------------------------------------------------------
+// getMarkerGroupProps / getMarkerProps — tick marks
+// ---------------------------------------------------------------------------
+
+describe("connectSlider — getMarkerGroupProps", () => {
+  it("data-forge-part=marker-group", () => {
+    const { api } = makeApi();
+    expect(api.getMarkerGroupProps()["data-forge-part"]).toBe("marker-group");
+  });
+
+  it("aria-hidden=true (decorative)", () => {
+    const { api } = makeApi();
+    expect(api.getMarkerGroupProps()["aria-hidden"]).toBe(true);
+  });
+
+  it("data-orientation reflects orientation", () => {
+    const { api } = makeApi({ orientation: "vertical" });
+    expect(api.getMarkerGroupProps()["data-orientation"]).toBe("vertical");
+  });
+
+  it("style has pointerEvents:none", () => {
+    const { api } = makeApi();
+    const style = api.getMarkerGroupProps().style as Record<string, string>;
+    expect(style.pointerEvents).toBe("none");
+  });
+});
+
+describe("connectSlider — getMarkerProps", () => {
+  it("data-forge-part=marker", () => {
+    const { api } = makeApi();
+    expect(api.getMarkerProps(50)["data-forge-part"]).toBe("marker");
+  });
+
+  it("data-value reflects mark value", () => {
+    const { api } = makeApi();
+    expect(api.getMarkerProps(25)["data-value"]).toBe(25);
+  });
+
+  it("horizontal: left=percent%, transform=translateX(-50%)", () => {
+    const { api } = makeApi({ min: 0, max: 100, values: [50] });
+    const style = api.getMarkerProps(25).style as Record<string, string>;
+    expect(style.left).toBe("25%");
+    expect(style.transform).toBe("translateX(-50%)");
+  });
+
+  it("vertical: bottom=percent%, transform=translateY(50%)", () => {
+    const { api } = makeApi({ min: 0, max: 100, values: [50], orientation: "vertical" });
+    const style = api.getMarkerProps(75).style as Record<string, string>;
+    expect(style.bottom).toBe("75%");
+    expect(style.transform).toBe("translateY(50%)");
+  });
+
+  it("data-in-range present when mark within single thumb range [min..value]", () => {
+    const { api } = makeApi({ values: [70], min: 0, max: 100 });
+    expect(api.getMarkerProps(50)["data-in-range"]).toBe("");
+  });
+
+  it("data-in-range absent when mark above single thumb value", () => {
+    const { api } = makeApi({ values: [40], min: 0, max: 100 });
+    expect(api.getMarkerProps(60)["data-in-range"]).toBeUndefined();
+  });
+
+  it("data-in-range present when mark within range [low..high] (multi-thumb)", () => {
+    const { api } = makeApi({ values: [20, 80], min: 0, max: 100 });
+    expect(api.getMarkerProps(50)["data-in-range"]).toBe("");
+  });
+
+  it("data-in-range absent when mark outside range [low..high] (multi-thumb)", () => {
+    const { api } = makeApi({ values: [30, 70], min: 0, max: 100 });
+    expect(api.getMarkerProps(10)["data-in-range"]).toBeUndefined();
+    expect(api.getMarkerProps(90)["data-in-range"]).toBeUndefined();
+  });
+
+  it("clamps percent to 0 when mark below min", () => {
+    const { api } = makeApi({ min: 10, max: 100, values: [50] });
+    const style = api.getMarkerProps(0).style as Record<string, string>;
+    expect(style.left).toBe("0%");
+  });
+
+  it("clamps percent to 100 when mark above max", () => {
+    const { api } = makeApi({ min: 0, max: 100, values: [50] });
+    const style = api.getMarkerProps(120).style as Record<string, string>;
+    expect(style.left).toBe("100%");
+  });
+
+  it("marks array exposed on api", () => {
+    const marks = [{ value: 0 }, { value: 50, label: "Mid" }, { value: 100 }];
+    const { api } = makeApi({ marks });
+    expect(api.marks).toEqual(marks);
+  });
+
+  it("marks defaults to empty array when not set", () => {
+    const { api } = makeApi();
+    expect(api.marks).toEqual([]);
+  });
+});

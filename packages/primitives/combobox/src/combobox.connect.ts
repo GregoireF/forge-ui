@@ -57,6 +57,8 @@ export function connectCombobox(
     value: context.value,
     valueLabel,
     valueLabels,
+    /** Map of value → label for selected items. Survives portal unmount. Used by TagsInput. */
+    selectedLabels: context.selectedLabels,
     filteredOptions,
     hasCreateOption,
     createOptionLabel: context.inputValue,

@@ -34,6 +34,8 @@ export type { UseRadioGroupOptions } from "./components/radio-group/use-radio-gr
 export { useRadioGroup } from "./components/radio-group/use-radio-group.js";
 export type {
   SliderHiddenInputProps,
+  SliderMarkerGroupProps,
+  SliderMarkerProps,
   SliderRangeProps,
   SliderRootProps,
   SliderThumbProps,
@@ -61,6 +63,9 @@ export type {
   ComboboxLabelProps,
   ComboboxPortalProps,
   ComboboxRootProps,
+  ComboboxTagDeleteProps,
+  ComboboxTagProps,
+  ComboboxTagsInputProps,
   ComboboxTriggerProps,
 } from "./components/combobox/Combobox.js";
 export { Combobox } from "./components/combobox/Combobox.js";

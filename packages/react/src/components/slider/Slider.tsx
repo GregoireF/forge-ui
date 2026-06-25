@@ -1,3 +1,4 @@
+import type { SliderMark } from "@forge-ui/slider";
 import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { Slot } from "../shared/Slot.js";
@@ -27,6 +28,7 @@ export interface SliderRootProps extends Omit<HTMLAttributes<HTMLDivElement>, "d
   step?: number;
   orientation?: "horizontal" | "vertical";
   disabled?: boolean;
+  marks?: SliderMark[];
   getValueLabel?: (value: number, index: number) => string;
   onValueChange?: (values: number[]) => void;
   onValueCommit?: (values: number[]) => void;
@@ -43,6 +45,7 @@ function Root({
   step,
   orientation,
   disabled,
+  marks,
   getValueLabel,
   onValueChange,
   onValueCommit,
@@ -58,6 +61,7 @@ function Root({
     ...(step !== undefined && { step }),
     ...(orientation !== undefined && { orientation }),
     ...(disabled !== undefined && { disabled }),
+    ...(marks !== undefined && { marks }),
     ...(getValueLabel !== undefined && { getValueLabel }),
     ...(onValueChange !== undefined && { onValueChange }),
     ...(onValueCommit !== undefined && { onValueCommit }),
@@ -146,6 +150,37 @@ function HiddenInput({ name, index = 0 }: SliderHiddenInputProps) {
 }
 
 // ---------------------------------------------------------------------------
+// MarkerGroup — container for tick marks, positioned relative to the track
+// ---------------------------------------------------------------------------
+
+export interface SliderMarkerGroupProps extends HTMLAttributes<HTMLDivElement> {}
+
+function MarkerGroup({ style: userStyle, ...rest }: SliderMarkerGroupProps) {
+  const api = useCtx();
+  const { style: connectStyle, ...groupAttrs } = api.getMarkerGroupProps();
+  return <div {...groupAttrs} {...rest} style={{ ...connectStyle, ...userStyle }} />;
+}
+
+// ---------------------------------------------------------------------------
+// Marker — single tick mark at a given value
+// ---------------------------------------------------------------------------
+
+export interface SliderMarkerProps extends HTMLAttributes<HTMLSpanElement> {
+  value: number;
+  children?: ReactNode;
+}
+
+function Marker({ value: markValue, style: userStyle, children, ...rest }: SliderMarkerProps) {
+  const api = useCtx();
+  const { style: connectStyle, ...markerAttrs } = api.getMarkerProps(markValue);
+  return (
+    <span {...markerAttrs} {...rest} style={{ ...connectStyle, ...userStyle }}>
+      {children}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
 
@@ -155,4 +190,6 @@ export const Slider = {
   Range,
   Thumb,
   HiddenInput,
+  MarkerGroup,
+  Marker,
 } as const;

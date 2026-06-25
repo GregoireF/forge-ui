@@ -279,6 +279,7 @@ export function createSliderMachine(options: CreateSliderOptions) {
       disabled: options.disabled ?? false,
       trackEl: null,
       activeThumb: -1,
+      ...(options.marks !== undefined && { marks: options.marks }),
       ...(options.getValueLabel !== undefined && { getValueLabel: options.getValueLabel }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
       ...(options.onValueCommit !== undefined && { onValueCommit: options.onValueCommit }),

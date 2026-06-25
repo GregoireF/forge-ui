@@ -1,3 +1,4 @@
+import type { SliderMark } from "@forge-ui/slider";
 import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { Slot } from "../shared/Slot.js";
@@ -27,6 +28,7 @@ const SliderRoot = defineComponent({
     step: { type: Number, default: undefined },
     orientation: { type: String as PropType<"horizontal" | "vertical">, default: undefined },
     disabled: { type: Boolean, default: undefined },
+    marks: { type: Array as PropType<SliderMark[]>, default: undefined },
     getValueLabel: { type: Function as PropType<(v: number, i: number) => string>, default: undefined },
     onValueChange: { type: Function as PropType<(v: number[]) => void>, default: undefined },
     onValueCommit: { type: Function as PropType<(v: number[]) => void>, default: undefined },
@@ -43,6 +45,7 @@ const SliderRoot = defineComponent({
       ...(props.step !== undefined && { step: props.step }),
       ...(props.orientation !== undefined && { orientation: props.orientation }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
+      ...(props.marks !== undefined && { marks: props.marks }),
       ...(props.getValueLabel !== undefined && { getValueLabel: props.getValueLabel }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
       ...(props.onValueCommit !== undefined && { onValueCommit: props.onValueCommit }),
@@ -150,6 +153,41 @@ const SliderHiddenInput = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
+// MarkerGroup — container for tick marks, positioned relative to the track
+// ---------------------------------------------------------------------------
+
+const SliderMarkerGroup = defineComponent({
+  name: "ForgeSliderMarkerGroup",
+  setup(_, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      const { style: connectStyle, ...groupAttrs } = api.getMarkerGroupProps();
+      const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
+      return h("div", { ...groupAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } }, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// Marker — single tick mark at a given value
+// ---------------------------------------------------------------------------
+
+const SliderMarker = defineComponent({
+  name: "ForgeSliderMarker",
+  props: {
+    value: { type: Number, required: true as const },
+  },
+  setup(props, { slots, attrs }) {
+    const api = useCtx();
+    return () => {
+      const { style: connectStyle, ...markerAttrs } = api.getMarkerProps(props.value);
+      const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
+      return h("span", { ...markerAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } }, slots.default?.());
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
 
@@ -159,6 +197,8 @@ export const Slider = {
   Range: SliderRange,
   Thumb: SliderThumb,
   HiddenInput: SliderHiddenInput,
+  MarkerGroup: SliderMarkerGroup,
+  Marker: SliderMarker,
 } as const;
 
-export { SliderHiddenInput, SliderRange, SliderRoot, SliderThumb, SliderTrack };
+export { SliderHiddenInput, SliderMarker, SliderMarkerGroup, SliderRange, SliderRoot, SliderThumb, SliderTrack };

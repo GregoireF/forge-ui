@@ -21,6 +21,13 @@ export interface CalendarDate {
   year: number;
   month: number; // 1-indexed (1=January)
   day: number;
+  /**
+   * IANA timezone identifier (e.g. "America/New_York"). Optional — omit for
+   * timezone-naive dates (the common case). When present, consumers are
+   * responsible for timezone-aware rendering via Intl.DateTimeFormat.
+   * forge-ui calendar arithmetic always ignores this field.
+   */
+  timezone?: string;
 }
 
 /**

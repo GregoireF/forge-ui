@@ -55,6 +55,10 @@ export interface SelectContext {
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;
   onHighlightChange?: (value: string | null) => void;
+  /** Static options list — bypasses DOM REGISTER/UNREGISTER. Required for virtual scrolling. */
+  allOptions?: SelectOption[];
+  /** Called after every highlighted change — user scrolls their virtualizer to the given index. */
+  onHighlightedScroll?: (value: string, index: number) => void;
 }
 
 export type SelectState = "closed" | "open";

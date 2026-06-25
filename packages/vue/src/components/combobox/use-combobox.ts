@@ -9,6 +9,10 @@ export interface UseComboboxOptions extends Omit<CreateComboboxMachineOptions, "
 
 export interface UseComboboxReturn {
   isOpen: ComputedRef<boolean>;
+  isDisabled: ComputedRef<boolean>;
+  isReadOnly: ComputedRef<boolean>;
+  /** Map of value → label for selected items. Used by TagsInput sub-component. */
+  selectedLabels: ComputedRef<Record<string, string>>;
   send: ComboboxSend;
   setOpen: (open: boolean) => void;
   getInputValue: () => string;
@@ -47,6 +51,9 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
 
   return {
     isOpen,
+    isDisabled: computed(() => api.value.isDisabled),
+    isReadOnly: computed(() => api.value.isReadOnly),
+    selectedLabels: computed(() => api.value.selectedLabels),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
     getInputValue: () => api.value.inputValue,

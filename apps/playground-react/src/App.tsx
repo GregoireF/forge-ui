@@ -911,11 +911,30 @@ function ComboboxDemo() {
       </div>
 
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Multi-select</p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Multi-select avec TagsInput</p>
         <Combobox.Root multiple>
           <Combobox.Label style={labelStyle}>Langages maîtrisés</Combobox.Label>
+          {/* Tags affichés au-dessus de l'input */}
+          <Combobox.TagsInput style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "4px" }}>
+            {languages.map((l) => (
+              <Combobox.Tag
+                key={l.value}
+                value={l.value}
+                style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "2px 6px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "4px", fontSize: "0.75rem" }}
+              >
+                {l.label}
+                <Combobox.TagDelete
+                  value={l.value}
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "#3b82f6", fontSize: "0.75rem", lineHeight: 1 }}
+                >
+                  ✕
+                </Combobox.TagDelete>
+              </Combobox.Tag>
+            ))}
+          </Combobox.TagsInput>
           <div style={{ display: "flex", gap: "0.25rem" }}>
             <Combobox.Input
+              data-testid="combobox-tags-input"
               style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
             />
             <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
@@ -1270,20 +1289,87 @@ function RadioGroupDemo() {
 
 /* ── Slider ──────────────────────────────────────────────────────────────────── */
 
+const PRICE_MARKS = [
+  { value: 0, label: "0€" },
+  { value: 25, label: "25€" },
+  { value: 50, label: "50€" },
+  { value: 75, label: "75€" },
+  { value: 100, label: "100€" },
+];
+
 function SliderDemo() {
   const [value, setValue] = useState(50);
+  const [range, setRange] = useState([20, 80]);
+  const [vertical, setVertical] = useState(60);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%", maxWidth: "320px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Volume</span>
-        <code data-testid="slider-value" style={{ fontSize: "0.875rem", color: "#64748b" }}>{value}</code>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", width: "100%", maxWidth: "360px" }}>
+      {/* Horizontal avec marks */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+          <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Prix max</span>
+          <code data-testid="slider-value" style={{ fontSize: "0.875rem", color: "#64748b" }}>{value}€</code>
+        </div>
+        <Slider.Root
+          value={value}
+          onValueChange={(vals) => setValue(vals[0])}
+          min={0} max={100} step={25}
+          marks={PRICE_MARKS}
+          style={{ position: "relative", height: "28px", display: "flex", alignItems: "center" }}
+          data-testid="slider-root"
+        >
+          <Slider.Track data-testid="slider-track" style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
+            <Slider.Range style={{ position: "absolute", height: "100%", background: "#1e293b", borderRadius: "2px" }} />
+          </Slider.Track>
+          <Slider.Thumb aria-label="Prix max" data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
+          <Slider.MarkerGroup style={{ position: "absolute", width: "100%", top: "20px", left: 0 }}>
+            {PRICE_MARKS.map((m) => (
+              <Slider.Marker key={m.value} value={m.value} style={{ fontSize: "0.7rem", color: "#94a3b8", whiteSpace: "nowrap" }}>
+                {m.label}
+              </Slider.Marker>
+            ))}
+          </Slider.MarkerGroup>
+        </Slider.Root>
       </div>
-      <Slider.Root value={value} onValueChange={(vals) => setValue(vals[0])} min={0} max={100} step={1} style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}>
-        <Slider.Track data-testid="slider-track" style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
-          <Slider.Range style={{ position: "absolute", height: "100%", background: "#1e293b", borderRadius: "2px" }} />
-        </Slider.Track>
-        <Slider.Thumb aria-label="Valeur" data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
-      </Slider.Root>
+
+      {/* Range slider (2 thumbs) */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+          <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Fourchette</span>
+          <code style={{ fontSize: "0.875rem", color: "#64748b" }}>{range[0]}–{range[1]}</code>
+        </div>
+        <Slider.Root
+          value={range}
+          onValueChange={(vals) => setRange(vals)}
+          min={0} max={100} step={1}
+          style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}
+          data-testid="slider-range-root"
+        >
+          <Slider.Track style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
+            <Slider.Range style={{ position: "absolute", height: "100%", background: "#6366f1", borderRadius: "2px" }} />
+          </Slider.Track>
+          <Slider.Thumb index={0} aria-label="Minimum" style={{ display: "block", width: "18px", height: "18px", borderRadius: "50%", background: "#fff", border: "2px solid #6366f1", cursor: "grab" }} />
+          <Slider.Thumb index={1} aria-label="Maximum" style={{ display: "block", width: "18px", height: "18px", borderRadius: "50%", background: "#fff", border: "2px solid #6366f1", cursor: "grab" }} />
+        </Slider.Root>
+      </div>
+
+      {/* Vertical */}
+      <div style={{ display: "flex", gap: "1rem", alignItems: "flex-end" }}>
+        <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Volume vertical</span>
+        <Slider.Root
+          value={vertical}
+          onValueChange={(vals) => setVertical(vals[0])}
+          orientation="vertical"
+          min={0} max={100} step={1}
+          data-testid="slider-vertical-root"
+          style={{ position: "relative", width: "20px", height: "120px", display: "flex", justifyContent: "center" }}
+        >
+          <Slider.Track style={{ position: "absolute", width: "4px", height: "100%", background: "#e2e8f0", borderRadius: "2px" }}>
+            <Slider.Range style={{ position: "absolute", width: "100%", background: "#1e293b", borderRadius: "2px" }} />
+          </Slider.Track>
+          <Slider.Thumb aria-label="Volume" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", cursor: "grab" }} />
+        </Slider.Root>
+        <code style={{ fontSize: "0.875rem", color: "#64748b" }}>{vertical}</code>
+      </div>
     </div>
   );
 }
@@ -1472,10 +1558,17 @@ function TimePickerDemo() {
 
 function DatePickerDemo() {
   const [selected, setSelected] = useState<string | null>(null);
+  // min/max: only allow dates within 30 days around today
+  const today = new Date();
+  const min = { year: today.getFullYear(), month: today.getMonth() + 1, day: 1 };
+  const max = { year: today.getFullYear(), month: today.getMonth() + 1, day: 28 };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <p style={{ margin: 0, fontSize: "0.75rem", color: "#94a3b8" }}>Dates disponibles : du {min.day}/{min.month}/{min.year} au {max.day}/{max.month}/{max.year}</p>
       <DatePicker.Root
         data-testid="date-picker-root"
+        min={min}
+        max={max}
         onValueChange={(d) => setSelected(d ? `${d.year}-${String(d.month).padStart(2,"0")}-${String(d.day).padStart(2,"0")}` : null)}
       >
         <DatePicker.Trigger data-testid="date-picker-trigger" style={btnStyle}>

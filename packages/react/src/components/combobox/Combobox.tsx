@@ -257,6 +257,73 @@ function ItemIndicator({ value, children }: ComboboxItemIndicatorProps) {
 }
 
 // ---------------------------------------------------------------------------
+// TagsInput — displays selected values as dismissible tag pills (multi-select)
+// ---------------------------------------------------------------------------
+
+export interface ComboboxTagsInputProps extends HTMLAttributes<HTMLDivElement> {
+  children?: ReactNode;
+}
+
+function TagsInput({ children, ...rest }: ComboboxTagsInputProps) {
+  const api = useCtx();
+  if (!api.value.length) return null;
+  return (
+    <div
+      data-forge-scope="combobox"
+      data-forge-part="tags-input"
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+}
+
+export interface ComboboxTagProps extends HTMLAttributes<HTMLSpanElement> {
+  value: string;
+  children?: ReactNode;
+}
+
+function Tag({ value: tagValue, children, ...rest }: ComboboxTagProps) {
+  const api = useCtx();
+  if (!api.value.includes(tagValue)) return null;
+  const label = api.selectedLabels[tagValue] ?? tagValue;
+  return (
+    <span
+      data-forge-scope="combobox"
+      data-forge-part="tag"
+      data-value={tagValue}
+      {...rest}
+    >
+      {children ?? label}
+    </span>
+  );
+}
+
+export interface ComboboxTagDeleteProps extends HTMLAttributes<HTMLButtonElement> {
+  value: string;
+}
+
+function TagDelete({ value: tagValue, ...rest }: ComboboxTagDeleteProps) {
+  const api = useCtx();
+  return (
+    <button
+      type="button"
+      aria-label={`Remove ${api.selectedLabels[tagValue] ?? tagValue}`}
+      data-forge-scope="combobox"
+      data-forge-part="tag-delete"
+      data-value={tagValue}
+      {...rest}
+      onClick={(e) => {
+        (rest as HTMLAttributes<HTMLButtonElement>).onClick?.(e);
+        if (!api.isDisabled && !api.isReadOnly) {
+          api.send({ type: "SELECT_OPTION", value: tagValue });
+        }
+      }}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Group + GroupLabel
 // ---------------------------------------------------------------------------
 
@@ -324,6 +391,16 @@ export const Combobox = {
   Group: ComboboxGroupComp,
   GroupLabel: ComboboxGroupLabelComp,
   CreateOption,
+  TagsInput,
+  Tag,
+  TagDelete,
 } as const;
 
-export { ComboboxGroupComp as ComboboxGroup, ComboboxGroupLabelComp as ComboboxGroupLabel, CreateOption as ComboboxCreateOption };
+export {
+  ComboboxGroupComp as ComboboxGroup,
+  ComboboxGroupLabelComp as ComboboxGroupLabel,
+  CreateOption as ComboboxCreateOption,
+  Tag as ComboboxTag,
+  TagDelete as ComboboxTagDelete,
+  TagsInput as ComboboxTagsInput,
+};

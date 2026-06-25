@@ -37,6 +37,8 @@ export { useRadioGroup } from "./components/radio-group/use-radio-group.js";
 export {
   Slider,
   SliderHiddenInput,
+  SliderMarker,
+  SliderMarkerGroup,
   SliderRange,
   SliderRoot,
   SliderThumb,
@@ -67,6 +69,9 @@ export {
   ComboboxLabel,
   ComboboxPortal,
   ComboboxRoot,
+  ComboboxTag,
+  ComboboxTagDelete,
+  ComboboxTagsInput,
   ComboboxTrigger,
 } from "./components/combobox/Combobox.js";
 export type { UseComboboxOptions } from "./components/combobox/use-combobox.js";

@@ -54,6 +54,7 @@ export function connectSlider(
     percents,
     isDragging: snapshot.value === "dragging",
     activeThumb: context.activeThumb,
+    marks: context.marks ?? [],
 
     getRootProps() {
       return {
@@ -222,6 +223,38 @@ export function connectSlider(
         "aria-hidden": true as const,
         style: { position: "absolute" as const, opacity: 0, pointerEvents: "none" as const },
         onChange() {},
+      };
+    },
+
+    /** Props for the marker-group container — position relative to the track. */
+    getMarkerGroupProps() {
+      return {
+        "data-forge-scope": "slider",
+        "data-forge-part": "marker-group",
+        "data-orientation": orientation,
+        "aria-hidden": true as const,
+        style: { position: "relative" as const, pointerEvents: "none" as const },
+      };
+    },
+
+    /**
+     * Props for a single tick mark at `markValue`.
+     * `data-in-range` is present when the mark falls inside the active range.
+     */
+    getMarkerProps(markValue: number) {
+      const clampedPercent = Math.max(0, Math.min(100, ((markValue - min) / (max - min)) * 100));
+      const lo = values.length > 1 ? Math.min(...values) : min;
+      const hi = Math.max(...values);
+      const inRange = markValue >= lo && markValue <= hi;
+      return {
+        "data-forge-scope": "slider",
+        "data-forge-part": "marker",
+        "data-value": markValue,
+        "data-in-range": inRange ? ("" as const) : undefined,
+        "data-orientation": orientation,
+        style: orientation === "horizontal"
+          ? { position: "absolute" as const, left: `${clampedPercent}%`, transform: "translateX(-50%)" }
+          : { position: "absolute" as const, bottom: `${clampedPercent}%`, transform: "translateY(50%)" },
       };
     },
   };

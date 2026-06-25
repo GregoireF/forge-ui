@@ -1,3 +1,8 @@
+export interface SliderMark {
+  value: number;
+  label?: string;
+}
+
 export interface SliderContext {
   values: number[];
   min: number;
@@ -8,6 +13,8 @@ export interface SliderContext {
   trackEl: Element | null;
   /** Index of the thumb currently being dragged. -1 when not dragging. */
   activeThumb: number;
+  /** Optional tick marks along the track. Purely decorative — no snap behavior. */
+  marks?: SliderMark[];
   getValueLabel?: (value: number, index: number) => string;
   onValueChange?: (values: number[]) => void;
   onValueCommit?: (values: number[]) => void;
@@ -42,6 +49,8 @@ export interface CreateSliderOptions {
   orientation?: "horizontal" | "vertical";
   /** @default false */
   disabled?: boolean;
+  /** Tick marks along the track. Rendered via Slider.MarkerGroup + Slider.Marker. */
+  marks?: SliderMark[];
   /** Produces aria-valuetext for a thumb — use for non-numeric labels ("low", "medium", "high"). */
   getValueLabel?: (value: number, index: number) => string;
   onValueChange?: (values: number[]) => void;

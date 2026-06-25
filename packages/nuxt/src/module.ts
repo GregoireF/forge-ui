@@ -57,6 +57,7 @@ export default defineNuxtModule({
     addImports({ name: "Field", from });
     addImports({ name: "Checkbox", from });
     addImports({ name: "Switch", from });
+    addImports({ name: "Slider", from });
     addImports({ name: "Tooltip", from });
     addImports({ name: "HoverCard", from });
     addImports({ name: "Combobox", from });
@@ -211,6 +212,9 @@ export default defineNuxtModule({
       "ComboboxGroup",
       "ComboboxGroupLabel",
       "ComboboxCreateOption",
+      "ComboboxTagsInput",
+      "ComboboxTag",
+      "ComboboxTagDelete",
     ] as const;
 
     for (const name of tooltipComponents) {
@@ -231,6 +235,20 @@ export default defineNuxtModule({
     ] as const;
 
     for (const name of tagsInputComponents) {
+      addComponent({ name, export: name, filePath: from });
+    }
+
+    const sliderComponents = [
+      "SliderRoot",
+      "SliderTrack",
+      "SliderRange",
+      "SliderThumb",
+      "SliderHiddenInput",
+      "SliderMarkerGroup",
+      "SliderMarker",
+    ] as const;
+
+    for (const name of sliderComponents) {
       addComponent({ name, export: name, filePath: from });
     }
 

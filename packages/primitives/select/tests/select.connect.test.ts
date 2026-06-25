@@ -714,3 +714,43 @@ describe("connectSelect — aria-required / aria-invalid on trigger", () => {
     expect(props["aria-invalid"]).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Virtual scroll: allOptions / onHighlightedScroll
+// ---------------------------------------------------------------------------
+
+describe("connectSelect — virtual scroll (allOptions)", () => {
+  const ALL_OPTIONS: SelectOption[] = [
+    { value: "a", label: "Alpha", disabled: false },
+    { value: "b", label: "Beta", disabled: false },
+    { value: "c", label: "Charlie", disabled: false },
+  ];
+
+  it("options returned from connect equals allOptions when provided", () => {
+    const { api } = makeApi({ allOptions: ALL_OPTIONS, options: OPTIONS });
+    expect(api.options).toEqual(ALL_OPTIONS);
+  });
+
+  it("options returned from connect falls back to context.options when allOptions absent", () => {
+    const { api } = makeApi({ options: OPTIONS });
+    expect(api.options).toEqual(OPTIONS);
+  });
+
+  it("typeahead matches against allOptions when provided", () => {
+    // "a" matches "Alpha" from allOptions (not from OPTIONS)
+    const { api, send } = makeApi({ allOptions: ALL_OPTIONS, options: OPTIONS }, "open");
+    const e = { key: "a", ctrlKey: false, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getTriggerProps().onKeyDown(e);
+    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "a" });
+  });
+
+  it("onHighlightedScroll stored in context and allOptions exposed via api", () => {
+    const onHighlightedScroll = vi.fn();
+    const ctx = makeCtx({ allOptions: ALL_OPTIONS, onHighlightedScroll, highlighted: "a" });
+    const machine = { setContext: vi.fn() };
+    const api = connectSelect(makeSnapshot(ctx, "open"), vi.fn(), machine);
+    // onHighlightedScroll is a context callback wired in machine, verify presence
+    expect(ctx.onHighlightedScroll).toBe(onHighlightedScroll);
+    expect(api.options).toEqual(ALL_OPTIONS);
+  });
+});

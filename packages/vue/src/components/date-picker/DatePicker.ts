@@ -1,10 +1,14 @@
 import type { CalendarDate, CreateDatePickerOptions, DatePreset } from "@forge-ui/date-picker";
-import type { InjectionKey, PropType } from "vue";
+import type { InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
+import { usePresence } from "../../hooks/use-presence.js";
 import type { UseDatePickerReturn } from "./use-date-picker.js";
 import { useDatePicker } from "./use-date-picker.js";
 
 const datePickerKey: InjectionKey<UseDatePickerReturn> = Symbol("forge-date-picker");
+
+type DatePickerPresenceContext = { isPresent: Ref<boolean>; presenceRef: Ref<HTMLElement | null> };
+const datePickerPresenceKey: InjectionKey<DatePickerPresenceContext> = Symbol("forge-date-picker-presence");
 
 function useCtx(): UseDatePickerReturn {
   const ctx = inject(datePickerKey);
@@ -54,6 +58,8 @@ const DatePickerRoot = defineComponent({
 
     watch(api.value, (v) => emit("update:value", v));
 
+    const presence = usePresence(api.isOpen);
+    provide(datePickerPresenceKey, presence);
     provide(datePickerKey, api);
     return () => slots.default?.();
   },
@@ -86,12 +92,27 @@ const DatePickerTrigger = defineComponent({
 
 const DatePickerContent = defineComponent({
   name: "ForgeDatePickerContent",
-  setup(_, { slots, attrs }) {
+  props: {
+    forceMount: { type: Boolean, default: false },
+  },
+  setup(props, { slots, attrs }) {
     const api = useCtx();
+    const sharedPresence = inject(datePickerPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = sharedPresence ?? ownPresence;
+
     return () => {
-      if (!api.isOpen.value) return null;
-      const props = api.getContentProps();
-      return h("div", { ...props, ...attrs }, slots.default?.());
+      if (!props.forceMount && !isPresent.value) return null;
+      const contentProps = api.getContentProps();
+      const closingProps = !api.isOpen.value
+        ? ({ "aria-hidden": true, style: { pointerEvents: "none" } } as const)
+        : {};
+      return h("div", {
+        ...contentProps,
+        ...closingProps,
+        ...attrs,
+        ref(el: HTMLElement | null) { presenceRef.value = el; },
+      }, slots.default?.());
     };
   },
 });

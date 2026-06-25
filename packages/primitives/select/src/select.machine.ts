@@ -72,6 +72,10 @@ export interface CreateSelectMachineOptions {
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;
   onHighlightChange?: (value: string | null) => void;
+  /** Static options list — bypasses DOM REGISTER/UNREGISTER for navigation. Required for virtual scrolling. */
+  allOptions?: import("./select.types.js").SelectOption[];
+  /** Called after every highlighted change — user scrolls their virtualizer to the given index. */
+  onHighlightedScroll?: (value: string, index: number) => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -92,25 +96,36 @@ function invokeOnHighlightChange({ context }: { context: SelectContext }) {
   context.onHighlightChange?.(context.highlighted);
 }
 
+function invokeOnHighlightedScroll({ context }: { context: SelectContext }) {
+  if (!context.highlighted || !context.onHighlightedScroll) return;
+  const effectiveOpts = getEnabled(context.allOptions ?? context.options);
+  const index = effectiveOpts.findIndex((o) => o.value === context.highlighted);
+  if (index >= 0) context.onHighlightedScroll(context.highlighted, index);
+}
+
+function effectiveOptions(context: SelectContext) {
+  return context.allOptions ?? context.options;
+}
+
 function setHighlightedToDefault({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
-  setContext({ highlighted: getDefaultHighlighted(context.options, context.value) });
+  setContext({ highlighted: getDefaultHighlighted(effectiveOptions(context), context.value) });
 }
 
 function highlightNext({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
-  setContext({ highlighted: getNextHighlighted(context.options, context.highlighted) });
+  setContext({ highlighted: getNextHighlighted(effectiveOptions(context), context.highlighted) });
 }
 
 function highlightPrev({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
-  setContext({ highlighted: getPrevHighlighted(context.options, context.highlighted) });
+  setContext({ highlighted: getPrevHighlighted(effectiveOptions(context), context.highlighted) });
 }
 
 function highlightFirst({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
-  const first = getEnabled(context.options)[0]?.value ?? null;
+  const first = getEnabled(effectiveOptions(context))[0]?.value ?? null;
   setContext({ highlighted: first });
 }
 
 function highlightLast({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
-  const enabled = getEnabled(context.options);
+  const enabled = getEnabled(effectiveOptions(context));
   setContext({ highlighted: enabled[enabled.length - 1]?.value ?? null });
 }
 
@@ -197,6 +212,8 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
       ...(options.onHighlightChange !== undefined && { onHighlightChange: options.onHighlightChange }),
+      ...(options.allOptions !== undefined && { allOptions: options.allOptions }),
+      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
     },
     initial: initialOpen ? "open" : "closed",
 
@@ -281,10 +298,10 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
               invokeOnHighlightChange,
             ],
           },
-          HIGHLIGHT_NEXT: { actions: [highlightNext, invokeOnHighlightChange] },
-          HIGHLIGHT_PREV: { actions: [highlightPrev, invokeOnHighlightChange] },
-          HIGHLIGHT_FIRST: { actions: [highlightFirst, invokeOnHighlightChange] },
-          HIGHLIGHT_LAST: { actions: [highlightLast, invokeOnHighlightChange] },
+          HIGHLIGHT_NEXT: { actions: [highlightNext, invokeOnHighlightChange, invokeOnHighlightedScroll] },
+          HIGHLIGHT_PREV: { actions: [highlightPrev, invokeOnHighlightChange, invokeOnHighlightedScroll] },
+          HIGHLIGHT_FIRST: { actions: [highlightFirst, invokeOnHighlightChange, invokeOnHighlightedScroll] },
+          HIGHLIGHT_LAST: { actions: [highlightLast, invokeOnHighlightChange, invokeOnHighlightedScroll] },
 
           REGISTER_OPTION: {
             actions: [({ context, setContext, event }) => {

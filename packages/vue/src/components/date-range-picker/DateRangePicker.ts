@@ -1,10 +1,14 @@
 import type { CalendarDate, CreateDateRangePickerOptions, DateRange } from "@forge-ui/date-range-picker";
-import type { InjectionKey, PropType } from "vue";
+import type { InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
+import { usePresence } from "../../hooks/use-presence.js";
 import type { UseDateRangePickerReturn } from "./use-date-range-picker.js";
 import { useDateRangePicker } from "./use-date-range-picker.js";
 
 const dateRangePickerKey: InjectionKey<UseDateRangePickerReturn> = Symbol("forge-date-range-picker");
+
+type DateRangePickerPresenceContext = { isPresent: Ref<boolean>; presenceRef: Ref<HTMLElement | null> };
+const dateRangePickerPresenceKey: InjectionKey<DateRangePickerPresenceContext> = Symbol("forge-date-range-picker-presence");
 
 function useCtx(): UseDateRangePickerReturn {
   const ctx = inject(dateRangePickerKey);
@@ -62,6 +66,8 @@ const DateRangePickerRoot = defineComponent({
       (v) => emit("update:value", v),
     );
 
+    const presence = usePresence(api.isOpen);
+    provide(dateRangePickerPresenceKey, presence);
     provide(dateRangePickerKey, api);
     return () => slots.default?.();
   },
@@ -94,12 +100,27 @@ const DateRangePickerTrigger = defineComponent({
 
 const DateRangePickerContent = defineComponent({
   name: "ForgeDateRangePickerContent",
-  setup(_, { slots, attrs }) {
+  props: {
+    forceMount: { type: Boolean, default: false },
+  },
+  setup(props, { slots, attrs }) {
     const api = useCtx();
+    const sharedPresence = inject(dateRangePickerPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = sharedPresence ?? ownPresence;
+
     return () => {
-      if (!api.isOpen.value) return null;
-      const props = api.getContentProps();
-      return h("div", { ...props, ...attrs }, slots.default?.());
+      if (!props.forceMount && !isPresent.value) return null;
+      const contentProps = api.getContentProps();
+      const closingProps = !api.isOpen.value
+        ? ({ "aria-hidden": true, style: { pointerEvents: "none" } } as const)
+        : {};
+      return h("div", {
+        ...contentProps,
+        ...closingProps,
+        ...attrs,
+        ref(el: HTMLElement | null) { presenceRef.value = el; },
+      }, slots.default?.());
     };
   },
 });
