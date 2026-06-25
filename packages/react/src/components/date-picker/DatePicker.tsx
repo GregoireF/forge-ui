@@ -105,7 +105,7 @@ export interface DatePickerCalendarHeaderProps extends HTMLAttributes<HTMLDivEle
 
 function CalendarHeader({ children, ...rest }: DatePickerCalendarHeaderProps) {
   const api = useCtx();
-  return <div {...api.getCalendarHeaderProps()} {...rest}>{children}</div>;
+  return <div {...api.getCalendarHeaderProps()} {...rest}>{children ?? api.monthYearLabel}</div>;
 }
 
 // ---------------------------------------------------------------------------
@@ -169,7 +169,7 @@ export interface DatePickerWeekdayHeaderProps extends HTMLAttributes<HTMLDivElem
 
 function WeekdayHeader({ dayIndex, children, ...rest }: DatePickerWeekdayHeaderProps) {
   const api = useCtx();
-  return <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>{children}</div>;
+  return <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>{children ?? api.weekdays[dayIndex]?.narrow}</div>;
 }
 
 // ---------------------------------------------------------------------------
@@ -266,6 +266,18 @@ export interface DatePickerHiddenInputProps {
 function HiddenInput({ name }: DatePickerHiddenInputProps) {
   const api = useCtx();
   return <input {...api.getHiddenInputProps(name)} />;
+}
+
+// ---------------------------------------------------------------------------
+// Namespace export
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Context hook — for consumers who need to access api data inside the tree
+// ---------------------------------------------------------------------------
+
+export function useDatePickerContext(): DatePickerApi {
+  return useCtx();
 }
 
 // ---------------------------------------------------------------------------

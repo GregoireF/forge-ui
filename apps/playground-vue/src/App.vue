@@ -2,7 +2,6 @@
 import {
   Accordion,
   AlertDialog,
-  Checkbox,
   CheckboxControl,
   CheckboxGroup,
   CheckboxGroupAll,
@@ -21,7 +20,6 @@ import {
   FieldGroupLabel,
   FieldRequiredIndicator,
   HoverCard,
-  HoverCardArrow,
   HoverCardContent,
   HoverCardPortal,
   HoverCardRoot,
@@ -32,14 +30,12 @@ import {
   Select,
   NumberInput,
   Slider,
-  Switch,
   SwitchControl,
   SwitchLabel,
   SwitchRoot,
   SwitchThumb,
   Tabs,
   TimePicker,
-  Tooltip,
   TooltipAnchor,
   TooltipContent,
   TooltipPortal,
@@ -48,8 +44,71 @@ import {
   TooltipTrigger,
   TagsInput,
   useDialog,
+  useDatePickerContext,
+  useDateRangePickerContext,
 } from "@forge-ui/vue";
-import { ref } from "vue";
+import { defineComponent, h, ref } from "vue";
+
+const calendarCellStyle = {
+  textAlign: "center" as const,
+  padding: "5px 2px",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontSize: "0.8rem",
+  lineHeight: 1,
+};
+
+const DatePickerCalendarGrid = defineComponent({
+  name: "DatePickerCalendarGrid",
+  setup() {
+    const api = useDatePickerContext();
+    return () => {
+      const weekdays = api.weekdays.value;
+      const weeks = api.weeks.value;
+      return h(DatePicker.CalendarGrid, { style: { display: "grid", gap: "2px" } }, {
+        default: () => [
+          h(DatePicker.CalendarRow, { weekIndex: -1, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" } }, {
+            default: () => weekdays.map((_, i) => h(DatePicker.WeekdayHeader, { dayIndex: i, style: { textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" } })),
+          }),
+          ...weeks.map((week, wi) =>
+            h(DatePicker.CalendarRow, { weekIndex: wi, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" } }, {
+              default: () => week.map((cell) =>
+                h(DatePicker.CalendarCell, { date: cell.date, isOutsideMonth: cell.isOutsideMonth, style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 } })
+              ),
+            })
+          ),
+        ],
+      });
+    };
+  },
+});
+
+const DateRangePickerCalendarGrid = defineComponent({
+  name: "DateRangePickerCalendarGrid",
+  setup() {
+    const api = useDateRangePickerContext();
+    return () => {
+      const weekdays = api.weekdays.value;
+      const weeks = api.weeksPerMonth.value[0] ?? [];
+      return h(DateRangePicker.CalendarGrid, { style: { display: "grid", gap: "2px" } }, {
+        default: () => [
+          h(DateRangePicker.CalendarRow, { weekIndex: -1, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" } }, {
+            default: () => weekdays.map((_, i) => h(DateRangePicker.WeekdayHeader, { dayIndex: i, style: { textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" } })),
+          }),
+          ...weeks.map((week, wi) =>
+            h(DateRangePicker.CalendarRow, { weekIndex: wi, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" } }, {
+              default: () => week.map((cell) =>
+                h(DateRangePicker.CalendarCell, { date: cell.date, isOutsideMonth: cell.isOutsideMonth, style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 } })
+              ),
+            })
+          ),
+        ],
+      });
+    };
+  },
+});
+
+const locale = typeof navigator !== "undefined" ? navigator.language : "en";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
@@ -1181,6 +1240,8 @@ const radioGroupValue = ref<string>("react");
       <div style="display:flex;flex-direction:column;gap:0.75rem">
         <DatePicker.Root
           data-testid="date-picker-root"
+          :locale="locale"
+          :first-day-of-week="1"
           @value-change="(d) => datePickerSelected = d ? `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}` : null"
         >
           <DatePicker.Trigger data-testid="date-picker-trigger" :style="btnStyle">
@@ -1194,12 +1255,12 @@ const radioGroupValue = ref<string>("react");
               padding: '1rem', boxShadow: '0 8px 30px rgb(0 0 0 / 0.12)', zIndex: 50, minWidth: '280px',
             }"
           >
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
               <DatePicker.PrevMonthButton data-testid="date-picker-prev" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">←</DatePicker.PrevMonthButton>
               <DatePicker.CalendarHeader data-testid="date-picker-header" :style="{ fontWeight: 600, fontSize: '0.875rem' }" />
               <DatePicker.NextMonthButton data-testid="date-picker-next" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">→</DatePicker.NextMonthButton>
             </div>
-            <DatePicker.CalendarGrid data-testid="date-picker-grid" :style="{ display: 'grid', gap: '2px' }" />
+            <DatePickerCalendarGrid />
           </DatePicker.Content>
           <DatePicker.HiddenInput name="date" />
         </DatePicker.Root>
@@ -1216,6 +1277,8 @@ const radioGroupValue = ref<string>("react");
       <div style="display:flex;flex-direction:column;gap:0.75rem">
         <DateRangePicker.Root
           data-testid="date-range-picker-root"
+          :locale="locale"
+          :first-day-of-week="1"
           @value-change="(r) => dateRangePickerRange = r ? `${r.start?.year ?? '?'} → ${r.end?.year ?? '?'}` : null"
         >
           <DateRangePicker.Trigger data-testid="date-range-picker-trigger" :style="btnStyle">
@@ -1229,12 +1292,12 @@ const radioGroupValue = ref<string>("react");
               padding: '1rem', boxShadow: '0 8px 30px rgb(0 0 0 / 0.12)', zIndex: 50, minWidth: '300px',
             }"
           >
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
               <DateRangePicker.PrevMonthButton data-testid="date-range-picker-prev" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">←</DateRangePicker.PrevMonthButton>
               <DateRangePicker.CalendarHeader data-testid="date-range-picker-header" :style="{ fontWeight: 600, fontSize: '0.875rem' }" />
               <DateRangePicker.NextMonthButton data-testid="date-range-picker-next" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">→</DateRangePicker.NextMonthButton>
             </div>
-            <DateRangePicker.CalendarGrid data-testid="date-range-picker-grid" :style="{ display: 'grid', gap: '2px' }" />
+            <DateRangePickerCalendarGrid />
             <DateRangePicker.ClearButton data-testid="date-range-picker-clear" :style="{ ...btnGhostStyle, marginTop: '0.75rem', width: '100%' }">
               Effacer
             </DateRangePicker.ClearButton>

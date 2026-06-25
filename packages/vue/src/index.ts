@@ -260,6 +260,7 @@ export {
   DatePickerYearCell,
   DatePickerPreset,
   DatePickerHiddenInput,
+  useDatePickerContext,
 } from "./components/date-picker/DatePicker.js";
 export { useDatePicker, useDatePickerControlled } from "./components/date-picker/use-date-picker.js";
 export type { UseDatePickerOptions, UseDatePickerReturn } from "./components/date-picker/use-date-picker.js";
@@ -278,6 +279,7 @@ export {
   DateRangePickerClearButton,
   DateRangePickerPreset,
   DateRangePickerHiddenInputs,
+  useDateRangePickerContext,
 } from "./components/date-range-picker/DateRangePicker.js";
 export { useDateRangePicker, useDateRangePickerControlled } from "./components/date-range-picker/use-date-range-picker.js";
 export type { UseDateRangePickerOptions, UseDateRangePickerReturn } from "./components/date-range-picker/use-date-range-picker.js";

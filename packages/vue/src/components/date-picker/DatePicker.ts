@@ -125,7 +125,7 @@ const DatePickerCalendarHeader = defineComponent({
   name: "ForgeDatePickerCalendarHeader",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getCalendarHeaderProps(), ...attrs }, slots.default?.());
+    return () => h("div", { ...api.getCalendarHeaderProps(), ...attrs }, slots.default?.() ?? [api.monthYearLabel.value]);
   },
 });
 
@@ -210,7 +210,7 @@ const DatePickerWeekdayHeader = defineComponent({
   props: { dayIndex: { type: Number, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs }, slots.default?.());
+    return () => h("div", { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs }, slots.default?.() ?? [api.weekdays.value[props.dayIndex]?.narrow]);
   },
 });
 
@@ -303,6 +303,18 @@ const DatePickerHiddenInput = defineComponent({
     return () => h("input", api.getHiddenInputProps(props.name));
   },
 });
+
+// ---------------------------------------------------------------------------
+// Namespace export
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Context composable — for consumers who need api data (weeks, weekdays, etc.)
+// ---------------------------------------------------------------------------
+
+export function useDatePickerContext(): UseDatePickerReturn {
+  return useCtx();
+}
 
 // ---------------------------------------------------------------------------
 // Namespace export

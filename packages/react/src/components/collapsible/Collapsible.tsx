@@ -19,17 +19,23 @@ function useCtx(): CollapsibleApiReturn {
 // Root
 // ---------------------------------------------------------------------------
 
-export interface CollapsibleRootProps extends UseCollapsibleOptions {
+export interface CollapsibleRootProps extends UseCollapsibleOptions, Omit<HTMLAttributes<HTMLDivElement>, keyof UseCollapsibleOptions | "children"> {
   children: ReactNode;
   asChild?: boolean;
 }
 
-function Root({ children, asChild, ...opts }: CollapsibleRootProps) {
-  const api = useCollapsible(opts);
+function Root({ children, asChild, open, defaultOpen, onOpenChange, disabled, id, ...rest }: CollapsibleRootProps) {
+  const api = useCollapsible({
+    ...(open !== undefined && { open }),
+    ...(defaultOpen !== undefined && { defaultOpen }),
+    ...(onOpenChange !== undefined && { onOpenChange }),
+    ...(disabled !== undefined && { disabled }),
+    ...(id !== undefined && { id }),
+  });
   const props = api.getRootProps();
   return (
     <CollapsibleCtx.Provider value={api}>
-      {asChild ? <Slot {...props}>{children}</Slot> : <div {...props}>{children}</div>}
+      {asChild ? <Slot {...props} {...rest}>{children}</Slot> : <div {...props} {...rest}>{children}</div>}
     </CollapsibleCtx.Provider>
   );
 }

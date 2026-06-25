@@ -159,7 +159,7 @@ export interface DateRangePickerWeekdayHeaderProps extends HTMLAttributes<HTMLDi
 
 function WeekdayHeader({ dayIndex, children, ...rest }: DateRangePickerWeekdayHeaderProps) {
   const api = useCtx();
-  return <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>{children}</div>;
+  return <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>{children ?? api.weekdays[dayIndex]?.narrow}</div>;
 }
 
 // ---------------------------------------------------------------------------
@@ -223,6 +223,14 @@ function HiddenInputs({ startName, endName }: DateRangePickerHiddenInputsProps) 
       <input {...api.getHiddenEndInputProps(endName)} />
     </>
   );
+}
+
+// ---------------------------------------------------------------------------
+// Context hook — for consumers who need api.weeks, api.weekdays, etc.
+// ---------------------------------------------------------------------------
+
+export function useDateRangePickerContext(): DateRangePickerApi {
+  return useCtx();
 }
 
 // ---------------------------------------------------------------------------

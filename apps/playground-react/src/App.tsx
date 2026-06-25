@@ -1,4 +1,4 @@
-import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, NumberInput, Popover, Progress, RadioGroup, Select, Separator, Slider, Switch, Tabs, TagsInput, TimePicker, Toggle, ToggleGroup, Tooltip, VisuallyHidden, useDialog } from "@forge-ui/react";
+import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, NumberInput, Popover, Progress, RadioGroup, Select, Separator, Slider, Switch, Tabs, TagsInput, TimePicker, Toggle, ToggleGroup, Tooltip, VisuallyHidden, useDialog, useDatePickerContext, useDateRangePickerContext } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -1584,12 +1584,49 @@ function TimePickerDemo() {
 
 /* ── DatePicker ─────────────────────────────────────────────────────────────── */
 
+const calendarCellStyle = {
+  textAlign: "center" as const,
+  padding: "5px 2px",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontSize: "0.8rem",
+  lineHeight: 1,
+};
+
+function DatePickerCalendarGrid() {
+  const api = useDatePickerContext();
+  return (
+    <DatePicker.CalendarGrid
+      data-testid="date-picker-grid"
+      style={{ display: "grid", gap: "2px" }}
+    >
+      <DatePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
+        {api.weekdays.map((_, i) => (
+          <DatePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }} />
+        ))}
+      </DatePicker.CalendarRow>
+      {api.weeks.map((week, wi) => (
+        <DatePicker.CalendarRow key={wi} weekIndex={wi} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+          {week.map((cell) => (
+            <DatePicker.CalendarCell
+              key={`${cell.date.year}-${cell.date.month}-${cell.date.day}`}
+              date={cell.date}
+              isOutsideMonth={cell.isOutsideMonth}
+              style={{ ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 }}
+            />
+          ))}
+        </DatePicker.CalendarRow>
+      ))}
+    </DatePicker.CalendarGrid>
+  );
+}
+
 function DatePickerDemo() {
   const [selected, setSelected] = useState<string | null>(null);
-  // min/max: only allow dates within 30 days around today
   const today = new Date();
   const min = { year: today.getFullYear(), month: today.getMonth() + 1, day: 1 };
   const max = { year: today.getFullYear(), month: today.getMonth() + 1, day: 28 };
+  const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       <p style={{ margin: 0, fontSize: "0.75rem", color: "#94a3b8" }}>Dates disponibles : du {min.day}/{min.month}/{min.year} au {max.day}/{max.month}/{max.year}</p>
@@ -1597,6 +1634,8 @@ function DatePickerDemo() {
         data-testid="date-picker-root"
         min={min}
         max={max}
+        locale={locale}
+        firstDayOfWeek={1}
         onValueChange={(d) => setSelected(d ? `${d.year}-${String(d.month).padStart(2,"0")}-${String(d.day).padStart(2,"0")}` : null)}
       >
         <DatePicker.Trigger data-testid="date-picker-trigger" style={btnStyle}>
@@ -1619,21 +1658,12 @@ function DatePickerDemo() {
               minWidth: "280px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
               <DatePicker.PrevMonthButton data-testid="date-picker-prev" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>←</DatePicker.PrevMonthButton>
               <DatePicker.CalendarHeader data-testid="date-picker-header" style={{ fontWeight: 600, fontSize: "0.875rem" }} />
               <DatePicker.NextMonthButton data-testid="date-picker-next" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>→</DatePicker.NextMonthButton>
             </div>
-            <DatePicker.CalendarGrid
-              data-testid="date-picker-grid"
-              style={{ display: "grid", gridTemplateRows: "auto", gap: "2px" }}
-            >
-              <DatePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
-                {Array.from({ length: 7 }, (_, i) => (
-                  <DatePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", padding: "2px" }} />
-                ))}
-              </DatePicker.CalendarRow>
-            </DatePicker.CalendarGrid>
+            <DatePickerCalendarGrid />
           </DatePicker.Content>
         </DatePicker.Portal>
         <DatePicker.HiddenInput name="date" />
@@ -1649,43 +1679,74 @@ function DatePickerDemo() {
 
 /* ── DateRangePicker ─────────────────────────────────────────────────────────── */
 
+function DateRangePickerCalendarGrid() {
+  const api = useDateRangePickerContext();
+  const weeks = api.weeksPerMonth[0] ?? [];
+  return (
+    <DateRangePicker.CalendarGrid style={{ display: "grid", gap: "2px" }}>
+      <DateRangePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
+        {api.weekdays.map((_, i) => (
+          <DateRangePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }} />
+        ))}
+      </DateRangePicker.CalendarRow>
+      {weeks.map((week, wi) => (
+        <DateRangePicker.CalendarRow key={wi} weekIndex={wi} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+          {week.map((cell) => (
+            <DateRangePicker.CalendarCell
+              key={`${cell.date.year}-${cell.date.month}-${cell.date.day}`}
+              date={cell.date}
+              isOutsideMonth={cell.isOutsideMonth}
+              style={{ ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 }}
+            />
+          ))}
+        </DateRangePicker.CalendarRow>
+      ))}
+    </DateRangePicker.CalendarGrid>
+  );
+}
+
 function DateRangePickerDemo() {
   const [range, setRange] = useState<string | null>(null);
+  const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       <DateRangePicker.Root
         data-testid="date-range-picker-root"
+        locale={locale}
+        firstDayOfWeek={1}
         onValueChange={(r) => setRange(r ? `${r.start?.year ?? "?"}-${String(r.start?.month ?? "??").padStart(2, "0")}-${String(r.start?.day ?? "??").padStart(2, "0")} → ${r.end?.year ?? "?"}-${String(r.end?.month ?? "??").padStart(2, "0")}-${String(r.end?.day ?? "??").padStart(2, "0")}` : null)}
       >
         <DateRangePicker.Trigger data-testid="date-range-picker-trigger" style={btnStyle}>
           {range ?? "Choisir une plage"}
         </DateRangePicker.Trigger>
-        <DateRangePicker.Content
-          data-testid="date-range-picker-content"
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            background: "#fff",
-            border: "1px solid #e2e8f0",
-            borderRadius: "10px",
-            padding: "1rem",
-            boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
-            zIndex: 50,
-            minWidth: "300px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-            <DateRangePicker.PrevMonthButton data-testid="date-range-picker-prev" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>←</DateRangePicker.PrevMonthButton>
-            <DateRangePicker.CalendarHeader data-testid="date-range-picker-header" style={{ fontWeight: 600, fontSize: "0.875rem" }} />
-            <DateRangePicker.NextMonthButton data-testid="date-range-picker-next" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>→</DateRangePicker.NextMonthButton>
-          </div>
-          <DateRangePicker.CalendarGrid data-testid="date-range-picker-grid" style={{ display: "grid", gap: "2px" }} />
-          <DateRangePicker.ClearButton data-testid="date-range-picker-clear" style={{ ...btnGhostStyle, marginTop: "0.75rem", width: "100%" }}>
-            Effacer
-          </DateRangePicker.ClearButton>
-        </DateRangePicker.Content>
+        <DateRangePicker.Portal>
+          <DateRangePicker.Content
+            data-testid="date-range-picker-content"
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              background: "#fff",
+              border: "1px solid #e2e8f0",
+              borderRadius: "10px",
+              padding: "1rem",
+              boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+              zIndex: 50,
+              minWidth: "300px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+              <DateRangePicker.PrevMonthButton data-testid="date-range-picker-prev" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>←</DateRangePicker.PrevMonthButton>
+              <DateRangePicker.CalendarHeader data-testid="date-range-picker-header" style={{ fontWeight: 600, fontSize: "0.875rem" }} />
+              <DateRangePicker.NextMonthButton data-testid="date-range-picker-next" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>→</DateRangePicker.NextMonthButton>
+            </div>
+            <DateRangePickerCalendarGrid />
+            <DateRangePicker.ClearButton data-testid="date-range-picker-clear" style={{ ...btnGhostStyle, marginTop: "0.75rem", width: "100%" }}>
+              Effacer
+            </DateRangePicker.ClearButton>
+          </DateRangePicker.Content>
+        </DateRangePicker.Portal>
         <DateRangePicker.HiddenInputs startName="start" endName="end" />
       </DateRangePicker.Root>
       {range && (

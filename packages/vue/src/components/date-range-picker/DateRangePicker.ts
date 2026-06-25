@@ -195,7 +195,7 @@ const DateRangePickerWeekdayHeader = defineComponent({
   props: { dayIndex: { type: Number, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs }, slots.default?.());
+    return () => h("div", { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs }, slots.default?.() ?? [api.weekdays.value[props.dayIndex]?.narrow]);
   },
 });
 
@@ -263,6 +263,14 @@ const DateRangePickerHiddenInputs = defineComponent({
     ];
   },
 });
+
+// ---------------------------------------------------------------------------
+// Context composable — for consumers who need api data (weeksPerMonth, weekdays, etc.)
+// ---------------------------------------------------------------------------
+
+export function useDateRangePickerContext(): UseDateRangePickerReturn {
+  return useCtx();
+}
 
 // ---------------------------------------------------------------------------
 // Namespace export
