@@ -1,7 +1,7 @@
 import type { CalendarDate, CreateDateFieldOptions } from "@forge-ui/date-field";
 import type { InjectionKey, PropType } from "vue";
-import { defineComponent, h, inject, provide, watch } from "vue";
-import type { UseDateFieldReturn } from "./use-date-field.js";
+import { defineComponent, h, inject, nextTick, provide, watch } from "vue";
+import type { UseDateFieldOptions, UseDateFieldReturn } from "./use-date-field.js";
 import { useDateField } from "./use-date-field.js";
 
 const dateFieldKey: InjectionKey<UseDateFieldReturn> = Symbol("forge-date-field");
@@ -37,7 +37,7 @@ const DateFieldRoot = defineComponent({
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.readOnly !== undefined && { readOnly: props.readOnly }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
-    });
+    } as UseDateFieldOptions);
 
     watch(
       () => props.value,
@@ -53,6 +53,16 @@ const DateFieldRoot = defineComponent({
     );
 
     watch(api.assembledDate, (v) => emit("update:value", v));
+
+    watch(api.focusedSegment, async (seg) => {
+      if (!seg) return;
+      const groupId = api.getGroupProps().id;
+      await nextTick();
+      const groupEl = document.getElementById(groupId);
+      if (!groupEl) return;
+      const el = groupEl.querySelector<HTMLElement>(`[data-forge-part="segment-${seg}"]`);
+      if (el && document.activeElement !== el) el.focus();
+    });
 
     provide(dateFieldKey, api);
     return () => slots.default?.();

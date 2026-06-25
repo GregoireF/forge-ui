@@ -7,7 +7,10 @@ export interface SeparatorProps
     Omit<HTMLAttributes<HTMLDivElement>, "role"> {}
 
 export function Separator({ orientation, decorative, ...rest }: SeparatorProps) {
-  const api = connectSeparator({ orientation, decorative });
+  const api = connectSeparator({
+    ...(orientation !== undefined && { orientation }),
+    ...(decorative !== undefined && { decorative }),
+  });
   const props = { ...api.getSeparatorProps(), ...rest };
   return <div {...props} />;
 }

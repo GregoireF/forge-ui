@@ -147,7 +147,7 @@ export interface DatePickerCalendarGridProps extends HTMLAttributes<HTMLDivEleme
 
 function CalendarGrid({ children, ...rest }: DatePickerCalendarGridProps) {
   const api = useCtx();
-  return <div {...api.getCalendarGridProps()} {...rest}>{children}</div>;
+  return <div {...(api.getCalendarGridProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>{children}</div>;
 }
 
 // ---------------------------------------------------------------------------

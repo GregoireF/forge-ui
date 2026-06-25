@@ -1,8 +1,8 @@
 import type { CalendarDate, CreateDatePickerOptions, DatePreset } from "@forge-ui/date-picker";
-import type { InjectionKey, PropType, Ref } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
-import type { UseDatePickerReturn } from "./use-date-picker.js";
+import type { UseDatePickerOptions, UseDatePickerReturn } from "./use-date-picker.js";
 import { useDatePicker } from "./use-date-picker.js";
 
 const datePickerKey: InjectionKey<UseDatePickerReturn> = Symbol("forge-date-picker");
@@ -49,7 +49,7 @@ const DatePickerRoot = defineComponent({
       ...(props.presets !== undefined && { presets: props.presets }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
       ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
-    });
+    } as UseDatePickerOptions);
 
     watch(
       () => props.value,
@@ -111,7 +111,7 @@ const DatePickerContent = defineComponent({
         ...contentProps,
         ...closingProps,
         ...attrs,
-        ref(el: HTMLElement | null) { presenceRef.value = el; },
+        ref(el: Element | ComponentPublicInstance | null) { presenceRef.value = el as HTMLElement | null; },
       }, slots.default?.());
     };
   },

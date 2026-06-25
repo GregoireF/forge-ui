@@ -137,7 +137,7 @@ export interface DateRangePickerCalendarGridProps extends HTMLAttributes<HTMLDiv
 
 function CalendarGrid({ monthOffset = 0, children, ...rest }: DateRangePickerCalendarGridProps) {
   const api = useCtx();
-  return <div {...api.getCalendarGridProps(monthOffset)} {...rest}>{children}</div>;
+  return <div {...(api.getCalendarGridProps(monthOffset) as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>{children}</div>;
 }
 
 // ---------------------------------------------------------------------------

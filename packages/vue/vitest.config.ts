@@ -54,6 +54,36 @@ export default defineConfig({
       "@forge-ui/tooltip": fileURLToPath(
         new URL("../primitives/tooltip/src/index.ts", import.meta.url),
       ),
+      "@forge-ui/hover-card": fileURLToPath(
+        new URL("../primitives/hover-card/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/number-input": fileURLToPath(
+        new URL("../primitives/number-input/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/date-field": fileURLToPath(
+        new URL("../primitives/date-field/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/time-picker": fileURLToPath(
+        new URL("../primitives/time-picker/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/date-picker": fileURLToPath(
+        new URL("../primitives/date-picker/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/date-range-picker": fileURLToPath(
+        new URL("../primitives/date-range-picker/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/toggle": fileURLToPath(
+        new URL("../primitives/toggle/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/toggle-group": fileURLToPath(
+        new URL("../primitives/toggle-group/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/separator": fileURLToPath(
+        new URL("../primitives/separator/src/index.ts", import.meta.url),
+      ),
+      "@forge-ui/visually-hidden": fileURLToPath(
+        new URL("../primitives/visually-hidden/src/index.ts", import.meta.url),
+      ),
     },
   },
   test: {

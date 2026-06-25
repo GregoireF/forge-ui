@@ -46,7 +46,7 @@ export interface DateFieldMonthSegmentProps extends HTMLAttributes<HTMLDivElemen
 function MonthSegment({ children, ...rest }: DateFieldMonthSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getMonthSegmentProps()} {...rest}>
+    <div {...(api.getMonthSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.month ?? "MM"}
     </div>
   );
@@ -57,7 +57,7 @@ export interface DateFieldDaySegmentProps extends HTMLAttributes<HTMLDivElement>
 function DaySegment({ children, ...rest }: DateFieldDaySegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getDaySegmentProps()} {...rest}>
+    <div {...(api.getDaySegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.day ?? "DD"}
     </div>
   );
@@ -68,7 +68,7 @@ export interface DateFieldYearSegmentProps extends HTMLAttributes<HTMLDivElement
 function YearSegment({ children, ...rest }: DateFieldYearSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getYearSegmentProps()} {...rest}>
+    <div {...(api.getYearSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.year ?? "YYYY"}
     </div>
   );

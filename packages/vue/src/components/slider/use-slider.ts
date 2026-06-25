@@ -28,6 +28,8 @@ export function useSlider(options: UseSliderOptions = {}) {
     getRangeProps: () => api.value.getRangeProps(),
     getThumbProps: (thumbIndex: number) => api.value.getThumbProps(thumbIndex),
     getHiddenInputProps: (name?: string, thumbIndex = 0) => api.value.getHiddenInputProps(name, thumbIndex),
+    getMarkerGroupProps: () => api.value.getMarkerGroupProps(),
+    getMarkerProps: (markValue: number) => api.value.getMarkerProps(markValue),
   };
 }
 

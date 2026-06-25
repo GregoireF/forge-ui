@@ -1,7 +1,7 @@
 import type { CreateTimePickerOptions, TimeValue } from "@forge-ui/time-picker";
 import type { InjectionKey, PropType } from "vue";
-import { defineComponent, h, inject, provide, watch } from "vue";
-import type { UseTimePickerReturn } from "./use-time-picker.js";
+import { defineComponent, h, inject, nextTick, provide, watch } from "vue";
+import type { UseTimePickerOptions, UseTimePickerReturn } from "./use-time-picker.js";
 import { useTimePicker } from "./use-time-picker.js";
 
 const timePickerKey: InjectionKey<UseTimePickerReturn> = Symbol("forge-time-picker");
@@ -45,7 +45,7 @@ const TimePickerRoot = defineComponent({
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.readOnly !== undefined && { readOnly: props.readOnly }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
-    });
+    } as UseTimePickerOptions);
 
     watch(
       () => props.value,
@@ -66,6 +66,16 @@ const TimePickerRoot = defineComponent({
     );
 
     watch(api.assembledTime, (v) => emit("update:value", v));
+
+    watch(api.focusedSegment, async (seg) => {
+      if (!seg) return;
+      const groupId = api.getGroupProps().id;
+      await nextTick();
+      const groupEl = document.getElementById(groupId);
+      if (!groupEl) return;
+      const el = groupEl.querySelector<HTMLElement>(`[data-forge-part="segment-${seg}"]`);
+      if (el && document.activeElement !== el) el.focus();
+    });
 
     provide(timePickerKey, api);
     return () => slots.default?.();

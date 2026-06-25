@@ -188,20 +188,46 @@ export function connectTimePicker(
       };
     },
 
-    /**
-     * AM/PM toggle segment.
-     * WHY spinbutton (not button): Consistent segment model; ArrowUp/Down toggles
-     * instead of click. Used by React Aria and Zag.js for the same reason.
-     */
     getPeriodSegmentProps() {
+      const isFocused = focusedSegment === "period";
+      const onKeyDown = (e: KeyboardEvent) => {
+        switch (e.key) {
+          case "ArrowUp":
+          case "ArrowDown":
+            e.preventDefault();
+            send("TOGGLE_PERIOD");
+            break;
+          case "ArrowRight":
+            e.preventDefault();
+            send("NEXT_SEGMENT");
+            break;
+          case "ArrowLeft":
+            e.preventDefault();
+            send("PREV_SEGMENT");
+            break;
+          case "a":
+          case "A":
+            e.preventDefault();
+            if (period !== "AM") send("TOGGLE_PERIOD");
+            break;
+          case "p":
+          case "P":
+            e.preventDefault();
+            if (period !== "PM") send("TOGGLE_PERIOD");
+            break;
+        }
+      };
       return {
-        ...segmentProps("period"),
         "aria-label": "AM/PM",
-        "aria-valuemin": undefined,
-        "aria-valuemax": undefined,
-        "aria-valuenow": undefined,
+        "aria-live": "polite" as const,
         "aria-valuetext": period,
-        "data-placeholder": undefined,
+        "data-forge-scope": "time-picker",
+        "data-forge-part": "segment-period",
+        "data-focused": isFocused ? "" : undefined,
+        tabIndex: disabled ? -1 : 0,
+        onFocus() { send({ type: "FOCUS_SEGMENT", segment: "period" }); },
+        onBlur() { send("BLUR_SEGMENT"); },
+        onKeyDown,
       };
     },
 

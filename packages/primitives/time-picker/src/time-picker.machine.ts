@@ -157,7 +157,9 @@ function increment({
   };
   const maxVal = maxVals[seg] ?? 59;
   const minVal = minVals[seg] ?? 0;
-  const current = getSegmentValue(context, seg) ?? minVal - step;
+  const rawCurrent = getSegmentValue(context, seg);
+  // ArrowUp from blank → max (scrolling up from nothing lands at top)
+  const current = rawCurrent ?? maxVal - step;
   let next = current + step;
   if (next > maxVal) next = minVal;
 

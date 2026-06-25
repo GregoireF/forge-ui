@@ -8,21 +8,21 @@ import { TimePicker } from "../src/components/time-picker/TimePicker.js";
 // ---------------------------------------------------------------------------
 
 interface FixtureProps {
-  use12Hour?: boolean;
+  hourCycle?: 12 | 24;
   disabled?: boolean;
   onValueChange?: (v: { hours: number; minutes: number; seconds: number } | null) => void;
 }
 
-function makeFixture({ use12Hour = true, disabled, onValueChange }: FixtureProps = {}) {
+function makeFixture({ hourCycle = 12, disabled, onValueChange }: FixtureProps = {}) {
   return (
-    <TimePicker.Root use12Hour={use12Hour} disabled={disabled} onValueChange={onValueChange}>
+    <TimePicker.Root hourCycle={hourCycle} showSeconds disabled={disabled} onValueChange={onValueChange}>
       <TimePicker.Group data-testid="group">
         <TimePicker.HoursSegment data-testid="hours" />
         <TimePicker.Separator data-testid="sep" />
         <TimePicker.MinutesSegment data-testid="minutes" />
         <TimePicker.Separator />
         <TimePicker.SecondsSegment data-testid="seconds" />
-        {use12Hour && <TimePicker.PeriodSegment data-testid="period" />}
+        {hourCycle === 12 && <TimePicker.PeriodSegment data-testid="period" />}
       </TimePicker.Group>
       <TimePicker.HiddenInput name="time" />
     </TimePicker.Root>
@@ -73,12 +73,12 @@ describe("TimePicker (React)", () => {
     });
 
     it("hours has aria-valuemin=1 in 12-hour mode", () => {
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       expect(screen.getByLabelText("Hours")).toHaveAttribute("aria-valuemin", "1");
     });
 
     it("hours has aria-valuemax=12 in 12-hour mode", () => {
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       expect(screen.getByLabelText("Hours")).toHaveAttribute("aria-valuemax", "12");
     });
 
@@ -105,7 +105,7 @@ describe("TimePicker (React)", () => {
   describe("keyboard — hours segment", () => {
     it("ArrowUp increments hours from blank to 12 (12-hour)", async () => {
       const user = userEvent.setup();
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       const hours = screen.getByLabelText("Hours");
       hours.focus();
       await user.keyboard("{ArrowUp}");
@@ -114,7 +114,7 @@ describe("TimePicker (React)", () => {
 
     it("ArrowDown from blank wraps to 12 (12-hour)", async () => {
       const user = userEvent.setup();
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       const hours = screen.getByLabelText("Hours");
       hours.focus();
       await user.keyboard("{ArrowDown}");
@@ -197,12 +197,12 @@ describe("TimePicker (React)", () => {
 
   describe("24-hour mode", () => {
     it("hours has aria-valuemax=23 in 24-hour mode", () => {
-      render(makeFixture({ use12Hour: false }));
+      render(makeFixture({ hourCycle: 24 }));
       expect(screen.getByLabelText("Hours")).toHaveAttribute("aria-valuemax", "23");
     });
 
     it("no period segment in 24-hour mode", () => {
-      render(makeFixture({ use12Hour: false }));
+      render(makeFixture({ hourCycle: 24 }));
       expect(screen.queryByTestId("period")).not.toBeInTheDocument();
     });
   });
@@ -211,7 +211,7 @@ describe("TimePicker (React)", () => {
     it("onValueChange fires when all segments are filled", async () => {
       const user = userEvent.setup();
       const onChange = vi.fn();
-      render(makeFixture({ use12Hour: false, onValueChange: onChange }));
+      render(makeFixture({ hourCycle: 24, onValueChange: onChange }));
 
       const hours = screen.getByLabelText("Hours");
       hours.focus();

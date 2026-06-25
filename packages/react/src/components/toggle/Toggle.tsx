@@ -15,8 +15,16 @@ export interface ToggleProps
 }
 
 export function Toggle({ asChild, children, pressed, defaultPressed, onPressedChange, disabled, id, value, ...rest }: ToggleProps) {
-  const api = useToggle({ pressed, defaultPressed, onPressedChange, disabled, id, value });
-  const props = { ...api.getRootProps(), ...rest };
+  const api = useToggle({
+    ...(pressed !== undefined && { pressed }),
+    ...(defaultPressed !== undefined && { defaultPressed }),
+    ...(onPressedChange !== undefined && { onPressedChange }),
+    ...(disabled !== undefined && { disabled }),
+    ...(id !== undefined && { id }),
+    ...(value !== undefined && { value }),
+  });
+  const { onKeydown: _kd, ...rootProps } = api.getRootProps();
+  const props = { ...rootProps, ...rest } as ButtonHTMLAttributes<HTMLButtonElement>;
 
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;

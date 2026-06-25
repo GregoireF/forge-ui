@@ -202,9 +202,9 @@ describe("connectTimePicker — getSecondsSegmentProps", () => {
 // ---------------------------------------------------------------------------
 
 describe("connectTimePicker — getPeriodSegmentProps (12h)", () => {
-  it("role is spinbutton", () => {
+  it("has no role (not a spinbutton — no numeric aria-value range)", () => {
     const { api } = makeApi({ hourCycle: 12 });
-    expect(api.getPeriodSegmentProps().role).toBe("spinbutton");
+    expect((api.getPeriodSegmentProps() as Record<string, unknown>).role).toBeUndefined();
   });
 
   it("aria-label is 'AM/PM'", () => {

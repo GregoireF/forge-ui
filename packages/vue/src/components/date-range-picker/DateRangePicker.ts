@@ -1,8 +1,8 @@
 import type { CalendarDate, CreateDateRangePickerOptions, DateRange } from "@forge-ui/date-range-picker";
-import type { InjectionKey, PropType, Ref } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
-import type { UseDateRangePickerReturn } from "./use-date-range-picker.js";
+import type { UseDateRangePickerOptions, UseDateRangePickerReturn } from "./use-date-range-picker.js";
 import { useDateRangePicker } from "./use-date-range-picker.js";
 
 const dateRangePickerKey: InjectionKey<UseDateRangePickerReturn> = Symbol("forge-date-range-picker");
@@ -47,7 +47,7 @@ const DateRangePickerRoot = defineComponent({
       ...(props.readOnly !== undefined && { readOnly: props.readOnly }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
       ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
-    });
+    } as UseDateRangePickerOptions);
 
     watch(
       () => props.value,
@@ -119,7 +119,7 @@ const DateRangePickerContent = defineComponent({
         ...contentProps,
         ...closingProps,
         ...attrs,
-        ref(el: HTMLElement | null) { presenceRef.value = el; },
+        ref(el: Element | ComponentPublicInstance | null) { presenceRef.value = el as HTMLElement | null; },
       }, slots.default?.());
     };
   },

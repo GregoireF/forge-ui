@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { Slot } from "../shared/Slot.js";
 import type { UseToggleGroupOptions, UseToggleGroupReturn } from "./use-toggle-group.js";
@@ -58,7 +58,8 @@ export interface ToggleGroupItemProps
 
 function Item({ value, asChild, children, disabled, ...rest }: ToggleGroupItemProps) {
   const api = useCtx();
-  const props = { ...api.getItemProps(value, disabled), ...rest };
+  const { onKeydown: _kd, ...itemProps } = api.getItemProps(value, disabled);
+  const props = { ...itemProps, ...rest } as ButtonHTMLAttributes<HTMLButtonElement>;
 
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;

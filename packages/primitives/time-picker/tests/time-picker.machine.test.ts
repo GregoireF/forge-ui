@@ -84,11 +84,11 @@ describe("createTimePickerMachine — focus", () => {
 // ---------------------------------------------------------------------------
 
 describe("createTimePickerMachine — increment/decrement (24h)", () => {
-  it("INCREMENT hours from null → 0", () => {
+  it("INCREMENT hours from null → max (23 in 24h mode, wraps from top)", () => {
     const m = make({ hourCycle: 24 });
     m.send({ type: "FOCUS_SEGMENT", segment: "hours" });
     m.send("INCREMENT");
-    expect(m.getSnapshot().context.hoursValue).toBe(0);
+    expect(m.getSnapshot().context.hoursValue).toBe(23);
   });
 
   it("INCREMENT hours from 23 wraps to 0", () => {

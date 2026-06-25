@@ -25,7 +25,19 @@ export function useDateField(options: UseDateFieldOptions = {}) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
   }, [options.value]);
 
-  return connectDateField(snapshot, send, machine);
+  const api = connectDateField(snapshot, send, machine);
+
+  useLayoutEffect(() => {
+    const seg = api.focusedSegment;
+    if (!seg) return;
+    const groupEl = document.getElementById(`${id}-group`);
+    if (!groupEl) return;
+    const el = groupEl.querySelector<HTMLElement>(`[data-forge-part="segment-${seg}"]`);
+    if (el && document.activeElement !== el) el.focus();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional DOM focus sync
+  }, [api.focusedSegment]);
+
+  return api;
 }
 
 export type UseDateFieldReturn = ReturnType<typeof useDateField>;

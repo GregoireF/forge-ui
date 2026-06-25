@@ -22,24 +22,24 @@ afterEach(cleanup);
 // ---------------------------------------------------------------------------
 
 interface FixtureProps {
-  use12Hour?: boolean;
+  hourCycle?: 12 | 24;
   disabled?: boolean;
   onValueChange?: (v: { hours: number; minutes: number; seconds: number } | null) => void;
 }
 
-function makeFixture({ use12Hour = true, disabled, onValueChange }: FixtureProps = {}) {
+function makeFixture({ hourCycle = 12, disabled, onValueChange }: FixtureProps = {}) {
   return defineComponent({
     components: { TimePickerRoot, TimePickerGroup, TimePickerHours, TimePickerMinutes, TimePickerSeconds, TimePickerPeriod, TimePickerSeparator, TimePickerHiddenInput },
-    setup: () => ({ use12Hour, disabled, onValueChange }),
+    setup: () => ({ hourCycle, disabled, onValueChange }),
     template: `
-      <TimePickerRoot :use12Hour="use12Hour" :disabled="disabled" :onValueChange="onValueChange">
+      <TimePickerRoot :hourCycle="hourCycle" :showSeconds="true" :disabled="disabled" :onValueChange="onValueChange">
         <TimePickerGroup data-testid="group">
           <TimePickerHours data-testid="hours" />
           <TimePickerSeparator data-testid="sep" />
           <TimePickerMinutes data-testid="minutes" />
           <TimePickerSeparator />
           <TimePickerSeconds data-testid="seconds" />
-          <TimePickerPeriod v-if="use12Hour" data-testid="period" />
+          <TimePickerPeriod v-if="hourCycle === 12" data-testid="period" />
         </TimePickerGroup>
         <TimePickerHiddenInput name="time" />
       </TimePickerRoot>
@@ -59,12 +59,12 @@ describe("TimePicker (Vue)", () => {
     });
 
     it("period segment is rendered in 12-hour mode", () => {
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       expect(screen.getByTestId("period")).toBeInTheDocument();
     });
 
     it("period segment is not rendered in 24-hour mode", () => {
-      render(makeFixture({ use12Hour: false }));
+      render(makeFixture({ hourCycle: 24 }));
       expect(screen.queryByTestId("period")).not.toBeInTheDocument();
     });
 
@@ -96,12 +96,12 @@ describe("TimePicker (Vue)", () => {
     });
 
     it("hours has aria-valuemax=12 in 12-hour mode", () => {
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       expect(screen.getByLabelText("Hours")).toHaveAttribute("aria-valuemax", "12");
     });
 
     it("hours has aria-valuemax=23 in 24-hour mode", () => {
-      render(makeFixture({ use12Hour: false }));
+      render(makeFixture({ hourCycle: 24 }));
       expect(screen.getByLabelText("Hours")).toHaveAttribute("aria-valuemax", "23");
     });
 
@@ -121,7 +121,7 @@ describe("TimePicker (Vue)", () => {
   describe("keyboard — hours", () => {
     it("ArrowUp sets hours to 12 when blank (12-hour wraps)", async () => {
       const user = userEvent.setup();
-      render(makeFixture({ use12Hour: true }));
+      render(makeFixture({ hourCycle: 12 }));
       const hours = screen.getByLabelText("Hours");
       hours.focus();
       await user.keyboard("{ArrowUp}");

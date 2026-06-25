@@ -9,7 +9,9 @@ export interface VisuallyHiddenProps
 }
 
 export function VisuallyHidden({ focusable, children, ...rest }: VisuallyHiddenProps) {
-  const api = connectVisuallyHidden({ focusable });
+  const api = connectVisuallyHidden({
+    ...(focusable !== undefined && { focusable }),
+  });
   const props = { ...api.getProps(), ...rest };
   return <span {...props}>{children}</span>;
 }
