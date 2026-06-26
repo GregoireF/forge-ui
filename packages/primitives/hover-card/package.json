@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "@forge-ui/hover-card",
   "version": "0.0.1",
   "private": false,
@@ -28,7 +28,7 @@
     "@forge-ui/floating": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }
 
