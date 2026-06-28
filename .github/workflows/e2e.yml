@@ -12,7 +12,7 @@ name: E2E
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     paths-ignore:
       - "**.md"
       - "docs/**"
@@ -22,7 +22,7 @@ on:
       - ".github/workflows/bundle-size.yml"
       - ".github/workflows/codeql.yml"
   pull_request:
-    branches: [main]
+    branches: [main, develop]
     paths-ignore:
       - "**.md"
       - "docs/**"

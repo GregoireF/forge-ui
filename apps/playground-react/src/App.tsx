@@ -858,7 +858,6 @@ function TooltipDemo() {
               <p style={{ margin: 0, marginBottom: "0.25rem", fontSize: "0.8rem" }}>
                 Cliquez le lien ↓
               </p>
-              {/* biome-ignore lint/a11y/useValidAnchor: demo interactive */}
               <a href="#" style={{ color: "#38bdf8", fontSize: "0.8rem" }}>
                 Lien dans le tooltip
               </a>
@@ -923,7 +922,6 @@ function HoverCardDemo() {
   return (
     <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
       <HoverCard.Root>
-        {/* biome-ignore lint/a11y/useValidAnchor: demo */}
         <HoverCard.Trigger asChild>
           <a
             href="#"
@@ -980,7 +978,6 @@ function HoverCardDemo() {
       </HoverCard.Root>
 
       <HoverCard.Root positioning={{ placement: "bottom" }}>
-        {/* biome-ignore lint/a11y/useValidAnchor: demo */}
         <HoverCard.Trigger asChild>
           <a
             href="#"
@@ -1366,7 +1363,6 @@ function AsChildDemo() {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        {/* biome-ignore lint/a11y/useValidAnchor: demo asChild */}
         <a href="#" style={{ ...btnStyle, display: "inline-block", textDecoration: "none" }}>
           Ouvrir via &lt;a&gt; (asChild)
         </a>
