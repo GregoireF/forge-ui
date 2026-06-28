@@ -69,7 +69,15 @@ export function getDayOfWeek(year: number, month: number, day: number): number {
   const t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4] as const;
   let y = year;
   if (month < 3) y--;
-  return (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + (t[month - 1] ?? 0) + day) % 7;
+  return (
+    (y +
+      Math.floor(y / 4) -
+      Math.floor(y / 100) +
+      Math.floor(y / 400) +
+      (t[month - 1] ?? 0) +
+      day) %
+    7
+  );
 }
 
 export function addDays(date: CalendarDate, delta: number): CalendarDate {
@@ -77,10 +85,16 @@ export function addDays(date: CalendarDate, delta: number): CalendarDate {
   day += delta;
   while (day > getDaysInMonth(year, month)) {
     day -= getDaysInMonth(year, month);
-    if (++month > 12) { month = 1; year++; }
+    if (++month > 12) {
+      month = 1;
+      year++;
+    }
   }
   while (day < 1) {
-    if (--month < 1) { month = 12; year--; }
+    if (--month < 1) {
+      month = 12;
+      year--;
+    }
     day += getDaysInMonth(year, month);
   }
   return { year, month, day };
@@ -89,8 +103,14 @@ export function addDays(date: CalendarDate, delta: number): CalendarDate {
 export function addMonths(date: CalendarDate, delta: number): CalendarDate {
   let { year, month, day } = date;
   month += delta;
-  while (month > 12) { month -= 12; year++; }
-  while (month < 1) { month += 12; year--; }
+  while (month > 12) {
+    month -= 12;
+    year++;
+  }
+  while (month < 1) {
+    month += 12;
+    year--;
+  }
   return { year, month, day: Math.min(day, getDaysInMonth(year, month)) };
 }
 
@@ -134,7 +154,8 @@ export function isDateDisabled(
   if (min && compareDate(date, min) < 0) return true;
   if (max && compareDate(date, max) > 0) return true;
   if (isDateUnavailable && isDateUnavailable(date)) return true;
-  if (disabledWeekdays && disabledWeekdays.includes(getDayOfWeek(date.year, date.month, date.day))) return true;
+  if (disabledWeekdays && disabledWeekdays.includes(getDayOfWeek(date.year, date.month, date.day)))
+    return true;
   return false;
 }
 

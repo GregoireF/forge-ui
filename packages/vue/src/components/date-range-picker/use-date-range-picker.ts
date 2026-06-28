@@ -1,4 +1,8 @@
-import type { CalendarDate, CreateDateRangePickerOptions, DateRange } from "@forge-ui/date-range-picker";
+import type {
+  CalendarDate,
+  CreateDateRangePickerOptions,
+  DateRange,
+} from "@forge-ui/date-range-picker";
 import { connectDateRangePicker, createDateRangePickerMachine } from "@forge-ui/date-range-picker";
 import { computed, useId, watch } from "vue";
 import { useMachine } from "../../use-machine.js";
@@ -39,9 +43,11 @@ export function useDateRangePicker(options: UseDateRangePickerOptions = {}) {
     getCalendarGridProps: (monthOffset?: number) => api.value.getCalendarGridProps(monthOffset),
     getCalendarRowProps: (weekIndex: number) => api.value.getCalendarRowProps(weekIndex),
     getWeekdayHeaderProps: (dayIndex: number) => api.value.getWeekdayHeaderProps(dayIndex),
-    getCalendarCellProps: (date: CalendarDate, isOutsideMonth?: boolean) => api.value.getCalendarCellProps(date, isOutsideMonth),
+    getCalendarCellProps: (date: CalendarDate, isOutsideMonth?: boolean) =>
+      api.value.getCalendarCellProps(date, isOutsideMonth),
     getClearButtonProps: () => api.value.getClearButtonProps(),
-    getPresetProps: (preset: { label: string; getValue: (today: CalendarDate) => DateRange }) => api.value.getPresetProps(preset),
+    getPresetProps: (preset: { label: string; getValue: (today: CalendarDate) => DateRange }) =>
+      api.value.getPresetProps(preset),
     getHiddenStartInputProps: (name: string) => api.value.getHiddenStartInputProps(name),
     getHiddenEndInputProps: (name: string) => api.value.getHiddenEndInputProps(name),
   };

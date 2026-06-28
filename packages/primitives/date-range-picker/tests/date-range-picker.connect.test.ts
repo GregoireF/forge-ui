@@ -1,11 +1,11 @@
+import type { MachineSnapshot } from "@forge-ui/core";
+import type { CalendarDate } from "@forge-ui/date-picker";
 import { describe, expect, it, vi } from "vitest";
 import { connectDateRangePicker } from "../src/date-range-picker.connect.js";
 import type {
   DateRangePickerContext,
   DateRangePickerState,
 } from "../src/date-range-picker.types.js";
-import type { MachineSnapshot } from "@forge-ui/core";
-import type { CalendarDate } from "@forge-ui/date-picker";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -308,7 +308,10 @@ describe("connectDateRangePicker — multiple months", () => {
   });
 
   it("second calendar grid label is one month after first", () => {
-    const { api } = makeApi({ numberOfMonths: 2, focusedDate: { year: 2024, month: 6, day: 1 } }, "open");
+    const { api } = makeApi(
+      { numberOfMonths: 2, focusedDate: { year: 2024, month: 6, day: 1 } },
+      "open",
+    );
     const label0 = api.getCalendarGridProps(0)["aria-label"];
     const label1 = api.getCalendarGridProps(1)["aria-label"];
     // First is June 2024, second should be July 2024
@@ -336,9 +339,7 @@ describe("connectDateRangePicker — presets", () => {
     const { api, send } = makeApi({ presets }, "open");
     const props = api.getPresetProps(presets[0]);
     props.onClick();
-    expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({ type: "SELECT_PRESET" }),
-    );
+    expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: "SELECT_PRESET" }));
   });
 
   it("getPresetProps does nothing when disabled", () => {
@@ -361,23 +362,29 @@ describe("connectDateRangePicker — presets", () => {
 describe("connectDateRangePicker — previewEnd", () => {
   it("isPreviewEnd data attribute set when cell matches hoveredDate in end phase", () => {
     const hovered = { year: 2024, month: 6, day: 20 };
-    const { api } = makeApi({
-      selectionPhase: "end",
-      startDate: JUNE15,
-      endDate: null,
-      hoveredDate: hovered,
-    }, "open");
+    const { api } = makeApi(
+      {
+        selectionPhase: "end",
+        startDate: JUNE15,
+        endDate: null,
+        hoveredDate: hovered,
+      },
+      "open",
+    );
     const props = api.getCalendarCellProps(hovered);
     expect(props["data-preview-end"]).toBe("");
   });
 
   it("previewEnd falls back to endDate when hoveredDate is null in end phase", () => {
-    const { api } = makeApi({
-      selectionPhase: "end",
-      startDate: JUNE15,
-      endDate: JUNE20,
-      hoveredDate: null,
-    }, "open");
+    const { api } = makeApi(
+      {
+        selectionPhase: "end",
+        startDate: JUNE15,
+        endDate: JUNE20,
+        hoveredDate: null,
+      },
+      "open",
+    );
     const props = api.getCalendarCellProps(JUNE20);
     expect(props["data-range-end"]).toBe("");
   });
@@ -433,20 +440,26 @@ describe("connectDateRangePicker — navigation buttons", () => {
   });
 
   it("getPrevMonthButtonProps disabled when at min month", () => {
-    const { api } = makeApi({
-      focusedDate: { year: 2024, month: 3, day: 1 },
-      min: { year: 2024, month: 3 },
-    }, "open");
+    const { api } = makeApi(
+      {
+        focusedDate: { year: 2024, month: 3, day: 1 },
+        min: { year: 2024, month: 3 },
+      },
+      "open",
+    );
     const props = api.getPrevMonthButtonProps();
     expect(props.disabled).toBeTruthy();
     expect(props["aria-disabled"]).toBeTruthy();
   });
 
   it("getPrevMonthButtonProps click does nothing when at min", () => {
-    const { api, send } = makeApi({
-      focusedDate: { year: 2024, month: 3, day: 1 },
-      min: { year: 2024, month: 3 },
-    }, "open");
+    const { api, send } = makeApi(
+      {
+        focusedDate: { year: 2024, month: 3, day: 1 },
+        min: { year: 2024, month: 3 },
+      },
+      "open",
+    );
     api.getPrevMonthButtonProps().onClick();
     expect(send).not.toHaveBeenCalled();
   });
@@ -464,21 +477,27 @@ describe("connectDateRangePicker — navigation buttons", () => {
   });
 
   it("getNextMonthButtonProps disabled when at max month", () => {
-    const { api } = makeApi({
-      focusedDate: { year: 2024, month: 6, day: 1 },
-      numberOfMonths: 2,
-      max: { year: 2024, month: 7 },
-    }, "open");
+    const { api } = makeApi(
+      {
+        focusedDate: { year: 2024, month: 6, day: 1 },
+        numberOfMonths: 2,
+        max: { year: 2024, month: 7 },
+      },
+      "open",
+    );
     const props = api.getNextMonthButtonProps();
     expect(props.disabled).toBeTruthy();
   });
 
   it("getNextMonthButtonProps click does nothing when at max", () => {
-    const { api, send } = makeApi({
-      focusedDate: { year: 2024, month: 6, day: 1 },
-      numberOfMonths: 2,
-      max: { year: 2024, month: 7 },
-    }, "open");
+    const { api, send } = makeApi(
+      {
+        focusedDate: { year: 2024, month: 6, day: 1 },
+        numberOfMonths: 2,
+        max: { year: 2024, month: 7 },
+      },
+      "open",
+    );
     api.getNextMonthButtonProps().onClick();
     expect(send).not.toHaveBeenCalled();
   });
@@ -495,8 +514,17 @@ describe("connectDateRangePicker — navigation buttons", () => {
 // ---------------------------------------------------------------------------
 
 describe("connectDateRangePicker — calendar grid keyboard", () => {
-  function fireKey(api: ReturnType<typeof makeApi>["api"], key: string, extra: Partial<KeyboardEvent> = {}) {
-    const event = { key, shiftKey: false, preventDefault: vi.fn(), ...extra } as unknown as KeyboardEvent;
+  function fireKey(
+    api: ReturnType<typeof makeApi>["api"],
+    key: string,
+    extra: Partial<KeyboardEvent> = {},
+  ) {
+    const event = {
+      key,
+      shiftKey: false,
+      preventDefault: vi.fn(),
+      ...extra,
+    } as unknown as KeyboardEvent;
     api.getCalendarGridProps().onKeyDown(event);
     return event;
   }

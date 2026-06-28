@@ -1,11 +1,5 @@
 import type { HTMLAttributes, ImgHTMLAttributes, ReactNode } from "react";
-import {
-  createContext,
-  useContext,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useLayoutEffect, useRef, useState } from "react";
 import { Slot } from "../shared/Slot.js";
 import type { UseAvatarOptions, UseAvatarReturn } from "./use-avatar.js";
 import { useAvatar } from "./use-avatar.js";
@@ -64,7 +58,9 @@ function Root({
   const Comp = asChild ? Slot : "span";
   return (
     <AvatarCtx.Provider value={api}>
-      <Comp {...api.getRootProps()} {...htmlProps}>{children}</Comp>
+      <Comp {...api.getRootProps()} {...htmlProps}>
+        {children}
+      </Comp>
     </AvatarCtx.Provider>
   );
 }
@@ -124,15 +120,19 @@ export interface AvatarFallbackProps extends HTMLAttributes<HTMLSpanElement> {
   forceMount?: boolean;
 }
 
-function Fallback({ children, delayMs = 0, asChild, forceMount = false, ...rest }: AvatarFallbackProps) {
+function Fallback({
+  children,
+  delayMs = 0,
+  asChild,
+  forceMount = false,
+  ...rest
+}: AvatarFallbackProps) {
   const api = useCtx();
 
   // Initialise to the correct state on the very first render to avoid a
   // one-frame flash. The machine is already started synchronously (useMachine
   // calls machine.start() during Root render), so api.isLoading is reliable here.
-  const [showDelayed, setShowDelayed] = useState(
-    () => !api.isLoading || delayMs <= 0,
-  );
+  const [showDelayed, setShowDelayed] = useState(() => !api.isLoading || delayMs <= 0);
 
   useLayoutEffect(() => {
     if (!api.isLoading || delayMs <= 0) {

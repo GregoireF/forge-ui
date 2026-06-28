@@ -200,7 +200,14 @@ describe("useDialog (Vue)", () => {
 
     it("aria-labelledby and aria-describedby are set when Title and Description are mounted", async () => {
       const Fixture = defineComponent({
-        components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose },
+        components: {
+          DialogRoot,
+          DialogTrigger,
+          DialogContent,
+          DialogTitle,
+          DialogDescription,
+          DialogClose,
+        },
         template: `
           <DialogRoot id="test-aria-ids">
             <DialogTrigger data-testid="trigger">Open</DialogTrigger>
@@ -482,7 +489,9 @@ describe("useDialog (Vue)", () => {
       const isOpen = ref(true);
       const Fixture = defineComponent({
         components: { DialogRoot, DialogTrigger, DialogContent, DialogTitle },
-        setup() { return { isOpen }; },
+        setup() {
+          return { isOpen };
+        },
         template: `
           <DialogRoot id="test-controlled-close" :open="isOpen">
             <DialogTrigger>Open</DialogTrigger>

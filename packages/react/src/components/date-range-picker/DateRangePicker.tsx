@@ -105,10 +105,18 @@ export interface DateRangePickerCalendarHeaderProps extends HTMLAttributes<HTMLD
   monthOffset?: number;
 }
 
-function CalendarHeader({ monthOffset = 0, children, ...rest }: DateRangePickerCalendarHeaderProps) {
+function CalendarHeader({
+  monthOffset = 0,
+  children,
+  ...rest
+}: DateRangePickerCalendarHeaderProps) {
   const api = useCtx();
   const { label, ...headerProps } = api.getCalendarHeaderProps(monthOffset);
-  return <div {...headerProps} {...rest}>{children ?? label}</div>;
+  return (
+    <div {...headerProps} {...rest}>
+      {children ?? label}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -119,12 +127,20 @@ export interface DateRangePickerNavButtonProps extends ButtonHTMLAttributes<HTML
 
 function PrevMonthButton({ children, ...rest }: DateRangePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getPrevMonthButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getPrevMonthButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 function NextMonthButton({ children, ...rest }: DateRangePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getNextMonthButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getNextMonthButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -137,7 +153,14 @@ export interface DateRangePickerCalendarGridProps extends HTMLAttributes<HTMLDiv
 
 function CalendarGrid({ monthOffset = 0, children, ...rest }: DateRangePickerCalendarGridProps) {
   const api = useCtx();
-  return <div {...(api.getCalendarGridProps(monthOffset) as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>{children}</div>;
+  return (
+    <div
+      {...(api.getCalendarGridProps(monthOffset) as unknown as HTMLAttributes<HTMLDivElement>)}
+      {...rest}
+    >
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -150,7 +173,11 @@ export interface DateRangePickerCalendarRowProps extends HTMLAttributes<HTMLDivE
 
 function CalendarRow({ weekIndex, children, ...rest }: DateRangePickerCalendarRowProps) {
   const api = useCtx();
-  return <div {...api.getCalendarRowProps(weekIndex)} {...rest}>{children}</div>;
+  return (
+    <div {...api.getCalendarRowProps(weekIndex)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 export interface DateRangePickerWeekdayHeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -159,7 +186,11 @@ export interface DateRangePickerWeekdayHeaderProps extends HTMLAttributes<HTMLDi
 
 function WeekdayHeader({ dayIndex, children, ...rest }: DateRangePickerWeekdayHeaderProps) {
   const api = useCtx();
-  return <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>{children ?? api.weekdays[dayIndex]?.narrow}</div>;
+  return (
+    <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>
+      {children ?? api.weekdays[dayIndex]?.narrow}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -173,7 +204,12 @@ export interface DateRangePickerCalendarCellProps extends HTMLAttributes<HTMLDiv
   isOutsideMonth?: boolean;
 }
 
-function CalendarCell({ date, isOutsideMonth, children, ...rest }: DateRangePickerCalendarCellProps) {
+function CalendarCell({
+  date,
+  isOutsideMonth,
+  children,
+  ...rest
+}: DateRangePickerCalendarCellProps) {
   const api = useCtx();
   return (
     <div {...api.getCalendarCellProps(date, isOutsideMonth)} {...rest}>
@@ -188,7 +224,11 @@ function CalendarCell({ date, isOutsideMonth, children, ...rest }: DateRangePick
 
 function ClearButton({ children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
   const api = useCtx();
-  return <button {...api.getClearButtonProps()} {...rest}>{children ?? "Clear"}</button>;
+  return (
+    <button {...api.getClearButtonProps()} {...rest}>
+      {children ?? "Clear"}
+    </button>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -203,7 +243,11 @@ export interface DateRangePickerPresetProps extends ButtonHTMLAttributes<HTMLBut
 
 function Preset({ preset, children, ...rest }: DateRangePickerPresetProps) {
   const api = useCtx();
-  return <button {...api.getPresetProps(preset)} {...rest}>{children ?? preset.label}</button>;
+  return (
+    <button {...api.getPresetProps(preset)} {...rest}>
+      {children ?? preset.label}
+    </button>
+  );
 }
 
 // ---------------------------------------------------------------------------

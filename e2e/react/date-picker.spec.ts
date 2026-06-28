@@ -8,12 +8,18 @@ test.describe("DatePicker — React (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const trigger = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-picker-trigger"]');
-  const content = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-picker-content"]');
-  const header = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-picker-header"]');
-  const grid = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-picker-grid"]');
-  const prev = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-picker-prev"]');
-  const next = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-picker-next"]');
+  const trigger = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-picker-trigger"]');
+  const content = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-picker-content"]');
+  const header = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-picker-header"]');
+  const grid = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-picker-grid"]');
+  const prev = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-picker-prev"]');
+  const next = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-picker-next"]');
 
   test("trigger is visible", async ({ page }) => {
     await expect(trigger(page)).toBeVisible();
@@ -53,9 +59,7 @@ test.describe("DatePicker — React (forge-ui)", () => {
   });
 
   test("no axe violations when closed", async ({ page }) => {
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
     expect(results.violations).toEqual([]);
   });
 });

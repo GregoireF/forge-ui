@@ -21,7 +21,7 @@ export function useDateRangePicker(options: UseDateRangePickerOptions = {}) {
         endDate: options.value?.end ?? null,
       });
     }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
+    // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
   }, [options.value]);
 
   return connectDateRangePicker(snapshot, send, machine);

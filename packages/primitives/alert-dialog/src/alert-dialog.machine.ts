@@ -9,9 +9,7 @@ import type { CreateAlertDialogMachineOptions } from "./alert-dialog.types.js";
 // this lets callers react to the attempt (e.g. show a warning toast) without
 // receiving a pre-prevented event. We then prevent unconditionally.
 
-function wrapEscape(
-  userCallback?: (e: KeyboardEvent) => void,
-): (e: KeyboardEvent) => void {
+function wrapEscape(userCallback?: (e: KeyboardEvent) => void): (e: KeyboardEvent) => void {
   return (e) => {
     userCallback?.(e);
     e.preventDefault();

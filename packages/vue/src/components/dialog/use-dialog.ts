@@ -1,5 +1,4 @@
-import type { CreateDialogMachineOptions } from "@forge-ui/dialog";
-import type { DialogContentCallbacks } from "@forge-ui/dialog";
+import type { CreateDialogMachineOptions, DialogContentCallbacks } from "@forge-ui/dialog";
 import { connectDialog, createDialogMachine } from "@forge-ui/dialog";
 import { computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";

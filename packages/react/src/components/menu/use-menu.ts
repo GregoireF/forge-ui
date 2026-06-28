@@ -1,4 +1,10 @@
-import type { CreateMenuMachineOptions, MenuApi, MenuContext, MenuItem, MenuSend } from "@forge-ui/menu";
+import type {
+  CreateMenuMachineOptions,
+  MenuApi,
+  MenuContext,
+  MenuItem,
+  MenuSend,
+} from "@forge-ui/menu";
 import { connectMenu, createMenuMachine } from "@forge-ui/menu";
 import { useEffect, useId, useRef, useState } from "react";
 import { useMachine } from "../../use-machine.js";
@@ -31,10 +37,20 @@ export interface UseMenuReturn {
   getItemProps(value: string, disabled?: boolean): ReturnType<MenuApi["getItemProps"]>;
   getRadioGroupProps(groupId: string): ReturnType<MenuApi["getRadioGroupProps"]>;
   getRadioGroupLabelProps(groupId: string): ReturnType<MenuApi["getRadioGroupLabelProps"]>;
-  getRadioItemProps(opts: Parameters<MenuApi["getRadioItemProps"]>[0]): ReturnType<MenuApi["getRadioItemProps"]>;
-  getCheckboxItemProps(opts: Parameters<MenuApi["getCheckboxItemProps"]>[0]): ReturnType<MenuApi["getCheckboxItemProps"]>;
-  getItemIndicatorProps(checked: boolean | "indeterminate"): ReturnType<MenuApi["getItemIndicatorProps"]>;
-  getSubTriggerProps(subMenuId: string, subIsOpen: boolean, disabled?: boolean): ReturnType<MenuApi["getSubTriggerProps"]>;
+  getRadioItemProps(
+    opts: Parameters<MenuApi["getRadioItemProps"]>[0],
+  ): ReturnType<MenuApi["getRadioItemProps"]>;
+  getCheckboxItemProps(
+    opts: Parameters<MenuApi["getCheckboxItemProps"]>[0],
+  ): ReturnType<MenuApi["getCheckboxItemProps"]>;
+  getItemIndicatorProps(
+    checked: boolean | "indeterminate",
+  ): ReturnType<MenuApi["getItemIndicatorProps"]>;
+  getSubTriggerProps(
+    subMenuId: string,
+    subIsOpen: boolean,
+    disabled?: boolean,
+  ): ReturnType<MenuApi["getSubTriggerProps"]>;
   getLabelProps(): ReturnType<MenuApi["getLabelProps"]>;
   getSeparatorProps(): ReturnType<MenuApi["getSeparatorProps"]>;
   getGroupProps(groupId: string): ReturnType<MenuApi["getGroupProps"]>;

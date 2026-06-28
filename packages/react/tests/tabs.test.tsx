@@ -20,11 +20,19 @@ function makeFixture(opts: FixtureOptions = {}) {
   return (
     <Tabs.Root {...opts}>
       <Tabs.List>
-        <Tabs.Trigger value="a" data-testid="trigger-a">Tab A</Tabs.Trigger>
-        <Tabs.Trigger value="b" data-testid="trigger-b">Tab B</Tabs.Trigger>
+        <Tabs.Trigger value="a" data-testid="trigger-a">
+          Tab A
+        </Tabs.Trigger>
+        <Tabs.Trigger value="b" data-testid="trigger-b">
+          Tab B
+        </Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Panel value="a" data-testid="panel-a">Content A</Tabs.Panel>
-      <Tabs.Panel value="b" data-testid="panel-b">Content B</Tabs.Panel>
+      <Tabs.Panel value="a" data-testid="panel-a">
+        Content A
+      </Tabs.Panel>
+      <Tabs.Panel value="b" data-testid="panel-b">
+        Content B
+      </Tabs.Panel>
     </Tabs.Root>
   );
 }
@@ -184,11 +192,17 @@ describe("Tabs (React)", () => {
       render(
         <Tabs.Root defaultValue="a">
           <Tabs.List>
-            <Tabs.Trigger value="a" data-testid="trigger-a">A</Tabs.Trigger>
+            <Tabs.Trigger value="a" data-testid="trigger-a">
+              A
+            </Tabs.Trigger>
             <Tabs.Trigger value="b">B</Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Panel value="a" data-testid="panel-a">A</Tabs.Panel>
-          <Tabs.Panel value="b" forceMount data-testid="panel-b">B</Tabs.Panel>
+          <Tabs.Panel value="a" data-testid="panel-a">
+            A
+          </Tabs.Panel>
+          <Tabs.Panel value="b" forceMount data-testid="panel-b">
+            B
+          </Tabs.Panel>
         </Tabs.Root>,
       );
       expect(screen.getByTestId("panel-a")).toBeInTheDocument();
@@ -246,12 +260,16 @@ describe("Tabs (React)", () => {
   describe("CSS contract", () => {
     it("root has data-forge-scope=tabs and data-forge-part=root", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="tabs"][data-forge-part="root"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="tabs"][data-forge-part="root"]'),
+      ).toBeInTheDocument();
     });
 
     it("list has data-forge-scope=tabs and data-forge-part=list", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="tabs"][data-forge-part="list"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="tabs"][data-forge-part="list"]'),
+      ).toBeInTheDocument();
     });
 
     it("trigger has data-forge-scope=tabs and data-forge-part=trigger", () => {

@@ -2,7 +2,9 @@
   "name": "@forge-ui/css",
   "version": "0.0.0",
   "private": false,
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "type": "module",
   "exports": {
     ".": "./index.css",

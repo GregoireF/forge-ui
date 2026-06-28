@@ -34,7 +34,11 @@ export interface TimePickerGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
 function Group({ children, ...rest }: TimePickerGroupProps) {
   const api = useCtx();
-  return <div {...api.getGroupProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getGroupProps()} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -93,7 +97,11 @@ export interface TimePickerSeparatorProps extends HTMLAttributes<HTMLSpanElement
 
 function Separator({ children, ...rest }: TimePickerSeparatorProps) {
   const api = useCtx();
-  return <span {...api.getSeparatorProps()} {...rest}>{children}</span>;
+  return (
+    <span {...api.getSeparatorProps()} {...rest}>
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------

@@ -15,8 +15,7 @@ const menuContent = (page: import("@playwright/test").Page) =>
 const menuItems = (page: import("@playwright/test").Page) =>
   page.locator('[data-forge-scope="menu"][data-forge-part="item"]');
 
-const contextZone = (page: import("@playwright/test").Page) =>
-  page.getByText("Clic-droit ici");
+const contextZone = (page: import("@playwright/test").Page) => page.getByText("Clic-droit ici");
 
 test.describe("Menu (DropdownMenu) — React (forge-ui)", () => {
   test.beforeEach(async ({ page }) => {
@@ -190,13 +189,17 @@ test.describe("Menu (DropdownMenu) — React (forge-ui)", () => {
 
   test("disabled item has aria-disabled=true", async ({ page }) => {
     await menuTrigger(page).click();
-    const disabled = page.locator('[data-forge-scope="menu"][data-forge-part="item"][data-disabled]').first();
+    const disabled = page
+      .locator('[data-forge-scope="menu"][data-forge-part="item"][data-disabled]')
+      .first();
     await expect(disabled).toHaveAttribute("aria-disabled", "true");
   });
 
   test("disabled item has data-disabled attribute", async ({ page }) => {
     await menuTrigger(page).click();
-    const disabled = page.locator('[data-forge-scope="menu"][data-forge-part="item"][data-disabled]').first();
+    const disabled = page
+      .locator('[data-forge-scope="menu"][data-forge-part="item"][data-disabled]')
+      .first();
     await expect(disabled).toHaveAttribute("data-disabled", "");
   });
 
@@ -206,14 +209,18 @@ test.describe("Menu (DropdownMenu) — React (forge-ui)", () => {
 
   test("sub-trigger has aria-haspopup=menu", async ({ page }) => {
     await menuTrigger(page).click();
-    const subTrigger = page.locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]').first();
+    const subTrigger = page
+      .locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]')
+      .first();
     await expect(subTrigger).toHaveAttribute("aria-haspopup", "menu");
   });
 
   test("hovering sub-trigger opens sub-menu", async ({ page }) => {
     await menuTrigger(page).click();
     await page.waitForTimeout(100);
-    const subTrigger = page.locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]').first();
+    const subTrigger = page
+      .locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]')
+      .first();
     await subTrigger.hover();
     await page.waitForTimeout(300);
     const subContent = page.locator('[data-forge-scope="menu"][data-forge-part="content"]').nth(1);
@@ -223,7 +230,9 @@ test.describe("Menu (DropdownMenu) — React (forge-ui)", () => {
   test("ArrowRight opens sub-menu when sub-trigger highlighted", async ({ page }) => {
     await menuTrigger(page).click();
     // Navigate to the sub-trigger
-    const subTrigger = page.locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]').first();
+    const subTrigger = page
+      .locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]')
+      .first();
     await subTrigger.hover();
     await page.waitForTimeout(50);
     // Now use keyboard
@@ -256,7 +265,9 @@ test.describe("Menu (DropdownMenu) — React (forge-ui)", () => {
 
   test("checkbox items have role=menuitemcheckbox", async ({ page }) => {
     await menuTrigger(page).click();
-    const checkbox = page.locator('[data-forge-scope="menu"][data-forge-part="checkbox-item"]').first();
+    const checkbox = page
+      .locator('[data-forge-scope="menu"][data-forge-part="checkbox-item"]')
+      .first();
     await expect(checkbox).toHaveAttribute("role", "menuitemcheckbox");
   });
 
@@ -267,7 +278,9 @@ test.describe("Menu (DropdownMenu) — React (forge-ui)", () => {
   test("menu content is a direct child of body (portal)", async ({ page }) => {
     await menuTrigger(page).click();
     const isDirectBodyChild = await page.evaluate(() => {
-      const content = document.querySelector('[data-forge-scope="menu"][data-forge-part="content"]');
+      const content = document.querySelector(
+        '[data-forge-scope="menu"][data-forge-part="content"]',
+      );
       let el = content?.parentElement;
       while (el && el !== document.body) {
         el = el.parentElement;
@@ -343,7 +356,9 @@ test.describe("ContextMenu — React (forge-ui)", () => {
 
     // First right-click
     await page.mouse.click(box.x + 10, box.y + 10, { button: "right" });
-    const positioner1 = page.locator('[data-forge-scope="menu"][data-forge-part="positioner"]').last();
+    const positioner1 = page
+      .locator('[data-forge-scope="menu"][data-forge-part="positioner"]')
+      .last();
     const style1 = await positioner1.getAttribute("style");
 
     // Second right-click at different position
@@ -370,7 +385,9 @@ test.describe("ContextMenu — React (forge-ui)", () => {
   test("context menu portal renders in body", async ({ page }) => {
     await contextZone(page).click({ button: "right" });
     const isInBody = await page.evaluate(() => {
-      const contents = document.querySelectorAll('[data-forge-scope="menu"][data-forge-part="content"]');
+      const contents = document.querySelectorAll(
+        '[data-forge-scope="menu"][data-forge-part="content"]',
+      );
       const ctx = contents[contents.length - 1];
       let el: Element | null = ctx ?? null;
       while (el && el !== document.body) el = el.parentElement;
@@ -381,13 +398,17 @@ test.describe("ContextMenu — React (forge-ui)", () => {
 
   test("checkbox item has role=menuitemcheckbox", async ({ page }) => {
     await contextZone(page).click({ button: "right" });
-    const checkbox = page.locator('[data-forge-scope="menu"][data-forge-part="checkbox-item"]').last();
+    const checkbox = page
+      .locator('[data-forge-scope="menu"][data-forge-part="checkbox-item"]')
+      .last();
     await expect(checkbox).toHaveAttribute("role", "menuitemcheckbox");
   });
 
   test("sub-trigger in context menu has aria-haspopup=menu", async ({ page }) => {
     await contextZone(page).click({ button: "right" });
-    const subTrigger = page.locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]').last();
+    const subTrigger = page
+      .locator('[data-forge-scope="menu"][data-forge-part="sub-trigger"]')
+      .last();
     await expect(subTrigger).toHaveAttribute("aria-haspopup", "menu");
   });
 });

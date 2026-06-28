@@ -180,7 +180,9 @@ describe("DateField (React)", () => {
       await user.keyboard("0");
       await user.keyboard("2");
       await user.keyboard("5");
-      expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ year: 2025, month: 3, day: 15 }));
+      expect(onChange).toHaveBeenCalledWith(
+        expect.objectContaining({ year: 2025, month: 3, day: 15 }),
+      );
     });
   });
 

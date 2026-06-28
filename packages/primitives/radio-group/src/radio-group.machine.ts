@@ -1,5 +1,9 @@
 import { createMachine } from "@forge-ui/core";
-import type { CreateRadioGroupOptions, RadioGroupContext, RadioGroupEvent } from "./radio-group.types.js";
+import type {
+  CreateRadioGroupOptions,
+  RadioGroupContext,
+  RadioGroupEvent,
+} from "./radio-group.types.js";
 
 function select({
   context,

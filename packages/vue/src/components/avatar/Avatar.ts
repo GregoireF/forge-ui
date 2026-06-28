@@ -157,7 +157,9 @@ const AvatarFallback = defineComponent({
 
       // Loading with delay: hide immediately, reveal after delay.
       showDelayed.value = false;
-      const id = setTimeout(() => { showDelayed.value = true; }, delay);
+      const id = setTimeout(() => {
+        showDelayed.value = true;
+      }, delay);
       onCleanup(() => {
         clearTimeout(id);
         showDelayed.value = true; // reset so next load cycle starts fresh
@@ -197,4 +199,4 @@ export const Avatar = {
   Fallback: AvatarFallback,
 } as const;
 
-export { AvatarRoot, AvatarImage, AvatarFallback };
+export { AvatarFallback, AvatarImage, AvatarRoot };

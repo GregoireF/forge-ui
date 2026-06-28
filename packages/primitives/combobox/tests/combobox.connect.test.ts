@@ -693,7 +693,13 @@ describe("connectCombobox — getInputProps placeholder (multiple mode)", () => 
 
   it("shows default placeholder when multiple=true, has values, but is open (input editable)", () => {
     const { api } = makeApi(
-      { multiple: true, value: ["react"], options: OPTIONS, selectedLabels: {}, placeholder: "Search..." },
+      {
+        multiple: true,
+        value: ["react"],
+        options: OPTIONS,
+        selectedLabels: {},
+        placeholder: "Search...",
+      },
       "open",
     );
     expect(api.getInputProps().placeholder).toBe("Search...");

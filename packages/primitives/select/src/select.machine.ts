@@ -1,8 +1,4 @@
-import {
-  createMachine,
-  makeLayerActivity,
-  makeWatchOutsideActivity,
-} from "@forge-ui/core";
+import { createMachine, makeLayerActivity, makeWatchOutsideActivity } from "@forge-ui/core";
 import type { FloatingPositioning } from "@forge-ui/floating";
 import { makeComputePositionActivity } from "@forge-ui/floating";
 import type { SelectContext, SelectEvent, SelectOption, SelectState } from "./select.types.js";
@@ -107,24 +103,54 @@ function effectiveOptions(context: SelectContext) {
   return context.allOptions ?? context.options;
 }
 
-function setHighlightedToDefault({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
+function setHighlightedToDefault({
+  context,
+  setContext,
+}: {
+  context: SelectContext;
+  setContext: (u: Partial<SelectContext>) => void;
+}) {
   setContext({ highlighted: getDefaultHighlighted(effectiveOptions(context), context.value) });
 }
 
-function highlightNext({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
+function highlightNext({
+  context,
+  setContext,
+}: {
+  context: SelectContext;
+  setContext: (u: Partial<SelectContext>) => void;
+}) {
   setContext({ highlighted: getNextHighlighted(effectiveOptions(context), context.highlighted) });
 }
 
-function highlightPrev({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
+function highlightPrev({
+  context,
+  setContext,
+}: {
+  context: SelectContext;
+  setContext: (u: Partial<SelectContext>) => void;
+}) {
   setContext({ highlighted: getPrevHighlighted(effectiveOptions(context), context.highlighted) });
 }
 
-function highlightFirst({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
+function highlightFirst({
+  context,
+  setContext,
+}: {
+  context: SelectContext;
+  setContext: (u: Partial<SelectContext>) => void;
+}) {
   const first = getEnabled(effectiveOptions(context))[0]?.value ?? null;
   setContext({ highlighted: first });
 }
 
-function highlightLast({ context, setContext }: { context: SelectContext; setContext: (u: Partial<SelectContext>) => void }) {
+function highlightLast({
+  context,
+  setContext,
+}: {
+  context: SelectContext;
+  setContext: (u: Partial<SelectContext>) => void;
+}) {
   const enabled = getEnabled(effectiveOptions(context));
   setContext({ highlighted: enabled[enabled.length - 1]?.value ?? null });
 }
@@ -167,7 +193,9 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
   // Pre-seed label map from defaultLabel so trigger shows the right text before options mount.
   const initialLabelMap: Record<string, string> = {};
   if (options.defaultLabel !== undefined) {
-    const rawLabels = Array.isArray(options.defaultLabel) ? options.defaultLabel : [options.defaultLabel];
+    const rawLabels = Array.isArray(options.defaultLabel)
+      ? options.defaultLabel
+      : [options.defaultLabel];
     initialValue.forEach((v, i) => {
       if (rawLabels[i] !== undefined) initialLabelMap[v] = rawLabels[i];
     });
@@ -211,9 +239,13 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
       arrowEl: null,
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
-      ...(options.onHighlightChange !== undefined && { onHighlightChange: options.onHighlightChange }),
+      ...(options.onHighlightChange !== undefined && {
+        onHighlightChange: options.onHighlightChange,
+      }),
       ...(options.allOptions !== undefined && { allOptions: options.allOptions }),
-      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onHighlightedScroll !== undefined && {
+        onHighlightedScroll: options.onHighlightedScroll,
+      }),
     },
     initial: initialOpen ? "open" : "closed",
 
@@ -224,20 +256,29 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
           OPEN: { target: "open", actions: [setHighlightedToDefault, invokeOnOpenChange(true)] },
           TOGGLE: { target: "open", actions: [setHighlightedToDefault, invokeOnOpenChange(true)] },
           REGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              const exists = context.options.some((o) => o.value === event.option.value);
-              if (!exists) setContext({ options: [...context.options, event.option] });
-              // Always keep labels in the persistent map for value display after close.
-              if (context.valueLabelMap[event.option.value] !== event.option.label) {
-                setContext({ valueLabelMap: { ...context.valueLabelMap, [event.option.value]: event.option.label } });
-              }
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                const exists = context.options.some((o) => o.value === event.option.value);
+                if (!exists) setContext({ options: [...context.options, event.option] });
+                // Always keep labels in the persistent map for value display after close.
+                if (context.valueLabelMap[event.option.value] !== event.option.label) {
+                  setContext({
+                    valueLabelMap: {
+                      ...context.valueLabelMap,
+                      [event.option.value]: event.option.label,
+                    },
+                  });
+                }
+              },
+            ],
           },
           UNREGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              setContext({ options: context.options.filter((o) => o.value !== event.value) });
-              // Intentionally DO NOT remove from valueLabelMap — label must survive close.
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                setContext({ options: context.options.filter((o) => o.value !== event.value) });
+                // Intentionally DO NOT remove from valueLabelMap — label must survive close.
+              },
+            ],
           },
         },
       },
@@ -249,7 +290,10 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
           CLOSE: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
           TOGGLE: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
           ESCAPE_KEY: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
-          INTERACT_OUTSIDE: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
+          INTERACT_OUTSIDE: {
+            target: "closed",
+            actions: [clearHighlight, invokeOnOpenChange(false)],
+          },
 
           SELECT_OPTION: {
             // Stays "open" — the connect layer sends CLOSE after this for single-select.
@@ -298,25 +342,42 @@ export function createSelectMachine(options: CreateSelectMachineOptions) {
               invokeOnHighlightChange,
             ],
           },
-          HIGHLIGHT_NEXT: { actions: [highlightNext, invokeOnHighlightChange, invokeOnHighlightedScroll] },
-          HIGHLIGHT_PREV: { actions: [highlightPrev, invokeOnHighlightChange, invokeOnHighlightedScroll] },
-          HIGHLIGHT_FIRST: { actions: [highlightFirst, invokeOnHighlightChange, invokeOnHighlightedScroll] },
-          HIGHLIGHT_LAST: { actions: [highlightLast, invokeOnHighlightChange, invokeOnHighlightedScroll] },
+          HIGHLIGHT_NEXT: {
+            actions: [highlightNext, invokeOnHighlightChange, invokeOnHighlightedScroll],
+          },
+          HIGHLIGHT_PREV: {
+            actions: [highlightPrev, invokeOnHighlightChange, invokeOnHighlightedScroll],
+          },
+          HIGHLIGHT_FIRST: {
+            actions: [highlightFirst, invokeOnHighlightChange, invokeOnHighlightedScroll],
+          },
+          HIGHLIGHT_LAST: {
+            actions: [highlightLast, invokeOnHighlightChange, invokeOnHighlightedScroll],
+          },
 
           REGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              const exists = context.options.some((o) => o.value === event.option.value);
-              if (!exists) setContext({ options: [...context.options, event.option] });
-              if (context.valueLabelMap[event.option.value] !== event.option.label) {
-                setContext({ valueLabelMap: { ...context.valueLabelMap, [event.option.value]: event.option.label } });
-              }
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                const exists = context.options.some((o) => o.value === event.option.value);
+                if (!exists) setContext({ options: [...context.options, event.option] });
+                if (context.valueLabelMap[event.option.value] !== event.option.label) {
+                  setContext({
+                    valueLabelMap: {
+                      ...context.valueLabelMap,
+                      [event.option.value]: event.option.label,
+                    },
+                  });
+                }
+              },
+            ],
           },
           UNREGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              setContext({ options: context.options.filter((o) => o.value !== event.value) });
-              // Intentionally DO NOT remove from valueLabelMap — label must survive close.
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                setContext({ options: context.options.filter((o) => o.value !== event.value) });
+                // Intentionally DO NOT remove from valueLabelMap — label must survive close.
+              },
+            ],
           },
         },
       },
