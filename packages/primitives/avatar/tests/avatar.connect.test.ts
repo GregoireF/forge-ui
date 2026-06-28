@@ -1,7 +1,7 @@
+import type { MachineSnapshot } from "@forge-ui/core";
 import { describe, expect, it, vi } from "vitest";
 import { connectAvatar, getInitials } from "../src/avatar.connect.js";
 import type { AvatarContext, AvatarState } from "../src/avatar.types.js";
-import type { MachineSnapshot } from "@forge-ui/core";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -16,10 +16,7 @@ function makeCtx(overrides: Partial<AvatarContext> = {}): AvatarContext {
   };
 }
 
-function makeApi(
-  ctxOverrides: Partial<AvatarContext> = {},
-  state: AvatarState = "idle",
-) {
+function makeApi(ctxOverrides: Partial<AvatarContext> = {}, state: AvatarState = "idle") {
   const ctx = makeCtx(ctxOverrides);
   const send = vi.fn();
   const machine = { setContext: vi.fn() };

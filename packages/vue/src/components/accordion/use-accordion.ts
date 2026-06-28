@@ -1,5 +1,5 @@
-import { connectAccordion, createAccordionMachine } from "@forge-ui/accordion";
 import type { CreateAccordionOptions } from "@forge-ui/accordion";
+import { connectAccordion, createAccordionMachine } from "@forge-ui/accordion";
 import { computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";
 

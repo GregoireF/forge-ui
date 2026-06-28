@@ -1,11 +1,21 @@
 ﻿import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
-import { cloneVNode, defineComponent, h, inject, mergeProps, provide, reactive, ref, watch } from "vue";
+import {
+  cloneVNode,
+  defineComponent,
+  h,
+  inject,
+  mergeProps,
+  provide,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../shared/Slot.js";
 import { tooltipKey } from "./tooltip-context.js";
-import { tooltipProviderKey } from "./use-tooltip-provider.js";
 import { useTooltip } from "./use-tooltip.js";
+import { tooltipProviderKey } from "./use-tooltip-provider.js";
 
 type TooltipPresenceContext = {
   isPresent: Ref<boolean>;
@@ -58,7 +68,7 @@ const TooltipProvider = defineComponent({
 
     provide(tooltipProviderKey, value);
 
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -76,7 +86,10 @@ const TooltipRoot = defineComponent({
     openDelay: { type: Number, default: undefined },
     closeDelay: { type: Number, default: undefined },
     id: { type: String, default: undefined },
-    positioning: { type: Object as PropType<import("@forge-ui/tooltip").TooltipPositioning>, default: undefined },
+    positioning: {
+      type: Object as PropType<import("@forge-ui/tooltip").TooltipPositioning>,
+      default: undefined,
+    },
     onOpenChange: { type: Function as PropType<(open: boolean) => void>, default: undefined },
   },
   emits: {
@@ -112,7 +125,7 @@ const TooltipRoot = defineComponent({
 
     watch(api.isOpen, (open) => emit("update:open", open));
 
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -124,13 +137,10 @@ const TooltipRoot = defineComponent({
 // (not the DOM event "pointerenter"). Remap multi-word pointer/keyboard events to all-
 // lowercase-after-on form so hyphenate yields the correct DOM event name.
 function patchVueEvents(props: Record<string, unknown>): Record<string, unknown> {
-  const {
-    onPointerEnter,
-    onPointerLeave,
-    onPointerDown,
-    onKeyDown,
-    ...rest
-  } = props as Record<string, unknown>;
+  const { onPointerEnter, onPointerLeave, onPointerDown, onKeyDown, ...rest } = props as Record<
+    string,
+    unknown
+  >;
   return {
     ...rest,
     ...(onPointerEnter !== undefined && { onPointerenter: onPointerEnter }),
@@ -147,8 +157,8 @@ const TooltipTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...patchVueEvents(api.getTriggerProps()), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots['default']);
-      return h("button", triggerProps, slots['default']?.());
+      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
+      return h("button", triggerProps, slots["default"]?.());
     };
   },
 });
@@ -170,7 +180,7 @@ const TooltipPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots['default']);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots["default"]);
     };
   },
 });
@@ -200,7 +210,10 @@ const TooltipContent = defineComponent({
       const isOpen = api.isOpen.value;
 
       const machineRef = contentProps.ref as (el: HTMLElement | null) => void;
-      const { ref: _ref, ...patchedContentProps } = patchVueEvents(contentProps) as Record<string, unknown>;
+      const { ref: _ref, ...patchedContentProps } = patchVueEvents(contentProps) as Record<
+        string,
+        unknown
+      >;
       const finalContentProps = {
         ...patchedContentProps,
         ...(!isOpen && { "aria-hidden": true }),
@@ -214,9 +227,9 @@ const TooltipContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots['default']));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots["default"]));
       }
-      return h("div", positionerProps, h("div", finalContentProps, slots['default']?.()));
+      return h("div", positionerProps, h("div", finalContentProps, slots["default"]?.()));
     };
   },
 });
@@ -232,8 +245,8 @@ const TooltipAnchor = defineComponent({
     const api = useCtx();
     return () => {
       const anchorProps = { ...api.getAnchorProps(), ...attrs };
-      if (props.asChild) return h(Slot, anchorProps, slots['default']);
-      return h("div", anchorProps, slots['default']?.());
+      if (props.asChild) return h(Slot, anchorProps, slots["default"]);
+      return h("div", anchorProps, slots["default"]?.());
     };
   },
 });
@@ -251,7 +264,7 @@ const TooltipArrow = defineComponent({
         ref?: (el: Element | null) => void;
       };
       const { ref: machineRef, ...arrowAttrs } = rawProps;
-      const children = slots['default']?.();
+      const children = slots["default"]?.();
       if (!children?.length) return null;
       const child = children[0];
       if (!child) return null;

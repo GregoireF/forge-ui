@@ -36,13 +36,18 @@ import type {
   DateRangePickerState,
 } from "./date-range-picker.types.js";
 
-export type DateRangePickerSend = (event: DateRangePickerEvent | DateRangePickerEvent["type"]) => void;
+export type DateRangePickerSend = (
+  event: DateRangePickerEvent | DateRangePickerEvent["type"],
+) => void;
 export type DateRangePickerApi = ReturnType<typeof connectDateRangePicker>;
 
 export function connectDateRangePicker(
   snapshot: MachineSnapshot<DateRangePickerContext, DateRangePickerState>,
   send: DateRangePickerSend,
-  machine: Pick<MachineInstance<DateRangePickerContext, DateRangePickerState, DateRangePickerEvent>, "setContext">,
+  machine: Pick<
+    MachineInstance<DateRangePickerContext, DateRangePickerState, DateRangePickerEvent>,
+    "setContext"
+  >,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.hasTag("open");
@@ -122,7 +127,8 @@ export function connectDateRangePicker(
     today,
     formattedStart,
     formattedEnd,
-    formattedRange: formattedStart && formattedEnd ? `${formattedStart} – ${formattedEnd}` : formattedStart,
+    formattedRange:
+      formattedStart && formattedEnd ? `${formattedStart} – ${formattedEnd}` : formattedStart,
 
     /** Calendar weeks for each visible month */
     weeksPerMonth: Array.from({ length: numberOfMonths }, (_, i) => {
@@ -258,14 +264,38 @@ export function connectDateRangePicker(
         "data-forge-part": "calendar-grid",
         onKeyDown(e: KeyboardEvent) {
           switch (e.key) {
-            case "ArrowLeft": e.preventDefault(); send("FOCUS_PREV_DAY"); break;
-            case "ArrowRight": e.preventDefault(); send("FOCUS_NEXT_DAY"); break;
-            case "ArrowUp": e.preventDefault(); send("FOCUS_PREV_WEEK"); break;
-            case "ArrowDown": e.preventDefault(); send("FOCUS_NEXT_WEEK"); break;
-            case "PageUp": e.preventDefault(); send(e.shiftKey ? "FOCUS_PREV_MONTH" : "FOCUS_PREV_MONTH"); break;
-            case "PageDown": e.preventDefault(); send(e.shiftKey ? "FOCUS_NEXT_MONTH" : "FOCUS_NEXT_MONTH"); break;
-            case "Home": e.preventDefault(); send("FOCUS_WEEK_START"); break;
-            case "End": e.preventDefault(); send("FOCUS_WEEK_END"); break;
+            case "ArrowLeft":
+              e.preventDefault();
+              send("FOCUS_PREV_DAY");
+              break;
+            case "ArrowRight":
+              e.preventDefault();
+              send("FOCUS_NEXT_DAY");
+              break;
+            case "ArrowUp":
+              e.preventDefault();
+              send("FOCUS_PREV_WEEK");
+              break;
+            case "ArrowDown":
+              e.preventDefault();
+              send("FOCUS_NEXT_WEEK");
+              break;
+            case "PageUp":
+              e.preventDefault();
+              send(e.shiftKey ? "FOCUS_PREV_MONTH" : "FOCUS_PREV_MONTH");
+              break;
+            case "PageDown":
+              e.preventDefault();
+              send(e.shiftKey ? "FOCUS_NEXT_MONTH" : "FOCUS_NEXT_MONTH");
+              break;
+            case "Home":
+              e.preventDefault();
+              send("FOCUS_WEEK_START");
+              break;
+            case "End":
+              e.preventDefault();
+              send("FOCUS_WEEK_END");
+              break;
             case "Enter":
             case " ":
               e.preventDefault();

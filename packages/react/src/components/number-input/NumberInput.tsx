@@ -1,4 +1,10 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  ReactNode,
+} from "react";
 import { createContext, useContext } from "react";
 import { Slot } from "../shared/Slot.js";
 import type { UseNumberInputOptions } from "./use-number-input.js";
@@ -61,7 +67,11 @@ function Control({ asChild, children, ...rest }: NumberInputControlProps) {
 // Input — the spinbutton input element
 // ---------------------------------------------------------------------------
 
-export interface NumberInputInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "role" | "type" | "value" | "onChange" | "onFocus" | "onBlur" | "onKeyDown"> {
+export interface NumberInputInputProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "role" | "type" | "value" | "onChange" | "onFocus" | "onBlur" | "onKeyDown"
+  > {
   asChild?: boolean;
 }
 
@@ -101,7 +111,11 @@ function Input({ asChild, ...rest }: NumberInputInputProps) {
 // IncrementTrigger
 // ---------------------------------------------------------------------------
 
-export interface NumberInputIncrementTriggerProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onPointerDown" | "onPointerUp" | "onPointerLeave" | "type"> {
+export interface NumberInputIncrementTriggerProps
+  extends Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    "onPointerDown" | "onPointerUp" | "onPointerLeave" | "type"
+  > {
   asChild?: boolean;
 }
 
@@ -136,7 +150,11 @@ function IncrementTrigger({ asChild, children, ...rest }: NumberInputIncrementTr
 // DecrementTrigger
 // ---------------------------------------------------------------------------
 
-export interface NumberInputDecrementTriggerProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onPointerDown" | "onPointerUp" | "onPointerLeave" | "type"> {
+export interface NumberInputDecrementTriggerProps
+  extends Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    "onPointerDown" | "onPointerUp" | "onPointerLeave" | "type"
+  > {
   asChild?: boolean;
 }
 

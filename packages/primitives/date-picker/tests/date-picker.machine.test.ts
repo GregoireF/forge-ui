@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createDatePickerMachine } from "../src/date-picker.machine.js";
 import { getYearGridStart } from "../src/calendar.js";
+import { createDatePickerMachine } from "../src/date-picker.machine.js";
 import type { CalendarDate } from "../src/date-picker.types.js";
 
 const jan15: CalendarDate = { year: 2024, month: 1, day: 15 };

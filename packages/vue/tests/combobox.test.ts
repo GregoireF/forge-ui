@@ -238,7 +238,16 @@ describe("useCombobox (Vue)", () => {
 
   describe("CSS contract — compound API", () => {
     const ComboboxWithItemText = defineComponent({
-      components: { ComboboxRoot, ComboboxInput, ComboboxTrigger, ComboboxPortal, ComboboxContent, ComboboxItem, ComboboxItemText, ComboboxItemIndicator },
+      components: {
+        ComboboxRoot,
+        ComboboxInput,
+        ComboboxTrigger,
+        ComboboxPortal,
+        ComboboxContent,
+        ComboboxItem,
+        ComboboxItemText,
+        ComboboxItemIndicator,
+      },
       setup() {
         return { fruits };
       },
@@ -288,7 +297,9 @@ describe("useCombobox (Vue)", () => {
       render(ComboboxWithItemText);
       await fireEvent.click(screen.getByTestId("trigger"));
       await nextTick();
-      const itemText = document.querySelector('[data-forge-scope="combobox"][data-forge-part="item-text"]');
+      const itemText = document.querySelector(
+        '[data-forge-scope="combobox"][data-forge-part="item-text"]',
+      );
       expect(itemText).toBeInTheDocument();
     });
 
@@ -296,7 +307,9 @@ describe("useCombobox (Vue)", () => {
       render(ComboboxWithItemText);
       await fireEvent.click(screen.getByTestId("trigger"));
       await nextTick();
-      const item = document.querySelector('[data-forge-scope="combobox"][data-forge-part="option"]');
+      const item = document.querySelector(
+        '[data-forge-scope="combobox"][data-forge-part="option"]',
+      );
       expect(item).toBeInTheDocument();
     });
   });

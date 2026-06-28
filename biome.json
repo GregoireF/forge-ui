@@ -16,7 +16,7 @@
       "!**/*.tsbuildinfo",
       "!apps/docs/**/*.mdx",
       "!apps/docs/**/*.astro",
-      "!apps/docs/.astro/**"
+      "!apps/docs/.astro"
     ]
   },
   "formatter": {
@@ -60,6 +60,9 @@
           },
           "suspicious": {
             "noExplicitAny": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
           }
         }
       }
@@ -80,7 +83,8 @@
         "rules": {
           "correctness": {
             "noUnusedVariables": "off",
-            "noUnusedImports": "off"
+            "noUnusedImports": "off",
+            "useHookAtTopLevel": "off"
           }
         }
       }

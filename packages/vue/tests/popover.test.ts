@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { render, screen } from "@testing-library/vue";
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { Popover } from "../src/components/popover/Popover.js";
@@ -116,7 +116,13 @@ describe("usePopover (Vue)", () => {
 
     it("adds aria-labelledby once Title mounts (compound)", async () => {
       const Fixture = defineComponent({
-        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription },
+        components: {
+          PopoverRoot,
+          PopoverTrigger,
+          PopoverContent,
+          PopoverTitle,
+          PopoverDescription,
+        },
         template: `
           <PopoverRoot id="aria-test">
             <PopoverTrigger data-testid="trig">Open</PopoverTrigger>
@@ -173,7 +179,14 @@ describe("usePopover (Vue)", () => {
   describe("Popover compound components", () => {
     it("opens and closes via compound Close", async () => {
       const Fixture = defineComponent({
-        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription, PopoverClose },
+        components: {
+          PopoverRoot,
+          PopoverTrigger,
+          PopoverContent,
+          PopoverTitle,
+          PopoverDescription,
+          PopoverClose,
+        },
         template: `
           <PopoverRoot id="vue-cmp">
             <PopoverTrigger data-testid="trig">Open</PopoverTrigger>
@@ -194,7 +207,14 @@ describe("usePopover (Vue)", () => {
 
     it("Escape closes the compound popover", async () => {
       const Fixture = defineComponent({
-        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription, PopoverClose },
+        components: {
+          PopoverRoot,
+          PopoverTrigger,
+          PopoverContent,
+          PopoverTitle,
+          PopoverDescription,
+          PopoverClose,
+        },
         template: `
           <PopoverRoot id="vue-escape">
             <PopoverTrigger data-testid="trig">Open</PopoverTrigger>
@@ -214,7 +234,13 @@ describe("usePopover (Vue)", () => {
 
     it("forceMount keeps content in DOM when closed", () => {
       const Fixture = defineComponent({
-        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription },
+        components: {
+          PopoverRoot,
+          PopoverTrigger,
+          PopoverContent,
+          PopoverTitle,
+          PopoverDescription,
+        },
         template: `
           <PopoverRoot id="vue-force">
             <PopoverTrigger>Open</PopoverTrigger>
@@ -235,7 +261,13 @@ describe("usePopover (Vue)", () => {
   describe("controlled state", () => {
     it("respects :open=true prop", () => {
       const Fixture = defineComponent({
-        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription },
+        components: {
+          PopoverRoot,
+          PopoverTrigger,
+          PopoverContent,
+          PopoverTitle,
+          PopoverDescription,
+        },
         template: `
           <PopoverRoot id="vue-ctrl" :open="true">
             <PopoverTrigger>Open</PopoverTrigger>
@@ -252,7 +284,13 @@ describe("usePopover (Vue)", () => {
 
     it("respects :open=false prop", () => {
       const Fixture = defineComponent({
-        components: { PopoverRoot, PopoverTrigger, PopoverContent, PopoverTitle, PopoverDescription },
+        components: {
+          PopoverRoot,
+          PopoverTrigger,
+          PopoverContent,
+          PopoverTitle,
+          PopoverDescription,
+        },
         template: `
           <PopoverRoot id="vue-ctrl-closed" :open="false">
             <PopoverTrigger>Open</PopoverTrigger>

@@ -18,7 +18,9 @@ function navigateRadioGroup(e: KeyboardEvent, send: RadioGroupSend): boolean {
 
   e.preventDefault();
   const current = e.currentTarget as HTMLElement;
-  const root = current.closest<HTMLElement>('[data-forge-scope="radio-group"][data-forge-part="root"]');
+  const root = current.closest<HTMLElement>(
+    '[data-forge-scope="radio-group"][data-forge-part="root"]',
+  );
   if (!root) return true;
   const radios = [
     ...root.querySelectorAll<HTMLElement>('[data-forge-part="radio"]:not([disabled])'),

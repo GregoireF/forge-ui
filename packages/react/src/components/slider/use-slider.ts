@@ -20,7 +20,7 @@ export function useSlider(options: UseSliderOptions = {}): SliderApi {
       const vals = Array.isArray(options.value) ? options.value : [options.value];
       machine.update({ values: vals });
     }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: options.value identity change triggers sync
+    // biome-ignore lint/correctness/useExhaustiveDependencies: options.value identity change triggers sync
   }, [options.value]);
 
   return connectSlider(snapshot, send, machine);

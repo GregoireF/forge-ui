@@ -70,8 +70,8 @@ const AccordionRoot = defineComponent({
     provide(accordionKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots['default']);
-      return h("div", rootProps, slots['default']?.());
+      if (props.asChild) return h(Slot, rootProps, slots["default"]);
+      return h("div", rootProps, slots["default"]?.());
     };
   },
 });
@@ -91,8 +91,8 @@ const AccordionItem = defineComponent({
     provide(accordionItemKey, props.value);
     return () => {
       const itemProps = { ...api.getItemProps(props.value), ...attrs };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -109,8 +109,8 @@ const AccordionHeader = defineComponent({
     const itemValue = useItemValue();
     return () => {
       const headerProps = { ...api.getHeaderProps(itemValue), ...attrs };
-      if (props.asChild) return h(Slot, headerProps, slots['default']);
-      return h("h3", headerProps, slots['default']?.());
+      if (props.asChild) return h(Slot, headerProps, slots["default"]);
+      return h("h3", headerProps, slots["default"]?.());
     };
   },
 });
@@ -127,8 +127,8 @@ const AccordionTrigger = defineComponent({
     const itemValue = useItemValue();
     return () => {
       const triggerProps = { ...api.getTriggerProps(itemValue), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots['default']);
-      return h("button", triggerProps, slots['default']?.());
+      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
+      return h("button", triggerProps, slots["default"]?.());
     };
   },
 });
@@ -150,8 +150,8 @@ const AccordionContent = defineComponent({
       const isOpen = api.value.value.includes(itemValue);
       if (!props.forceMount && !isOpen) return null;
       const contentProps = { ...api.getContentProps(itemValue), ...attrs };
-      if (props.asChild) return h(Slot, contentProps, slots['default']);
-      return h("div", contentProps, slots['default']?.());
+      if (props.asChild) return h(Slot, contentProps, slots["default"]);
+      return h("div", contentProps, slots["default"]?.());
     };
   },
 });
@@ -168,10 +168,4 @@ export const Accordion = {
   Content: AccordionContent,
 } as const;
 
-export {
-  AccordionContent,
-  AccordionHeader,
-  AccordionItem,
-  AccordionRoot,
-  AccordionTrigger,
-};
+export { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, AccordionTrigger };

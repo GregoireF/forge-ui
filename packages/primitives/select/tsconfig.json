@@ -9,10 +9,7 @@
       "@forge-ui/floating": ["../../floating/src/index.ts"]
     }
   },
-  "references": [
-    { "path": "../../core" },
-    { "path": "../../floating" }
-  ],
+  "references": [{ "path": "../../core" }, { "path": "../../floating" }],
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tests"]
 }

@@ -45,10 +45,7 @@ export type ResolvedFloatingPositioning = Required<
 };
 
 // Convenience helpers to build a placement string from separate side+align props.
-export function buildPlacement(
-  side: Side,
-  align: Align | "center",
-): Placement {
+export function buildPlacement(side: Side, align: Align | "center"): Placement {
   return align === "center" ? side : (`${side}-${align}` as Placement);
 }
 

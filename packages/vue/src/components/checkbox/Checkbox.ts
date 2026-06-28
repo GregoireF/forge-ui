@@ -49,7 +49,9 @@ const CheckboxGroup = defineComponent({
   setup(props, { slots, emit }) {
     const isControlled = computed(() => props.value !== undefined);
     const internal = ref<string[]>(props.defaultValue ?? []);
-    const currentValue = computed(() => (isControlled.value ? (props.value ?? []) : internal.value));
+    const currentValue = computed(() =>
+      isControlled.value ? (props.value ?? []) : internal.value,
+    );
     const allValues = ref(new Set<string>());
 
     const commit = (next: string[]) => {
@@ -90,7 +92,7 @@ const CheckboxGroup = defineComponent({
       h(
         "div",
         { role: "group", "data-forge-scope": "checkbox", "data-forge-part": "group" },
-        slots['default']?.(),
+        slots["default"]?.(),
       );
   },
 });
@@ -197,7 +199,7 @@ const CheckboxRoot = defineComponent({
       const inputProps = api.getHiddenInputProps();
       const name = effectiveName.value;
       return h("div", api.getRootProps(), [
-        slots['default']?.(),
+        slots["default"]?.(),
         name
           ? h("input", {
               ...inputProps,
@@ -218,7 +220,7 @@ const CheckboxControl = defineComponent({
   name: "ForgeCheckboxControl",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("button", api.getControlProps(), slots['default']?.());
+    return () => h("button", api.getControlProps(), slots["default"]?.());
   },
 });
 
@@ -235,7 +237,7 @@ const CheckboxIndicator = defineComponent({
     const api = useCtx();
     return () => {
       if (!props.forceMount && !api.isChecked.value && !api.isIndeterminate.value) return null;
-      return h("span", api.getIndicatorProps(), slots['default']?.());
+      return h("span", api.getIndicatorProps(), slots["default"]?.());
     };
   },
 });
@@ -248,7 +250,7 @@ const CheckboxLabel = defineComponent({
   name: "ForgeCheckboxLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots['default']?.());
+    return () => h("label", api.getLabelProps(), slots["default"]?.());
   },
 });
 
@@ -305,7 +307,7 @@ const CheckboxGroupAll = defineComponent({
 
     provide(checkboxKey, modifiedApi);
 
-    return () => h("div", api.getRootProps(), slots['default']?.());
+    return () => h("div", api.getRootProps(), slots["default"]?.());
   },
 });
 
@@ -323,10 +325,10 @@ export const Checkbox = {
 } as const;
 
 export {
-  CheckboxRoot,
   CheckboxControl,
-  CheckboxIndicator,
-  CheckboxLabel,
   CheckboxGroup,
   CheckboxGroupAll,
+  CheckboxIndicator,
+  CheckboxLabel,
+  CheckboxRoot,
 };

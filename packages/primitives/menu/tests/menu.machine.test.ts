@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { clearRegistry } from "@forge-ui/core";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createMenuMachine } from "../src/menu.machine.js";
 
 let active: ReturnType<typeof createMenuMachine>[] = [];

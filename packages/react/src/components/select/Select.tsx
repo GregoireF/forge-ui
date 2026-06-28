@@ -43,9 +43,7 @@ function Root({ children, ...opts }: SelectRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <SelectCtx.Provider value={api}>
-      <SelectPresenceCtx.Provider value={presence}>
-        {children}
-      </SelectPresenceCtx.Provider>
+      <SelectPresenceCtx.Provider value={presence}>{children}</SelectPresenceCtx.Provider>
     </SelectCtx.Provider>
   );
 }
@@ -169,7 +167,10 @@ function Content({ asChild, forceMount, children, ...rest }: SelectContentProps)
     ...contentProps,
     ...closingProps,
     ...rest,
-    ref: mergeRefs(contentProps.ref as (el: HTMLUListElement | null) => void, presenceRef as (el: HTMLUListElement | null) => void),
+    ref: mergeRefs(
+      contentProps.ref as (el: HTMLUListElement | null) => void,
+      presenceRef as (el: HTMLUListElement | null) => void,
+    ),
   };
 
   if (asChild) {
@@ -207,11 +208,15 @@ function Item({ value, disabled = false, label, asChild, children, ...rest }: Se
     const option: SelectOption = { value, label: resolvedLabel, disabled };
     api.send({ type: "REGISTER_OPTION", option });
     return () => api.send({ type: "UNREGISTER_OPTION", value });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, resolvedLabel, disabled]);
 
   // Strip Vue-specific casing (onMousemove / onMouseleave) â€" React uses camelCase.
-  const { onMousemove: _mm, onMouseleave: _ml, ...optionProps } = api.getOptionProps({ value, disabled });
+  const {
+    onMousemove: _mm,
+    onMouseleave: _ml,
+    ...optionProps
+  } = api.getOptionProps({ value, disabled });
   const props = { ...optionProps, ...rest } as LiHTMLAttributes<HTMLLIElement>;
 
   if (asChild) return <Slot {...props}>{children}</Slot>;
@@ -227,7 +232,11 @@ export interface SelectItemTextProps {
 }
 
 function ItemText({ children }: SelectItemTextProps) {
-  return <span data-forge-scope="select" data-forge-part="item-text">{children}</span>;
+  return (
+    <span data-forge-scope="select" data-forge-part="item-text">
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -239,7 +248,11 @@ export interface SelectItemIndicatorProps {
 }
 
 function ItemIndicator({ children }: SelectItemIndicatorProps) {
-  return <span data-forge-scope="select" data-forge-part="item-indicator">{children}</span>;
+  return (
+    <span data-forge-scope="select" data-forge-part="item-indicator">
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -292,7 +305,11 @@ export interface SelectIndicatorProps extends HTMLAttributes<HTMLSpanElement> {
 
 function Indicator({ children, ...rest }: SelectIndicatorProps) {
   const api = useCtx();
-  return <span {...api.getIndicatorProps()} {...rest}>{children}</span>;
+  return (
+    <span {...api.getIndicatorProps()} {...rest}>
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------

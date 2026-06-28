@@ -378,7 +378,12 @@ describe("createSliderMachine — callbacks", () => {
   it("callbacks NOT called when disabled", () => {
     const onChange = vi.fn();
     const onCommit = vi.fn();
-    const m = make({ defaultValue: 50, disabled: true, onValueChange: onChange, onValueCommit: onCommit });
+    const m = make({
+      defaultValue: 50,
+      disabled: true,
+      onValueChange: onChange,
+      onValueCommit: onCommit,
+    });
     m.send({ type: "INCREMENT", thumbIndex: 0 });
     expect(onChange).not.toHaveBeenCalled();
     expect(onCommit).not.toHaveBeenCalled();
@@ -391,7 +396,7 @@ describe("createSliderMachine — callbacks", () => {
 
 describe("createSliderMachine — getValueLabel prop", () => {
   it("getValueLabel stored in context when provided", () => {
-    const getValueLabel = (v: number) => v < 50 ? "low" : "high";
+    const getValueLabel = (v: number) => (v < 50 ? "low" : "high");
     const m = make({ getValueLabel });
     expect(m.getSnapshot().context.getValueLabel).toBe(getValueLabel);
   });

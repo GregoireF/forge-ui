@@ -27,7 +27,8 @@ export function useSlider(options: UseSliderOptions = {}) {
     getTrackProps: () => api.value.getTrackProps(),
     getRangeProps: () => api.value.getRangeProps(),
     getThumbProps: (thumbIndex: number) => api.value.getThumbProps(thumbIndex),
-    getHiddenInputProps: (name?: string, thumbIndex = 0) => api.value.getHiddenInputProps(name, thumbIndex),
+    getHiddenInputProps: (name?: string, thumbIndex = 0) =>
+      api.value.getHiddenInputProps(name, thumbIndex),
     getMarkerGroupProps: () => api.value.getMarkerGroupProps(),
     getMarkerProps: (markValue: number) => api.value.getMarkerProps(markValue),
   };
