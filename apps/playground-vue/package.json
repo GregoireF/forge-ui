@@ -16,6 +16,6 @@
     "@vitejs/plugin-vue": "^5.1.0",
     "typescript": "*",
     "vite": "^6.0.0",
-    "vue-tsc": "^2.0.0"
+    "vue-tsc": "^3.3.5"
   }
 }
