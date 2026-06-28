@@ -113,6 +113,14 @@
     "./visually-hidden": {
       "types": "./dist/visually-hidden/index.d.ts",
       "import": "./dist/visually-hidden/index.js"
+    },
+    "./menu": {
+      "types": "./dist/menu/index.d.ts",
+      "import": "./dist/menu/index.js"
+    },
+    "./context-menu": {
+      "types": "./dist/context-menu/index.d.ts",
+      "import": "./dist/context-menu/index.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -133,6 +141,7 @@
     "vue": ">=3.5.0"
   },
   "dependencies": {
+    "@forge-ui/avatar": "workspace:*",
     "@forge-ui/accordion": "workspace:*",
     "@forge-ui/collapsible": "workspace:*",
     "@forge-ui/progress": "workspace:*",
@@ -159,7 +168,8 @@
     "@forge-ui/toggle": "workspace:*",
     "@forge-ui/toggle-group": "workspace:*",
     "@forge-ui/separator": "workspace:*",
-    "@forge-ui/visually-hidden": "workspace:*"
+    "@forge-ui/visually-hidden": "workspace:*",
+    "@forge-ui/menu": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/vue": "^8.1.0",

@@ -158,6 +158,16 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/avatar": {
+      "name": "@forge-ui/avatar",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/checkbox": {
       "name": "@forge-ui/checkbox",
       "version": "0.0.0",
@@ -247,6 +257,17 @@
       },
       "devDependencies": {
         "typescript": "^5.8.3",
+      },
+    },
+    "packages/primitives/menu": {
+      "name": "@forge-ui/menu",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/floating": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
       },
     },
     "packages/primitives/number-input": {
@@ -399,6 +420,7 @@
       "dependencies": {
         "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
+        "@forge-ui/avatar": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
         "@forge-ui/collapsible": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
@@ -409,6 +431,7 @@
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
+        "@forge-ui/menu": "workspace:*",
         "@forge-ui/number-input": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/progress": "workspace:*",
@@ -447,6 +470,7 @@
       "dependencies": {
         "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
+        "@forge-ui/avatar": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
         "@forge-ui/collapsible": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
@@ -457,6 +481,7 @@
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
+        "@forge-ui/menu": "workspace:*",
         "@forge-ui/number-input": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/progress": "workspace:*",
@@ -789,6 +814,8 @@
 
     "@forge-ui/alert-dialog": ["@forge-ui/alert-dialog@workspace:packages/primitives/alert-dialog"],
 
+    "@forge-ui/avatar": ["@forge-ui/avatar@workspace:packages/primitives/avatar"],
+
     "@forge-ui/checkbox": ["@forge-ui/checkbox@workspace:packages/primitives/checkbox"],
 
     "@forge-ui/collapsible": ["@forge-ui/collapsible@workspace:packages/primitives/collapsible"],
@@ -812,6 +839,8 @@
     "@forge-ui/floating": ["@forge-ui/floating@workspace:packages/floating"],
 
     "@forge-ui/hover-card": ["@forge-ui/hover-card@workspace:packages/primitives/hover-card"],
+
+    "@forge-ui/menu": ["@forge-ui/menu@workspace:packages/primitives/menu"],
 
     "@forge-ui/number-input": ["@forge-ui/number-input@workspace:packages/primitives/number-input"],
 

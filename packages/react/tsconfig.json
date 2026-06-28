@@ -32,7 +32,8 @@
       "@forge-ui/toggle": ["../primitives/toggle/src/index.ts"],
       "@forge-ui/toggle-group": ["../primitives/toggle-group/src/index.ts"],
       "@forge-ui/separator": ["../primitives/separator/src/index.ts"],
-      "@forge-ui/visually-hidden": ["../primitives/visually-hidden/src/index.ts"]
+      "@forge-ui/visually-hidden": ["../primitives/visually-hidden/src/index.ts"],
+      "@forge-ui/menu": ["../primitives/menu/src/index.ts"]
     }
   },
   "include": ["src"],
@@ -65,6 +66,7 @@
     { "path": "../primitives/toggle" },
     { "path": "../primitives/toggle-group" },
     { "path": "../primitives/separator" },
-    { "path": "../primitives/visually-hidden" }
+    { "path": "../primitives/visually-hidden" },
+    { "path": "../primitives/menu" }
   ]
 }

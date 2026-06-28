@@ -252,3 +252,61 @@ export type { VisuallyHiddenProps } from "./components/visually-hidden/VisuallyH
 export { VisuallyHidden } from "./components/visually-hidden/VisuallyHidden.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";
+export {
+  Menu,
+  MenuRoot,
+  MenuTrigger,
+  MenuPortal,
+  MenuContent,
+  MenuItem,
+  MenuSeparator,
+  MenuGroup,
+  MenuGroupLabel,
+  MenuSub,
+  MenuSubTrigger,
+  MenuSubContent,
+} from "./components/menu/Menu.js";
+export type {
+  MenuRootProps,
+  MenuTriggerProps,
+  MenuPortalProps,
+  MenuContentProps,
+  MenuItemProps,
+  MenuSeparatorProps,
+  MenuGroupProps,
+  MenuGroupLabelProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
+  MenuSubContentProps,
+} from "./components/menu/Menu.js";
+export type { UseMenuOptions, UseMenuReturn } from "./components/menu/use-menu.js";
+export { useMenu } from "./components/menu/use-menu.js";
+export type {
+  AvatarFallbackProps,
+  AvatarImageProps,
+  AvatarRootProps,
+} from "./components/avatar/Avatar.js";
+export { Avatar, useAvatarContext } from "./components/avatar/Avatar.js";
+export type { UseAvatarOptions } from "./components/avatar/use-avatar.js";
+export { useAvatar } from "./components/avatar/use-avatar.js";
+export {
+  ContextMenu,
+  ContextMenuRoot,
+  ContextMenuTrigger,
+  ContextMenuPortal,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuGroup,
+  ContextMenuGroupLabel,
+} from "./components/menu/ContextMenu.js";
+export type {
+  ContextMenuRootProps,
+  ContextMenuTriggerProps,
+  ContextMenuPortalProps,
+  ContextMenuContentProps,
+  ContextMenuItemProps,
+  ContextMenuSeparatorProps,
+  ContextMenuGroupProps,
+  ContextMenuGroupLabelProps,
+} from "./components/menu/ContextMenu.js";

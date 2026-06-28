@@ -1,4 +1,4 @@
-import { Accordion, AlertDialog, Checkbox, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, NumberInput, Popover, Progress, RadioGroup, Select, Separator, Slider, Switch, Tabs, TagsInput, TimePicker, Toggle, ToggleGroup, Tooltip, VisuallyHidden, useDialog, useDatePickerContext, useDateRangePickerContext } from "@forge-ui/react";
+import { Accordion, AlertDialog, Avatar, Checkbox, Collapsible, Combobox, ContextMenu, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, Menu, NumberInput, Popover, Progress, RadioGroup, Select, Separator, Slider, Switch, Tabs, TagsInput, TimePicker, Toggle, ToggleGroup, Tooltip, VisuallyHidden, useAvatarContext, useDialog, useDatePickerContext, useDateRangePickerContext } from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -193,6 +193,41 @@ export default function App() {
         description="Contenu visible pour les lecteurs d'écran, invisible visuellement. Utile pour les labels SR."
       >
         <VisuallyHiddenDemo />
+      </Section>
+
+      <Section
+        title="Menu (DropdownMenu)"
+        description="WAI-ARIA Menu Button. Focus dans le content. Keyboard nav. Sous-menus imbriqués. navigate prop."
+      >
+        <MenuDemo />
+      </Section>
+
+      <Section
+        title="Menu — Sub click-only (openOnHover=false)"
+        description="SubTrigger avec openOnHover={false} : le survol ne suffit pas, seul le clic ouvre le sous-menu."
+      >
+        <MenuClickOnlySubDemo />
+      </Section>
+
+      <Section
+        title="Menu — Anchor (positionnement personnalisé)"
+        description="Menu.Anchor positionne le floating par rapport à un élément arbitraire, pas le trigger."
+      >
+        <MenuAnchorDemo />
+      </Section>
+
+      <Section
+        title="Menu — ContextMenu (avec Sub)"
+        description="Clic-droit + sous-menus imbriqués portés vers document.body. Clipping impossible."
+      >
+        <ContextMenuDemo />
+      </Section>
+
+      <Section
+        title="Avatar"
+        description="Image avec fallback accessible. Supporte delayMs pour éviter le flash du fallback sur les connexions rapides."
+      >
+        <AvatarDemo />
       </Section>
     </main>
   );
@@ -1339,7 +1374,7 @@ function SliderDemo() {
         </div>
         <Slider.Root
           value={value}
-          onValueChange={(vals) => setValue(vals[0])}
+          onValueChange={(vals) => setValue(vals[0] ?? 0)}
           min={0} max={100} step={25}
           marks={PRICE_MARKS}
           style={{ position: "relative", height: "28px", display: "flex", alignItems: "center" }}
@@ -1385,7 +1420,7 @@ function SliderDemo() {
         <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Volume vertical</span>
         <Slider.Root
           value={vertical}
-          onValueChange={(vals) => setVertical(vals[0])}
+          onValueChange={(vals) => setVertical(vals[0] ?? 0)}
           orientation="vertical"
           min={0} max={100} step={1}
           data-testid="slider-vertical-root"
@@ -1481,10 +1516,12 @@ function NumberInputDemo() {
 
 function DateFieldDemo() {
   const [date, setDate] = useState<{ year: number; month: number; day: number } | null>(null);
+  const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       <DateField.Root
         data-testid="date-field-root"
+        locale={locale}
         onValueChange={(d) => setDate(d)}
       >
         <DateField.Group
@@ -1499,21 +1536,22 @@ function DateFieldDemo() {
             fontSize: "0.875rem",
             background: "#fff",
             fontVariantNumeric: "tabular-nums",
+            cursor: "text",
           }}
         >
           <DateField.MonthSegment
             data-testid="date-field-month"
-            style={{ minWidth: "3ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "3ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
           <DateField.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <DateField.DaySegment
             data-testid="date-field-day"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
           <DateField.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <DateField.YearSegment
             data-testid="date-field-year"
-            style={{ minWidth: "4ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "4ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
         </DateField.Group>
         <DateField.HiddenInput name="date" />
@@ -1531,10 +1569,12 @@ function DateFieldDemo() {
 
 function TimePickerDemo() {
   const [time, setTime] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+  const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       <TimePicker.Root
         data-testid="time-picker-root"
+        locale={locale}
         onValueChange={(t) => setTime(t)}
       >
         <TimePicker.Group
@@ -1549,26 +1589,27 @@ function TimePickerDemo() {
             fontSize: "0.875rem",
             background: "#fff",
             fontVariantNumeric: "tabular-nums",
+            cursor: "text",
           }}
         >
           <TimePicker.HoursSegment
             data-testid="time-picker-hours"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
           <TimePicker.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <TimePicker.MinutesSegment
             data-testid="time-picker-minutes"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
           <TimePicker.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <TimePicker.SecondsSegment
             data-testid="time-picker-seconds"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
           <span style={{ marginLeft: "4px" }} />
           <TimePicker.PeriodSegment
             data-testid="time-picker-period"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px" }}
+            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
           />
         </TimePicker.Group>
         <TimePicker.HiddenInput name="time" />
@@ -1593,62 +1634,97 @@ const calendarCellStyle = {
   lineHeight: 1,
 };
 
-function DatePickerCalendarGrid() {
+const calPickerCellStyle = { textAlign: "center" as const, padding: "8px 4px", cursor: "pointer", borderRadius: "6px", fontSize: "0.8rem" };
+
+function DatePickerCalendarContent() {
   const api = useDatePickerContext();
+  const navBtn = { padding: "0.25rem 0.6rem", background: "transparent", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.9rem" };
+  // "open.month" handles no navigation events — only day/year views have prev/next buttons
+  const prevBtn = api.view === "day"
+    ? <DatePicker.PrevMonthButton data-testid="date-picker-prev" style={navBtn}>←</DatePicker.PrevMonthButton>
+    : api.view === "year"
+      ? <DatePicker.PrevYearRangeButton style={navBtn}>←</DatePicker.PrevYearRangeButton>
+      : <span style={{ width: "2rem" }} />;
+  const nextBtn = api.view === "day"
+    ? <DatePicker.NextMonthButton data-testid="date-picker-next" style={navBtn}>→</DatePicker.NextMonthButton>
+    : api.view === "year"
+      ? <DatePicker.NextYearRangeButton style={navBtn}>→</DatePicker.NextYearRangeButton>
+      : <span style={{ width: "2rem" }} />;
   return (
-    <DatePicker.CalendarGrid
-      data-testid="date-picker-grid"
-      style={{ display: "grid", gap: "2px" }}
-    >
-      <DatePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
-        {api.weekdays.map((_, i) => (
-          <DatePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }} />
-        ))}
-      </DatePicker.CalendarRow>
-      {api.weeks.map((week, wi) => (
-        <DatePicker.CalendarRow key={wi} weekIndex={wi} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
-          {week.map((cell) => (
-            <DatePicker.CalendarCell
-              key={`${cell.date.year}-${cell.date.month}-${cell.date.day}`}
-              date={cell.date}
-              isOutsideMonth={cell.isOutsideMonth}
-              style={{ ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 }}
-            />
+    <>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+        {prevBtn}
+        <DatePicker.ViewSwitchButton
+          data-testid="date-picker-header"
+          style={{ fontWeight: 600, fontSize: "0.875rem", background: "none", border: "none", cursor: "pointer", padding: "0.25rem 0.5rem", borderRadius: "6px" }}
+        >
+          {api.monthYearLabel}
+        </DatePicker.ViewSwitchButton>
+        {nextBtn}
+      </div>
+
+      {api.view === "day" && (
+        <DatePicker.CalendarGrid data-testid="date-picker-grid" style={{ display: "grid", gap: "2px" }}>
+          <DatePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
+            {api.weekdays.map((_, i) => (
+              <DatePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }} />
+            ))}
+          </DatePicker.CalendarRow>
+          {api.weeks.map((week, wi) => (
+            <DatePicker.CalendarRow key={wi} weekIndex={wi} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+              {week.map((cell) => (
+                <DatePicker.CalendarCell
+                  key={`${cell.date.year}-${cell.date.month}-${cell.date.day}`}
+                  date={cell.date}
+                  isOutsideMonth={cell.isOutsideMonth}
+                  style={{ ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 }}
+                />
+              ))}
+            </DatePicker.CalendarRow>
           ))}
-        </DatePicker.CalendarRow>
-      ))}
-    </DatePicker.CalendarGrid>
+        </DatePicker.CalendarGrid>
+      )}
+
+      {api.view === "month" && (
+        <DatePicker.MonthGrid style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+          {Array.from({ length: 12 }, (_, i) => (
+            <DatePicker.MonthCell key={i} month={i + 1} style={calPickerCellStyle} />
+          ))}
+        </DatePicker.MonthGrid>
+      )}
+
+      {api.view === "year" && (
+        <DatePicker.YearGrid style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+          {api.yearRange.map((year) => (
+            <DatePicker.YearCell key={year} year={year} style={calPickerCellStyle} />
+          ))}
+        </DatePicker.YearGrid>
+      )}
+    </>
   );
 }
 
 function DatePickerDemo() {
   const [selected, setSelected] = useState<string | null>(null);
-  const today = new Date();
-  const min = { year: today.getFullYear(), month: today.getMonth() + 1, day: 1 };
-  const max = { year: today.getFullYear(), month: today.getMonth() + 1, day: 28 };
   const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-      <p style={{ margin: 0, fontSize: "0.75rem", color: "#94a3b8" }}>Dates disponibles : du {min.day}/{min.month}/{min.year} au {max.day}/{max.month}/{max.year}</p>
-      <DatePicker.Root
-        data-testid="date-picker-root"
-        min={min}
-        max={max}
-        locale={locale}
-        firstDayOfWeek={1}
-        onValueChange={(d) => setSelected(d ? `${d.year}-${String(d.month).padStart(2,"0")}-${String(d.day).padStart(2,"0")}` : null)}
-      >
-        <DatePicker.Trigger data-testid="date-picker-trigger" style={btnStyle}>
-          {selected ?? "Choisir une date"}
-        </DatePicker.Trigger>
-        <DatePicker.Portal>
+      <div style={{ position: "relative", display: "inline-block" }}>
+        <DatePicker.Root
+          data-testid="date-picker-root"
+          locale={locale}
+          firstDayOfWeek={1}
+          onValueChange={(d) => setSelected(d ? `${d.year}-${String(d.month).padStart(2,"0")}-${String(d.day).padStart(2,"0")}` : null)}
+        >
+          <DatePicker.Trigger data-testid="date-picker-trigger" style={btnStyle}>
+            {selected ?? "Choisir une date"}
+          </DatePicker.Trigger>
           <DatePicker.Content
             data-testid="date-picker-content"
             style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              position: "absolute",
+              top: "calc(100% + 4px)",
+              left: 0,
               background: "#fff",
               border: "1px solid #e2e8f0",
               borderRadius: "10px",
@@ -1658,16 +1734,11 @@ function DatePickerDemo() {
               minWidth: "280px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-              <DatePicker.PrevMonthButton data-testid="date-picker-prev" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>←</DatePicker.PrevMonthButton>
-              <DatePicker.CalendarHeader data-testid="date-picker-header" style={{ fontWeight: 600, fontSize: "0.875rem" }} />
-              <DatePicker.NextMonthButton data-testid="date-picker-next" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>→</DatePicker.NextMonthButton>
-            </div>
-            <DatePickerCalendarGrid />
+            <DatePickerCalendarContent />
           </DatePicker.Content>
-        </DatePicker.Portal>
-        <DatePicker.HiddenInput name="date" />
-      </DatePicker.Root>
+          <DatePicker.HiddenInput name="date" />
+        </DatePicker.Root>
+      </div>
       {selected && (
         <p data-testid="date-picker-value" style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
           Sélectionné : {selected}
@@ -1710,23 +1781,29 @@ function DateRangePickerDemo() {
   const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-      <DateRangePicker.Root
-        data-testid="date-range-picker-root"
-        locale={locale}
-        firstDayOfWeek={1}
-        onValueChange={(r) => setRange(r ? `${r.start?.year ?? "?"}-${String(r.start?.month ?? "??").padStart(2, "0")}-${String(r.start?.day ?? "??").padStart(2, "0")} → ${r.end?.year ?? "?"}-${String(r.end?.month ?? "??").padStart(2, "0")}-${String(r.end?.day ?? "??").padStart(2, "0")}` : null)}
-      >
-        <DateRangePicker.Trigger data-testid="date-range-picker-trigger" style={btnStyle}>
-          {range ?? "Choisir une plage"}
-        </DateRangePicker.Trigger>
-        <DateRangePicker.Portal>
+      <div style={{ position: "relative", display: "inline-block" }}>
+        <DateRangePicker.Root
+          data-testid="date-range-picker-root"
+          locale={locale}
+          firstDayOfWeek={1}
+          numberOfMonths={1}
+          onValueChange={(r) => {
+            if (r?.start && r?.end) {
+              setRange(`${r.start.year}-${String(r.start.month).padStart(2,"0")}-${String(r.start.day).padStart(2,"0")} → ${r.end.year}-${String(r.end.month).padStart(2,"0")}-${String(r.end.day).padStart(2,"0")}`);
+            } else {
+              setRange(null);
+            }
+          }}
+        >
+          <DateRangePicker.Trigger data-testid="date-range-picker-trigger" style={btnStyle}>
+            {range ?? "Choisir une plage"}
+          </DateRangePicker.Trigger>
           <DateRangePicker.Content
             data-testid="date-range-picker-content"
             style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              position: "absolute",
+              top: "calc(100% + 4px)",
+              left: 0,
               background: "#fff",
               border: "1px solid #e2e8f0",
               borderRadius: "10px",
@@ -1746,9 +1823,9 @@ function DateRangePickerDemo() {
               Effacer
             </DateRangePicker.ClearButton>
           </DateRangePicker.Content>
-        </DateRangePicker.Portal>
-        <DateRangePicker.HiddenInputs startName="start" endName="end" />
-      </DateRangePicker.Root>
+          <DateRangePicker.HiddenInputs startName="start" endName="end" />
+        </DateRangePicker.Root>
+      </div>
       {range && (
         <p data-testid="date-range-picker-value" style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
           Plage : {range}
@@ -1780,15 +1857,30 @@ function Section({
 
 /* ── Toggle ─────────────────────────────────────────────────────────────────── */
 
+function toggleStyle(pressed: boolean, extra?: React.CSSProperties): React.CSSProperties {
+  return {
+    padding: "0.5rem 1rem",
+    border: `1px solid ${pressed ? "#1e293b" : "#cbd5e1"}`,
+    borderRadius: "6px",
+    cursor: "pointer",
+    background: pressed ? "#1e293b" : "transparent",
+    color: pressed ? "#fff" : "inherit",
+    transition: "background 120ms, border-color 120ms, color 120ms",
+    ...extra,
+  };
+}
+
 function ToggleDemo() {
+  const [bold, setBold] = useState(false);
+  const [italic, setItalic] = useState(true);
   return (
     <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
       <Toggle
         data-testid="toggle-bold"
-        defaultPressed={false}
-        onPressedChange={(p) => console.log("[Toggle] bold:", p)}
+        pressed={bold}
+        onPressedChange={setBold}
         aria-label="Gras"
-        style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer", background: "transparent", fontWeight: "bold" }}
+        style={toggleStyle(bold, { fontWeight: "bold" })}
       >
         <VisuallyHidden>Activer le</VisuallyHidden>
         B
@@ -1796,9 +1888,10 @@ function ToggleDemo() {
 
       <Toggle
         data-testid="toggle-italic"
-        defaultPressed={true}
+        pressed={italic}
+        onPressedChange={setItalic}
         aria-label="Italique"
-        style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer", background: "transparent", fontStyle: "italic" }}
+        style={toggleStyle(italic, { fontStyle: "italic" })}
       >
         I
       </Toggle>
@@ -1807,7 +1900,7 @@ function ToggleDemo() {
         data-testid="toggle-disabled"
         disabled
         aria-label="Souligné (désactivé)"
-        style={{ padding: "0.5rem 1rem", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "not-allowed", background: "transparent", opacity: 0.4 }}
+        style={{ ...toggleStyle(false), border: "1px solid #e2e8f0", cursor: "not-allowed", opacity: 0.4, textDecoration: "underline" }}
       >
         U
       </Toggle>
@@ -1817,47 +1910,48 @@ function ToggleDemo() {
 
 /* ── ToggleGroup ─────────────────────────────────────────────────────────────── */
 
+function toggleGroupItemStyle(active: boolean, extra?: React.CSSProperties): React.CSSProperties {
+  return {
+    padding: "0.5rem 0.75rem",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    background: active ? "#1e293b" : "transparent",
+    color: active ? "#fff" : "inherit",
+    transition: "background 120ms, color 120ms",
+    ...extra,
+  };
+}
+
 function ToggleGroupDemo() {
+  const [align, setAlign] = useState<string[]>([]);
+  const [formats, setFormats] = useState<string[]>([]);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <ToggleGroup.Root
         data-testid="toggle-group-text-align"
         type="single"
+        value={align}
+        onValueChange={setAlign}
         aria-label="Alignement du texte"
         style={{ display: "inline-flex", gap: "0.25rem", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem" }}
       >
-        <ToggleGroup.Item
-          value="left"
-          aria-label="Aligner à gauche"
-          style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent" }}
-        >
-          ←
-        </ToggleGroup.Item>
-        <ToggleGroup.Item
-          value="center"
-          aria-label="Centrer"
-          style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent" }}
-        >
-          ↔
-        </ToggleGroup.Item>
-        <ToggleGroup.Item
-          value="right"
-          aria-label="Aligner à droite"
-          style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent" }}
-        >
-          →
-        </ToggleGroup.Item>
+        <ToggleGroup.Item value="left" aria-label="Aligner à gauche" style={toggleGroupItemStyle(align.includes("left"))}>←</ToggleGroup.Item>
+        <ToggleGroup.Item value="center" aria-label="Centrer" style={toggleGroupItemStyle(align.includes("center"))}>↔</ToggleGroup.Item>
+        <ToggleGroup.Item value="right" aria-label="Aligner à droite" style={toggleGroupItemStyle(align.includes("right"))}>→</ToggleGroup.Item>
       </ToggleGroup.Root>
 
       <ToggleGroup.Root
         data-testid="toggle-group-formatting"
         type="multiple"
+        value={formats}
+        onValueChange={(v) => setFormats(v)}
         aria-label="Formatage du texte"
         style={{ display: "inline-flex", gap: "0.25rem", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem" }}
       >
-        <ToggleGroup.Item value="bold" aria-label="Gras" style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent", fontWeight: "bold" }}>B</ToggleGroup.Item>
-        <ToggleGroup.Item value="italic" aria-label="Italique" style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent", fontStyle: "italic" }}>I</ToggleGroup.Item>
-        <ToggleGroup.Item value="underline" aria-label="Souligné" style={{ padding: "0.5rem 0.75rem", border: "none", borderRadius: "6px", cursor: "pointer", background: "transparent", textDecoration: "underline" }}>U</ToggleGroup.Item>
+        <ToggleGroup.Item value="bold" aria-label="Gras" style={toggleGroupItemStyle(formats.includes("bold"), { fontWeight: "bold" })}>B</ToggleGroup.Item>
+        <ToggleGroup.Item value="italic" aria-label="Italique" style={toggleGroupItemStyle(formats.includes("italic"), { fontStyle: "italic" })}>I</ToggleGroup.Item>
+        <ToggleGroup.Item value="underline" aria-label="Souligné" style={toggleGroupItemStyle(formats.includes("underline"), { textDecoration: "underline" })}>U</ToggleGroup.Item>
       </ToggleGroup.Root>
     </div>
   );
@@ -1906,6 +2000,338 @@ function VisuallyHiddenDemo() {
     </div>
   );
 }
+
+/* ── Menu (DropdownMenu) ─────────────────────────────────────────────────────── */
+
+function MenuDemo() {
+  const [lastSelect, setLastSelect] = useState<string | null>(null);
+  const [theme, setTheme] = useState("system");
+  const [showGrid, setShowGrid] = useState(false);
+  const [showRuler, setShowRuler] = useState(true);
+  return (
+    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
+      <Menu.Root onSelect={setLastSelect}>
+        <Menu.Trigger style={btnStyle}>Actions ▾</Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Content style={menuContentStyle}>
+            <Menu.Label style={menuGroupLabelStyle}>Fichier</Menu.Label>
+            {/* navigate prop — simule une navigation router */}
+            <Menu.Item value="new" label="Nouveau" style={menuItemStyle} navigate={() => console.log("[navigate] /new")}>Nouveau fichier</Menu.Item>
+            <Menu.Item value="open" label="Ouvrir" style={menuItemStyle}>Ouvrir…</Menu.Item>
+            <Menu.Separator style={menuSepStyle} />
+            <Menu.Group id="edit-group">
+              <Menu.GroupLabel groupId="edit-group" style={menuGroupLabelStyle}>Edition</Menu.GroupLabel>
+              <Menu.Item value="cut" label="Couper" style={menuItemStyle}>Couper</Menu.Item>
+              <Menu.Item value="copy" label="Copier" style={menuItemStyle}>Copier</Menu.Item>
+              <Menu.Item value="paste" label="Coller" disabled style={{ ...menuItemStyle, opacity: 0.45 }}>Coller</Menu.Item>
+            </Menu.Group>
+            <Menu.Separator style={menuSepStyle} />
+            <Menu.Label style={menuGroupLabelStyle}>Theme</Menu.Label>
+            <Menu.RadioGroup groupId="theme" value={theme} onValueChange={setTheme}>
+              {(["light", "dark", "system"] as const).map((t) => (
+                <Menu.RadioItem key={t} value={t} style={menuItemStyle} closeOnSelect={false}>
+                  <Menu.ItemIndicator><span style={{ marginRight: 6 }}>✓</span></Menu.ItemIndicator>
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </Menu.RadioItem>
+              ))}
+            </Menu.RadioGroup>
+            <Menu.Separator style={menuSepStyle} />
+            <Menu.Label style={menuGroupLabelStyle}>Vue</Menu.Label>
+            <Menu.CheckboxItem value="grid" checked={showGrid} onCheckedChange={setShowGrid} style={menuItemStyle}>
+              <Menu.ItemIndicator><span style={{ marginRight: 6 }}>✓</span></Menu.ItemIndicator>
+              Grille
+            </Menu.CheckboxItem>
+            <Menu.CheckboxItem value="ruler" checked={showRuler} onCheckedChange={setShowRuler} style={menuItemStyle}>
+              <Menu.ItemIndicator><span style={{ marginRight: 6 }}>✓</span></Menu.ItemIndicator>
+              Regle
+            </Menu.CheckboxItem>
+            <Menu.Separator style={menuSepStyle} />
+            {/* Sub 2 niveaux */}
+            <Menu.Sub>
+              <Menu.SubTrigger value="share" label="Partager" style={menuItemStyle}>
+                Partager ▶
+              </Menu.SubTrigger>
+              <Menu.SubContent style={menuContentStyle}>
+                <Menu.Item value="share-link" label="Lien" style={menuItemStyle}>Lien</Menu.Item>
+                <Menu.Item value="share-email" label="Email" style={menuItemStyle}>Email</Menu.Item>
+                <Menu.Separator style={menuSepStyle} />
+                <Menu.Sub>
+                  <Menu.SubTrigger value="social" label="Social" style={menuItemStyle}>Reseaux ▶</Menu.SubTrigger>
+                  <Menu.SubContent style={menuContentStyle}>
+                    <Menu.Item value="twitter" style={menuItemStyle}>Twitter</Menu.Item>
+                    <Menu.Item value="linkedin" style={menuItemStyle}>LinkedIn</Menu.Item>
+                  </Menu.SubContent>
+                </Menu.Sub>
+              </Menu.SubContent>
+            </Menu.Sub>
+          </Menu.Content>
+        </Menu.Portal>
+      </Menu.Root>
+      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
+        {lastSelect && <div>Selection : {lastSelect}</div>}
+        <div>Theme : {theme}</div>
+        <div>Grille : {showGrid ? "oui" : "non"} | Regle : {showRuler ? "oui" : "non"}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Menu — Sub click-only ────────────────────────────────────────────────────── */
+
+function MenuClickOnlySubDemo() {
+  const [lastSelect, setLastSelect] = useState<string | null>(null);
+  return (
+    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
+      <Menu.Root onSelect={setLastSelect}>
+        <Menu.Trigger style={btnStyle}>Options ▾</Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Content style={menuContentStyle}>
+            <Menu.Item value="action-a" style={menuItemStyle}>Action A</Menu.Item>
+            <Menu.Item value="action-b" style={menuItemStyle}>Action B</Menu.Item>
+            <Menu.Separator style={menuSepStyle} />
+            {/* openOnHover={false} — only click opens the sub-menu */}
+            <Menu.Sub>
+              <Menu.SubTrigger value="more" label="Plus" style={menuItemStyle} openOnHover={false}>
+                Plus (clic) ▶
+              </Menu.SubTrigger>
+              <Menu.SubContent style={menuContentStyle}>
+                <Menu.Item value="advanced-a" style={menuItemStyle}>Avance A</Menu.Item>
+                <Menu.Item value="advanced-b" style={menuItemStyle}>Avance B</Menu.Item>
+              </Menu.SubContent>
+            </Menu.Sub>
+          </Menu.Content>
+        </Menu.Portal>
+      </Menu.Root>
+      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
+        {lastSelect && <div>Selection : {lastSelect}</div>}
+        <div style={{ color: "#94a3b8" }}>Hover ne suffit pas — clic requis</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Menu — Anchor ───────────────────────────────────────────────────────────── */
+
+function MenuAnchorDemo() {
+  const [open, setOpen] = useState(false);
+  const [lastSelect, setLastSelect] = useState<string | null>(null);
+  return (
+    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
+      <Menu.Root open={open} onOpenChange={setOpen} onSelect={setLastSelect}>
+        {/* Anchor — the positioner will float relative to this element */}
+        <Menu.Anchor>
+          <div style={{ width: "200px", padding: "0.5rem", background: "#f1f5f9", border: "2px dashed #94a3b8", borderRadius: "8px", textAlign: "center", fontSize: "0.8rem", color: "#64748b" }}>
+            Ancre (reference)
+          </div>
+        </Menu.Anchor>
+        <Menu.Trigger style={{ ...btnStyle, marginTop: "0.5rem" }}>
+          {open ? "Fermer" : "Ouvrir (ancre)"}
+        </Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Content style={menuContentStyle}>
+            <Menu.Item value="profile" style={menuItemStyle}>Profil</Menu.Item>
+            <Menu.Item value="settings" style={menuItemStyle}>Parametres</Menu.Item>
+            <Menu.Separator style={menuSepStyle} />
+            <Menu.Item value="logout" style={menuItemStyle}>Deconnexion</Menu.Item>
+          </Menu.Content>
+        </Menu.Portal>
+      </Menu.Root>
+      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
+        {lastSelect && <div>Selection : {lastSelect}</div>}
+        <div style={{ color: "#94a3b8" }}>Le menu se positionne par rapport a l'ancre (cadre tirete)</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── ContextMenu ──────────────────────────────────────────────────────────────── */
+
+function ContextMenuDemo() {
+  const [lastSelect, setLastSelect] = useState<string | null>(null);
+  const [bookmarked, setBookmarked] = useState(false);
+  return (
+    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
+      <ContextMenu.Root onSelect={setLastSelect}>
+        <ContextMenu.Trigger>
+          <div style={{ width: "200px", height: "80px", background: "#1e40af", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "0.8rem", userSelect: "none" }}>
+            Clic-droit ici
+          </div>
+        </ContextMenu.Trigger>
+        <ContextMenu.Portal>
+          <ContextMenu.Content style={menuContentStyle}>
+            <ContextMenu.Item value="inspect" style={menuItemStyle}>Inspecter</ContextMenu.Item>
+            <ContextMenu.Item value="reload" style={menuItemStyle}>Recharger</ContextMenu.Item>
+            <ContextMenu.Separator style={menuSepStyle} />
+            <ContextMenu.CheckboxItem
+              value="bookmark"
+              checked={bookmarked}
+              onCheckedChange={setBookmarked}
+              style={menuItemStyle}
+            >
+              <ContextMenu.ItemIndicator><span style={{ marginRight: 6 }}>★</span></ContextMenu.ItemIndicator>
+              Marquer comme favori
+            </ContextMenu.CheckboxItem>
+            <ContextMenu.Separator style={menuSepStyle} />
+            {/* ContextMenu.Sub — nested sub-menu */}
+            <ContextMenu.Sub>
+              <ContextMenu.SubTrigger value="share" label="Partager" style={menuItemStyle}>
+                Partager ▶
+              </ContextMenu.SubTrigger>
+              <ContextMenu.SubContent style={menuContentStyle}>
+                <ContextMenu.Item value="share-link" style={menuItemStyle}>Lien</ContextMenu.Item>
+                <ContextMenu.Item value="share-email" style={menuItemStyle}>Email</ContextMenu.Item>
+                <ContextMenu.Separator style={menuSepStyle} />
+                <ContextMenu.Sub>
+                  <ContextMenu.SubTrigger value="social" label="Social" style={menuItemStyle}>Reseaux ▶</ContextMenu.SubTrigger>
+                  <ContextMenu.SubContent style={menuContentStyle}>
+                    <ContextMenu.Item value="twitter" style={menuItemStyle}>Twitter</ContextMenu.Item>
+                    <ContextMenu.Item value="linkedin" style={menuItemStyle}>LinkedIn</ContextMenu.Item>
+                  </ContextMenu.SubContent>
+                </ContextMenu.Sub>
+              </ContextMenu.SubContent>
+            </ContextMenu.Sub>
+            <ContextMenu.Separator style={menuSepStyle} />
+            <ContextMenu.Item value="copy-link" style={menuItemStyle}>Copier le lien</ContextMenu.Item>
+          </ContextMenu.Content>
+        </ContextMenu.Portal>
+      </ContextMenu.Root>
+      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
+        {lastSelect && <div>Selection : {lastSelect}</div>}
+        <div>Favori : {bookmarked ? "★" : "☆"}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Avatar ──────────────────────────────────────────────────────────────────── */
+
+function AvatarDemo() {
+  return (
+    <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
+      {/* Broken image → immediate fallback */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+        <Avatar.Root style={avatarRootStyle}>
+          <Avatar.Image src="https://invalid.domain/broken.jpg" alt="Bob" style={avatarImgStyle} />
+          <Avatar.Fallback style={avatarFallbackStyle}>BO</Avatar.Fallback>
+        </Avatar.Root>
+        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Image cassée</span>
+      </div>
+
+      {/* No src → immediate fallback */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+        <Avatar.Root style={avatarRootStyle}>
+          <Avatar.Image alt="Carol" style={avatarImgStyle} />
+          <Avatar.Fallback style={avatarFallbackStyle}>CA</Avatar.Fallback>
+        </Avatar.Root>
+        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Sans image</span>
+      </div>
+
+      {/* delayMs on Fallback (not Root) — prevents flash-of-fallback */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+        <Avatar.Root style={avatarRootStyle}>
+          <Avatar.Image src="https://invalid.domain/slow.jpg" alt="Dave" style={avatarImgStyle} />
+          <Avatar.Fallback delayMs={600} style={avatarFallbackStyle}>DA</Avatar.Fallback>
+        </Avatar.Root>
+        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>delayMs=600 (Fallback)</span>
+      </div>
+
+      {/* Auto-initials via compound component pattern + useAvatarContext */}
+      <AutoInitialsAvatar name="John Doe" />
+
+      {/* asChild: Fallback rendered as a <div> */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+        <Avatar.Root style={avatarRootStyle}>
+          <Avatar.Image alt="Eve" style={avatarImgStyle} />
+          <Avatar.Fallback asChild style={avatarFallbackStyle}>
+            <div>EV</div>
+          </Avatar.Fallback>
+        </Avatar.Root>
+        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>asChild (div)</span>
+      </div>
+    </div>
+  );
+}
+
+// Reads initials directly from the Avatar compound component context — no
+// standalone hook needed, no duplicate machine. Pattern recommended for apps.
+function InitialsFallback({ style }: { style?: React.CSSProperties }) {
+  const { initials } = useAvatarContext();
+  return <Avatar.Fallback style={style}>{initials}</Avatar.Fallback>;
+}
+
+function AutoInitialsAvatar({ name }: { name: string }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+      <Avatar.Root name={name} style={avatarRootStyle}>
+        <Avatar.Image alt={name} style={avatarImgStyle} />
+        <InitialsFallback style={avatarFallbackStyle} />
+      </Avatar.Root>
+      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>initials (context)</span>
+    </div>
+  );
+}
+
+const avatarRootStyle: React.CSSProperties = {
+  display: "inline-flex",
+  position: "relative",
+  width: "48px",
+  height: "48px",
+  borderRadius: "50%",
+  overflow: "hidden",
+  background: "#e2e8f0",
+};
+
+const avatarImgStyle: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+};
+
+const avatarFallbackStyle: React.CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "0.875rem",
+  fontWeight: 600,
+  color: "#475569",
+  background: "#e2e8f0",
+};
+
+const menuContentStyle: React.CSSProperties = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  padding: "4px",
+  boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)",
+  minWidth: "160px",
+  outline: "none",
+};
+
+const menuItemStyle: React.CSSProperties = {
+  padding: "6px 12px",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.875rem",
+  outline: "none",
+  userSelect: "none",
+};
+
+const menuGroupLabelStyle: React.CSSProperties = {
+  padding: "4px 12px 2px",
+  fontSize: "0.7rem",
+  color: "#94a3b8",
+  fontWeight: 600,
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+};
+
+const menuSepStyle: React.CSSProperties = {
+  height: "1px",
+  background: "#e2e8f0",
+  margin: "4px 0",
+};
 
 /* ── Styles ─────────────────────────────────────────────────────────────────── */
 

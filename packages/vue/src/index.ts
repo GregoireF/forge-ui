@@ -306,3 +306,52 @@ export {
 } from "./components/visually-hidden/VisuallyHidden.js";
 export { usePresence } from "./hooks/use-presence.js";
 export { useMachine } from "./use-machine.js";
+export {
+  Menu,
+  MenuRoot,
+  MenuTrigger,
+  MenuPortal,
+  MenuContent,
+  MenuArrow,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  MenuGroup,
+  MenuGroupLabel,
+  MenuRadioGroup,
+  MenuRadioGroupLabel,
+  MenuRadioItem,
+  MenuCheckboxItem,
+  MenuItemIndicator,
+  MenuSub,
+  MenuSubTrigger,
+  MenuSubContent,
+} from "./components/menu/Menu.js";
+export type { UseMenuOptions, UseMenuReturn } from "./components/menu/use-menu.js";
+export { useMenu } from "./components/menu/use-menu.js";
+export {
+  Avatar,
+  AvatarRoot,
+  AvatarImage,
+  AvatarFallback,
+  injectAvatarContext,
+} from "./components/avatar/Avatar.js";
+export type { UseAvatarOptions } from "./components/avatar/use-avatar.js";
+export { useAvatar } from "./components/avatar/use-avatar.js";
+export {
+  ContextMenu,
+  ContextMenuRoot,
+  ContextMenuTrigger,
+  ContextMenuPortal,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuGroup,
+  ContextMenuGroupLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioGroupLabel,
+  ContextMenuRadioItem,
+  ContextMenuCheckboxItem,
+  ContextMenuItemIndicator,
+} from "./components/menu/ContextMenu.js";

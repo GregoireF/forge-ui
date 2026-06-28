@@ -122,4 +122,32 @@ test.describe("Accessibility (axe-core) — Vue playground", () => {
       .analyze();
     expect(results.violations).toEqual([]);
   });
+
+  test("Menu open: no a11y violations", async ({ page }) => {
+    const trigger = page.locator('[data-forge-scope="menu"][data-forge-part="trigger"]').first();
+    await trigger.click();
+    await page.locator('[data-forge-scope="menu"][data-forge-part="content"]').first().waitFor({ state: "visible" });
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("ContextMenu open: no a11y violations", async ({ page }) => {
+    await page.getByText("Clic-droit ici").click({ button: "right" });
+    await page.locator('[data-forge-scope="menu"][data-forge-part="content"]').last().waitFor({ state: "visible" });
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("Avatar (idle + error fallbacks visible): no a11y violations", async ({ page }) => {
+    await page.locator('[data-forge-scope="avatar"][data-forge-part="root"]').first().waitFor({ state: "visible" });
+    const results = await new AxeBuilder({ page })
+      .include('[data-forge-scope="avatar"]')
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
 });
