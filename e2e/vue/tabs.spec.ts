@@ -102,7 +102,6 @@ test.describe("Tabs — Vue (forge-ui)", () => {
   // WAI-ARIA §3.22: trigger aria-controls must point to its panel id, and
   // the panel aria-labelledby must point back to the trigger id.
   test("trigger aria-controls points to its panel", async ({ page }) => {
-    const triggerId = await triggerReact(page).getAttribute("id");
     const controlsId = await triggerReact(page).getAttribute("aria-controls");
     expect(controlsId).toBeTruthy();
     await expect(panelReact(page)).toHaveAttribute("id", controlsId!);

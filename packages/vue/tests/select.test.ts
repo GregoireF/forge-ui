@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, h } from "vue";
+import { defineComponent } from "vue";
 import { Select } from "../src/components/select/Select.js";
 
 // Destructure at module level — dot-notation doesn't work in template strings
@@ -15,7 +15,6 @@ const {
   Content: SelectContent,
   Item: SelectItem,
   ItemText: SelectItemText,
-  ItemIndicator: SelectItemIndicator,
   Separator: SelectSeparator,
   Group: SelectGroup,
   GroupLabel: SelectGroupLabel,

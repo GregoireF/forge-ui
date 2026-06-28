@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent } from "vue";
 import { TimePicker } from "../src/components/time-picker/TimePicker.js";
 

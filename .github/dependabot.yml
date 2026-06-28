@@ -4,26 +4,36 @@
 # self-hosted bot — setup cost is non-trivial.
 # Dependabot is zero-config, native to GitHub, and integrates directly with
 # GitHub Security Advisories (auto-closes advisory PRs when patched).
-# For a pre-release project, Dependabot's simplicity wins over Renovate's power.
 #
 # Known limitation: Dependabot doesn't understand bun workspaces fully.
-# It will open PRs at the package level it discovers, not as workspace-wide
-# bumps. Accept this tradeoff: security patches still land automatically.
+# It opens PRs at the package.json level it discovers, not workspace-wide.
+# Vite + its plugins therefore generate separate PRs per playground directory.
+# The groups below mitigate this within each directory.
 #
 # Why npm ecosystem (not bun):
-# Dependabot has no Bun-specific ecosystem support as of 2025.
-# It reads package.json files via the "npm" ecosystem, which correctly identifies
-# dependencies. Lock file updates (bun.lockb) won't be committed — acceptable.
+# Dependabot has no Bun-specific ecosystem support.
+# It reads package.json files via the "npm" ecosystem. Lock file updates
+# (bun.lock) won't be committed by Dependabot — acceptable.
 #
-# Schedule: weekly on Monday, time-shifted per directory to avoid PR flood.
+# open-pull-requests-limit: 5 per entry prevents a PR flood on first run.
+# It does NOT mean 5 total; each ecosystem entry has its own counter.
+#
+# Major-version ignores (TypeScript, Astro): major bumps in critical tooling
+# require a deliberate migration effort — they must not land silently via
+# an auto-merged Dependabot PR. Pin to "< next major" and bump manually
+# once the migration is tested end-to-end.
 
 version: 2
 
 updates:
-  # GitHub Actions — highest priority: SHA-pinned actions need security updates.
-  # An outdated action with a known CVE in the runner could compromise CI secrets.
+  # ─── GitHub Actions ──────────────────────────────────────────────────────
+  # Highest priority: SHA-pinned actions need security updates.
+  # An outdated action with a known CVE in the runner could leak CI secrets.
+  # Group ALL actions into one PR: they are independent from each other and
+  # merging them individually adds no review value.
   - package-ecosystem: "github-actions"
     directory: "/"
+    open-pull-requests-limit: 3
     schedule:
       interval: "weekly"
       day: "monday"
@@ -34,10 +44,18 @@ updates:
       - "github-actions"
     commit-message:
       prefix: "chore(deps)"
+    groups:
+      # One PR for all GHA actions — they are orthogonal; reviewing them
+      # together is faster and the blast radius is CI only.
+      github-actions:
+        patterns:
+          - "*"
 
-  # Root package.json — devDependencies (TypeScript, Biome, Vitest, Turbo…)
+  # ─── Root devDependencies ────────────────────────────────────────────────
+  # TypeScript, Biome, Vitest, Turbo, Lefthook, Changesets…
   - package-ecosystem: "npm"
     directory: "/"
+    open-pull-requests-limit: 5
     schedule:
       interval: "weekly"
       day: "monday"
@@ -46,32 +64,39 @@ updates:
     labels:
       - "dependencies"
     ignore:
-      # Managed by changesets — do not auto-update workspace packages
+      # Workspace packages are managed by changesets — never auto-update.
       - dependency-name: "@forge-ui/*"
+      # TypeScript major bumps (e.g. 5→6) require a dedicated migration:
+      # exactOptionalPropertyTypes, decorators, and generics can all have
+      # silent breaking changes. Evaluate manually before upgrading.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore(deps)"
     groups:
-      # Group all Playwright updates into one PR (they move in lockstep)
       playwright:
         patterns:
           - "@playwright/*"
           - "playwright"
-      # Group all Vitest updates (vitest + @vitest/* + happy-dom move together)
       vitest:
         patterns:
           - "vitest"
           - "@vitest/*"
           - "happy-dom"
-      # Group TypeScript toolchain
-      typescript:
+      typescript-toolchain:
         patterns:
           - "typescript"
           - "@types/*"
           - "@biomejs/biome"
+      changesets:
+        patterns:
+          - "@changesets/*"
+          - "changesets"
 
-  # e2e workspace
+  # ─── e2e workspace ───────────────────────────────────────────────────────
   - package-ecosystem: "npm"
     directory: "/e2e"
+    open-pull-requests-limit: 3
     schedule:
       interval: "weekly"
       day: "monday"
@@ -83,9 +108,12 @@ updates:
     commit-message:
       prefix: "chore(deps)"
 
-  # React playground
+  # ─── React playground ────────────────────────────────────────────────────
+  # Playground deps affect only the dev server, not the published library.
+  # Group Vite ecosystem: vite + @vitejs/plugin-react always move together.
   - package-ecosystem: "npm"
     directory: "/apps/playground-react"
+    open-pull-requests-limit: 3
     schedule:
       interval: "weekly"
       day: "monday"
@@ -96,10 +124,17 @@ updates:
       - "playground"
     commit-message:
       prefix: "chore(deps)"
+    groups:
+      vite-react:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
 
-  # Vue playground
+  # ─── Vue playground ──────────────────────────────────────────────────────
+  # Group Vite ecosystem: vite + @vitejs/plugin-vue + vue-tsc move together.
   - package-ecosystem: "npm"
     directory: "/apps/playground-vue"
+    open-pull-requests-limit: 3
     schedule:
       interval: "weekly"
       day: "monday"
@@ -110,10 +145,17 @@ updates:
       - "playground"
     commit-message:
       prefix: "chore(deps)"
+    groups:
+      vite-vue:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "vue-tsc"
 
-  # Nuxt playground
+  # ─── Nuxt playground ─────────────────────────────────────────────────────
   - package-ecosystem: "npm"
     directory: "/apps/playground-nuxt"
+    open-pull-requests-limit: 3
     schedule:
       interval: "weekly"
       day: "monday"
@@ -124,3 +166,31 @@ updates:
       - "playground"
     commit-message:
       prefix: "chore(deps)"
+
+  # ─── Docs site (Astro) ───────────────────────────────────────────────────
+  # Astro major bumps (e.g. 5→7) require validating the docs build end-to-end.
+  # Group the entire Astro ecosystem into one PR; ignore major version jumps.
+  # When ready to upgrade: bump manually and validate `astro build` locally.
+  - package-ecosystem: "npm"
+    directory: "/apps/docs"
+    open-pull-requests-limit: 3
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "Europe/Paris"
+    labels:
+      - "dependencies"
+      - "docs"
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "astro"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@astrojs/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"

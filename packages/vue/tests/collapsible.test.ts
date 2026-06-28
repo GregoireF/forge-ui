@@ -1,7 +1,7 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/vue";
+import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, nextTick, ref } from "vue";
+import { defineComponent } from "vue";
 import { Collapsible } from "../src/components/collapsible/Collapsible.js";
 
 const { Root: CollapsibleRoot, Trigger: CollapsibleTrigger, Content: CollapsibleContent } = Collapsible;

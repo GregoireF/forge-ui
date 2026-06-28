@@ -41,8 +41,7 @@ function formatMonth(month: number | null, locale: string): string | undefined {
   }
 }
 
-function pad(val: number | null, digits: number): string | undefined {
-  if (val === null) return undefined;
+function pad(val: number, digits: number): string {
   return String(val).padStart(digits, "0");
 }
 

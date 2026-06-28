@@ -5,7 +5,6 @@ import type { CalendarDate } from "../src/date-picker.types.js";
 
 const jan15: CalendarDate = { year: 2024, month: 1, day: 15 };
 const jan31: CalendarDate = { year: 2024, month: 1, day: 31 };
-const feb1: CalendarDate = { year: 2024, month: 2, day: 1 };
 const jun15: CalendarDate = { year: 2024, month: 6, day: 15 };
 const TODAY: CalendarDate = { year: 2024, month: 3, day: 1 };
 
