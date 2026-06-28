@@ -1,0 +1,205 @@
+name: Nightly Release
+
+# Creates a pre-release GitHub Release every night from main if there are
+# new commits since the last nightly tag. Publishes build artifacts as
+# release assets for downstream CI or integration testing.
+#
+# Strategy rationale:
+# - GitHub Release only (no npm publish) — nightlies are for QA, not prod consumers.
+# - Skips if main hasn't moved since last nightly (idempotent, safe to run daily).
+# - Tag format: nightly-YYYY-MM-DD (one per day, overwritten if re-triggered).
+# - Pre-release flag: clearly signals non-production status in the GitHub UI.
+
+on:
+  schedule:
+    # 02:00 UTC every night — after any late-day merges have landed.
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force nightly even if no new commits"
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}
+  # Never cancel a release in progress — partial releases are worse than duplicates.
+  cancel-in-progress: false
+
+permissions: read-all
+
+jobs:
+  nightly:
+    name: Nightly Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Check for new commits since last nightly
+        id: check
+        shell: bash
+        run: |
+          TAG="nightly-$(date -u +%Y-%m-%d)"
+          YESTERDAY="nightly-$(date -u -d 'yesterday' +%Y-%m-%d 2>/dev/null || date -u -v-1d +%Y-%m-%d)"
+
+          # Find the most recent nightly tag
+          LAST_TAG=$(git tag --list 'nightly-*' | sort -r | head -1)
+
+          if [ -z "$LAST_TAG" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "No previous nightly tag found — first nightly"
+          else
+            COMMITS=$(git log "$LAST_TAG..HEAD" --oneline | wc -l)
+            echo "Commits since $LAST_TAG: $COMMITS"
+            if [ "$COMMITS" -gt 0 ] || [ "${{ inputs.force }}" = "true" ]; then
+              echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Bun
+        if: steps.check.outputs.has_changes == 'true'
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun store
+        if: steps.check.outputs.has_changes == 'true'
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        if: steps.check.outputs.has_changes == 'true'
+        run: bun install --frozen-lockfile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build packages
+        if: steps.check.outputs.has_changes == 'true'
+        run: bun x turbo run build --filter=!apps/docs
+
+      - name: Package artifacts
+        if: steps.check.outputs.has_changes == 'true'
+        shell: bash
+        run: |
+          TAG="${{ steps.check.outputs.tag }}"
+          mkdir -p /tmp/nightly-artifacts
+
+          # Pack each publishable package into a tarball
+          for pkg in packages/core packages/react packages/vue packages/nuxt packages/floating packages/primitives/*/; do
+            PKG_JSON="$pkg/package.json"
+            if [ ! -f "$PKG_JSON" ]; then continue; fi
+            PRIVATE=$(node -p "try{require('./$PKG_JSON').private}catch{true}" 2>/dev/null)
+            if [ "$PRIVATE" = "true" ]; then continue; fi
+            if [ ! -d "$pkg/dist" ]; then continue; fi
+            NAME=$(node -p "require('./$PKG_JSON').name.replace('@','').replace('/','__')")
+            tar -czf "/tmp/nightly-artifacts/${NAME}-${TAG}.tgz" -C "$pkg" dist package.json
+          done
+
+          ls -lh /tmp/nightly-artifacts/
+
+      - name: Generate changelog since last nightly
+        if: steps.check.outputs.has_changes == 'true'
+        id: changelog
+        shell: bash
+        run: |
+          TAG="${{ steps.check.outputs.tag }}"
+          LAST_TAG=$(git tag --list 'nightly-*' | sort -r | head -1)
+
+          if [ -z "$LAST_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="$LAST_TAG..HEAD"
+          fi
+
+          # Group commits by type
+          CHANGELOG=$(git log $RANGE --pretty=format:"- %s (%h)" --no-merges)
+          COMMIT_COUNT=$(git log $RANGE --oneline --no-merges | wc -l)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+
+          {
+            echo "body<<EOF"
+            echo "## Nightly build — $TAG"
+            echo ""
+            echo "> **Pre-release:** Not intended for production use. Built from \`main\` at \`$SHORT_SHA\`."
+            echo ""
+            echo "### Changes since last nightly ($COMMIT_COUNT commits)"
+            echo ""
+            echo "$CHANGELOG"
+            echo ""
+            echo "### Assets"
+            echo ""
+            echo "Each \`.tgz\` archive contains the \`dist/\` folder and \`package.json\` for the respective package."
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Delete previous nightly tag if same date
+        if: steps.check.outputs.has_changes == 'true'
+        shell: bash
+        run: |
+          TAG="${{ steps.check.outputs.tag }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.has_changes == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const tag = '${{ steps.check.outputs.tag }}';
+            const body = `${{ steps.changelog.outputs.body }}`;
+
+            // Create the release
+            const release = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: `Nightly — ${tag}`,
+              body,
+              prerelease: true,
+              make_latest: false,
+              target_commitish: context.sha,
+            });
+
+            // Upload artifacts
+            const artifactDir = '/tmp/nightly-artifacts';
+            if (fs.existsSync(artifactDir)) {
+              for (const file of fs.readdirSync(artifactDir)) {
+                const filePath = path.join(artifactDir, file);
+                const data = fs.readFileSync(filePath);
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: release.data.id,
+                  name: file,
+                  data,
+                });
+                console.log(`Uploaded: ${file}`);
+              }
+            }
+
+            console.log(`Release created: ${release.data.html_url}`);
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Skip summary
+        if: steps.check.outputs.has_changes != 'true'
+        run: echo "No new commits since last nightly — skipping release."
