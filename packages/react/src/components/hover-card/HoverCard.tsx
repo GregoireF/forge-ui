@@ -143,6 +143,12 @@ function Arrow({ children }: HoverCardArrowProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "HoverCard.Root";
+Trigger.displayName = "HoverCard.Trigger";
+Portal.displayName = "HoverCard.Portal";
+Content.displayName = "HoverCard.Content";
+Arrow.displayName = "HoverCard.Arrow";
+
 export const HoverCard = {
   Root,
   Trigger,

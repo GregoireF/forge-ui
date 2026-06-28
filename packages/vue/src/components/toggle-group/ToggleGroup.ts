@@ -1,4 +1,4 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
 import { Slot } from "../shared/Slot.js";
 import type { UseToggleGroupReturn } from "./use-toggle-group.js";
@@ -13,7 +13,7 @@ function useCtx(): UseToggleGroupReturn {
 }
 
 // ---------------------------------------------------------------------------
-// Root — role="toolbar"
+// Root â€” role="toolbar"
 // ---------------------------------------------------------------------------
 
 const ToggleGroupRoot = defineComponent({
@@ -35,7 +35,9 @@ const ToggleGroupRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: string[]) => true,
+  },
   setup(props, { slots, attrs, emit }) {
     const api = useToggleGroup({
       ...(props.id !== undefined && { id: props.id }),
@@ -54,12 +56,12 @@ const ToggleGroupRoot = defineComponent({
 
     provide(toggleGroupKey, api);
 
-    return () => h("div", { ...api.getRootProps(), ...attrs }, slots.default?.());
+    return () => h("div", { ...api.getRootProps(), ...attrs }, slots['default']?.());
   },
 });
 
 // ---------------------------------------------------------------------------
-// Item — role="button" aria-pressed, roving tabindex
+// Item â€” role="button" aria-pressed, roving tabindex
 // ---------------------------------------------------------------------------
 
 const ToggleGroupItem = defineComponent({
@@ -73,8 +75,8 @@ const ToggleGroupItem = defineComponent({
     const api = useCtx();
     return () => {
       const itemProps = { ...api.getItemProps(props.value, props.disabled), ...attrs };
-      if (props.asChild) return h(Slot, itemProps, slots.default);
-      return h("button", itemProps, slots.default?.());
+      if (props.asChild) return h(Slot, itemProps, slots['default']);
+      return h("button", itemProps, slots['default']?.());
     };
   },
 });

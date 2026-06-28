@@ -249,6 +249,16 @@ function Action({ asChild, children, ...rest }: AlertDialogActionProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "AlertDialog.Root";
+Trigger.displayName = "AlertDialog.Trigger";
+Portal.displayName = "AlertDialog.Portal";
+Overlay.displayName = "AlertDialog.Overlay";
+Content.displayName = "AlertDialog.Content";
+Title.displayName = "AlertDialog.Title";
+Description.displayName = "AlertDialog.Description";
+Cancel.displayName = "AlertDialog.Cancel";
+Action.displayName = "AlertDialog.Action";
+
 export const AlertDialog = {
   Root,
   Trigger,

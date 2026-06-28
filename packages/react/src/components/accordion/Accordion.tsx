@@ -123,6 +123,12 @@ function Content({ children, asChild, forceMount, ...rest }: AccordionContentPro
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Accordion.Root";
+Item.displayName = "Accordion.Item";
+Header.displayName = "Accordion.Header";
+Trigger.displayName = "Accordion.Trigger";
+Content.displayName = "Accordion.Content";
+
 export const Accordion = {
   Root,
   Item,

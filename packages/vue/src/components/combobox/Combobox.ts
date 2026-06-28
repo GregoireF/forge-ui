@@ -68,8 +68,11 @@ const ComboboxRoot = defineComponent({
     onCreateOption: { type: Function as PropType<(value: string) => void>, default: undefined },
     translations: { type: Object as PropType<Partial<ComboboxTranslations>>, default: undefined },
   },
-  emits: ["update:value", "update:open"],
-  setup(props, { slots }) {
+  emits: {
+    "update:value": (_v: string[]) => true,
+    "update:open": (_v: boolean) => true,
+  },
+  setup(props, { slots, emit }) {
     const opts: UseComboboxOptions = {
       ...(props.id !== undefined && { id: props.id }),
       ...(props.multiple !== undefined && { multiple: props.multiple }),
@@ -82,8 +85,14 @@ const ComboboxRoot = defineComponent({
       ...(props.invalid !== undefined && { invalid: props.invalid }),
       ...(props.positioning !== undefined && { positioning: props.positioning }),
       ...(props.onInputChange !== undefined && { onInputChange: props.onInputChange }),
-      ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
-      ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
+      onValueChange: (v: string[]) => {
+        emit("update:value", v);
+        props.onValueChange?.(v);
+      },
+      onOpenChange: (open: boolean) => {
+        emit("update:open", open);
+        props.onOpenChange?.(open);
+      },
       ...(props.onHighlightChange !== undefined && { onHighlightChange: props.onHighlightChange }),
       ...(props.options !== undefined && { options: props.options }),
       ...(props.onHighlightedScroll !== undefined && { onHighlightedScroll: props.onHighlightedScroll }),
@@ -98,7 +107,7 @@ const ComboboxRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(comboboxPresenceKey, presence);
 
-    return () => slots.default?.();
+    return () => slots['default']?.();
   },
 });
 
@@ -113,8 +122,8 @@ const ComboboxLabel = defineComponent({
     const api = useCtx();
     return () => {
       const labelProps = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, labelProps, slots.default);
-      return h("label", labelProps, slots.default?.());
+      if (props.asChild) return h(Slot, labelProps, slots['default']);
+      return h("label", labelProps, slots['default']?.());
     };
   },
 });
@@ -138,7 +147,7 @@ const ComboboxInput = defineComponent({
         ...attrs,
         ...(machineRef != null && { ref: machineRef as VNodeRef }),
       };
-      if (props.asChild) return h(Slot, inputProps, slots.default);
+      if (props.asChild) return h(Slot, inputProps, slots['default']);
       return h("input", inputProps);
     };
   },
@@ -155,8 +164,8 @@ const ComboboxTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots.default);
-      return h("button", triggerProps, slots.default?.());
+      if (props.asChild) return h(Slot, triggerProps, slots['default']);
+      return h("button", triggerProps, slots['default']?.());
     };
   },
 });
@@ -175,8 +184,8 @@ const ComboboxClearTrigger = defineComponent({
       const inputVal = api.getInputValue();
       if (!val.length && !inputVal) return null;
       const clearProps = { ...api.getClearTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, clearProps, slots.default);
-      return h("button", clearProps, slots.default?.());
+      if (props.asChild) return h(Slot, clearProps, slots['default']);
+      return h("button", clearProps, slots['default']?.());
     };
   },
 });
@@ -198,7 +207,7 @@ const ComboboxPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots['default']);
     };
   },
 });
@@ -242,9 +251,9 @@ const ComboboxContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots.default));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots['default']));
       }
-      return h("div", positionerProps, h("ul", finalContentProps, slots.default?.()));
+      return h("div", positionerProps, h("ul", finalContentProps, slots['default']?.()));
     };
   },
 });
@@ -265,10 +274,11 @@ const ComboboxItem = defineComponent({
     const api = useCtx();
 
     onMounted(() => {
+      const defaultChildren = slots['default']?.();
       const label =
         props.label ??
-        (typeof slots.default?.()[0]?.children === "string"
-          ? (slots.default()[0].children as string)
+        (typeof defaultChildren?.[0]?.children === "string"
+          ? (defaultChildren[0]?.children as string)
           : props.value);
       api.send({ type: "REGISTER_OPTION", option: { value: props.value, label, disabled: props.disabled } });
     });
@@ -283,8 +293,8 @@ const ComboboxItem = defineComponent({
         ...patchVueEvents(api.getOptionProps({ value: props.value, disabled: props.disabled }) as Record<string, unknown>),
         ...attrs,
       };
-      if (props.asChild) return h(Slot, optionProps, slots.default);
-      return h("li", optionProps, slots.default?.());
+      if (props.asChild) return h(Slot, optionProps, slots['default']);
+      return h("li", optionProps, slots['default']?.());
     };
   },
 });
@@ -296,7 +306,7 @@ const ComboboxItem = defineComponent({
 const ComboboxItemText = defineComponent({
   name: "ForgeComboboxItemText",
   setup(_props, { slots }) {
-    return () => h("span", { "data-forge-scope": "combobox", "data-forge-part": "item-text" }, slots.default?.());
+    return () => h("span", { "data-forge-scope": "combobox", "data-forge-part": "item-text" }, slots['default']?.());
   },
 });
 
@@ -311,7 +321,7 @@ const ComboboxItemIndicator = defineComponent({
     const api = useCtx();
     return () => {
       if (!api.getValue().includes(props.value)) return null;
-      return h("span", { "data-forge-scope": "combobox", "data-forge-part": "item-indicator" }, slots.default?.());
+      return h("span", { "data-forge-scope": "combobox", "data-forge-part": "item-indicator" }, slots['default']?.());
     };
   },
 });
@@ -323,14 +333,14 @@ const ComboboxItemIndicator = defineComponent({
 const ComboboxGroup = defineComponent({
   name: "ForgeComboboxGroup",
   setup(_props, { slots, attrs }) {
-    return () => h("ul", { role: "group", "data-forge-scope": "combobox", "data-forge-part": "group", ...attrs }, slots.default?.());
+    return () => h("ul", { role: "group", "data-forge-scope": "combobox", "data-forge-part": "group", ...attrs }, slots['default']?.());
   },
 });
 
 const ComboboxGroupLabel = defineComponent({
   name: "ForgeComboboxGroupLabel",
   setup(_props, { slots, attrs }) {
-    return () => h("li", { role: "presentation", "data-forge-scope": "combobox", "data-forge-part": "group-label", ...attrs }, slots.default?.());
+    return () => h("li", { role: "presentation", "data-forge-scope": "combobox", "data-forge-part": "group-label", ...attrs }, slots['default']?.());
   },
 });
 
@@ -348,7 +358,7 @@ const ComboboxTagsInput = defineComponent({
         "data-forge-scope": "combobox",
         "data-forge-part": "tags-input",
         ...attrs,
-      }, slots.default?.());
+      }, slots['default']?.());
     };
   },
 });
@@ -366,7 +376,7 @@ const ComboboxTag = defineComponent({
         "data-forge-part": "tag",
         "data-value": props.value,
         ...attrs,
-      }, slots.default?.() ?? [label]);
+      }, slots['default']?.() ?? [label]);
     };
   },
 });
@@ -408,8 +418,8 @@ const ComboboxCreateOption = defineComponent({
       if (!api.hasCreateOption.value) return null;
       const label = api.createOptionLabel.value;
       const createProps = { ...api.getCreateOptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, createProps, slots.default);
-      const content = slots.default?.() ?? [`CrÃ©er "${label}"`];
+      if (props.asChild) return h(Slot, createProps, slots['default']);
+      const content = slots['default']?.() ?? [`CrÃ©er "${label}"`];
       return h("li", createProps, content);
     };
   },

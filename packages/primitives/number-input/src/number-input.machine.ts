@@ -197,12 +197,13 @@ function onBlur({
   const clamped = parsed !== null ? clampSnap(parsed, context.min, context.max, context.step) : null;
   const rounded = clamped !== null ? Number(clamped.toFixed(context.fractionDigits)) : null;
   const next = rounded !== null ? rounded : (context.allowEmpty ? null : context.value);
+  const prevValue = context.value;
   setContext({
     focused: false,
     value: next,
     inputText: next !== null ? formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) : "",
   });
-  if (next !== context.value) {
+  if (next !== prevValue) {
     context.onValueChange?.(next);
   }
   context.onValueCommit?.(next);

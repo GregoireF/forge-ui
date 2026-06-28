@@ -39,7 +39,10 @@ const AccordionRoot = defineComponent({
     onValueChange: { type: Function as PropType<(v: string[]) => void>, default: undefined },
     asChild: { type: Boolean, default: false },
   },
-  setup(props, { slots, attrs }) {
+  emits: {
+    "update:value": (_v: string[]) => true,
+  },
+  setup(props, { slots, attrs, emit }) {
     // Spread conditionally: Vue LooseRequired makes all prop keys present (as T | undefined),
     // which is incompatible with exactOptionalPropertyTypes expecting keys to be absent.
     const api = useAccordion({
@@ -63,11 +66,12 @@ const AccordionRoot = defineComponent({
       },
     );
 
+    watch(api.value, (v) => emit("update:value", v));
     provide(accordionKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots.default);
-      return h("div", rootProps, slots.default?.());
+      if (props.asChild) return h(Slot, rootProps, slots['default']);
+      return h("div", rootProps, slots['default']?.());
     };
   },
 });
@@ -87,8 +91,8 @@ const AccordionItem = defineComponent({
     provide(accordionItemKey, props.value);
     return () => {
       const itemProps = { ...api.getItemProps(props.value), ...attrs };
-      if (props.asChild) return h(Slot, itemProps, slots.default);
-      return h("div", itemProps, slots.default?.());
+      if (props.asChild) return h(Slot, itemProps, slots['default']);
+      return h("div", itemProps, slots['default']?.());
     };
   },
 });
@@ -105,8 +109,8 @@ const AccordionHeader = defineComponent({
     const itemValue = useItemValue();
     return () => {
       const headerProps = { ...api.getHeaderProps(itemValue), ...attrs };
-      if (props.asChild) return h(Slot, headerProps, slots.default);
-      return h("h3", headerProps, slots.default?.());
+      if (props.asChild) return h(Slot, headerProps, slots['default']);
+      return h("h3", headerProps, slots['default']?.());
     };
   },
 });
@@ -123,8 +127,8 @@ const AccordionTrigger = defineComponent({
     const itemValue = useItemValue();
     return () => {
       const triggerProps = { ...api.getTriggerProps(itemValue), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots.default);
-      return h("button", triggerProps, slots.default?.());
+      if (props.asChild) return h(Slot, triggerProps, slots['default']);
+      return h("button", triggerProps, slots['default']?.());
     };
   },
 });
@@ -146,8 +150,8 @@ const AccordionContent = defineComponent({
       const isOpen = api.value.value.includes(itemValue);
       if (!props.forceMount && !isOpen) return null;
       const contentProps = { ...api.getContentProps(itemValue), ...attrs };
-      if (props.asChild) return h(Slot, contentProps, slots.default);
-      return h("div", contentProps, slots.default?.());
+      if (props.asChild) return h(Slot, contentProps, slots['default']);
+      return h("div", contentProps, slots['default']?.());
     };
   },
 });

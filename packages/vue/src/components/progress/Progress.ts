@@ -1,10 +1,10 @@
-import { connectProgress } from "@forge-ui/progress";
+﻿import { connectProgress } from "@forge-ui/progress";
 import type { ComputedRef, InjectionKey } from "vue";
 import { computed, defineComponent, h, inject, provide } from "vue";
 import { Slot } from "../shared/Slot.js";
 
 // ---------------------------------------------------------------------------
-// Context — Root provides a ComputedRef so children stay reactive
+// Context â€” Root provides a ComputedRef so children stay reactive
 // ---------------------------------------------------------------------------
 
 interface ProgressCtx {
@@ -45,8 +45,8 @@ const ProgressRoot = defineComponent({
     return () => {
       const api = connectProgress({ value: props.value, max: props.max, min: props.min });
       const merged = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("div", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("div", merged, slots['default']?.());
     };
   },
 });
@@ -66,8 +66,8 @@ const ProgressTrack = defineComponent({
       const { value, max, min } = ctx.value;
       const api = connectProgress({ value, max, min });
       const merged = { ...api.getTrackProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("div", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("div", merged, slots['default']?.());
     };
   },
 });
@@ -87,7 +87,7 @@ const ProgressFill = defineComponent({
       const { value, max, min } = ctx.value;
       const api = connectProgress({ value, max, min });
       const merged = { ...api.getFillProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
+      if (props.asChild) return h(Slot, merged, slots['default']);
       return h("div", merged);
     };
   },
@@ -104,8 +104,8 @@ const ProgressLabel = defineComponent({
     return () => {
       const api = connectProgress({ value: null });
       const merged = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("span", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("span", merged, slots['default']?.());
     };
   },
 });
@@ -126,7 +126,7 @@ const ProgressValueText = defineComponent({
       const api = connectProgress({ value, max, min });
       const text = value !== null ? `${api.percent}%` : "loading";
       const merged = { ...api.getValueTextProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
+      if (props.asChild) return h(Slot, merged, slots['default']);
       return h("span", merged, text);
     };
   },

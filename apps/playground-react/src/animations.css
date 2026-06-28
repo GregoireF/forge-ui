@@ -69,3 +69,94 @@
 [data-forge-scope="tooltip"][data-forge-part="content"][data-state="closed"] {
   animation: forge-fade-scale-out 80ms ease forwards;
 }
+
+/* DateField / TimePicker — group focus-within border + segment states */
+[data-forge-scope="date-field"][data-forge-part="group"]:focus-within,
+[data-forge-scope="time-picker"][data-forge-part="group"]:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: 0;
+  border-color: #3b82f6;
+  border-radius: 6px;
+}
+/* Placeholder state (no value yet) */
+[data-forge-part^="segment-"][data-placeholder] {
+  color: #94a3b8;
+}
+/* Focused segment — blue chip */
+[data-forge-part^="segment-"][data-focused] {
+  background: #dbeafe;
+  border-radius: 3px;
+  color: #1e40af;
+}
+
+/* DatePicker / DateRangePicker — hover on cells */
+[data-forge-scope="date-picker"][data-forge-part="cell"]:hover,
+[data-forge-scope="date-range-picker"][data-forge-part="cell"]:not([data-in-range]):not([data-range-start]):not([data-range-end]):hover {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+/* DatePicker — selected cell, today, focused cell */
+[data-forge-scope="date-picker"][data-forge-part="cell"][aria-selected="true"],
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-state="selected"] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px;
+}
+[data-forge-scope="date-picker"][data-forge-part="cell"][data-today],
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-today]:not([data-range-start]):not([data-range-end]) {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+[data-forge-scope="date-picker"][data-forge-part="cell"][data-focused],
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-focused] {
+  outline: 2px solid #94a3b8;
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+
+/* DateRangePicker — range visualization */
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-range-start] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px 0 0 6px;
+}
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-range-end] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 0 6px 6px 0;
+}
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-in-range] {
+  background: #e2e8f0;
+  border-radius: 0;
+}
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-range-start][data-range-end] {
+  border-radius: 6px;
+}
+
+/* DatePicker Month/Year cells — hover, selected, focused */
+[data-forge-scope="date-picker"][data-forge-part="month-cell"]:hover,
+[data-forge-scope="date-picker"][data-forge-part="year-cell"]:hover {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+[data-forge-scope="date-picker"][data-forge-part="month-cell"][aria-selected="true"],
+[data-forge-scope="date-picker"][data-forge-part="year-cell"][aria-selected="true"] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px;
+}
+[data-forge-scope="date-picker"][data-forge-part="month-cell"][data-focused],
+[data-forge-scope="date-picker"][data-forge-part="year-cell"][data-focused] {
+  outline: 2px solid #94a3b8;
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+
+/* Toggle + ToggleGroup pressed state via data attr */
+[data-forge-scope="toggle"][data-state="on"],
+[data-forge-scope="toggle-group"][data-forge-part="item"][data-state="on"] {
+  background: #1e293b;
+  color: #fff;
+}

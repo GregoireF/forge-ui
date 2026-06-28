@@ -29,7 +29,7 @@ function navigateRadioGroup(e: KeyboardEvent, send: RadioGroupSend): boolean {
   if (!target) return true;
 
   target.focus();
-  const val = target.closest<HTMLElement>('[data-forge-part="item"]')?.dataset.value;
+  const val = target.closest<HTMLElement>('[data-forge-part="item"]')?.dataset["value"];
   if (val) send({ type: "SELECT", value: val });
   return true;
 }

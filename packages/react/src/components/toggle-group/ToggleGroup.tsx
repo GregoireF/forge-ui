@@ -69,4 +69,7 @@ function Item({ value, asChild, children, disabled, ...rest }: ToggleGroupItemPr
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "ToggleGroup.Root";
+Item.displayName = "ToggleGroup.Item";
+
 export const ToggleGroup = { Root, Item } as const;

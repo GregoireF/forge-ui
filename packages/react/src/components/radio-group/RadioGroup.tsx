@@ -127,6 +127,12 @@ function HiddenInput() {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "RadioGroup.Root";
+Item.displayName = "RadioGroup.Item";
+Radio.displayName = "RadioGroup.Radio";
+Label.displayName = "RadioGroup.Label";
+HiddenInput.displayName = "RadioGroup.HiddenInput";
+
 export const RadioGroup = {
   Root,
   Item,

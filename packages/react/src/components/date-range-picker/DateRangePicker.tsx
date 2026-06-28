@@ -237,6 +237,21 @@ export function useDateRangePickerContext(): DateRangePickerApi {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "DateRangePicker.Root";
+Trigger.displayName = "DateRangePicker.Trigger";
+Portal.displayName = "DateRangePicker.Portal";
+Content.displayName = "DateRangePicker.Content";
+CalendarHeader.displayName = "DateRangePicker.CalendarHeader";
+PrevMonthButton.displayName = "DateRangePicker.PrevMonthButton";
+NextMonthButton.displayName = "DateRangePicker.NextMonthButton";
+CalendarGrid.displayName = "DateRangePicker.CalendarGrid";
+CalendarRow.displayName = "DateRangePicker.CalendarRow";
+WeekdayHeader.displayName = "DateRangePicker.WeekdayHeader";
+CalendarCell.displayName = "DateRangePicker.CalendarCell";
+ClearButton.displayName = "DateRangePicker.ClearButton";
+Preset.displayName = "DateRangePicker.Preset";
+HiddenInputs.displayName = "DateRangePicker.HiddenInputs";
+
 export const DateRangePicker = {
   Root,
   Trigger,

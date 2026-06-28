@@ -296,6 +296,23 @@ function Indicator({ children, ...rest }: SelectIndicatorProps) {
 }
 
 // ---------------------------------------------------------------------------
+// Namespace export
+// ---------------------------------------------------------------------------
+
+Root.displayName = "Select.Root";
+Label.displayName = "Select.Label";
+Trigger.displayName = "Select.Trigger";
+Value.displayName = "Select.Value";
+Placeholder.displayName = "Select.Placeholder";
+Portal.displayName = "Select.Portal";
+Content.displayName = "Select.Content";
+Indicator.displayName = "Select.Indicator";
+Item.displayName = "Select.Item";
+ItemText.displayName = "Select.ItemText";
+ItemIndicator.displayName = "Select.ItemIndicator";
+Separator.displayName = "Select.Separator";
+Group.displayName = "Select.Group";
+GroupLabel.displayName = "Select.GroupLabel";
 
 export const Select = {
   Root,

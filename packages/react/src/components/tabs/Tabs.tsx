@@ -95,6 +95,11 @@ function Panel({ value, children, asChild, forceMount, ...rest }: TabsPanelProps
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Tabs.Root";
+List.displayName = "Tabs.List";
+Trigger.displayName = "Tabs.Trigger";
+Panel.displayName = "Tabs.Panel";
+
 export const Tabs = {
   Root,
   List,

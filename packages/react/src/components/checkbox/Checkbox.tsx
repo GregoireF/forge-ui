@@ -208,6 +208,13 @@ function Label({ children, ...rest }: CheckboxLabelProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Checkbox.Root";
+Control.displayName = "Checkbox.Control";
+Indicator.displayName = "Checkbox.Indicator";
+Label.displayName = "Checkbox.Label";
+Group.displayName = "Checkbox.Group";
+GroupAll.displayName = "Checkbox.GroupAll";
+
 export const Checkbox = {
   Root,
   Control,

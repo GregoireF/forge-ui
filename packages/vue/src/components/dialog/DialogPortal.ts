@@ -1,9 +1,9 @@
-import type { Component, PropType } from "vue";
+﻿import type { Component, PropType } from "vue";
 import { defineComponent, h, onMounted, ref, Teleport } from "vue";
 
 /**
  * Portals dialog content to a configurable container (default: document.body).
- * Uses Vue's built-in <Teleport> — zero extra deps.
+ * Uses Vue's built-in <Teleport> â€” zero extra deps.
  *
  * SSR-safe: defers rendering until after mount to avoid hydration mismatches.
  * Pass container=null to disable portal and render inline (e.g. in tests).
@@ -35,7 +35,7 @@ export const DialogPortal = defineComponent({
       return h(
         Teleport as unknown as Component,
         { to: props.to, disabled: props.disabled },
-        slots.default?.(),
+        slots['default']?.(),
       );
     };
   },

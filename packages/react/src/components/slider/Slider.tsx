@@ -184,6 +184,14 @@ function Marker({ value: markValue, style: userStyle, children, ...rest }: Slide
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Slider.Root";
+Track.displayName = "Slider.Track";
+Range.displayName = "Slider.Range";
+Thumb.displayName = "Slider.Thumb";
+HiddenInput.displayName = "Slider.HiddenInput";
+MarkerGroup.displayName = "Slider.MarkerGroup";
+Marker.displayName = "Slider.Marker";
+
 export const Slider = {
   Root,
   Track,

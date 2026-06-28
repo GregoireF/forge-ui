@@ -185,6 +185,14 @@ function HiddenInput({ name }: NumberInputHiddenInputProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "NumberInput.Root";
+Label.displayName = "NumberInput.Label";
+Control.displayName = "NumberInput.Control";
+Input.displayName = "NumberInput.Input";
+IncrementTrigger.displayName = "NumberInput.IncrementTrigger";
+DecrementTrigger.displayName = "NumberInput.DecrementTrigger";
+HiddenInput.displayName = "NumberInput.HiddenInput";
+
 export const NumberInput = {
   Root,
   Label,

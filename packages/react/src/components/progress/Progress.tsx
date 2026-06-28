@@ -113,6 +113,12 @@ function ValueText({ asChild, ...rest }: ProgressValueTextProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Progress.Root";
+Track.displayName = "Progress.Track";
+Fill.displayName = "Progress.Fill";
+Label.displayName = "Progress.Label";
+ValueText.displayName = "Progress.ValueText";
+
 export const Progress = {
   Root,
   Track,

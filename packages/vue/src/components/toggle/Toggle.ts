@@ -1,11 +1,11 @@
-import type { PropType } from "vue";
+﻿import type { PropType } from "vue";
 import { defineComponent, h } from "vue";
 import { Slot } from "../shared/Slot.js";
 import type { UseToggleOptions } from "./use-toggle.js";
 import { useToggle } from "./use-toggle.js";
 
 // ---------------------------------------------------------------------------
-// Standalone Toggle — no compound context needed (single element)
+// Standalone Toggle â€” no compound context needed (single element)
 // ---------------------------------------------------------------------------
 
 const ToggleRoot = defineComponent({
@@ -22,7 +22,9 @@ const ToggleRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:pressed"],
+  emits: {
+    "update:pressed": (_v: boolean) => true,
+  },
   setup(props, { slots, attrs, emit }) {
     const api = useToggle({
       ...(props.id !== undefined && { id: props.id }),
@@ -38,8 +40,8 @@ const ToggleRoot = defineComponent({
 
     return () => {
       const toggleProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, toggleProps, slots.default);
-      return h("button", toggleProps, slots.default?.());
+      if (props.asChild) return h(Slot, toggleProps, slots['default']);
+      return h("button", toggleProps, slots['default']?.());
     };
   },
 });

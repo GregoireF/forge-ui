@@ -202,6 +202,13 @@ function HiddenInput({ name }: TagsInputHiddenInputProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "TagsInput.Root";
+Label.displayName = "TagsInput.Label";
+Input.displayName = "TagsInput.Input";
+Tag.displayName = "TagsInput.Tag";
+TagDelete.displayName = "TagsInput.TagDelete";
+HiddenInput.displayName = "TagsInput.HiddenInput";
+
 export const TagsInput = {
   Root,
   Label,

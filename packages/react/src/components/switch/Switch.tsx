@@ -82,6 +82,11 @@ function Label({ children, ...rest }: SwitchLabelProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Switch.Root";
+Control.displayName = "Switch.Control";
+Thumb.displayName = "Switch.Thumb";
+Label.displayName = "Switch.Label";
+
 export const Switch = {
   Root,
   Control,

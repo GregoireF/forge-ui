@@ -1,4 +1,4 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { Slot } from "../shared/Slot.js";
 import type { UseNumberInputReturn } from "./use-number-input.js";
@@ -36,7 +36,9 @@ const NumberInputRoot = defineComponent({
     onValueChange: { type: Function as PropType<(v: number | null) => void>, default: undefined },
     onValueCommit: { type: Function as PropType<(v: number | null) => void>, default: undefined },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: number | null) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useNumberInput({
       ...(props.id !== undefined && { id: props.id }),
@@ -70,7 +72,7 @@ const NumberInputRoot = defineComponent({
     watch(api.value, (v) => emit("update:value", v));
 
     provide(numberInputKey, api);
-    return () => slots.default?.();
+    return () => slots['default']?.();
   },
 });
 
@@ -85,14 +87,14 @@ const NumberInputLabel = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("label", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("label", merged, slots['default']?.());
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// Control — wrapper around Input + stepper buttons
+// Control â€” wrapper around Input + stepper buttons
 // ---------------------------------------------------------------------------
 
 const NumberInputControl = defineComponent({
@@ -102,14 +104,14 @@ const NumberInputControl = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...api.getControlProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("div", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("div", merged, slots['default']?.());
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// Input — the spinbutton
+// Input â€” the spinbutton
 // ---------------------------------------------------------------------------
 
 const NumberInputInput = defineComponent({
@@ -177,8 +179,8 @@ const NumberInputIncrementTrigger = defineComponent({
       };
 
       const merged = { ...triggerAttrs, onPointerdown, onPointerup, onPointerleave, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("button", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("button", merged, slots['default']?.());
     };
   },
 });
@@ -211,14 +213,14 @@ const NumberInputDecrementTrigger = defineComponent({
       };
 
       const merged = { ...triggerAttrs, onPointerdown, onPointerup, onPointerleave, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("button", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots['default']);
+      return h("button", merged, slots['default']?.());
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// HiddenInput — for form submission
+// HiddenInput â€” for form submission
 // ---------------------------------------------------------------------------
 
 const NumberInputHiddenInput = defineComponent({

@@ -284,6 +284,27 @@ export function useDatePickerContext(): DatePickerApi {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "DatePicker.Root";
+Trigger.displayName = "DatePicker.Trigger";
+Portal.displayName = "DatePicker.Portal";
+Content.displayName = "DatePicker.Content";
+CalendarHeader.displayName = "DatePicker.CalendarHeader";
+ViewSwitchButton.displayName = "DatePicker.ViewSwitchButton";
+PrevMonthButton.displayName = "DatePicker.PrevMonthButton";
+NextMonthButton.displayName = "DatePicker.NextMonthButton";
+PrevYearRangeButton.displayName = "DatePicker.PrevYearRangeButton";
+NextYearRangeButton.displayName = "DatePicker.NextYearRangeButton";
+CalendarGrid.displayName = "DatePicker.CalendarGrid";
+CalendarRow.displayName = "DatePicker.CalendarRow";
+WeekdayHeader.displayName = "DatePicker.WeekdayHeader";
+CalendarCell.displayName = "DatePicker.CalendarCell";
+MonthGrid.displayName = "DatePicker.MonthGrid";
+MonthCell.displayName = "DatePicker.MonthCell";
+YearGrid.displayName = "DatePicker.YearGrid";
+YearCell.displayName = "DatePicker.YearCell";
+Preset.displayName = "DatePicker.Preset";
+HiddenInput.displayName = "DatePicker.HiddenInput";
+
 export const DatePicker = {
   Root,
   Trigger,

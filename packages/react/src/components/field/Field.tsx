@@ -158,6 +158,15 @@ function GroupLabel({ asChild, children, ...rest }: FieldGroupLabelProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Field.Root";
+Label.displayName = "Field.Label";
+RequiredIndicator.displayName = "Field.RequiredIndicator";
+Control.displayName = "Field.Control";
+Description.displayName = "Field.Description";
+FieldError.displayName = "Field.Error";
+Group.displayName = "Field.Group";
+GroupLabel.displayName = "Field.GroupLabel";
+
 export const Field = {
   Root,
   Label,

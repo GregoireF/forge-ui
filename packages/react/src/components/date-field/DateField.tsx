@@ -102,6 +102,14 @@ function HiddenInput({ name }: DateFieldHiddenInputProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "DateField.Root";
+Group.displayName = "DateField.Group";
+MonthSegment.displayName = "DateField.MonthSegment";
+DaySegment.displayName = "DateField.DaySegment";
+YearSegment.displayName = "DateField.YearSegment";
+Separator.displayName = "DateField.Separator";
+HiddenInput.displayName = "DateField.HiddenInput";
+
 export const DateField = {
   Root,
   Group,

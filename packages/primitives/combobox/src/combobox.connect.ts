@@ -44,7 +44,7 @@ export function connectCombobox(
   const valueLabel: string =
     context.value.length === 0
       ? ""
-      : (effectiveBase.find((o) => o.value === context.value[0])?.label ?? context.value[0]);
+      : (effectiveBase.find((o) => o.value === context.value[0])?.label ?? context.value[0] ?? "");
 
   const valueLabels: string[] = context.value.map(
     (v) => context.selectedLabels[v] ?? context.options.find((o) => o.value === v)?.label ?? v,

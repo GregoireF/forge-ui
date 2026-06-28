@@ -394,6 +394,24 @@ describe("createNumberInputMachine — callbacks", () => {
     expect(onChange).toHaveBeenCalledWith(75);
     expect(onCommit).not.toHaveBeenCalled();
   });
+
+  it("BLUR calls onValueChange when value changes on commit", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 42, onValueChange: onChange });
+    m.send({ type: "FOCUS", event: new FocusEvent("focus") });
+    m.send({ type: "SET_INPUT_TEXT", text: "99" });
+    m.send({ type: "BLUR", event: new FocusEvent("blur") });
+    expect(onChange).toHaveBeenCalledWith(99);
+  });
+
+  it("BLUR does NOT call onValueChange when value is unchanged", () => {
+    const onChange = vi.fn();
+    const m = make({ defaultValue: 42, onValueChange: onChange });
+    onChange.mockClear();
+    m.send({ type: "FOCUS", event: new FocusEvent("focus") });
+    m.send({ type: "BLUR", event: new FocusEvent("blur") });
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------

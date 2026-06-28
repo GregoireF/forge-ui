@@ -4,7 +4,8 @@
     "noEmit": true,
     "paths": {
       "@forge-ui/react": ["../../packages/react/src/index.ts"],
-      "@forge-ui/core": ["../../packages/core/src/index.ts"]
+      "@forge-ui/core": ["../../packages/core/src/index.ts"],
+      "@forge-ui/menu": ["../../packages/primitives/menu/src/index.ts"]
     }
   },
   "include": ["src"]

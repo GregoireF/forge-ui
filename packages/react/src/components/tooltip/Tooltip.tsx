@@ -197,6 +197,14 @@ function Arrow({ children }: TooltipArrowProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Provider.displayName = "Tooltip.Provider";
+Root.displayName = "Tooltip.Root";
+Trigger.displayName = "Tooltip.Trigger";
+Anchor.displayName = "Tooltip.Anchor";
+Portal.displayName = "Tooltip.Portal";
+Content.displayName = "Tooltip.Content";
+Arrow.displayName = "Tooltip.Arrow";
+
 export const Tooltip = {
   Provider,
   Root,

@@ -113,6 +113,15 @@ function HiddenInput({ name }: TimePickerHiddenInputProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "TimePicker.Root";
+Group.displayName = "TimePicker.Group";
+HoursSegment.displayName = "TimePicker.HoursSegment";
+MinutesSegment.displayName = "TimePicker.MinutesSegment";
+SecondsSegment.displayName = "TimePicker.SecondsSegment";
+PeriodSegment.displayName = "TimePicker.PeriodSegment";
+Separator.displayName = "TimePicker.Separator";
+HiddenInput.displayName = "TimePicker.HiddenInput";
+
 export const TimePicker = {
   Root,
   Group,

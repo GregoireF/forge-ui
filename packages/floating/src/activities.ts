@@ -138,7 +138,7 @@ export function makeComputePositionActivity<
         // data-hidden for hideWhenDetached (written on content div).
         if (hideWhenDetached) {
           const hidden = result.middlewareData.hide?.referenceHidden ?? false;
-          contentEl.dataset.hidden = String(hidden);
+          contentEl.dataset["hidden"] = String(hidden);
         }
 
         // CSS var for transform-origin and data-side/align/placement.
@@ -146,9 +146,9 @@ export function makeComputePositionActivity<
           "--forge-floating-transform-origin",
           getTransformOrigin(result.placement),
         );
-        contentEl.dataset.side = getSideFromPlacement(result.placement);
-        contentEl.dataset.align = getAlignFromPlacement(result.placement);
-        contentEl.dataset.placement = result.placement;
+        contentEl.dataset["side"] = getSideFromPlacement(result.placement);
+        contentEl.dataset["align"] = getAlignFromPlacement(result.placement);
+        contentEl.dataset["placement"] = result.placement;
 
         if (!positioned) {
           positioned = true;

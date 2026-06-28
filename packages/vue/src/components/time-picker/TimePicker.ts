@@ -1,4 +1,4 @@
-import type { CreateTimePickerOptions, TimeValue } from "@forge-ui/time-picker";
+﻿import type { CreateTimePickerOptions, TimeValue } from "@forge-ui/time-picker";
 import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, nextTick, provide, watch } from "vue";
 import type { UseTimePickerOptions, UseTimePickerReturn } from "./use-time-picker.js";
@@ -31,7 +31,9 @@ const TimePickerRoot = defineComponent({
     readOnly: { type: Boolean, default: undefined },
     onValueChange: { type: Function as PropType<CreateTimePickerOptions["onValueChange"]>, default: undefined },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: TimeValue | null) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useTimePicker({
       ...(props.id !== undefined && { id: props.id }),
@@ -78,12 +80,12 @@ const TimePickerRoot = defineComponent({
     });
 
     provide(timePickerKey, api);
-    return () => slots.default?.();
+    return () => slots['default']?.();
   },
 });
 
 // ---------------------------------------------------------------------------
-// Segment helper — remaps onKeyDown → onKeydown for Vue
+// Segment helper â€” remaps onKeyDown â†’ onKeydown for Vue
 // ---------------------------------------------------------------------------
 
 function remapKeyDown(props: Record<string, unknown>): Record<string, unknown> {
@@ -99,7 +101,7 @@ const TimePickerGroup = defineComponent({
   name: "ForgeTimePickerGroup",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(), ...attrs }, slots.default?.());
+    return () => h("div", { ...api.getGroupProps(), ...attrs }, slots['default']?.());
   },
 });
 
@@ -113,7 +115,7 @@ const TimePickerHoursSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getHoursSegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.hours ?? "HH"]);
+      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.hours ?? "HH"]);
     };
   },
 });
@@ -124,7 +126,7 @@ const TimePickerMinutesSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getMinutesSegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.minutes ?? "MM"]);
+      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.minutes ?? "MM"]);
     };
   },
 });
@@ -135,7 +137,7 @@ const TimePickerSecondsSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getSecondsSegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.seconds ?? "SS"]);
+      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.seconds ?? "SS"]);
     };
   },
 });
@@ -146,7 +148,7 @@ const TimePickerPeriodSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getPeriodSegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.period ?? "AM"]);
+      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.period ?? "AM"]);
     };
   },
 });
@@ -159,7 +161,7 @@ const TimePickerSeparator = defineComponent({
   name: "ForgeTimePickerSeparator",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("span", { ...api.getSeparatorProps(), ...attrs }, slots.default?.());
+    return () => h("span", { ...api.getSeparatorProps(), ...attrs }, slots['default']?.());
   },
 });
 

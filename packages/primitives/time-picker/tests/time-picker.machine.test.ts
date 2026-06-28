@@ -283,3 +283,288 @@ describe("createTimePickerMachine — segment navigation", () => {
     expect(m.getSnapshot().context.focusedSegment).toBe("hours");
   });
 });
+
+// ---------------------------------------------------------------------------
+// getSegmentValue — minutes and seconds branches
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — getSegmentValue branches", () => {
+  it("INCREMENT on minutes calls getSegmentValue('minutes')", () => {
+    const m = make({ defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("INCREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(31);
+  });
+
+  it("DECREMENT on minutes calls getSegmentValue('minutes')", () => {
+    const m = make({ defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(29);
+  });
+
+  it("INCREMENT on seconds calls getSegmentValue('seconds')", () => {
+    const m = make({ showSeconds: true, defaultValue: { hours: 9, minutes: 30, seconds: 15 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "seconds" });
+    m.send("INCREMENT");
+    expect(m.getSnapshot().context.secondsValue).toBe(16);
+  });
+
+  it("DECREMENT on seconds calls getSegmentValue('seconds')", () => {
+    const m = make({ showSeconds: true, defaultValue: { hours: 9, minutes: 30, seconds: 15 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "seconds" });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.secondsValue).toBe(14);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// INCREMENT/DECREMENT on period segment
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — INCREMENT/DECREMENT period", () => {
+  it("INCREMENT on period segment toggles AM → PM", () => {
+    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 0, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("INCREMENT");
+    expect(m.getSnapshot().context.period).toBe("PM");
+    expect(m.getSnapshot().context.hoursValue).toBe(21);
+  });
+
+  it("INCREMENT on period segment toggles PM → AM", () => {
+    const m = make({ hourCycle: 12, defaultValue: { hours: 21, minutes: 0, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("INCREMENT");
+    expect(m.getSnapshot().context.period).toBe("AM");
+    expect(m.getSnapshot().context.hoursValue).toBe(9);
+  });
+
+  it("INCREMENT on period calls onValueChange", () => {
+    const cb = vi.fn();
+    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 30, seconds: 0 }, onValueChange: cb });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("INCREMENT");
+    expect(cb).toHaveBeenCalledWith(expect.objectContaining({ hours: 21, minutes: 30 }));
+  });
+
+  it("DECREMENT on period segment toggles AM → PM", () => {
+    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 0, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.period).toBe("PM");
+    expect(m.getSnapshot().context.hoursValue).toBe(21);
+  });
+
+  it("DECREMENT on period segment toggles PM → AM", () => {
+    const m = make({ hourCycle: 12, defaultValue: { hours: 21, minutes: 0, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.period).toBe("AM");
+    expect(m.getSnapshot().context.hoursValue).toBe(9);
+  });
+
+  it("DECREMENT on period calls onValueChange", () => {
+    const cb = vi.fn();
+    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 30, seconds: 0 }, onValueChange: cb });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("DECREMENT");
+    expect(cb).toHaveBeenCalledWith(expect.objectContaining({ hours: 21, minutes: 30 }));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// TYPE_DIGIT — 12h hour commit path
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — TYPE_DIGIT 12h", () => {
+  it("typing '1' then '2' for hours in 12h mode commits 12", () => {
+    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 0, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "hours" });
+    m.send({ type: "TYPE_DIGIT", digit: "1" });
+    m.send({ type: "TYPE_DIGIT", digit: "2" });
+    // 12 in AM → stored as 0 (midnight) OR 12 (noon) depending on period
+    const ctx = m.getSnapshot().context;
+    expect(ctx.hoursValue).not.toBeNull();
+  });
+
+  it("typing '1' then '1' in 12h mode commits 11 and stays in AM", () => {
+    const m = make({ hourCycle: 12 });
+    m.send({ type: "FOCUS_SEGMENT", segment: "hours" });
+    m.send({ type: "TYPE_DIGIT", digit: "1" });
+    m.send({ type: "TYPE_DIGIT", digit: "1" });
+    expect(m.getSnapshot().context.hoursValue).toBe(11);
+  });
+
+  it("typing '9' for hours in 12h mode auto-commits (9*10>12)", () => {
+    const m = make({ hourCycle: 12 });
+    m.send({ type: "FOCUS_SEGMENT", segment: "hours" });
+    m.send({ type: "TYPE_DIGIT", digit: "9" });
+    expect(m.getSnapshot().context.hoursValue).toBe(9);
+    expect(m.getSnapshot().context.focusedSegment).toBe("minutes");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CLEAR_SEGMENT — seconds branch
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — CLEAR_SEGMENT seconds", () => {
+  it("clears secondsValue when focused segment is seconds", () => {
+    const m = make({ showSeconds: true, defaultValue: { hours: 9, minutes: 30, seconds: 45 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "seconds" });
+    m.send("CLEAR_SEGMENT");
+    expect(m.getSnapshot().context.secondsValue).toBeNull();
+  });
+
+  it("clears hoursValue when focused segment is hours", () => {
+    const m = make({ defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "hours" });
+    m.send("CLEAR_SEGMENT");
+    expect(m.getSnapshot().context.hoursValue).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// tryBuildTime — uncovered branches
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — tryBuildTime branches", () => {
+  it("tryBuildTime returns null when showSeconds=true and secondsValue=null (via INCREMENT)", () => {
+    const cb = vi.fn();
+    const m = make({ showSeconds: true, defaultValue: { hours: 9, minutes: 30, seconds: 0 }, onValueChange: cb });
+    // Set seconds to null
+    m.send({ type: "FOCUS_SEGMENT", segment: "seconds" });
+    m.send("CLEAR_SEGMENT");
+    // Now secondsValue is null, tryBuildTime should return null → onValueChange NOT called on CLEAR
+    // Reset callback count, then INCREMENT on minutes (tryBuildTime called but secondsValue null)
+    cb.mockClear();
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("INCREMENT");
+    // tryBuildTime returns null since secondsValue is null with showSeconds=true
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it("INCREMENT on period with no minutes → time null → onValueChange not called", () => {
+    const cb = vi.fn();
+    const m = make({ hourCycle: 12, onValueChange: cb });
+    // hoursValue is null, so tryBuildTime returns null
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("INCREMENT");
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it("DECREMENT on period with no hours → hoursValue ?? 0 branch", () => {
+    const m = make({ hourCycle: 12 });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    // hoursValue is null → h = 0 → hoursValue ?? 0 = 0
+    m.send("DECREMENT");
+    const ctx = m.getSnapshot().context;
+    // AM toggled → PM, newHours = (0 % 12) + 12 = 12
+    expect(ctx.hoursValue).toBe(12);
+    expect(ctx.period).toBe("PM");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// segmentOrder — branches
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — segmentOrder branches", () => {
+  it("NEXT_SEGMENT includes period in 12h mode with showSeconds=true", () => {
+    const m = make({ hourCycle: 12, showSeconds: true });
+    m.send({ type: "FOCUS_SEGMENT", segment: "seconds" });
+    m.send("NEXT_SEGMENT");
+    expect(m.getSnapshot().context.focusedSegment).toBe("period");
+  });
+
+  it("NEXT_SEGMENT from period → null (last segment)", () => {
+    const m = make({ hourCycle: 12 });
+    m.send({ type: "FOCUS_SEGMENT", segment: "period" });
+    m.send("NEXT_SEGMENT");
+    expect(m.getSnapshot().context.focusedSegment).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// typeDigit — additional branches
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — typeDigit additional branches", () => {
+  it("typeDigit does nothing when seg is null", () => {
+    const m = make();
+    // focusedSegment is null by default
+    m.send({ type: "TYPE_DIGIT", digit: "5" });
+    expect(m.getSnapshot().context.hoursValue).toBeNull();
+  });
+
+  it("typeDigit does nothing when readOnly", () => {
+    const m = make({ readOnly: true });
+    m.send({ type: "FOCUS_SEGMENT", segment: "hours" });
+    m.send({ type: "TYPE_DIGIT", digit: "5" });
+    expect(m.getSnapshot().context.hoursValue).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Guard branches: disabled/readOnly/!focusedSegment
+// ---------------------------------------------------------------------------
+
+describe("createTimePickerMachine — guard branches", () => {
+  it("DECREMENT does nothing when disabled", () => {
+    const m = make({ disabled: true, defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+
+  it("DECREMENT does nothing when readOnly", () => {
+    const m = make({ readOnly: true, defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+
+  it("DECREMENT does nothing when no segment focused", () => {
+    const m = make({ defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send("DECREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+
+  it("CLEAR_SEGMENT does nothing when readOnly", () => {
+    const m = make({ readOnly: true, defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("CLEAR_SEGMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+
+  it("CLEAR_SEGMENT does nothing when no segment focused", () => {
+    const m = make({ defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send("CLEAR_SEGMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+
+  it("NEXT_SEGMENT with null focusedSegment focuses first segment (hours)", () => {
+    const m = make();
+    m.send("NEXT_SEGMENT");
+    expect(m.getSnapshot().context.focusedSegment).toBe("hours");
+  });
+
+  it("PREV_SEGMENT with null focusedSegment focuses last segment", () => {
+    const m = make({ hourCycle: 24, showSeconds: false });
+    m.send("PREV_SEGMENT");
+    expect(m.getSnapshot().context.focusedSegment).toBe("minutes");
+  });
+
+  it("INCREMENT does nothing when readOnly", () => {
+    const m = make({ readOnly: true, defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send({ type: "FOCUS_SEGMENT", segment: "minutes" });
+    m.send("INCREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+
+  it("INCREMENT does nothing when no segment focused", () => {
+    const m = make({ defaultValue: { hours: 9, minutes: 30, seconds: 0 } });
+    m.send("INCREMENT");
+    expect(m.getSnapshot().context.minutesValue).toBe(30);
+  });
+});

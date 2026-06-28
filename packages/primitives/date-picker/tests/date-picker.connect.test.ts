@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { connectDatePicker } from "../src/date-picker.connect.js";
 import { getYearGridStart } from "../src/calendar.js";
 import type { DatePickerContext, DatePickerState } from "../src/date-picker.types.js";
+import type { MachineSnapshot } from "@forge-ui/core";
 
 const JUNE15 = { year: 2024, month: 6, day: 15 };
 const JAN15 = { year: 2024, month: 1, day: 15 };
@@ -31,17 +32,17 @@ function makeApi(
 ) {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
+  const machine = { setContext: vi.fn<(updates: Partial<DatePickerContext>) => void>() };
   const openStates = ["open.day", "open.month", "open.year"];
   const tags = openStates.includes(state) ? ["open"] : ["closed"];
-  const snapshot = {
+  const snapshot: MachineSnapshot<DatePickerContext, DatePickerState> = {
     value: state,
     context: ctx,
-    matches: (s: string) => s === state,
+    matches: (...values) => values.includes(state),
     hasTag: (t: string) => tags.includes(t),
     tags,
   };
-  return { api: connectDatePicker(snapshot as any, send, machine), send, machine };
+  return { api: connectDatePicker(snapshot, send, machine), send, machine };
 }
 
 // ---------------------------------------------------------------------------

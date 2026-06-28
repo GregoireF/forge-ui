@@ -1,4 +1,4 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, ref, watch } from "vue";
 import type { TagsInputTranslations } from "@forge-ui/tags-input";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
@@ -43,7 +43,9 @@ const TagsInputRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: string[]) => true,
+  },
   setup(props, { slots, emit }) {
     const opts: UseTagsInputOptions = {
       ...(props.id !== undefined && { id: props.id }),
@@ -87,7 +89,7 @@ const TagsInputRoot = defineComponent({
 
     return () =>
       h("div", api.getRootProps(), [
-        slots.default?.(),
+        slots['default']?.(),
         h("span", { ...api.getLiveRegionProps(), ref: liveRegionEl, style: liveRegionStyle }),
       ]);
   },
@@ -101,7 +103,7 @@ const TagsInputLabel = defineComponent({
   name: "ForgeTagsInputLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots.default?.());
+    return () => h("label", api.getLabelProps(), slots['default']?.());
   },
 });
 
@@ -147,7 +149,7 @@ const TagsInputTag = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
-    return () => h("span", api.getTagProps(props.value), slots.default?.());
+    return () => h("span", api.getTagProps(props.value), slots['default']?.());
   },
 });
 
@@ -163,7 +165,7 @@ const TagsInputTagDelete = defineComponent({
   setup(props, { slots }) {
     const api = useCtx();
     return () =>
-      h("button", api.getTagDeleteProps(props.value), slots.default?.() ?? "×");
+      h("button", api.getTagDeleteProps(props.value), slots['default']?.() ?? "Ã—");
   },
 });
 

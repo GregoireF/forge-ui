@@ -1,4 +1,4 @@
-import type { InjectionKey, PropType } from "vue";
+﻿import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide } from "vue";
 import { Slot } from "../shared/Slot.js";
 import type { UseSwitchReturn } from "./use-switch.js";
@@ -34,7 +34,9 @@ const SwitchRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:checked"],
+  emits: {
+    "update:checked": (_v: boolean) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useSwitch({
       ...(props.id !== undefined && { id: props.id }),
@@ -58,7 +60,7 @@ const SwitchRoot = defineComponent({
     return () => {
       const inputProps = api.getHiddenInputProps();
       return h("div", api.getRootProps(), [
-        slots.default?.(),
+        slots['default']?.(),
         props.name
           ? h("input", { ...inputProps, name: props.name, value: props.value ?? inputProps.value })
           : null,
@@ -78,8 +80,8 @@ const SwitchControl = defineComponent({
     const api = useCtx();
     return () => {
       const controlProps = { ...api.getControlProps(), ...attrs };
-      if (props.asChild) return h(Slot, controlProps, slots.default);
-      return h("button", controlProps, slots.default?.());
+      if (props.asChild) return h(Slot, controlProps, slots['default']);
+      return h("button", controlProps, slots['default']?.());
     };
   },
 });
@@ -104,7 +106,7 @@ const SwitchLabel = defineComponent({
   name: "ForgeSwitchLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots.default?.());
+    return () => h("label", api.getLabelProps(), slots['default']?.());
   },
 });
 

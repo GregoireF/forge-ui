@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { connectDateField } from "../src/date-field.connect.js";
-import type { DateFieldContext, DateFieldEvent, DateFieldState } from "../src/date-field.types.js";
+import type { DateFieldContext, DateFieldState } from "../src/date-field.types.js";
+import type { MachineSnapshot } from "@forge-ui/core";
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -27,15 +28,15 @@ function makeApi(
 ) {
   const ctx = makeCtx(ctxOverrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  const snapshot = {
+  const machine = { setContext: vi.fn<(updates: Partial<DateFieldContext>) => void>() };
+  const snapshot: MachineSnapshot<DateFieldContext, DateFieldState> = {
     value: state,
     context: ctx,
-    matches: (s: string) => s === state,
+    matches: (...values) => values.includes(state),
     tags: [],
     hasTag: () => false,
   };
-  const api = connectDateField(snapshot as any, send, machine as any);
+  const api = connectDateField(snapshot, send, machine);
   return { api, send, machine, ctx };
 }
 
@@ -196,9 +197,13 @@ describe("connectDateField — getYearSegmentProps", () => {
 // ---------------------------------------------------------------------------
 
 describe("connectDateField — keyboard handling", () => {
-  function fireKey(props: Record<string, unknown>, key: string, extra: Partial<KeyboardEvent> = {}) {
+  function fireKey(
+    props: { onKeyDown?: (e: KeyboardEvent) => void } & Record<string, unknown>,
+    key: string,
+    extra: Partial<KeyboardEvent> = {},
+  ) {
     const event = { key, preventDefault: vi.fn(), ...extra } as unknown as KeyboardEvent;
-    (props as any).onKeyDown(event);
+    props.onKeyDown?.(event);
     return event;
   }
 

@@ -82,6 +82,10 @@ function Content({ asChild, forceMount, children, ...rest }: CollapsibleContentP
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Collapsible.Root";
+Trigger.displayName = "Collapsible.Trigger";
+Content.displayName = "Collapsible.Content";
+
 export const Collapsible = {
   Root,
   Trigger,

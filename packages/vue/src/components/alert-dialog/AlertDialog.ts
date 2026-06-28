@@ -47,7 +47,9 @@ const AlertDialogRoot = defineComponent({
     initialFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
     finalFocusEl: { type: Function as PropType<() => HTMLElement | null>, default: undefined },
   },
-  emits: ["update:open"],
+  emits: {
+    "update:open": (_v: boolean) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useAlertDialog({
       ...(props.id !== undefined && { id: props.id }),
@@ -78,7 +80,7 @@ const AlertDialogRoot = defineComponent({
       emit("update:open", api.isOpen.value);
     });
 
-    return () => slots.default?.();
+    return () => slots['default']?.();
   },
 });
 
@@ -93,8 +95,8 @@ const AlertDialogTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots.default);
-      return h("button", triggerProps, slots.default?.());
+      if (props.asChild) return h(Slot, triggerProps, slots['default']);
+      return h("button", triggerProps, slots['default']?.());
     };
   },
 });
@@ -116,7 +118,7 @@ const AlertDialogPortalCompound = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots['default']);
     };
   },
 });
@@ -146,7 +148,7 @@ const AlertDialogOverlay = defineComponent({
         ...(isOpen ? {} : { style: [attrs.style, { pointerEvents: "none" }] }),
         ref: presenceRef,
       };
-      if (props.asChild) return h(Slot, finalProps, slots.default);
+      if (props.asChild) return h(Slot, finalProps, slots['default']);
       return h("div", finalProps);
     };
   },
@@ -219,8 +221,8 @@ const AlertDialogContent = defineComponent({
         },
       };
 
-      if (props.asChild) return h(Slot, finalProps, slots.default);
-      return h("div", finalProps, slots.default?.());
+      if (props.asChild) return h(Slot, finalProps, slots['default']);
+      return h("div", finalProps, slots['default']?.());
     };
   },
 });
@@ -238,8 +240,8 @@ const AlertDialogTitle = defineComponent({
     onScopeDispose(() => api.send("UNREGISTER_TITLE"));
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
-      if (props.asChild) return h(Slot, titleProps, slots.default);
-      return h("h2", titleProps, slots.default?.());
+      if (props.asChild) return h(Slot, titleProps, slots['default']);
+      return h("h2", titleProps, slots['default']?.());
     };
   },
 });
@@ -257,8 +259,8 @@ const AlertDialogDescription = defineComponent({
     onScopeDispose(() => api.send("UNREGISTER_DESCRIPTION"));
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, descriptionProps, slots.default);
-      return h("p", descriptionProps, slots.default?.());
+      if (props.asChild) return h(Slot, descriptionProps, slots['default']);
+      return h("p", descriptionProps, slots['default']?.());
     };
   },
 });
@@ -274,8 +276,8 @@ const AlertDialogCancel = defineComponent({
     const api = useCtx();
     return () => {
       const cancelProps = { ...api.getCancelProps(), ...attrs };
-      if (props.asChild) return h(Slot, cancelProps, slots.default);
-      return h("button", cancelProps, slots.default?.());
+      if (props.asChild) return h(Slot, cancelProps, slots['default']);
+      return h("button", cancelProps, slots['default']?.());
     };
   },
 });
@@ -291,8 +293,8 @@ const AlertDialogAction = defineComponent({
     const api = useCtx();
     return () => {
       const actionProps = { ...api.getActionProps(), ...attrs };
-      if (props.asChild) return h(Slot, actionProps, slots.default);
-      return h("button", actionProps, slots.default?.());
+      if (props.asChild) return h(Slot, actionProps, slots['default']);
+      return h("button", actionProps, slots['default']?.());
     };
   },
 });

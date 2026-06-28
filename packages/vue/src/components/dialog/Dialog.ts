@@ -57,7 +57,9 @@ const DialogRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:open"],
+  emits: {
+    "update:open": (_v: boolean) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useDialog({
       ...(props.id !== undefined && { id: props.id }),
@@ -98,7 +100,7 @@ const DialogRoot = defineComponent({
       emit("update:open", open);
     });
 
-    return () => slots.default?.();
+    return () => slots['default']?.();
   },
 });
 
@@ -113,8 +115,8 @@ const DialogTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots.default);
-      return h("button", triggerProps, slots.default?.());
+      if (props.asChild) return h(Slot, triggerProps, slots['default']);
+      return h("button", triggerProps, slots['default']?.());
     };
   },
 });
@@ -136,7 +138,7 @@ const DialogPortalCompound = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots['default']);
     };
   },
 });
@@ -169,7 +171,7 @@ const DialogOverlay = defineComponent({
         ref: presenceRef,
       };
 
-      if (props.asChild) return h(Slot, finalProps, slots.default);
+      if (props.asChild) return h(Slot, finalProps, slots['default']);
       return h("div", finalProps);
     };
   },
@@ -260,8 +262,8 @@ const DialogContent = defineComponent({
         },
       };
 
-      if (props.asChild) return h(Slot, finalProps, slots.default);
-      return h("div", finalProps, slots.default?.());
+      if (props.asChild) return h(Slot, finalProps, slots['default']);
+      return h("div", finalProps, slots['default']?.());
     };
   },
 });
@@ -281,8 +283,8 @@ const DialogTitle = defineComponent({
 
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
-      if (props.asChild) return h(Slot, titleProps, slots.default);
-      return h("h2", titleProps, slots.default?.());
+      if (props.asChild) return h(Slot, titleProps, slots['default']);
+      return h("h2", titleProps, slots['default']?.());
     };
   },
 });
@@ -302,8 +304,8 @@ const DialogDescription = defineComponent({
 
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, descriptionProps, slots.default);
-      return h("p", descriptionProps, slots.default?.());
+      if (props.asChild) return h(Slot, descriptionProps, slots['default']);
+      return h("p", descriptionProps, slots['default']?.());
     };
   },
 });
@@ -319,8 +321,8 @@ const DialogClose = defineComponent({
     const api = useCtx();
     return () => {
       const closeProps = { ...api.getCloseProps(), ...attrs };
-      if (props.asChild) return h(Slot, closeProps, slots.default);
-      return h("button", closeProps, slots.default?.());
+      if (props.asChild) return h(Slot, closeProps, slots['default']);
+      return h("button", closeProps, slots['default']?.());
     };
   },
 });

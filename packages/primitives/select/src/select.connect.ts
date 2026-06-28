@@ -52,11 +52,13 @@ function createTypeahead(
     if (matches.length > 1) {
       const idx = matches.findIndex((o) => o.value === current);
       if (idx !== -1) {
-        onMatch(matches[(idx + 1) % matches.length].value);
+        const next = matches[(idx + 1) % matches.length];
+        if (next) onMatch(next.value);
         return;
       }
     }
-    onMatch(matches[0].value);
+    const first = matches[0];
+    if (first) onMatch(first.value);
   }
 
   return { handleChar };
@@ -171,7 +173,7 @@ export function connectSelect(
       ? ""
       : context.multiple
         ? context.value.map(resolveLabel).join(", ")
-        : resolveLabel(context.value[0]),
+        : resolveLabel(context.value[0] ?? ""),
 
     /** Machine-level placeholder. Prefer using SelectValue's placeholder prop in compounds. */
     placeholder: context.placeholder,

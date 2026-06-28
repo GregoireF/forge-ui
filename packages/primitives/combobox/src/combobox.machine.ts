@@ -27,17 +27,17 @@ function getEffectiveOptions(context: ComboboxContext): ComboboxOption[] {
 function getNextHighlighted(options: ComboboxOption[], current: string | null): string | null {
   const enabled = getEnabled(options);
   if (enabled.length === 0) return null;
-  if (current === null) return enabled[0].value;
+  if (current === null) return enabled[0]?.value ?? null;
   const idx = enabled.findIndex((o) => o.value === current);
-  return enabled[(idx + 1) % enabled.length].value;
+  return enabled[(idx + 1) % enabled.length]?.value ?? null;
 }
 
 function getPrevHighlighted(options: ComboboxOption[], current: string | null): string | null {
   const enabled = getEnabled(options);
   if (enabled.length === 0) return null;
-  if (current === null) return enabled[enabled.length - 1].value;
+  if (current === null) return enabled[enabled.length - 1]?.value ?? null;
   const idx = enabled.findIndex((o) => o.value === current);
-  return enabled[(idx - 1 + enabled.length) % enabled.length].value;
+  return enabled[(idx - 1 + enabled.length) % enabled.length]?.value ?? null;
 }
 
 // ---------------------------------------------------------------------------

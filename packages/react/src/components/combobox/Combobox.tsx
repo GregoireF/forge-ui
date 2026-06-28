@@ -377,6 +377,23 @@ function CreateOption({ children, ...rest }: ComboboxCreateOptionProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Combobox.Root";
+Label.displayName = "Combobox.Label";
+Input.displayName = "Combobox.Input";
+Trigger.displayName = "Combobox.Trigger";
+ClearTrigger.displayName = "Combobox.ClearTrigger";
+Portal.displayName = "Combobox.Portal";
+Content.displayName = "Combobox.Content";
+Item.displayName = "Combobox.Item";
+ItemText.displayName = "Combobox.ItemText";
+ItemIndicator.displayName = "Combobox.ItemIndicator";
+ComboboxGroupComp.displayName = "Combobox.Group";
+ComboboxGroupLabelComp.displayName = "Combobox.GroupLabel";
+CreateOption.displayName = "Combobox.CreateOption";
+TagsInput.displayName = "Combobox.TagsInput";
+Tag.displayName = "Combobox.Tag";
+TagDelete.displayName = "Combobox.TagDelete";
+
 export const Combobox = {
   Root,
   Label,

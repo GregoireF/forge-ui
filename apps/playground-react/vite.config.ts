@@ -26,6 +26,7 @@ export default defineConfig({
       "@forge-ui/radio-group": fileURLToPath(new URL("../../packages/primitives/radio-group/src/index.ts", import.meta.url)),
       "@forge-ui/slider": fileURLToPath(new URL("../../packages/primitives/slider/src/index.ts", import.meta.url)),
       "@forge-ui/tabs": fileURLToPath(new URL("../../packages/primitives/tabs/src/index.ts", import.meta.url)),
+      "@forge-ui/menu": fileURLToPath(new URL("../../packages/primitives/menu/src/index.ts", import.meta.url)),
     },
   },
   server: {

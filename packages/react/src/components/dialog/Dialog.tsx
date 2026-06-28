@@ -269,6 +269,15 @@ function Close({ asChild, children, ...rest }: DialogCloseProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "Dialog.Root";
+Trigger.displayName = "Dialog.Trigger";
+Portal.displayName = "Dialog.Portal";
+Overlay.displayName = "Dialog.Overlay";
+Content.displayName = "Dialog.Content";
+Title.displayName = "Dialog.Title";
+Description.displayName = "Dialog.Description";
+Close.displayName = "Dialog.Close";
+
 export const Dialog = {
   Root,
   Trigger,

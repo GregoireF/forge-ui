@@ -43,7 +43,10 @@ const SelectRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:value", "update:open"],
+  emits: {
+    "update:value": (_v: string[]) => true,
+    "update:open": (_v: boolean) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useSelect({
       ...(props.id !== undefined && { id: props.id }),
@@ -54,8 +57,13 @@ const SelectRoot = defineComponent({
       ...(props.placeholder !== undefined && { placeholder: props.placeholder }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.positioning !== undefined && { positioning: props.positioning }),
-      ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
-      ...(props.onOpenChange !== undefined && { onOpenChange: props.onOpenChange }),
+      onValueChange: (v: string[]) => {
+        emit("update:value", v);
+        props.onValueChange?.(v);
+      },
+      onOpenChange: (open: boolean) => {
+        props.onOpenChange?.(open);
+      },
       ...(props.onHighlightChange !== undefined && {
         onHighlightChange: props.onHighlightChange,
       }),
@@ -68,7 +76,7 @@ const SelectRoot = defineComponent({
 
     watch(api.isOpen, (open) => emit("update:open", open));
 
-    return () => slots.default?.();
+    return () => slots['default']?.();
   },
 });
 
@@ -83,8 +91,8 @@ const SelectLabel = defineComponent({
     const api = useCtx();
     return () => {
       const labelProps = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, labelProps, slots.default);
-      return h("label", labelProps, slots.default?.());
+      if (props.asChild) return h(Slot, labelProps, slots['default']);
+      return h("label", labelProps, slots['default']?.());
     };
   },
 });
@@ -100,8 +108,8 @@ const SelectTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots.default);
-      return h("button", triggerProps, slots.default?.());
+      if (props.asChild) return h(Slot, triggerProps, slots['default']);
+      return h("button", triggerProps, slots['default']?.());
     };
   },
 });
@@ -121,7 +129,7 @@ const SelectValue = defineComponent({
       const label = api.getValueLabel();
       // When a value is selected, always show the label â€" default slot acts as a placeholder slot.
       if (label) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, label);
-      if (slots.default) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, slots.default?.());
+      if (slots['default']) return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, slots['default']?.());
       return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, props.placeholder);
     };
   },
@@ -137,7 +145,7 @@ const SelectPlaceholder = defineComponent({
     const api = useCtx();
     return () => {
       if (api.getValueLabel()) return null;
-      return h("span", { "data-forge-scope": "select", "data-forge-part": "placeholder", ...attrs }, slots.default?.());
+      return h("span", { "data-forge-scope": "select", "data-forge-part": "placeholder", ...attrs }, slots['default']?.());
     };
   },
 });
@@ -159,7 +167,7 @@ const SelectPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots['default']);
     };
   },
 });
@@ -204,9 +212,9 @@ const SelectContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots.default));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots['default']));
       }
-      return h("div", positionerProps, h("ul", finalContentProps, slots.default?.()));
+      return h("div", positionerProps, h("ul", finalContentProps, slots['default']?.()));
     };
   },
 });
@@ -227,10 +235,11 @@ const SelectItem = defineComponent({
     const api = useCtx();
 
     onMounted(() => {
+      const defaultChildren = slots['default']?.();
       const label =
         props.label ??
-        (typeof slots.default?.()[0]?.children === "string"
-          ? (slots.default()[0].children as string)
+        (typeof defaultChildren?.[0]?.children === "string"
+          ? (defaultChildren[0]?.children as string)
           : props.value);
       api.send({ type: "REGISTER_OPTION", option: { value: props.value, label, disabled: props.disabled } });
     });
@@ -241,8 +250,8 @@ const SelectItem = defineComponent({
         ...api.getOptionProps({ value: props.value, disabled: props.disabled }),
         ...attrs,
       };
-      if (props.asChild) return h(Slot, optionProps, slots.default);
-      return h("li", optionProps, slots.default?.());
+      if (props.asChild) return h(Slot, optionProps, slots['default']);
+      return h("li", optionProps, slots['default']?.());
     };
   },
 });
@@ -254,7 +263,7 @@ const SelectItem = defineComponent({
 const SelectItemText = defineComponent({
   name: "ForgeSelectItemText",
   setup(_props, { slots }) {
-    return () => h("span", { "data-forge-scope": "select", "data-forge-part": "item-text" }, slots.default?.());
+    return () => h("span", { "data-forge-scope": "select", "data-forge-part": "item-text" }, slots['default']?.());
   },
 });
 
@@ -265,7 +274,7 @@ const SelectItemText = defineComponent({
 const SelectItemIndicator = defineComponent({
   name: "ForgeSelectItemIndicator",
   setup(_props, { slots }) {
-    return () => h("span", { "data-forge-scope": "select", "data-forge-part": "item-indicator" }, slots.default?.());
+    return () => h("span", { "data-forge-scope": "select", "data-forge-part": "item-indicator" }, slots['default']?.());
   },
 });
 
@@ -287,7 +296,7 @@ const SelectSeparator = defineComponent({
 const SelectGroup = defineComponent({
   name: "ForgeSelectGroup",
   setup(_props, { slots, attrs }) {
-    return () => h("ul", { role: "group", "data-forge-scope": "select", "data-forge-part": "group", ...attrs }, slots.default?.());
+    return () => h("ul", { role: "group", "data-forge-scope": "select", "data-forge-part": "group", ...attrs }, slots['default']?.());
   },
 });
 
@@ -295,7 +304,7 @@ const SelectGroupLabel = defineComponent({
   name: "ForgeSelectGroupLabel",
   setup(_props, { slots, attrs }) {
     return () =>
-      h("li", { role: "presentation", "data-forge-scope": "select", "data-forge-part": "group-label", ...attrs }, slots.default?.());
+      h("li", { role: "presentation", "data-forge-scope": "select", "data-forge-part": "group-label", ...attrs }, slots['default']?.());
   },
 });
 
@@ -307,7 +316,7 @@ const SelectIndicator = defineComponent({
   name: "ForgeSelectIndicator",
   setup(_props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("span", { ...api.getIndicatorProps(), ...attrs }, slots.default?.());
+    return () => h("span", { ...api.getIndicatorProps(), ...attrs }, slots['default']?.());
   },
 });
 
