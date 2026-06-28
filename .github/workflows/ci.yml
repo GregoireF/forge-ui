@@ -100,4 +100,6 @@ jobs:
           fail_ci_if_error: false
 
       - name: Build
-        run: bun run build
+        # Exclude apps/docs: Astro docs build is validated at deploy time,
+        # not in library CI. Keeps dep bumps from blocking core package validation.
+        run: bun x turbo run build --filter=!apps/docs
