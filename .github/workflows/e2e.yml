@@ -53,10 +53,10 @@ jobs:
         browser: [chromium, firefox, webkit]
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: latest
 
@@ -84,7 +84,7 @@ jobs:
       - name: Upload test results
         # Upload even on failure so we can diagnose flaky browser-specific issues.
         if: always()
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: e2e-results-${{ matrix.browser }}
           path: e2e/test-results/
@@ -108,15 +108,15 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: latest
 
       - name: Download Chromium test results
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89 # v4.2.1
+        uses: actions/download-artifact@484a0b528fb4d7bd804637ccb632e47a0e638317 # v4.2.1
         with:
           name: e2e-results-chromium
           path: e2e/test-results
@@ -125,7 +125,7 @@ jobs:
         run: node e2e/update-axe-badge.mjs
 
       - name: Commit badge
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update axe-core badge [skip ci]"
           file_pattern: axe-badge.json
