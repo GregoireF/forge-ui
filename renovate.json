@@ -98,14 +98,24 @@
 
     {
       "description": "Changesets",
-      "matchPackageNames": ["@changesets/cli", "@changesets/action", "@changesets/changelog-github"],
+      "matchPackageNames": [
+        "@changesets/cli",
+        "@changesets/action",
+        "@changesets/changelog-github"
+      ],
       "groupName": "Changesets",
       "automerge": true
     },
 
     {
       "description": "Astro ecosystem — major bumps need manual docs build validation",
-      "matchPackageNames": ["astro", "@astrojs/react", "@astrojs/vue", "@astrojs/starlight", "@astrojs/sitemap"],
+      "matchPackageNames": [
+        "astro",
+        "@astrojs/react",
+        "@astrojs/vue",
+        "@astrojs/starlight",
+        "@astrojs/sitemap"
+      ],
       "groupName": "Astro ecosystem",
       "automerge": true,
       "major": {
