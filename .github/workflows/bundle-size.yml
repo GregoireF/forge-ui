@@ -12,14 +12,14 @@ name: Bundle Size
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, develop]
     paths:
       - "packages/**"
       - "tooling/scripts/bundle-size.ts"
       - ".github/workflows/bundle-size.yml"
 
   push:
-    branches: [main]
+    branches: [main, develop]
     paths:
       - "packages/**"
 
