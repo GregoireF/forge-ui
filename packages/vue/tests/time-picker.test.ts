@@ -1,5 +1,5 @@
-import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent } from "vue";
 import { TimePicker } from "../src/components/time-picker/TimePicker.js";
@@ -29,7 +29,16 @@ interface FixtureProps {
 
 function makeFixture({ hourCycle = 12, disabled, onValueChange }: FixtureProps = {}) {
   return defineComponent({
-    components: { TimePickerRoot, TimePickerGroup, TimePickerHours, TimePickerMinutes, TimePickerSeconds, TimePickerPeriod, TimePickerSeparator, TimePickerHiddenInput },
+    components: {
+      TimePickerRoot,
+      TimePickerGroup,
+      TimePickerHours,
+      TimePickerMinutes,
+      TimePickerSeconds,
+      TimePickerPeriod,
+      TimePickerSeparator,
+      TimePickerHiddenInput,
+    },
     setup: () => ({ hourCycle, disabled, onValueChange }),
     template: `
       <TimePickerRoot :hourCycle="hourCycle" :showSeconds="true" :disabled="disabled" :onValueChange="onValueChange">

@@ -1,8 +1,7 @@
+import type { TagsInputEvent } from "@forge-ui/tags-input";
 import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
-import { useTagsInput } from "../src/components/tags-input/use-tags-input.js";
-import type { TagsInputEvent } from "@forge-ui/tags-input";
 import {
   TagsInputHiddenInput,
   TagsInputInput,
@@ -10,6 +9,7 @@ import {
   TagsInputTag,
   TagsInputTagDelete,
 } from "../src/components/tags-input/TagsInput.js";
+import { useTagsInput } from "../src/components/tags-input/use-tags-input.js";
 
 afterEach(cleanup);
 
@@ -155,7 +155,12 @@ describe("useTagsInput (Vue)", () => {
     it("allows duplicate when allowDuplicates=true", () => {
       const spy = vi.fn();
       const sendRef: { current: SendFn | null } = { current: null };
-      render(makeTagsInputFixture({ defaultValue: ["React"], allowDuplicates: true, onValueChange: spy }, sendRef));
+      render(
+        makeTagsInputFixture(
+          { defaultValue: ["React"], allowDuplicates: true, onValueChange: spy },
+          sendRef,
+        ),
+      );
       const send = sendRef.current!;
       send({ type: "FOCUS" });
       send({ type: "INPUT_CHANGE", value: "React" });
@@ -166,7 +171,9 @@ describe("useTagsInput (Vue)", () => {
     it("respects maxTags", () => {
       const spy = vi.fn();
       const sendRef: { current: SendFn | null } = { current: null };
-      render(makeTagsInputFixture({ defaultValue: ["a", "b"], maxTags: 2, onValueChange: spy }, sendRef));
+      render(
+        makeTagsInputFixture({ defaultValue: ["a", "b"], maxTags: 2, onValueChange: spy }, sendRef),
+      );
       const send = sendRef.current!;
       send({ type: "FOCUS" });
       send({ type: "INPUT_CHANGE", value: "c" });
@@ -244,7 +251,10 @@ describe("useTagsInput (Vue)", () => {
       const send = sendRef.current!;
       send({ type: "FOCUS" });
       send({ type: "INPUT_CHANGE", value: "TypeScript" });
-      propsRef.current!.onKeyDown({ key: ",", preventDefault: () => {} } as unknown as KeyboardEvent);
+      propsRef.current!.onKeyDown({
+        key: ",",
+        preventDefault: () => {},
+      } as unknown as KeyboardEvent);
       expect(spy).toHaveBeenCalledWith(["TypeScript"]);
     });
   });

@@ -1,12 +1,19 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import type { NumberInputContext, NumberInputEvent, NumberInputState } from "./number-input.types.js";
+import type {
+  NumberInputContext,
+  NumberInputEvent,
+  NumberInputState,
+} from "./number-input.types.js";
 
 export type NumberInputSend = (event: NumberInputEvent) => void;
 
 export function connectNumberInput(
   snapshot: MachineSnapshot<NumberInputContext, NumberInputState>,
   send: NumberInputSend,
-  _machine: Pick<MachineInstance<NumberInputContext, NumberInputState, NumberInputEvent>, "setContext">,
+  _machine: Pick<
+    MachineInstance<NumberInputContext, NumberInputState, NumberInputEvent>,
+    "setContext"
+  >,
 ) {
   const { context } = snapshot;
   const { value, inputText, min, max, disabled, readOnly, required, focused } = context;
@@ -47,7 +54,8 @@ export function connectNumberInput(
         "aria-valuenow": value ?? undefined,
         "aria-valuemin": min,
         "aria-valuemax": Number.isFinite(max) ? max : undefined,
-        "aria-valuetext": value !== null ? (context.getValueLabel?.(value) ?? undefined) : undefined,
+        "aria-valuetext":
+          value !== null ? (context.getValueLabel?.(value) ?? undefined) : undefined,
         "aria-disabled": disabled || undefined,
         "aria-readonly": readOnly || undefined,
         "aria-required": required || undefined,

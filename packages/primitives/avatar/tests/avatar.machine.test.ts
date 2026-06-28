@@ -56,9 +56,9 @@ describe("createAvatarMachine — initial state (no src)", () => {
 
 describe("createAvatarMachine — initial state (with src)", () => {
   it("starts in loading when src is provided", () => {
-    expect(
-      make({ src: "https://example.com/img.jpg" }).getSnapshot().matches("loading"),
-    ).toBe(true);
+    expect(make({ src: "https://example.com/img.jpg" }).getSnapshot().matches("loading")).toBe(
+      true,
+    );
   });
 
   it("src is stored in context", () => {
@@ -181,9 +181,7 @@ describe("createAvatarMachine — tags", () => {
   });
 
   it("loading state has 'loading' tag", () => {
-    expect(
-      make({ src: "https://example.com/img.jpg" }).getSnapshot().hasTag("loading"),
-    ).toBe(true);
+    expect(make({ src: "https://example.com/img.jpg" }).getSnapshot().hasTag("loading")).toBe(true);
   });
 
   it("loaded state has 'loaded' tag", () => {

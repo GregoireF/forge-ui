@@ -7,9 +7,9 @@ import {
   formatDateLabel,
   formatDateMedium,
   formatMonthYear,
+  getCalendarWeeks,
   getDayOfWeek,
   getDaysInMonth,
-  getCalendarWeeks,
   getMonthsOfYear,
   getTodayLabel,
   getWeekdayHeaders,
@@ -56,23 +56,59 @@ describe("getDayOfWeek", () => {
 
 describe("addDays", () => {
   it("adds 1 day within a month", () =>
-    expect(addDays({ year: 2024, month: 1, day: 14 }, 1)).toEqual({ year: 2024, month: 1, day: 15 }));
+    expect(addDays({ year: 2024, month: 1, day: 14 }, 1)).toEqual({
+      year: 2024,
+      month: 1,
+      day: 15,
+    }));
   it("crosses month boundary forward", () =>
-    expect(addDays({ year: 2024, month: 1, day: 31 }, 1)).toEqual({ year: 2024, month: 2, day: 1 }));
+    expect(addDays({ year: 2024, month: 1, day: 31 }, 1)).toEqual({
+      year: 2024,
+      month: 2,
+      day: 1,
+    }));
   it("crosses year boundary forward", () =>
-    expect(addDays({ year: 2024, month: 12, day: 31 }, 1)).toEqual({ year: 2025, month: 1, day: 1 }));
+    expect(addDays({ year: 2024, month: 12, day: 31 }, 1)).toEqual({
+      year: 2025,
+      month: 1,
+      day: 1,
+    }));
   it("subtracts 1 day within a month", () =>
-    expect(addDays({ year: 2024, month: 1, day: 15 }, -1)).toEqual({ year: 2024, month: 1, day: 14 }));
+    expect(addDays({ year: 2024, month: 1, day: 15 }, -1)).toEqual({
+      year: 2024,
+      month: 1,
+      day: 14,
+    }));
   it("crosses month boundary backward", () =>
-    expect(addDays({ year: 2024, month: 2, day: 1 }, -1)).toEqual({ year: 2024, month: 1, day: 31 }));
+    expect(addDays({ year: 2024, month: 2, day: 1 }, -1)).toEqual({
+      year: 2024,
+      month: 1,
+      day: 31,
+    }));
   it("crosses year boundary backward", () =>
-    expect(addDays({ year: 2025, month: 1, day: 1 }, -1)).toEqual({ year: 2024, month: 12, day: 31 }));
+    expect(addDays({ year: 2025, month: 1, day: 1 }, -1)).toEqual({
+      year: 2024,
+      month: 12,
+      day: 31,
+    }));
   it("adds 0 days returns same date", () =>
-    expect(addDays({ year: 2024, month: 6, day: 15 }, 0)).toEqual({ year: 2024, month: 6, day: 15 }));
+    expect(addDays({ year: 2024, month: 6, day: 15 }, 0)).toEqual({
+      year: 2024,
+      month: 6,
+      day: 15,
+    }));
   it("handles leap day addition (Feb 28 + 1 = Feb 29 in leap year)", () =>
-    expect(addDays({ year: 2024, month: 2, day: 28 }, 1)).toEqual({ year: 2024, month: 2, day: 29 }));
+    expect(addDays({ year: 2024, month: 2, day: 28 }, 1)).toEqual({
+      year: 2024,
+      month: 2,
+      day: 29,
+    }));
   it("skips leap day in non-leap year (Feb 28 + 1 = Mar 1 in 2023)", () =>
-    expect(addDays({ year: 2023, month: 2, day: 28 }, 1)).toEqual({ year: 2023, month: 3, day: 1 }));
+    expect(addDays({ year: 2023, month: 2, day: 28 }, 1)).toEqual({
+      year: 2023,
+      month: 3,
+      day: 1,
+    }));
 });
 
 // ---------------------------------------------------------------------------
@@ -81,17 +117,41 @@ describe("addDays", () => {
 
 describe("addMonths", () => {
   it("adds 1 month", () =>
-    expect(addMonths({ year: 2024, month: 1, day: 15 }, 1)).toEqual({ year: 2024, month: 2, day: 15 }));
+    expect(addMonths({ year: 2024, month: 1, day: 15 }, 1)).toEqual({
+      year: 2024,
+      month: 2,
+      day: 15,
+    }));
   it("crosses year boundary forward", () =>
-    expect(addMonths({ year: 2024, month: 12, day: 1 }, 1)).toEqual({ year: 2025, month: 1, day: 1 }));
+    expect(addMonths({ year: 2024, month: 12, day: 1 }, 1)).toEqual({
+      year: 2025,
+      month: 1,
+      day: 1,
+    }));
   it("subtracts 1 month", () =>
-    expect(addMonths({ year: 2024, month: 3, day: 15 }, -1)).toEqual({ year: 2024, month: 2, day: 15 }));
+    expect(addMonths({ year: 2024, month: 3, day: 15 }, -1)).toEqual({
+      year: 2024,
+      month: 2,
+      day: 15,
+    }));
   it("crosses year boundary backward", () =>
-    expect(addMonths({ year: 2024, month: 1, day: 1 }, -1)).toEqual({ year: 2023, month: 12, day: 1 }));
+    expect(addMonths({ year: 2024, month: 1, day: 1 }, -1)).toEqual({
+      year: 2023,
+      month: 12,
+      day: 1,
+    }));
   it("clamps day when shorter month (Jan 31 + 1 month = Feb 29 in leap year)", () =>
-    expect(addMonths({ year: 2024, month: 1, day: 31 }, 1)).toEqual({ year: 2024, month: 2, day: 29 }));
+    expect(addMonths({ year: 2024, month: 1, day: 31 }, 1)).toEqual({
+      year: 2024,
+      month: 2,
+      day: 29,
+    }));
   it("clamps day when shorter month (Jan 31 + 1 month = Feb 28 in non-leap)", () =>
-    expect(addMonths({ year: 2023, month: 1, day: 31 }, 1)).toEqual({ year: 2023, month: 2, day: 28 }));
+    expect(addMonths({ year: 2023, month: 1, day: 31 }, 1)).toEqual({
+      year: 2023,
+      month: 2,
+      day: 28,
+    }));
 });
 
 // ---------------------------------------------------------------------------
@@ -100,11 +160,23 @@ describe("addMonths", () => {
 
 describe("addYears", () => {
   it("adds 1 year", () =>
-    expect(addYears({ year: 2024, month: 6, day: 15 }, 1)).toEqual({ year: 2025, month: 6, day: 15 }));
+    expect(addYears({ year: 2024, month: 6, day: 15 }, 1)).toEqual({
+      year: 2025,
+      month: 6,
+      day: 15,
+    }));
   it("subtracts 1 year", () =>
-    expect(addYears({ year: 2024, month: 6, day: 15 }, -1)).toEqual({ year: 2023, month: 6, day: 15 }));
+    expect(addYears({ year: 2024, month: 6, day: 15 }, -1)).toEqual({
+      year: 2023,
+      month: 6,
+      day: 15,
+    }));
   it("clamps Feb 29 to Feb 28 in non-leap year", () =>
-    expect(addYears({ year: 2024, month: 2, day: 29 }, 1)).toEqual({ year: 2025, month: 2, day: 28 }));
+    expect(addYears({ year: 2024, month: 2, day: 29 }, 1)).toEqual({
+      year: 2025,
+      month: 2,
+      day: 28,
+    }));
 });
 
 // ---------------------------------------------------------------------------
@@ -113,31 +185,51 @@ describe("addYears", () => {
 
 describe("isSameDate", () => {
   it("true for identical dates", () =>
-    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 6, day: 15 })).toBe(true));
+    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 6, day: 15 })).toBe(
+      true,
+    ));
   it("false for different day", () =>
-    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 6, day: 16 })).toBe(false));
+    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 6, day: 16 })).toBe(
+      false,
+    ));
   it("false for different month", () =>
-    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 7, day: 15 })).toBe(false));
+    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 7, day: 15 })).toBe(
+      false,
+    ));
   it("false for different year", () =>
-    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2025, month: 6, day: 15 })).toBe(false));
+    expect(isSameDate({ year: 2024, month: 6, day: 15 }, { year: 2025, month: 6, day: 15 })).toBe(
+      false,
+    ));
 });
 
 describe("isSameMonth", () => {
   it("true when same year+month", () =>
-    expect(isSameMonth({ year: 2024, month: 6, day: 1 }, { year: 2024, month: 6, day: 30 })).toBe(true));
+    expect(isSameMonth({ year: 2024, month: 6, day: 1 }, { year: 2024, month: 6, day: 30 })).toBe(
+      true,
+    ));
   it("false when different month", () =>
-    expect(isSameMonth({ year: 2024, month: 6, day: 1 }, { year: 2024, month: 7, day: 1 })).toBe(false));
+    expect(isSameMonth({ year: 2024, month: 6, day: 1 }, { year: 2024, month: 7, day: 1 })).toBe(
+      false,
+    ));
 });
 
 describe("compareDate", () => {
   it("returns 0 for equal dates", () =>
-    expect(compareDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 6, day: 15 })).toBe(0));
+    expect(compareDate({ year: 2024, month: 6, day: 15 }, { year: 2024, month: 6, day: 15 })).toBe(
+      0,
+    ));
   it("returns negative when a < b", () =>
-    expect(compareDate({ year: 2023, month: 6, day: 15 }, { year: 2024, month: 6, day: 15 })).toBeLessThan(0));
+    expect(
+      compareDate({ year: 2023, month: 6, day: 15 }, { year: 2024, month: 6, day: 15 }),
+    ).toBeLessThan(0));
   it("returns positive when a > b", () =>
-    expect(compareDate({ year: 2024, month: 7, day: 15 }, { year: 2024, month: 6, day: 15 })).toBeGreaterThan(0));
+    expect(
+      compareDate({ year: 2024, month: 7, day: 15 }, { year: 2024, month: 6, day: 15 }),
+    ).toBeGreaterThan(0));
   it("compares by day when year+month equal", () =>
-    expect(compareDate({ year: 2024, month: 6, day: 16 }, { year: 2024, month: 6, day: 15 })).toBeGreaterThan(0));
+    expect(
+      compareDate({ year: 2024, month: 6, day: 16 }, { year: 2024, month: 6, day: 15 }),
+    ).toBeGreaterThan(0));
 });
 
 describe("isBetween", () => {
@@ -147,8 +239,7 @@ describe("isBetween", () => {
     expect(isBetween({ year: 2024, month: 6, day: 15 }, start, end)).toBe(true));
   it("false for start boundary (exclusive)", () =>
     expect(isBetween(start, start, end)).toBe(false));
-  it("false for end boundary (exclusive)", () =>
-    expect(isBetween(end, start, end)).toBe(false));
+  it("false for end boundary (exclusive)", () => expect(isBetween(end, start, end)).toBe(false));
   it("false for date before range", () =>
     expect(isBetween({ year: 2024, month: 6, day: 1 }, start, end)).toBe(false));
 });
@@ -183,7 +274,8 @@ describe("isDateDisabled", () => {
   it("enabled on min boundary", () => expect(isDateDisabled(june1, june1)).toBe(false));
   it("disabled when after max", () =>
     expect(isDateDisabled({ year: 2024, month: 7, day: 1 }, undefined, june30)).toBe(true));
-  it("enabled on max boundary", () => expect(isDateDisabled(june30, undefined, june30)).toBe(false));
+  it("enabled on max boundary", () =>
+    expect(isDateDisabled(june30, undefined, june30)).toBe(false));
   it("disabled by isDateUnavailable callback", () =>
     expect(isDateDisabled(june15, undefined, undefined, (d) => d.day === 15)).toBe(true));
   it("enabled when isDateUnavailable returns false", () =>
@@ -196,7 +288,9 @@ describe("isDateDisabled", () => {
     it("enables Saturday when 6 not in disabledWeekdays", () =>
       expect(isDateDisabled(june15, undefined, undefined, undefined, [0, 1])).toBe(false));
     it("disables Sunday (0) — june16 is Sunday", () =>
-      expect(isDateDisabled({ year: 2024, month: 6, day: 16 }, undefined, undefined, undefined, [0])).toBe(true));
+      expect(
+        isDateDisabled({ year: 2024, month: 6, day: 16 }, undefined, undefined, undefined, [0]),
+      ).toBe(true));
     it("empty disabledWeekdays array disables nothing", () =>
       expect(isDateDisabled(june15, undefined, undefined, undefined, [])).toBe(false));
   });
@@ -232,7 +326,10 @@ describe("getCalendarWeeks", () => {
 
   it("June 2024: last in-month cell is June 30", () => {
     const weeks = getCalendarWeeks(2024, 6, 0);
-    const lastInMonth = weeks.flat().filter((c) => !c.isOutsideMonth).at(-1);
+    const lastInMonth = weeks
+      .flat()
+      .filter((c) => !c.isOutsideMonth)
+      .at(-1);
     expect(lastInMonth?.date).toEqual({ year: 2024, month: 6, day: 30 });
   });
 
@@ -244,12 +341,16 @@ describe("getCalendarWeeks", () => {
   });
 
   it("total in-month cells equals daysInMonth (June = 30)", () => {
-    const count = getCalendarWeeks(2024, 6, 0).flat().filter((c) => !c.isOutsideMonth).length;
+    const count = getCalendarWeeks(2024, 6, 0)
+      .flat()
+      .filter((c) => !c.isOutsideMonth).length;
     expect(count).toBe(30);
   });
 
   it("total in-month cells for February 2024 = 29 (leap year)", () => {
-    const count = getCalendarWeeks(2024, 2, 0).flat().filter((c) => !c.isOutsideMonth).length;
+    const count = getCalendarWeeks(2024, 2, 0)
+      .flat()
+      .filter((c) => !c.isOutsideMonth).length;
     expect(count).toBe(29);
   });
 
@@ -327,8 +428,10 @@ describe("getYearGridStart", () => {
 
 describe("getWeekdayHeaders", () => {
   it("returns 7 entries", () => expect(getWeekdayHeaders()).toHaveLength(7));
-  it("Sunday-first: first index is 0 (Sunday)", () => expect(getWeekdayHeaders(0)[0]?.index).toBe(0));
-  it("Monday-first: first index is 1 (Monday)", () => expect(getWeekdayHeaders(1)[0]?.index).toBe(1));
+  it("Sunday-first: first index is 0 (Sunday)", () =>
+    expect(getWeekdayHeaders(0)[0]?.index).toBe(0));
+  it("Monday-first: first index is 1 (Monday)", () =>
+    expect(getWeekdayHeaders(1)[0]?.index).toBe(1));
   it("each entry has short, long, narrow fields", () => {
     const h = getWeekdayHeaders(0, "en")[0]!;
     expect(h.short).toBeTruthy();

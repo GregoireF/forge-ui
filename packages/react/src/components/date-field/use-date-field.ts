@@ -22,7 +22,7 @@ export function useDateField(options: UseDateFieldOptions = {}) {
         yearValue: options.value?.year ?? null,
       });
     }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
+    // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
   }, [options.value]);
 
   const api = connectDateField(snapshot, send, machine);
@@ -34,7 +34,7 @@ export function useDateField(options: UseDateFieldOptions = {}) {
     if (!groupEl) return;
     const el = groupEl.querySelector<HTMLElement>(`[data-forge-part="segment-${seg}"]`);
     if (el && document.activeElement !== el) el.focus();
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional DOM focus sync
+    // biome-ignore lint/correctness/useExhaustiveDependencies: intentional DOM focus sync
   }, [api.focusedSegment]);
 
   return api;

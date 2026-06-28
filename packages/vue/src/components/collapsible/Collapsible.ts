@@ -42,8 +42,8 @@ const CollapsibleRoot = defineComponent({
     provide(collapsibleKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots['default']);
-      return h("div", rootProps, slots['default']?.());
+      if (props.asChild) return h(Slot, rootProps, slots["default"]);
+      return h("div", rootProps, slots["default"]?.());
     };
   },
 });
@@ -61,8 +61,8 @@ const CollapsibleTrigger = defineComponent({
       // Strip React-only onKeyDown
       const { onKeyDown: _kd, ...triggerProps } = api.getTriggerProps();
       const merged = { ...triggerProps, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots['default']);
-      return h("button", merged, slots['default']?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("button", merged, slots["default"]?.());
     };
   },
 });
@@ -83,8 +83,8 @@ const CollapsibleContent = defineComponent({
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
       const contentProps = { ...api.getContentProps(), ref: presenceRef, ...attrs };
-      if (props.asChild) return h(Slot, contentProps, slots['default']);
-      return h("div", contentProps, slots['default']?.());
+      if (props.asChild) return h(Slot, contentProps, slots["default"]);
+      return h("div", contentProps, slots["default"]?.());
     };
   },
 });

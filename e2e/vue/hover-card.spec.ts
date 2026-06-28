@@ -7,8 +7,7 @@ test.describe("HoverCard — Vue (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const trigger = (page: import("@playwright/test").Page) =>
-    page.getByText("@forge-ui").first();
+  const trigger = (page: import("@playwright/test").Page) => page.getByText("@forge-ui").first();
 
   const content = (page: import("@playwright/test").Page) =>
     page.locator('[data-forge-scope="hover-card"][data-forge-part="content"]').first();
@@ -77,7 +76,9 @@ test.describe("HoverCard — Vue (forge-ui)", () => {
     await trigger(page).hover();
     await expect(content(page)).toBeVisible({ timeout: 2000 });
     const isBodyChild = await page.evaluate(() => {
-      const el = document.querySelector('[data-forge-scope="hover-card"][data-forge-part="content"]');
+      const el = document.querySelector(
+        '[data-forge-scope="hover-card"][data-forge-part="content"]',
+      );
       return el?.closest("body") !== null;
     });
     expect(isBodyChild).toBe(true);

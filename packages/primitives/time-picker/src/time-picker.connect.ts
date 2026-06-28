@@ -29,7 +29,10 @@ function pad2(n: number): string {
 export function connectTimePicker(
   snapshot: MachineSnapshot<TimePickerContext, TimePickerState>,
   send: TimePickerSend,
-  _machine: Pick<MachineInstance<TimePickerContext, TimePickerState, TimePickerEvent>, "setContext">,
+  _machine: Pick<
+    MachineInstance<TimePickerContext, TimePickerState, TimePickerEvent>,
+    "setContext"
+  >,
 ) {
   const { context } = snapshot;
   const {
@@ -52,7 +55,9 @@ export function connectTimePicker(
     hoursValue === null
       ? null
       : hourCycle === 12
-        ? hoursValue % 12 === 0 ? 12 : hoursValue % 12
+        ? hoursValue % 12 === 0
+          ? 12
+          : hoursValue % 12
         : hoursValue;
 
   const assembledTime: TimeValue | null =
@@ -86,11 +91,17 @@ export function connectTimePicker(
           break;
         case "a":
         case "A":
-          if (segment === "period") { e.preventDefault(); if (period !== "AM") send("TOGGLE_PERIOD"); }
+          if (segment === "period") {
+            e.preventDefault();
+            if (period !== "AM") send("TOGGLE_PERIOD");
+          }
           break;
         case "p":
         case "P":
-          if (segment === "period") { e.preventDefault(); if (period !== "PM") send("TOGGLE_PERIOD"); }
+          if (segment === "period") {
+            e.preventDefault();
+            if (period !== "PM") send("TOGGLE_PERIOD");
+          }
           break;
         case "Backspace":
         case "Delete":
@@ -113,8 +124,12 @@ export function connectTimePicker(
       "data-forge-part": `segment-${segment}`,
       "data-focused": isFocused ? "" : undefined,
       tabIndex: disabled ? -1 : 0,
-      onFocus() { send({ type: "FOCUS_SEGMENT", segment }); },
-      onBlur() { send("BLUR_SEGMENT"); },
+      onFocus() {
+        send({ type: "FOCUS_SEGMENT", segment });
+      },
+      onBlur() {
+        send("BLUR_SEGMENT");
+      },
       onKeyDown,
     };
   }
@@ -225,8 +240,12 @@ export function connectTimePicker(
         "data-forge-part": "segment-period",
         "data-focused": isFocused ? "" : undefined,
         tabIndex: disabled ? -1 : 0,
-        onFocus() { send({ type: "FOCUS_SEGMENT", segment: "period" }); },
-        onBlur() { send("BLUR_SEGMENT"); },
+        onFocus() {
+          send({ type: "FOCUS_SEGMENT", segment: "period" });
+        },
+        onBlur() {
+          send("BLUR_SEGMENT");
+        },
         onKeyDown,
       };
     },

@@ -74,7 +74,7 @@ const HoverCardRoot = defineComponent({
 
     watch(api.isOpen, (open) => emit("update:open", open));
 
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -95,7 +95,7 @@ const HoverCardTrigger = defineComponent({
       const patchedAttrs = { ...patchVueEvents(triggerAttrs), ...attrs };
 
       if (props.asChild) {
-        const children = slots['default']?.();
+        const children = slots["default"]?.();
         if (!children?.length) return null;
         const child = children[0];
         if (!child) return null;
@@ -117,7 +117,7 @@ const HoverCardTrigger = defineComponent({
             machineRef?.(el instanceof Element ? (el as HTMLElement) : null);
           },
         },
-        slots['default']?.(),
+        slots["default"]?.(),
       );
     };
   },
@@ -140,7 +140,7 @@ const HoverCardPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots['default']);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots["default"]);
     };
   },
 });
@@ -188,9 +188,9 @@ const HoverCardContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots['default']));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots["default"]));
       }
-      return h("div", positionerProps, h("div", finalContentProps, slots['default']?.()));
+      return h("div", positionerProps, h("div", finalContentProps, slots["default"]?.()));
     };
   },
 });
@@ -208,7 +208,7 @@ const HoverCardArrow = defineComponent({
         ref?: (el: HTMLElement | null) => void;
       };
       const { ref: machineRef, ...arrowAttrs } = rawProps;
-      const children = slots['default']?.();
+      const children = slots["default"]?.();
       if (!children?.length) return null;
       const child = children[0];
       if (!child) return null;
@@ -236,10 +236,4 @@ export const HoverCard = {
   Arrow: HoverCardArrow,
 } as const;
 
-export {
-  HoverCardArrow,
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger,
-};
+export { HoverCardArrow, HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger };

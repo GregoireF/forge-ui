@@ -25,13 +25,17 @@ type ContextMenuApi = UseMenuReturn;
 type ContextMenuPresenceCtx = { isPresent: Ref<boolean>; presenceRef: Ref<HTMLElement | null> };
 
 const contextMenuKey: InjectionKey<ContextMenuApi> = Symbol("forge-context-menu");
-const contextMenuPresenceKey: InjectionKey<ContextMenuPresenceCtx> = Symbol("forge-context-menu-presence");
+const contextMenuPresenceKey: InjectionKey<ContextMenuPresenceCtx> = Symbol(
+  "forge-context-menu-presence",
+);
 const contextMenuRadioGroupKey: InjectionKey<{
   groupId: string;
   value: Ref<string>;
   onValueChange: (v: string) => void;
 }> = Symbol("forge-context-menu-radio-group");
-const contextMenuItemCheckedKey: InjectionKey<Ref<boolean | "indeterminate">> = Symbol("forge-context-menu-item-checked");
+const contextMenuItemCheckedKey: InjectionKey<Ref<boolean | "indeterminate">> = Symbol(
+  "forge-context-menu-item-checked",
+);
 
 function useCtx(): ContextMenuApi {
   const ctx = inject(contextMenuKey);
@@ -88,7 +92,9 @@ const ContextMenuRoot = defineComponent({
       ...(props.onSelect !== undefined && { onSelect: props.onSelect }),
       ...(props.onHighlightChange !== undefined && { onHighlightChange: props.onHighlightChange }),
       ...(props.onInteractOutside !== undefined && { onInteractOutside: props.onInteractOutside }),
-      ...(props.onPointerDownOutside !== undefined && { onPointerDownOutside: props.onPointerDownOutside }),
+      ...(props.onPointerDownOutside !== undefined && {
+        onPointerDownOutside: props.onPointerDownOutside,
+      }),
       ...(props.onFocusOutside !== undefined && { onFocusOutside: props.onFocusOutside }),
       ...(props.onEscapeKeyDown !== undefined && { onEscapeKeyDown: props.onEscapeKeyDown }),
     });
@@ -98,7 +104,7 @@ const ContextMenuRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(contextMenuPresenceKey, presence);
 
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -112,10 +118,16 @@ const ContextMenuTrigger = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const { onContextMenu, ref: _ref, ...rest } = api.getContextMenuTriggerProps() as ReturnType<typeof api.getContextMenuTriggerProps> & { ref?: unknown };
+      const {
+        onContextMenu,
+        ref: _ref,
+        ...rest
+      } = api.getContextMenuTriggerProps() as ReturnType<typeof api.getContextMenuTriggerProps> & {
+        ref?: unknown;
+      };
       const triggerProps = { ...rest, ...attrs, onContextmenu: onContextMenu };
-      if (props.asChild) return h(Slot, triggerProps, slots['default']);
-      return h("div", triggerProps, slots['default']?.());
+      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
+      return h("div", triggerProps, slots["default"]?.());
     };
   },
 });
@@ -135,7 +147,7 @@ const ContextMenuPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, {}, slots['default']);
+      return h(DialogPortal, {}, slots["default"]);
     };
   },
 });
@@ -188,7 +200,11 @@ const ContextMenuContent = defineComponent({
 
     // ARIA roving tabindex: keyboard highlight moves real focus to the item.
     watch(api.highlighted, () => {
-      if (api.isOpen.value && api.highlighted.value !== null && api.highlightSource.value === "keyboard") {
+      if (
+        api.isOpen.value &&
+        api.highlighted.value !== null &&
+        api.highlightSource.value === "keyboard"
+      ) {
         nextTick(() => api.focusHighlightedItem());
       }
     });
@@ -196,7 +212,12 @@ const ContextMenuContent = defineComponent({
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
 
-      const { ref: _ref, onKeydown: baseKeydown, onKeyDown: _kD, ...contentRest } = api.getContentProps() as ReturnType<typeof api.getContentProps> & { onKeyDown?: unknown };
+      const {
+        ref: _ref,
+        onKeydown: baseKeydown,
+        onKeyDown: _kD,
+        ...contentRest
+      } = api.getContentProps() as ReturnType<typeof api.getContentProps> & { onKeyDown?: unknown };
       const positionerProps = api.getPositionerProps();
 
       const closingAttrs = !api.isOpen.value
@@ -221,16 +242,17 @@ const ContextMenuContent = defineComponent({
       };
 
       const inner = props.asChild
-        ? h(Slot, contentProps, slots['default'])
-        : h("div", contentProps, slots['default']?.());
+        ? h(Slot, contentProps, slots["default"])
+        : h("div", contentProps, slots["default"]?.());
 
-      const overlay = api.modal.value && api.isOpen.value
-        ? h("div", {
-            "data-forge-part": "modal-overlay",
-            "aria-hidden": "true",
-            style: { position: "fixed", inset: 0, zIndex: 49 },
-          })
-        : null;
+      const overlay =
+        api.modal.value && api.isOpen.value
+          ? h("div", {
+              "data-forge-part": "modal-overlay",
+              "aria-hidden": "true",
+              style: { position: "fixed", inset: 0, zIndex: 49 },
+            })
+          : null;
 
       // ContextMenu always portals to body — context menus appear at cursor position
       // and must escape any overflow:hidden ancestor. Use `container` to override.
@@ -261,11 +283,26 @@ const ContextMenuItemComp = defineComponent({
   setup(props, { slots, attrs, emit }) {
     const api = useCtx();
 
-    onMounted(() => api.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      api.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => api.unregisterItem(props.value));
 
     return () => {
-      const { onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getItemProps(props.value, props.disabled) as ReturnType<typeof api.getItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      const {
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        onClick: baseClick,
+        ...itemRest
+      } = api.getItemProps(props.value, props.disabled) as ReturnType<typeof api.getItemProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
       const itemProps = {
         ...itemRest,
         ...attrs,
@@ -277,8 +314,8 @@ const ContextMenuItemComp = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -291,7 +328,7 @@ const ContextMenuLabel = defineComponent({
   name: "ForgeContextMenuLabel",
   setup(_props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots['default']?.());
+    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -316,7 +353,7 @@ const ContextMenuGroup = defineComponent({
   props: { id: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots['default']?.());
+    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -325,7 +362,8 @@ const ContextMenuGroupLabel = defineComponent({
   props: { groupId: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -345,7 +383,12 @@ const ContextMenuRadioGroup = defineComponent({
   setup(props, { slots, attrs, emit }) {
     const api = useCtx();
     const valueRef = ref(props.value);
-    watch(() => props.value, (v) => { valueRef.value = v; });
+    watch(
+      () => props.value,
+      (v) => {
+        valueRef.value = v;
+      },
+    );
 
     provide(contextMenuRadioGroupKey, {
       groupId: props.groupId,
@@ -356,7 +399,8 @@ const ContextMenuRadioGroup = defineComponent({
       },
     });
 
-    return () => h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -365,7 +409,8 @@ const ContextMenuRadioGroupLabel = defineComponent({
   props: { groupId: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -388,21 +433,38 @@ const ContextMenuRadioItem = defineComponent({
     const radioCtx = inject(contextMenuRadioGroupKey);
     if (!radioCtx) throw new Error("ContextMenu.RadioItem must be inside <ContextMenu.RadioGroup>");
 
-    onMounted(() => api.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      api.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => api.unregisterItem(props.value));
 
     const isChecked = ref(radioCtx.value.value === props.value);
-    watch(radioCtx.value, (v) => { isChecked.value = v === props.value; });
+    watch(radioCtx.value, (v) => {
+      isChecked.value = v === props.value;
+    });
 
     provide(contextMenuItemCheckedKey, isChecked as Ref<boolean | "indeterminate">);
 
     return () => {
-      const { onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getRadioItemProps({
+      const {
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        onClick: baseClick,
+        ...itemRest
+      } = api.getRadioItemProps({
         value: props.value,
         checked: isChecked.value,
         disabled: props.disabled,
         closeOnSelect: props.closeOnSelect,
-      }) as ReturnType<typeof api.getRadioItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      }) as ReturnType<typeof api.getRadioItemProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
 
       const itemProps = {
         ...itemRest,
@@ -414,8 +476,8 @@ const ContextMenuRadioItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -441,20 +503,40 @@ const ContextMenuCheckboxItem = defineComponent({
   setup(props, { slots, attrs, emit }) {
     const api = useCtx();
 
-    onMounted(() => api.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      api.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => api.unregisterItem(props.value));
 
     const checkedRef = ref(props.checked);
-    watch(() => props.checked, (v) => { checkedRef.value = v; });
+    watch(
+      () => props.checked,
+      (v) => {
+        checkedRef.value = v;
+      },
+    );
     provide(contextMenuItemCheckedKey, checkedRef as Ref<boolean | "indeterminate">);
 
     return () => {
-      const { onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getCheckboxItemProps({
+      const {
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        onClick: baseClick,
+        ...itemRest
+      } = api.getCheckboxItemProps({
         value: props.value,
         checked: checkedRef.value,
         disabled: props.disabled,
         closeOnSelect: props.closeOnSelect,
-      }) as ReturnType<typeof api.getCheckboxItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      }) as ReturnType<typeof api.getCheckboxItemProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
 
       const itemProps = {
         ...itemRest,
@@ -467,8 +549,8 @@ const ContextMenuCheckboxItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -489,7 +571,7 @@ const ContextMenuItemIndicator = defineComponent({
     return () => {
       const isChecked = checkedCtx?.value ?? false;
       if (!props.forceMount && !isChecked) return null;
-      return h("span", api.getItemIndicatorProps(isChecked), slots['default']?.());
+      return h("span", api.getItemIndicatorProps(isChecked), slots["default"]?.());
     };
   },
 });
@@ -507,7 +589,9 @@ const contextMenuSubKey: InjectionKey<{
   closeDelay: number;
   parentTriggers: Map<string, () => void> | undefined;
 }> = Symbol("forge-context-menu-sub");
-const contextMenuSubTriggersKey: InjectionKey<Map<string, () => void>> = Symbol("forge-context-menu-sub-triggers");
+const contextMenuSubTriggersKey: InjectionKey<Map<string, () => void>> = Symbol(
+  "forge-context-menu-sub-triggers",
+);
 
 const ContextMenuSub = defineComponent({
   name: "ForgeContextMenuSub",
@@ -519,11 +603,22 @@ const ContextMenuSub = defineComponent({
   setup(props, { slots }) {
     const parentTriggers = inject(contextMenuSubTriggersKey);
     const ownTriggers = new Map<string, () => void>();
-    const childApi = useMenu({ isContextMenu: false, positioning: { placement: "right-start" }, ...(props.onSelect !== undefined && { onSelect: props.onSelect }) });
+    const childApi = useMenu({
+      isContextMenu: false,
+      positioning: { placement: "right-start" },
+      ...(props.onSelect !== undefined && { onSelect: props.onSelect }),
+    });
     const childPresence = usePresence(childApi.isOpen);
-    provide(contextMenuSubKey, { childApi, childPresence, subMenuId: childApi.id, openDelay: props.openDelay, closeDelay: props.closeDelay, parentTriggers });
+    provide(contextMenuSubKey, {
+      childApi,
+      childPresence,
+      subMenuId: childApi.id,
+      openDelay: props.openDelay,
+      closeDelay: props.closeDelay,
+      parentTriggers,
+    });
     provide(contextMenuSubTriggersKey, ownTriggers);
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -549,29 +644,66 @@ const ContextMenuSubTrigger = defineComponent({
     function openSubmenu() {
       clearTimeout(closeTimer.value);
       childApi.setOpen(true);
-      setTimeout(() => { childApi.focusContent(); childApi.send("FIRST_ITEM"); }, 10);
+      setTimeout(() => {
+        childApi.focusContent();
+        childApi.send("FIRST_ITEM");
+      }, 10);
     }
 
     onMounted(() => parentTriggers?.set(props.value, openSubmenu));
     onScopeDispose(() => parentTriggers?.delete(props.value));
-    onMounted(() => parentApi.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      parentApi.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => parentApi.unregisterItem(props.value));
 
     return () => {
-      const { onMouseEnter: _pme, onMouseLeave: _pml, onMousemove: _mm, onMouseleave: _ml, ...baseTriggerProps } = parentApi.getSubTriggerProps(subMenuId, childApi.isOpen.value, props.disabled) as ReturnType<typeof parentApi.getSubTriggerProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      const {
+        onMouseEnter: _pme,
+        onMouseLeave: _pml,
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        ...baseTriggerProps
+      } = parentApi.getSubTriggerProps(
+        subMenuId,
+        childApi.isOpen.value,
+        props.disabled,
+      ) as ReturnType<typeof parentApi.getSubTriggerProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
       const subTriggerProps = {
-        ...baseTriggerProps, ...attrs,
+        ...baseTriggerProps,
+        ...attrs,
         onMouseenter() {
           parentApi.send({ type: "HIGHLIGHT_ITEM", value: props.value });
-          if (props.openOnHover) { clearTimeout(closeTimer.value); openTimer.value = setTimeout(() => childApi.setOpen(true), openDelay); }
+          if (props.openOnHover) {
+            clearTimeout(closeTimer.value);
+            openTimer.value = setTimeout(() => childApi.setOpen(true), openDelay);
+          }
         },
         onMouseleave() {
-          if (props.openOnHover) { clearTimeout(openTimer.value); closeTimer.value = setTimeout(() => { if (childApi.isOpen.value) childApi.setOpen(false); }, closeDelay); }
+          if (props.openOnHover) {
+            clearTimeout(openTimer.value);
+            closeTimer.value = setTimeout(() => {
+              if (childApi.isOpen.value) childApi.setOpen(false);
+            }, closeDelay);
+          }
         },
-        onClick() { if (!props.disabled) { clearTimeout(openTimer.value); openSubmenu(); } },
+        onClick() {
+          if (!props.disabled) {
+            clearTimeout(openTimer.value);
+            openSubmenu();
+          }
+        },
       };
-      if (props.asChild) return h(Slot, subTriggerProps, slots['default']);
-      return h("div", subTriggerProps, slots['default']?.());
+      if (props.asChild) return h(Slot, subTriggerProps, slots["default"]);
+      return h("div", subTriggerProps, slots["default"]?.());
     };
   },
 });
@@ -593,42 +725,69 @@ const ContextMenuSubContent = defineComponent({
     const subCloseTimer = ref<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     watch(childApi.highlighted, () => {
-      if (childApi.isOpen.value && childApi.highlighted.value !== null && childApi.highlightSource.value === "keyboard") {
+      if (
+        childApi.isOpen.value &&
+        childApi.highlighted.value !== null &&
+        childApi.highlightSource.value === "keyboard"
+      ) {
         nextTick(() => childApi.focusHighlightedItem());
       }
     });
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
-      const { ref: _ref, onKeydown: baseKeydown, onKeyDown: _kD, ...contentRest } = childApi.getContentProps() as ReturnType<typeof childApi.getContentProps> & { onKeyDown?: unknown };
+      const {
+        ref: _ref,
+        onKeydown: baseKeydown,
+        onKeyDown: _kD,
+        ...contentRest
+      } = childApi.getContentProps() as ReturnType<typeof childApi.getContentProps> & {
+        onKeyDown?: unknown;
+      };
       const positionerProps = childApi.getPositionerProps();
-      const closingAttrs = !childApi.isOpen.value ? { "aria-hidden": true, style: { pointerEvents: "none" as const } } : {};
+      const closingAttrs = !childApi.isOpen.value
+        ? { "aria-hidden": true, style: { pointerEvents: "none" as const } }
+        : {};
       const contentProps = {
-        ...contentRest, ...closingAttrs, ...attrs,
+        ...contentRest,
+        ...closingAttrs,
+        ...attrs,
         ref: (el: unknown) => {
           presenceRef.value = el as HTMLElement | null;
           if (typeof _ref === "function") (_ref as (el: unknown) => void)(el);
         },
-        onMouseenter() { clearTimeout(subCloseTimer.value); },
-        onMouseleave() { subCloseTimer.value = setTimeout(() => childApi.setOpen(false), closeDelay); },
+        onMouseenter() {
+          clearTimeout(subCloseTimer.value);
+        },
+        onMouseleave() {
+          subCloseTimer.value = setTimeout(() => childApi.setOpen(false), closeDelay);
+        },
         onKeydown(e: KeyboardEvent) {
           const isRTL = getComputedStyle(e.currentTarget as HTMLElement).direction === "rtl";
           const closeKey = isRTL ? "ArrowRight" : "ArrowLeft";
           const openKey = isRTL ? "ArrowLeft" : "ArrowRight";
           if (e.key === closeKey) {
-            e.preventDefault(); e.stopPropagation();
+            e.preventDefault();
+            e.stopPropagation();
             childApi.send("CLOSE");
             setTimeout(() => parentApi.focusContent(), 0);
             return;
           }
           if (e.key === openKey && childApi.highlighted.value !== null) {
             const openNestedSub = ownTriggers?.get(childApi.highlighted.value);
-            if (openNestedSub) { e.preventDefault(); e.stopPropagation(); openNestedSub(); return; }
+            if (openNestedSub) {
+              e.preventDefault();
+              e.stopPropagation();
+              openNestedSub();
+              return;
+            }
           }
           (baseKeydown as unknown as (e: KeyboardEvent) => void)(e);
         },
       };
-      const inner = props.asChild ? h(Slot, contentProps, slots['default']) : h("div", contentProps, slots['default']?.());
+      const inner = props.asChild
+        ? h(Slot, contentProps, slots["default"])
+        : h("div", contentProps, slots["default"]?.());
       return h(DialogPortal, {}, () => h("div", positionerProps, [inner]));
     };
   },
@@ -659,21 +818,21 @@ export const ContextMenu = {
 } as const;
 
 export {
-  ContextMenuRoot,
-  ContextMenuTrigger,
-  ContextMenuPortal,
+  ContextMenuCheckboxItem,
   ContextMenuContent,
-  ContextMenuItemComp as ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
   ContextMenuGroup,
   ContextMenuGroupLabel,
+  ContextMenuItemComp as ContextMenuItem,
+  ContextMenuItemIndicator,
+  ContextMenuLabel,
+  ContextMenuPortal,
   ContextMenuRadioGroup,
   ContextMenuRadioGroupLabel,
   ContextMenuRadioItem,
-  ContextMenuCheckboxItem,
-  ContextMenuItemIndicator,
+  ContextMenuRoot,
+  ContextMenuSeparator,
   ContextMenuSub,
-  ContextMenuSubTrigger,
   ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
 };

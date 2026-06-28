@@ -1,5 +1,5 @@
-import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { useSwitch } from "../src/components/switch/use-switch.js";

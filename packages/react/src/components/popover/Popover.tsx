@@ -44,9 +44,7 @@ function Root({ children, open: openProp, ...opts }: PopoverRootProps) {
 
   return (
     <PopoverCtx.Provider value={api}>
-      <PopoverPresenceCtx.Provider value={presence}>
-        {children}
-      </PopoverPresenceCtx.Provider>
+      <PopoverPresenceCtx.Provider value={presence}>{children}</PopoverPresenceCtx.Provider>
     </PopoverCtx.Provider>
   );
 }

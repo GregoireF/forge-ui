@@ -14,7 +14,10 @@ function makeMachine(overrides = {}) {
 // happy-dom does not implement requestAnimationFrame — stub it so that dialog
 // focus-management activities (which call rAF for deferred focus) don't throw.
 beforeEach(() => {
-  vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+  vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+    cb(0);
+    return 0;
+  });
   vi.stubGlobal("cancelAnimationFrame", () => {});
 });
 
@@ -389,7 +392,10 @@ describe("createDialogMachine — focus management (WAI-ARIA §6.2)", () => {
 
 describe("createDialogMachine — activity config callbacks (contentEl required)", () => {
   beforeEach(() => {
-    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    });
     vi.stubGlobal("cancelAnimationFrame", () => {});
   });
   afterEach(() => {
@@ -406,7 +412,9 @@ describe("createDialogMachine — activity config callbacks (contentEl required)
     m.send("OPEN");
     // Dispatching Tab triggers the keyboard activity's tab-trap logic,
     // which calls getContentEl(ctx) and isModal(ctx) internally.
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }),
+    );
     expect(m.getSnapshot().matches("open")).toBe(true);
     m.send("CLOSE");
     content.remove();
@@ -437,7 +445,9 @@ describe("createDialogMachine — activity config callbacks (contentEl required)
     m.setContext({ contentEl: content });
     m.send("OPEN");
     // pointerdown outside content → watchOutside calls getContainers/getOnPointerDownOutside
-    outsideEl.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, composed: true, cancelable: true }));
+    outsideEl.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, composed: true, cancelable: true }),
+    );
     content.remove();
     outsideEl.remove();
   });

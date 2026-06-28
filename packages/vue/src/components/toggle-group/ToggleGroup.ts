@@ -56,7 +56,7 @@ const ToggleGroupRoot = defineComponent({
 
     provide(toggleGroupKey, api);
 
-    return () => h("div", { ...api.getRootProps(), ...attrs }, slots['default']?.());
+    return () => h("div", { ...api.getRootProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -75,8 +75,8 @@ const ToggleGroupItem = defineComponent({
     const api = useCtx();
     return () => {
       const itemProps = { ...api.getItemProps(props.value, props.disabled), ...attrs };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("button", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("button", itemProps, slots["default"]?.());
     };
   },
 });
@@ -86,4 +86,4 @@ const ToggleGroupItem = defineComponent({
 // ---------------------------------------------------------------------------
 
 export const ToggleGroup = { Root: ToggleGroupRoot, Item: ToggleGroupItem } as const;
-export { ToggleGroupRoot, ToggleGroupItem };
+export { ToggleGroupItem, ToggleGroupRoot };

@@ -21,15 +21,33 @@ function onSrcChange({
   setContext({ src: event.src });
 }
 
-function onLoaded({ context }: { context: AvatarContext; setContext: (u: Partial<AvatarContext>) => void; event: AvatarEvent }) {
+function onLoaded({
+  context,
+}: {
+  context: AvatarContext;
+  setContext: (u: Partial<AvatarContext>) => void;
+  event: AvatarEvent;
+}) {
   context.onStatusChange?.("loaded");
 }
 
-function onError({ context }: { context: AvatarContext; setContext: (u: Partial<AvatarContext>) => void; event: AvatarEvent }) {
+function onError({
+  context,
+}: {
+  context: AvatarContext;
+  setContext: (u: Partial<AvatarContext>) => void;
+  event: AvatarEvent;
+}) {
   context.onStatusChange?.("error");
 }
 
-function onLoadingStart({ context }: { context: AvatarContext; setContext: (u: Partial<AvatarContext>) => void; event: AvatarEvent }) {
+function onLoadingStart({
+  context,
+}: {
+  context: AvatarContext;
+  setContext: (u: Partial<AvatarContext>) => void;
+  event: AvatarEvent;
+}) {
   context.onStatusChange?.("loading");
 }
 

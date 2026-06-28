@@ -35,7 +35,7 @@ export const DialogPortal = defineComponent({
       return h(
         Teleport as unknown as Component,
         { to: props.to, disabled: props.disabled },
-        slots['default']?.(),
+        slots["default"]?.(),
       );
     };
   },

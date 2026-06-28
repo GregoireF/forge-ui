@@ -222,7 +222,9 @@ describe("Accordion (React)", () => {
             <Accordion.Header>
               <Accordion.Trigger data-testid="trigger-a">A</Accordion.Trigger>
             </Accordion.Header>
-            <Accordion.Content forceMount data-testid="content-a">Content A</Accordion.Content>
+            <Accordion.Content forceMount data-testid="content-a">
+              Content A
+            </Accordion.Content>
           </Accordion.Item>
         </Accordion.Root>,
       );
@@ -237,7 +239,9 @@ describe("Accordion (React)", () => {
             <Accordion.Header>
               <Accordion.Trigger data-testid="trigger-a">A</Accordion.Trigger>
             </Accordion.Header>
-            <Accordion.Content forceMount data-testid="content-a">Content A</Accordion.Content>
+            <Accordion.Content forceMount data-testid="content-a">
+              Content A
+            </Accordion.Content>
           </Accordion.Item>
         </Accordion.Root>,
       );
@@ -288,7 +292,9 @@ describe("Accordion (React)", () => {
 
     it("item has data-forge-scope=accordion and data-forge-part=item", () => {
       render(makeFixture());
-      const items = document.querySelectorAll('[data-forge-scope="accordion"][data-forge-part="item"]');
+      const items = document.querySelectorAll(
+        '[data-forge-scope="accordion"][data-forge-part="item"]',
+      );
       expect(items.length).toBe(2);
     });
 
@@ -306,7 +312,9 @@ describe("Accordion (React)", () => {
 
     it("header has data-forge-scope=accordion and data-forge-part=header", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="accordion"][data-forge-part="header"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="accordion"][data-forge-part="header"]'),
+      ).toBeInTheDocument();
     });
 
     it("trigger has data-forge-scope=accordion and data-forge-part=trigger", () => {

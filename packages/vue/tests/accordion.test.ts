@@ -1,10 +1,16 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
 import { Accordion } from "../src/components/accordion/Accordion.js";
 
-const { Root: AccordionRoot, Item: AccordionItem, Header: AccordionHeader, Trigger: AccordionTrigger, Content: AccordionContent } = Accordion;
+const {
+  Root: AccordionRoot,
+  Item: AccordionItem,
+  Header: AccordionHeader,
+  Trigger: AccordionTrigger,
+  Content: AccordionContent,
+} = Accordion;
 
 afterEach(cleanup);
 
@@ -23,7 +29,13 @@ interface FixtureOptions {
 
 function makeFixture(opts: FixtureOptions = {}) {
   return defineComponent({
-    components: { AccordionRoot, AccordionItem, AccordionHeader, AccordionTrigger, AccordionContent },
+    components: {
+      AccordionRoot,
+      AccordionItem,
+      AccordionHeader,
+      AccordionTrigger,
+      AccordionContent,
+    },
     setup: () => ({ opts }),
     template: `
       <AccordionRoot
@@ -225,8 +237,16 @@ describe("Accordion (Vue)", () => {
     it("reflects controlled value prop", async () => {
       const isOpen = ref<string[]>([]);
       const Fixture = defineComponent({
-        components: { AccordionRoot, AccordionItem, AccordionHeader, AccordionTrigger, AccordionContent },
-        setup() { return { isOpen }; },
+        components: {
+          AccordionRoot,
+          AccordionItem,
+          AccordionHeader,
+          AccordionTrigger,
+          AccordionContent,
+        },
+        setup() {
+          return { isOpen };
+        },
         template: `
           <AccordionRoot :value="isOpen">
             <AccordionItem value="a">
@@ -247,7 +267,13 @@ describe("Accordion (Vue)", () => {
   describe("forceMount", () => {
     it("forceMount keeps closed content in DOM", () => {
       const Fixture = defineComponent({
-        components: { AccordionRoot, AccordionItem, AccordionHeader, AccordionTrigger, AccordionContent },
+        components: {
+          AccordionRoot,
+          AccordionItem,
+          AccordionHeader,
+          AccordionTrigger,
+          AccordionContent,
+        },
         template: `
           <AccordionRoot>
             <AccordionItem value="a">
@@ -264,7 +290,13 @@ describe("Accordion (Vue)", () => {
 
     it("forceMount content shows data-state=open when opened", async () => {
       const Fixture = defineComponent({
-        components: { AccordionRoot, AccordionItem, AccordionHeader, AccordionTrigger, AccordionContent },
+        components: {
+          AccordionRoot,
+          AccordionItem,
+          AccordionHeader,
+          AccordionTrigger,
+          AccordionContent,
+        },
         template: `
           <AccordionRoot>
             <AccordionItem value="a">
@@ -316,12 +348,16 @@ describe("Accordion (Vue)", () => {
   describe("CSS contract", () => {
     it("root has data-forge-scope=accordion and data-forge-part=root", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="accordion"][data-forge-part="root"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="accordion"][data-forge-part="root"]'),
+      ).toBeInTheDocument();
     });
 
     it("item has data-forge-scope=accordion and data-forge-part=item", () => {
       render(makeFixture());
-      const items = document.querySelectorAll('[data-forge-scope="accordion"][data-forge-part="item"]');
+      const items = document.querySelectorAll(
+        '[data-forge-scope="accordion"][data-forge-part="item"]',
+      );
       expect(items.length).toBe(2);
     });
 
@@ -333,12 +369,16 @@ describe("Accordion (Vue)", () => {
 
     it("item has data-state=open when expanded", () => {
       render(makeFixture({ defaultValue: ["a"] }));
-      expect(document.querySelector('[data-forge-part="item"][data-state="open"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-part="item"][data-state="open"]'),
+      ).toBeInTheDocument();
     });
 
     it("header has data-forge-scope=accordion and data-forge-part=header", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="accordion"][data-forge-part="header"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="accordion"][data-forge-part="header"]'),
+      ).toBeInTheDocument();
     });
 
     it("trigger has data-forge-scope=accordion and data-forge-part=trigger", () => {

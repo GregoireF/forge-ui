@@ -60,7 +60,7 @@ const SwitchRoot = defineComponent({
     return () => {
       const inputProps = api.getHiddenInputProps();
       return h("div", api.getRootProps(), [
-        slots['default']?.(),
+        slots["default"]?.(),
         props.name
           ? h("input", { ...inputProps, name: props.name, value: props.value ?? inputProps.value })
           : null,
@@ -80,8 +80,8 @@ const SwitchControl = defineComponent({
     const api = useCtx();
     return () => {
       const controlProps = { ...api.getControlProps(), ...attrs };
-      if (props.asChild) return h(Slot, controlProps, slots['default']);
-      return h("button", controlProps, slots['default']?.());
+      if (props.asChild) return h(Slot, controlProps, slots["default"]);
+      return h("button", controlProps, slots["default"]?.());
     };
   },
 });
@@ -106,7 +106,7 @@ const SwitchLabel = defineComponent({
   name: "ForgeSwitchLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots['default']?.());
+    return () => h("label", api.getLabelProps(), slots["default"]?.());
   },
 });
 
@@ -121,4 +121,4 @@ export const Switch = {
   Label: SwitchLabel,
 } as const;
 
-export { SwitchRoot, SwitchControl, SwitchThumb, SwitchLabel };
+export { SwitchControl, SwitchLabel, SwitchRoot, SwitchThumb };

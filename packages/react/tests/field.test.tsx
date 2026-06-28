@@ -37,10 +37,7 @@ describe("useField (React)", () => {
   describe("label–control association", () => {
     it("label htmlFor matches control id", () => {
       render(<FieldHookFixture />);
-      expect(screen.getByTestId("label")).toHaveAttribute(
-        "for",
-        screen.getByTestId("control").id,
-      );
+      expect(screen.getByTestId("label")).toHaveAttribute("for", screen.getByTestId("control").id);
     });
 
     it("label has data-forge-scope=field and data-forge-part=label", () => {

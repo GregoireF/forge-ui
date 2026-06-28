@@ -28,8 +28,18 @@ export type DateFieldSend = (event: DateFieldEvent | DateFieldEvent["type"]) => 
 export type DateFieldApi = ReturnType<typeof connectDateField>;
 
 const MONTH_NAMES_EN = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 function formatMonth(month: number | null, locale: string): string | undefined {
@@ -51,7 +61,8 @@ export function connectDateField(
   _machine: Pick<MachineInstance<DateFieldContext, DateFieldState, DateFieldEvent>, "setContext">,
 ) {
   const { context } = snapshot;
-  const { id, locale, focusedSegment, dayValue, monthValue, yearValue, disabled, readOnly } = context;
+  const { id, locale, focusedSegment, dayValue, monthValue, yearValue, disabled, readOnly } =
+    context;
 
   const groupId = `${id}-group`;
 
@@ -81,11 +92,19 @@ export function connectDateField(
           break;
         case "ArrowRight":
         case "Tab":
-          if (!e.shiftKey) { e.preventDefault(); send("NEXT_SEGMENT"); }
+          if (!e.shiftKey) {
+            e.preventDefault();
+            send("NEXT_SEGMENT");
+          }
           break;
         case "ArrowLeft":
-          if (e.shiftKey) { e.preventDefault(); send("PREV_SEGMENT"); }
-          else { e.preventDefault(); send("PREV_SEGMENT"); }
+          if (e.shiftKey) {
+            e.preventDefault();
+            send("PREV_SEGMENT");
+          } else {
+            e.preventDefault();
+            send("PREV_SEGMENT");
+          }
           break;
         case "Backspace":
         case "Delete":

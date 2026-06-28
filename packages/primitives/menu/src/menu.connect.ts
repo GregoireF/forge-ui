@@ -5,7 +5,14 @@ import {
   getSideFromPlacement,
   getTransformOrigin,
 } from "@forge-ui/floating";
-import type { KeyEventLike, MenuContext, MenuEvent, MenuItem, MenuSend, MenuState } from "./menu.types.js";
+import type {
+  KeyEventLike,
+  MenuContext,
+  MenuEvent,
+  MenuItem,
+  MenuSend,
+  MenuState,
+} from "./menu.types.js";
 
 export type MenuApi = ReturnType<typeof connectMenu>;
 
@@ -29,7 +36,10 @@ function createTypeahead(
   let buffer = "";
   let timerId: ReturnType<typeof setTimeout> | undefined;
 
-  function flush() { buffer = ""; timerId = undefined; }
+  function flush() {
+    buffer = "";
+    timerId = undefined;
+  }
 
   function handleChar(char: string) {
     if (timerId !== undefined) clearTimeout(timerId);
@@ -163,8 +173,12 @@ export function connectMenu(
     modal: context.modal,
     highlightSource: context.highlightSource,
 
-    focusContent() { context.contentEl?.focus(); },
-    focusTrigger() { context.triggerEl?.focus(); },
+    focusContent() {
+      context.contentEl?.focus();
+    },
+    focusTrigger() {
+      context.triggerEl?.focus();
+    },
     focusHighlightedItem() {
       if (!context.highlighted || !context.contentEl) return;
       const id = getItemId(context.id, context.highlighted);
@@ -194,7 +208,9 @@ export function connectMenu(
         "aria-disabled": disabled || undefined,
         "data-disabled": disabled ? "" : undefined,
         ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
-        onClick() { if (!disabled) send("TOGGLE"); },
+        onClick() {
+          if (!disabled) send("TOGGLE");
+        },
         onKeyDown: disabled ? undefined : triggerKeyDown,
         onKeydown: disabled ? undefined : triggerKeyDown,
       };
@@ -324,11 +340,21 @@ export function connectMenu(
         "data-disabled": disabled ? "" : undefined,
         "data-forge-scope": "menu",
         "data-forge-part": "item",
-        onMouseEnter() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value }); },
-        onMouseLeave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
-        onMousemove() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value }); },
-        onMouseleave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
-        onClick() { if (!disabled) send({ type: "SELECT_ITEM", value }); },
+        onMouseEnter() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value });
+        },
+        onMouseLeave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
+        onMousemove() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value });
+        },
+        onMouseleave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
+        onClick() {
+          if (!disabled) send({ type: "SELECT_ITEM", value });
+        },
       };
     },
 
@@ -375,10 +401,18 @@ export function connectMenu(
         "data-state": checked ? "checked" : ("unchecked" as const),
         "data-forge-scope": "menu",
         "data-forge-part": "radio-item",
-        onMouseEnter() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value }); },
-        onMouseLeave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
-        onMousemove() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value }); },
-        onMouseleave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
+        onMouseEnter() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value });
+        },
+        onMouseLeave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
+        onMousemove() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value });
+        },
+        onMouseleave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
         onClick() {
           if (!disabled && closeOnSelect) send({ type: "SELECT_ITEM", value });
         },
@@ -399,7 +433,7 @@ export function connectMenu(
       closeOnSelect?: boolean;
     }) {
       const isHighlighted = context.highlighted === value;
-      const ariaChecked = checked === "indeterminate" ? "mixed" as const : checked;
+      const ariaChecked = checked === "indeterminate" ? ("mixed" as const) : checked;
       return {
         id: getItemId(context.id, value),
         role: "menuitemcheckbox" as const,
@@ -408,13 +442,26 @@ export function connectMenu(
         "aria-disabled": disabled || undefined,
         "data-highlighted": isHighlighted ? "" : undefined,
         "data-disabled": disabled ? "" : undefined,
-        "data-state": checked === "indeterminate" ? "indeterminate" : checked ? "checked" : ("unchecked" as const),
+        "data-state":
+          checked === "indeterminate"
+            ? "indeterminate"
+            : checked
+              ? "checked"
+              : ("unchecked" as const),
         "data-forge-scope": "menu",
         "data-forge-part": "checkbox-item",
-        onMouseEnter() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value }); },
-        onMouseLeave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
-        onMousemove() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value }); },
-        onMouseleave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
+        onMouseEnter() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value });
+        },
+        onMouseLeave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
+        onMousemove() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value });
+        },
+        onMouseleave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
         onClick() {
           if (!disabled && closeOnSelect) send({ type: "SELECT_ITEM", value });
         },
@@ -425,7 +472,12 @@ export function connectMenu(
 
     getItemIndicatorProps(checked: boolean | "indeterminate") {
       return {
-        "data-state": checked === "indeterminate" ? "indeterminate" : checked ? "checked" : ("unchecked" as const),
+        "data-state":
+          checked === "indeterminate"
+            ? "indeterminate"
+            : checked
+              ? "checked"
+              : ("unchecked" as const),
         "data-forge-scope": "menu",
         "data-forge-part": "item-indicator",
       };
@@ -448,10 +500,18 @@ export function connectMenu(
         "data-disabled": disabled ? "" : undefined,
         "data-forge-scope": "menu",
         "data-forge-part": "sub-trigger",
-        onMouseEnter() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value: subMenuId }); },
-        onMousemove() { if (!disabled) send({ type: "HIGHLIGHT_ITEM", value: subMenuId }); },
-        onMouseLeave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
-        onMouseleave() { send({ type: "HIGHLIGHT_ITEM", value: null }); },
+        onMouseEnter() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value: subMenuId });
+        },
+        onMousemove() {
+          if (!disabled) send({ type: "HIGHLIGHT_ITEM", value: subMenuId });
+        },
+        onMouseLeave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
+        onMouseleave() {
+          send({ type: "HIGHLIGHT_ITEM", value: null });
+        },
       };
     },
 
