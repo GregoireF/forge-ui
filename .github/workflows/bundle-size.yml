@@ -127,7 +127,7 @@ jobs:
 
       - name: Commit bundle badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update bundle size badge [skip ci]"
           file_pattern: bundle-size-badge.json

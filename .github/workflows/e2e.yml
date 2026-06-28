@@ -125,7 +125,7 @@ jobs:
         run: node e2e/update-axe-badge.mjs
 
       - name: Commit badge
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update axe-core badge [skip ci]"
           file_pattern: axe-badge.json
