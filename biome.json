@@ -63,16 +63,76 @@
           },
           "style": {
             "noNonNullAssertion": "off"
+          },
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "useValidAnchor": "off"
           }
         }
       }
     },
     {
-      "includes": ["apps/**"],
+      "includes": ["packages/**/src/**"],
       "linter": {
         "rules": {
           "style": {
             "noNonNullAssertion": "off"
+          },
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useSemanticElements": "off",
+            "useAriaPropsSupportedByRole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/playground-react/**", "apps/playground-vue/**", "apps/playground-nuxt/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "a11y": {
+            "useValidAnchor": "off",
+            "useButtonType": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noControlCharactersInRegex": "off",
+            "noImplicitAnyLet": "off"
+          },
+          "correctness": {
+            "noUnusedImports": "off",
+            "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/docs/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tooling/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "suspicious": {
+            "noImplicitAnyLet": "off",
+            "noControlCharactersInRegex": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }
