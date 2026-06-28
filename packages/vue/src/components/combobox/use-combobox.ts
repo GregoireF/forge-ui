@@ -1,6 +1,11 @@
-import type { ComboboxApi, ComboboxOption, ComboboxSend, CreateComboboxMachineOptions } from "@forge-ui/combobox";
+import type {
+  ComboboxApi,
+  ComboboxOption,
+  ComboboxSend,
+  CreateComboboxMachineOptions,
+} from "@forge-ui/combobox";
 import { connectCombobox, createComboboxMachine } from "@forge-ui/combobox";
-import { computed, type ComputedRef, useId, watchEffect } from "vue";
+import { type ComputedRef, computed, useId, watchEffect } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseComboboxOptions extends Omit<CreateComboboxMachineOptions, "id"> {
@@ -27,7 +32,10 @@ export interface UseComboboxReturn {
   getClearTriggerProps: () => ReturnType<ComboboxApi["getClearTriggerProps"]>;
   getPositionerProps: () => ReturnType<ComboboxApi["getPositionerProps"]>;
   getContentProps: () => ReturnType<ComboboxApi["getContentProps"]>;
-  getOptionProps: (option: { value: string; disabled?: boolean }) => ReturnType<ComboboxApi["getOptionProps"]>;
+  getOptionProps: (option: {
+    value: string;
+    disabled?: boolean;
+  }) => ReturnType<ComboboxApi["getOptionProps"]>;
   getCreateOptionProps: () => ReturnType<ComboboxApi["getCreateOptionProps"]>;
 }
 
@@ -41,7 +49,9 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
   watchEffect(() => {
     machine.setContext({
       ...(options.options !== undefined && { allOptions: options.options }),
-      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onHighlightedScroll !== undefined && {
+        onHighlightedScroll: options.onHighlightedScroll,
+      }),
       ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
     });
   });

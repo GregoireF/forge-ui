@@ -5,9 +5,27 @@ import type { LogLine, PlaygroundMeta, PlaygroundName, PlaygroundState } from ".
 const ROOT = process.cwd();
 
 export const PLAYGROUNDS: readonly PlaygroundMeta[] = [
-  { name: "react", label: "React", port: 3000, cwd: path.join(ROOT, "apps/playground-react"), color: "cyan"    },
-  { name: "vue",   label: "Vue",   port: 3001, cwd: path.join(ROOT, "apps/playground-vue"),   color: "green"   },
-  { name: "nuxt",  label: "Nuxt",  port: 3002, cwd: path.join(ROOT, "apps/playground-nuxt"),  color: "magenta" },
+  {
+    name: "react",
+    label: "React",
+    port: 3000,
+    cwd: path.join(ROOT, "apps/playground-react"),
+    color: "cyan",
+  },
+  {
+    name: "vue",
+    label: "Vue",
+    port: 3001,
+    cwd: path.join(ROOT, "apps/playground-vue"),
+    color: "green",
+  },
+  {
+    name: "nuxt",
+    label: "Nuxt",
+    port: 3002,
+    cwd: path.join(ROOT, "apps/playground-nuxt"),
+    color: "magenta",
+  },
 ] as const;
 
 const RESTART_KEY: Record<PlaygroundName, string> = { react: "R", vue: "V", nuxt: "N" };
@@ -16,14 +34,16 @@ const RESTART_KEY: Record<PlaygroundName, string> = { react: "R", vue: "V", nuxt
 export function killPorts(ports: readonly number[]): void {
   if (process.platform !== "win32") {
     for (const port of ports) {
-      try { Bun.spawnSync(["fuser", "-k", `${port}/tcp`], { stdout: "pipe", stderr: "pipe" }); } catch {}
+      try {
+        Bun.spawnSync(["fuser", "-k", `${port}/tcp`], { stdout: "pipe", stderr: "pipe" });
+      } catch {}
     }
     return;
   }
   try {
     const result = Bun.spawnSync(["netstat", "-ano"], { stdout: "pipe", stderr: "pipe" });
     const lines = new TextDecoder().decode(result.stdout).split(/\r?\n/);
-    const wanted = new Set(ports.map(p => `:${p}`));
+    const wanted = new Set(ports.map((p) => `:${p}`));
     const pids = new Set<string>();
     for (const line of lines) {
       if (!line.includes("LISTENING")) continue;
@@ -45,8 +65,8 @@ const strip = (s: string) => s.replace(ANSI_RE, "").replace(/\r/g, "").trim();
 
 // ── Signal detection ──────────────────────────────────────────────────────────
 const READY_RE = /ready in \d+|Nitro server built in \d+|Listening on http/i;
-const URL_RE   = /Local:?\s+(http:\/\/localhost:\d+\/?)/i;
-const HMR_RE   = /\[vite\]\s+(hmr update|page reload|full reload)/i;
+const URL_RE = /Local:?\s+(http:\/\/localhost:\d+\/?)/i;
+const HMR_RE = /\[vite\]\s+(hmr update|page reload|full reload)/i;
 const ERROR_RE = /\b(EADDRINUSE|Build failed|Failed to compile)\b/;
 
 // ── Noise filter ──────────────────────────────────────────────────────────────
@@ -64,7 +84,7 @@ const NOISE_RE = new RegExp(
 const BUN_ECHO_RE = /^\$\s/;
 
 const MAX_LOGS = 2000;
-const TRIM_TO  = 1800;
+const TRIM_TO = 1800;
 let uid = 0;
 
 function syntheticLog(source: PlaygroundName, text: string): LogLine {
@@ -74,33 +94,33 @@ function syntheticLog(source: PlaygroundName, text: string): LogLine {
 export function useProcesses() {
   const [states, setStates] = useState<Record<PlaygroundName, PlaygroundState>>({
     react: { status: "starting" },
-    vue:   { status: "starting" },
-    nuxt:  { status: "starting" },
+    vue: { status: "starting" },
+    nuxt: { status: "starting" },
   });
   const [logs, setLogs] = useState<LogLine[]>([]);
-  const t0              = useRef<Record<string, number>>({});
-  const procMap         = useRef<Partial<Record<PlaygroundName, ReturnType<typeof Bun.spawn>>>>({});
-  const restartRef      = useRef<(name: PlaygroundName) => void>(() => {});
+  const t0 = useRef<Record<string, number>>({});
+  const procMap = useRef<Partial<Record<PlaygroundName, ReturnType<typeof Bun.spawn>>>>({});
+  const restartRef = useRef<(name: PlaygroundName) => void>(() => {});
   // Tracks intentional kills (manual restart) so exit handler doesn't auto-restart
   const intentionalKill = useRef<Set<PlaygroundName>>(new Set());
   // Tracks last crash time per playground to detect crash loops
-  const crashTime       = useRef<Partial<Record<PlaygroundName, number>>>({});
+  const crashTime = useRef<Partial<Record<PlaygroundName, number>>>({});
 
   useEffect(() => {
     let mounted = true;
 
     // ── Helpers ───────────────────────────────────────────────────────────────
     const markReady = (name: PlaygroundName) =>
-      setStates(prev => ({
+      setStates((prev) => ({
         ...prev,
         [name]: { ...prev[name], status: "ready", readyMs: Date.now() - (t0.current[name] ?? 0) },
       }));
 
     const markUrl = (name: PlaygroundName, url: string) =>
-      setStates(prev => ({ ...prev, [name]: { ...prev[name], url } }));
+      setStates((prev) => ({ ...prev, [name]: { ...prev[name], url } }));
 
     const markError = (name: PlaygroundName) =>
-      setStates(prev => ({ ...prev, [name]: { ...prev[name], status: "error" } }));
+      setStates((prev) => ({ ...prev, [name]: { ...prev[name], status: "error" } }));
 
     async function drain(stream: ReadableStream<Uint8Array>, name: PlaygroundName, isErr: boolean) {
       const reader = stream.getReader();
@@ -128,7 +148,7 @@ export function useProcesses() {
 
             if (NOISE_RE.test(text)) continue;
 
-            const isHmr   = HMR_RE.test(text);
+            const isHmr = HMR_RE.test(text);
             const isError = isErr && ERROR_RE.test(text);
 
             batch.push({ id: ++uid, source: name, text, isError, isHmr, ts: Date.now() });
@@ -138,17 +158,19 @@ export function useProcesses() {
           }
 
           if (batch.length) {
-            setLogs(prev => {
+            setLogs((prev) => {
               const base = prev.length + batch.length > MAX_LOGS ? prev.slice(-TRIM_TO) : prev;
               return [...base, ...batch];
             });
           }
         }
-      } catch { /* process killed */ }
+      } catch {
+        /* process killed */
+      }
     }
 
     function spawnOne(name: PlaygroundName) {
-      const pg = PLAYGROUNDS.find(p => p.name === name)!;
+      const pg = PLAYGROUNDS.find((p) => p.name === name)!;
       t0.current[name] = Date.now();
       const proc = Bun.spawn(["bun", "run", "dev"], {
         cwd: pg.cwd,
@@ -161,14 +183,14 @@ export function useProcesses() {
       drain(proc.stderr, name, true);
 
       // ── Crash detection ───────────────────────────────────────────────────
-      proc.exited.then(code => {
+      proc.exited.then((code) => {
         if (!mounted) return;
         // Intentional kill (manual restart via R/V/N) — skip auto-restart
         if (intentionalKill.current.has(name)) {
           intentionalKill.current.delete(name);
           return;
         }
-        const now  = Date.now();
+        const now = Date.now();
         const last = crashTime.current[name] ?? 0;
         crashTime.current[name] = now;
 
@@ -179,13 +201,13 @@ export function useProcesses() {
           ? `● exited (code ${code ?? "?"}) — crash loop detected, press ${RESTART_KEY[name]} to restart manually`
           : `● exited (code ${code ?? "?"}) — restarting in 2s…`;
 
-        setLogs(prev => [...prev, syntheticLog(name, msg)]);
+        setLogs((prev) => [...prev, syntheticLog(name, msg)]);
 
         if (!isCrashLoop) {
           setTimeout(() => {
             if (!mounted) return;
-            setStates(prev => ({ ...prev, [name]: { status: "starting" } }));
-            setLogs(prev => prev.filter(l => l.source !== name || l.text.startsWith("●")));
+            setStates((prev) => ({ ...prev, [name]: { status: "starting" } }));
+            setLogs((prev) => prev.filter((l) => l.source !== name || l.text.startsWith("●")));
             spawnOne(name);
           }, 2000);
         }
@@ -194,15 +216,17 @@ export function useProcesses() {
 
     // Expose restart to App — marks kill as intentional to suppress auto-restart
     restartRef.current = (name: PlaygroundName) => {
-      const pg = PLAYGROUNDS.find(p => p.name === name)!;
+      const pg = PLAYGROUNDS.find((p) => p.name === name)!;
       const existing = procMap.current[name];
       if (existing) {
         intentionalKill.current.add(name);
-        try { existing.kill(); } catch {}
+        try {
+          existing.kill();
+        } catch {}
       }
       killPorts([pg.port]);
-      setStates(prev => ({ ...prev, [name]: { status: "starting" } }));
-      setLogs(prev => prev.filter(l => l.source !== name));
+      setStates((prev) => ({ ...prev, [name]: { status: "starting" } }));
+      setLogs((prev) => prev.filter((l) => l.source !== name));
       spawnOne(name);
     };
 
@@ -211,12 +235,15 @@ export function useProcesses() {
     return () => {
       mounted = false;
       for (const proc of Object.values(procMap.current)) {
-        if (proc) try { proc.kill(); } catch {}
+        if (proc)
+          try {
+            proc.kill();
+          } catch {}
       }
     };
   }, []);
 
-  const restart   = (name: PlaygroundName) => restartRef.current(name);
+  const restart = (name: PlaygroundName) => restartRef.current(name);
   const clearLogs = () => setLogs([]);
 
   return { states, logs, restart, clearLogs };

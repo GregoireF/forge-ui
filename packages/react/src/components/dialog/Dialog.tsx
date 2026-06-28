@@ -2,8 +2,8 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useEffect, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
-import { DialogPortal } from "./DialogPortal.js";
 import { Slot } from "../shared/Slot.js";
+import { DialogPortal } from "./DialogPortal.js";
 import type { UseDialogOptions } from "./use-dialog.js";
 import { useDialog } from "./use-dialog.js";
 
@@ -39,9 +39,7 @@ function Root({ children, open: openProp, defaultOpen, ...opts }: DialogRootProp
 
   return (
     <DialogCtx.Provider value={api}>
-      <DialogPresenceCtx.Provider value={presence}>
-        {children}
-      </DialogPresenceCtx.Provider>
+      <DialogPresenceCtx.Provider value={presence}>{children}</DialogPresenceCtx.Provider>
     </DialogCtx.Provider>
   );
 }
@@ -58,7 +56,11 @@ function Trigger({ asChild, children, ...rest }: DialogTriggerProps) {
   const api = useCtx();
   const { "aria-haspopup": hasPopup, ...triggerRest } = api.getTriggerProps();
   // React's aria-haspopup type set omits "alertdialog" â€" cast to widen for WAI-ARIA compliance.
-  const props = { ...triggerRest, "aria-haspopup": hasPopup as ButtonHTMLAttributes<HTMLButtonElement>["aria-haspopup"], ...rest };
+  const props = {
+    ...triggerRest,
+    "aria-haspopup": hasPopup as ButtonHTMLAttributes<HTMLButtonElement>["aria-haspopup"],
+    ...rest,
+  };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;
 }
@@ -189,7 +191,15 @@ function Content({
     });
     return () => api.setContentCallbacks({});
     // biome-ignore lint/correctness/useExhaustiveDependencies: api is stable; callbacks compared by identity
-  }, [api, onOpenAutoFocus, onCloseAutoFocus, onPointerDownOutside, onFocusOutside, onInteractOutside, onEscapeKeyDown]);
+  }, [
+    api,
+    onOpenAutoFocus,
+    onCloseAutoFocus,
+    onPointerDownOutside,
+    onFocusOutside,
+    onInteractOutside,
+    onEscapeKeyDown,
+  ]);
 
   if (!forceMount && !isPresent) return null;
 

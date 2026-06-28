@@ -1,5 +1,7 @@
-import type { CreateAlertDialogMachineOptions } from "@forge-ui/alert-dialog";
-import type { AlertDialogContentCallbacks } from "@forge-ui/alert-dialog";
+import type {
+  AlertDialogContentCallbacks,
+  CreateAlertDialogMachineOptions,
+} from "@forge-ui/alert-dialog";
 import { connectAlertDialog, createAlertDialogMachine } from "@forge-ui/alert-dialog";
 import { computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";

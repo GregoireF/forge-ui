@@ -1,9 +1,9 @@
 import type { HTMLAttributes, LabelHTMLAttributes, MouseEvent, ReactNode } from "react";
 import { createContext, useContext, useEffect } from "react";
-import type { UseCheckboxGroupOptions, UseCheckboxGroupReturn } from "./use-checkbox-group.js";
-import { useCheckboxGroup } from "./use-checkbox-group.js";
 import type { UseCheckboxOptions, UseCheckboxReturn } from "./use-checkbox.js";
 import { useCheckbox } from "./use-checkbox.js";
+import type { UseCheckboxGroupOptions, UseCheckboxGroupReturn } from "./use-checkbox-group.js";
+import { useCheckboxGroup } from "./use-checkbox-group.js";
 
 // ---------------------------------------------------------------------------
 // Contexts

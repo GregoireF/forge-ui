@@ -19,17 +19,17 @@ test.describe("Slider — Vue (forge-ui)", () => {
   });
 
   test("aria-valuenow is 50 initially", async ({ page }) => {
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "-1");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "-1", 10);
     expect(valuenow).toBe(50);
   });
 
   test("aria-valuemin is 0", async ({ page }) => {
-    const valuemin = parseInt(await thumb(page).getAttribute("aria-valuemin") ?? "-1");
+    const valuemin = parseInt((await thumb(page).getAttribute("aria-valuemin")) ?? "-1", 10);
     expect(valuemin).toBe(0);
   });
 
   test("aria-valuemax is 100", async ({ page }) => {
-    const valuemax = parseInt(await thumb(page).getAttribute("aria-valuemax") ?? "-1");
+    const valuemax = parseInt((await thumb(page).getAttribute("aria-valuemax")) ?? "-1", 10);
     expect(valuemax).toBe(100);
   });
 
@@ -44,42 +44,42 @@ test.describe("Slider — Vue (forge-ui)", () => {
   test("ArrowRight increments value by 1", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("ArrowRight");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(51);
   });
 
   test("ArrowLeft decrements value by 1", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("ArrowLeft");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(49);
   });
 
   test("ArrowUp increments value by 1", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("ArrowUp");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(51);
   });
 
   test("ArrowDown decrements value by 1", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("ArrowDown");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(49);
   });
 
   test("Home sets value to min (0)", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("Home");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "-1");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "-1", 10);
     expect(valuenow).toBe(0);
   });
 
   test("End sets value to max (100)", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("End");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "-1");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "-1", 10);
     expect(valuenow).toBe(100);
   });
 
@@ -87,14 +87,14 @@ test.describe("Slider — Vue (forge-ui)", () => {
   test("PageUp increments value by 10% of range", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("PageUp");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(60);
   });
 
   test("PageDown decrements value by 10% of range", async ({ page }) => {
     await thumb(page).focus();
     await page.keyboard.press("PageDown");
-    const valuenow = parseInt(await thumb(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumb(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(40);
   });
 
@@ -130,7 +130,7 @@ test.describe("Slider — Vue (forge-ui)", () => {
     await page.mouse.move(endX, startY, { steps: 5 });
     await page.mouse.up();
 
-    const valuenow = parseInt(await thumbEl.getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumbEl.getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBeGreaterThan(60);
   });
 
@@ -151,7 +151,7 @@ test.describe("Slider — Vue (forge-ui)", () => {
     await page.mouse.move(endX, startY, { steps: 5 });
     await page.mouse.up();
 
-    const valuenow = parseInt(await thumbEl.getAttribute("aria-valuenow") ?? "100");
+    const valuenow = parseInt((await thumbEl.getAttribute("aria-valuenow")) ?? "100", 10);
     expect(valuenow).toBeLessThan(40);
   });
 
@@ -167,7 +167,7 @@ test.describe("Slider — Vue (forge-ui)", () => {
 
     await page.mouse.click(clickX, clickY);
 
-    const valuenow = parseInt(await thumbEl.getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await thumbEl.getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBeGreaterThan(75);
   });
 });

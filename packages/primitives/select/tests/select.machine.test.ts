@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { clearRegistry } from "@forge-ui/core";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createSelectMachine } from "../src/select.machine.js";
 
 let active: ReturnType<typeof createSelectMachine>[] = [];
@@ -541,7 +541,9 @@ describe("createSelectMachine — positioning boundary/middleware", () => {
   });
 
   it("middleware array stored in positioning context when provided (line 185)", () => {
-    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createSelectMachine>[0]["positioning"]["middleware"];
+    const middleware = [{ name: "offset" }] as unknown as Parameters<
+      typeof createSelectMachine
+    >[0]["positioning"]["middleware"];
     const m = make({ positioning: { middleware } });
     expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
   });
@@ -573,7 +575,10 @@ describe("createSelectMachine — REGISTER_OPTION open state idempotency", () =>
 
 describe("createSelectMachine — watchOutside activity config callbacks", () => {
   beforeEach(() => {
-    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    });
     vi.stubGlobal("cancelAnimationFrame", () => {});
   });
   afterEach(() => {

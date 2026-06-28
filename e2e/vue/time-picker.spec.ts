@@ -8,11 +8,16 @@ test.describe("TimePicker — Vue (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const group = (page: import("@playwright/test").Page) => page.locator('[data-testid="time-picker-group"]');
-  const hours = (page: import("@playwright/test").Page) => page.locator('[data-testid="time-picker-hours"]');
-  const minutes = (page: import("@playwright/test").Page) => page.locator('[data-testid="time-picker-minutes"]');
-  const seconds = (page: import("@playwright/test").Page) => page.locator('[data-testid="time-picker-seconds"]');
-  const period = (page: import("@playwright/test").Page) => page.locator('[data-testid="time-picker-period"]');
+  const group = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="time-picker-group"]');
+  const hours = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="time-picker-hours"]');
+  const minutes = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="time-picker-minutes"]');
+  const seconds = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="time-picker-seconds"]');
+  const period = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="time-picker-period"]');
 
   test("group is visible", async ({ page }) => {
     await expect(group(page)).toBeVisible();
@@ -66,9 +71,7 @@ test.describe("TimePicker — Vue (forge-ui)", () => {
   });
 
   test("no axe violations", async ({ page }) => {
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
     expect(results.violations).toEqual([]);
   });
 });

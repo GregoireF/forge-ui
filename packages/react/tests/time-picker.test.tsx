@@ -15,7 +15,12 @@ interface FixtureProps {
 
 function makeFixture({ hourCycle = 12, disabled, onValueChange }: FixtureProps = {}) {
   return (
-    <TimePicker.Root hourCycle={hourCycle} showSeconds disabled={disabled} onValueChange={onValueChange}>
+    <TimePicker.Root
+      hourCycle={hourCycle}
+      showSeconds
+      disabled={disabled}
+      onValueChange={onValueChange}
+    >
       <TimePicker.Group data-testid="group">
         <TimePicker.HoursSegment data-testid="hours" />
         <TimePicker.Separator data-testid="sep" />
@@ -227,7 +232,9 @@ describe("TimePicker (React)", () => {
       await user.keyboard("0");
       await user.keyboard("0");
 
-      expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ hours: 9, minutes: 30, seconds: 0 }));
+      expect(onChange).toHaveBeenCalledWith(
+        expect.objectContaining({ hours: 9, minutes: 30, seconds: 0 }),
+      );
     });
   });
 });

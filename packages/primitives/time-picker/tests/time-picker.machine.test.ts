@@ -341,7 +341,11 @@ describe("createTimePickerMachine — INCREMENT/DECREMENT period", () => {
 
   it("INCREMENT on period calls onValueChange", () => {
     const cb = vi.fn();
-    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 30, seconds: 0 }, onValueChange: cb });
+    const m = make({
+      hourCycle: 12,
+      defaultValue: { hours: 9, minutes: 30, seconds: 0 },
+      onValueChange: cb,
+    });
     m.send({ type: "FOCUS_SEGMENT", segment: "period" });
     m.send("INCREMENT");
     expect(cb).toHaveBeenCalledWith(expect.objectContaining({ hours: 21, minutes: 30 }));
@@ -365,7 +369,11 @@ describe("createTimePickerMachine — INCREMENT/DECREMENT period", () => {
 
   it("DECREMENT on period calls onValueChange", () => {
     const cb = vi.fn();
-    const m = make({ hourCycle: 12, defaultValue: { hours: 9, minutes: 30, seconds: 0 }, onValueChange: cb });
+    const m = make({
+      hourCycle: 12,
+      defaultValue: { hours: 9, minutes: 30, seconds: 0 },
+      onValueChange: cb,
+    });
     m.send({ type: "FOCUS_SEGMENT", segment: "period" });
     m.send("DECREMENT");
     expect(cb).toHaveBeenCalledWith(expect.objectContaining({ hours: 21, minutes: 30 }));
@@ -431,7 +439,11 @@ describe("createTimePickerMachine — CLEAR_SEGMENT seconds", () => {
 describe("createTimePickerMachine — tryBuildTime branches", () => {
   it("tryBuildTime returns null when showSeconds=true and secondsValue=null (via INCREMENT)", () => {
     const cb = vi.fn();
-    const m = make({ showSeconds: true, defaultValue: { hours: 9, minutes: 30, seconds: 0 }, onValueChange: cb });
+    const m = make({
+      showSeconds: true,
+      defaultValue: { hours: 9, minutes: 30, seconds: 0 },
+      onValueChange: cb,
+    });
     // Set seconds to null
     m.send({ type: "FOCUS_SEGMENT", segment: "seconds" });
     m.send("CLEAR_SEGMENT");

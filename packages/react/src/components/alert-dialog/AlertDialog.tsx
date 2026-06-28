@@ -32,9 +32,7 @@ function Root({ children, defaultOpen, ...opts }: AlertDialogRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <AlertDialogCtx.Provider value={api}>
-      <AlertDialogPresenceCtx.Provider value={presence}>
-        {children}
-      </AlertDialogPresenceCtx.Provider>
+      <AlertDialogPresenceCtx.Provider value={presence}>{children}</AlertDialogPresenceCtx.Provider>
     </AlertDialogCtx.Provider>
   );
 }

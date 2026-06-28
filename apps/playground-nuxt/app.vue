@@ -54,7 +54,12 @@ const btn = {
   fontSize: "0.875rem",
 } as const;
 
-const btnGhost = { ...btn, background: "transparent", color: "#1e293b", border: "1px solid #cbd5e1" } as const;
+const btnGhost = {
+  ...btn,
+  background: "transparent",
+  color: "#1e293b",
+  border: "1px solid #cbd5e1",
+} as const;
 
 const overlay = { position: "fixed" as const, inset: 0, background: "rgb(0 0 0 / 0.45)" };
 
@@ -82,7 +87,13 @@ const popoverPanel = {
   boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
 };
 
-const labelS = { display: "block", fontSize: "0.8rem", fontWeight: 500, color: "#374151", marginBottom: "0.35rem" };
+const labelS = {
+  display: "block",
+  fontSize: "0.8rem",
+  fontWeight: 500,
+  color: "#374151",
+  marginBottom: "0.35rem",
+};
 const selectTrigger = {
   display: "flex",
   alignItems: "center",
@@ -105,9 +116,28 @@ const selectContent = {
   listStyle: "none",
   margin: 0,
 } as const;
-const selectItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
-const separatorS = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
-const groupLabelS = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
+const selectItem = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+};
+const separatorS = {
+  height: "1px",
+  background: "#e2e8f0",
+  margin: "0.25rem 0",
+  listStyle: "none" as const,
+};
+const groupLabelS = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  listStyle: "none" as const,
+};
 
 const titleS = { margin: "0 0 0.5rem", fontSize: "1.05rem", fontWeight: 600 };
 const descS = { color: "#64748b", marginBottom: "1.5rem", fontSize: "0.875rem", lineHeight: 1.5 };
@@ -116,26 +146,107 @@ const section = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
 const sectionTitle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
 const sectionDesc = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
 
-const checkboxControl = { width: "18px", height: "18px", border: "2px solid #cbd5e1", borderRadius: "4px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 };
+const checkboxControl = {
+  width: "18px",
+  height: "18px",
+  border: "2px solid #cbd5e1",
+  borderRadius: "4px",
+  background: "#fff",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  flexShrink: 0,
+};
 const checkboxIndicator = { fontSize: "11px", fontWeight: 700, color: "#1e293b", lineHeight: 1 };
 const checkboxLabel = { fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" };
-const switchOff = { width: "44px", height: "24px", borderRadius: "12px", background: "#cbd5e1", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center", transition: "background 0.15s", flexShrink: 0 };
+const switchOff = {
+  width: "44px",
+  height: "24px",
+  borderRadius: "12px",
+  background: "#cbd5e1",
+  border: "none",
+  cursor: "pointer",
+  padding: "2px",
+  display: "flex",
+  alignItems: "center",
+  transition: "background 0.15s",
+  flexShrink: 0,
+};
 const switchOn = { ...switchOff, background: "#1e293b" };
-const thumbOff = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
+const thumbOff = {
+  width: "20px",
+  height: "20px",
+  borderRadius: "50%",
+  background: "#fff",
+  boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)",
+  transform: "translateX(0)",
+  transition: "transform 0.15s",
+};
 const thumbOn = { ...thumbOff, transform: "translateX(20px)" };
 
 const checkboxControlled = ref<boolean | "indeterminate">("indeterminate");
 const groupValues = ref<string[]>(["react"]);
 const switchChecked = ref(false);
 
-const tooltipS = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
+const tooltipS = {
+  background: "#1e293b",
+  color: "#f1f5f9",
+  borderRadius: "6px",
+  padding: "0.35rem 0.6rem",
+  fontSize: "0.8rem",
+  boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
+  maxWidth: "240px",
+} as const;
 const btnDanger = { ...btn, background: "#dc2626" } as const;
 
-const comboboxContent = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
-const comboboxItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
-const groupLabel = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
-const hoverCardStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", minWidth: "260px", maxWidth: "320px", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)" } as const;
-const hoverCardLink = { color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" as const, cursor: "pointer" } as const;
+const comboboxContent = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none" as const,
+  margin: 0,
+  maxHeight: "200px",
+  overflowY: "auto" as const,
+};
+const comboboxItem = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+  display: "flex",
+  alignItems: "center",
+  gap: "0.25rem",
+};
+const groupLabel = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  listStyle: "none" as const,
+};
+const hoverCardStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "10px",
+  padding: "1rem",
+  minWidth: "260px",
+  maxWidth: "320px",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+} as const;
+const hoverCardLink = {
+  color: "#6366f1",
+  fontWeight: 500,
+  fontSize: "0.9rem",
+  textDecoration: "underline" as const,
+  cursor: "pointer",
+} as const;
 
 const fieldInvalid = ref(false);
 const fieldEmail = ref("");
@@ -176,9 +287,31 @@ const ctxMenuBookmarked = ref(false);
 const menuAnchorOpen = ref(false);
 const menuAnchorSelect = ref<string | null>(null);
 
-const menuContentS = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "4px", boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)", minWidth: "160px", outline: "none" } as const;
-const menuItemS = { padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontSize: "0.875rem", outline: "none", userSelect: "none" as const };
-const menuGroupS = { padding: "4px 12px 2px", fontSize: "0.7rem", color: "#94a3b8", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.05em" };
+const menuContentS = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  padding: "4px",
+  boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)",
+  minWidth: "160px",
+  outline: "none",
+} as const;
+const menuItemS = {
+  padding: "6px 12px",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.875rem",
+  outline: "none",
+  userSelect: "none" as const,
+};
+const menuGroupS = {
+  padding: "4px 12px 2px",
+  fontSize: "0.7rem",
+  color: "#94a3b8",
+  fontWeight: 600,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+};
 const menuSepS = { height: "1px", background: "#e2e8f0", margin: "4px 0" };
 </script>
 

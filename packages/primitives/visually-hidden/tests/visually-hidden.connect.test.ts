@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  connectVisuallyHidden,
-  VISUALLY_HIDDEN_STYLE,
-} from "../src/visually-hidden.connect.js";
+import { connectVisuallyHidden, VISUALLY_HIDDEN_STYLE } from "../src/visually-hidden.connect.js";
 
 describe("connectVisuallyHidden — getProps", () => {
   it("applies position:absolute", () => {

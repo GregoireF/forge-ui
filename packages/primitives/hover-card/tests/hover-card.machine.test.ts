@@ -227,7 +227,9 @@ describe("createHoverCardMachine — positioning boundary/middleware", () => {
   });
 
   it("middleware array is stored in positioning context when provided (line 38)", () => {
-    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createHoverCardMachine>[0]["positioning"]["middleware"];
+    const middleware = [{ name: "offset" }] as unknown as Parameters<
+      typeof createHoverCardMachine
+    >[0]["positioning"]["middleware"];
     const m = make({ id: "test", positioning: { middleware } });
     m.start();
     expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);

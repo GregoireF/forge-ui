@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+
 /**
  * Bundle size reporter for forge-ui primitives.
  *
@@ -27,11 +28,11 @@
  * - With floating (select, combobox, popover, tooltip): target ≤ 5kB gzip
  */
 
-import { build } from "bun";
-import { deflate, brotliCompress } from "node:zlib";
-import { promisify } from "node:util";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { promisify } from "node:util";
+import { brotliCompress, deflate } from "node:zlib";
+import { build } from "bun";
 
 const gzip = promisify(deflate);
 const brotli = promisify(brotliCompress);
@@ -46,29 +47,29 @@ if (!existsSync(tmpDir)) mkdirSync(tmpDir, { recursive: true });
 
 const THRESHOLDS: Record<string, { warn: number; fail: number }> = {
   // Simple primitives — no floating, no complex DOM management
-  accordion:   { warn: 3_000,  fail: 5_000  },
-  checkbox:    { warn: 2_000,  fail: 3_500  },
-  collapsible: { warn: 2_000,  fail: 3_500  },
-  "hover-card":{ warn: 3_000,  fail: 5_000  },
-  progress:    { warn: 1_500,  fail: 2_500  },
-  "radio-group":{ warn: 2_500, fail: 4_000  },
-  slider:      { warn: 3_000,  fail: 5_000  },
-  switch:      { warn: 2_000,  fail: 3_500  },
-  tabs:        { warn: 2_500,  fail: 4_000  },
-  "tags-input":{ warn: 3_500,  fail: 6_000  },
-  tooltip:     { warn: 3_000,  fail: 5_000  },
+  accordion: { warn: 3_000, fail: 5_000 },
+  checkbox: { warn: 2_000, fail: 3_500 },
+  collapsible: { warn: 2_000, fail: 3_500 },
+  "hover-card": { warn: 3_000, fail: 5_000 },
+  progress: { warn: 1_500, fail: 2_500 },
+  "radio-group": { warn: 2_500, fail: 4_000 },
+  slider: { warn: 3_000, fail: 5_000 },
+  switch: { warn: 2_000, fail: 3_500 },
+  tabs: { warn: 2_500, fail: 4_000 },
+  "tags-input": { warn: 3_500, fail: 6_000 },
+  tooltip: { warn: 3_000, fail: 5_000 },
   // Dialog / popover / select / combobox use floating-ui — heavier
-  dialog:      { warn: 4_000,  fail: 7_000  },
-  popover:     { warn: 5_000,  fail: 8_500  },
-  select:      { warn: 6_000,  fail: 10_000 },
-  combobox:    { warn: 7_000,  fail: 12_000 },
-  field:       { warn: 2_000,  fail: 3_500  },
+  dialog: { warn: 4_000, fail: 7_000 },
+  popover: { warn: 5_000, fail: 8_500 },
+  select: { warn: 6_000, fail: 10_000 },
+  combobox: { warn: 7_000, fail: 12_000 },
+  field: { warn: 2_000, fail: 3_500 },
   // Stateful but lightweight — no floating
-  toggle:             { warn: 1_000,  fail: 2_000  },
-  "toggle-group":     { warn: 1_500,  fail: 2_500  },
+  toggle: { warn: 1_000, fail: 2_000 },
+  "toggle-group": { warn: 1_500, fail: 2_500 },
   // Stateless / zero-machine
-  separator:          { warn: 500,    fail: 1_000  },
-  "visually-hidden":  { warn: 500,    fail: 1_000  },
+  separator: { warn: 500, fail: 1_000 },
+  "visually-hidden": { warn: 500, fail: 1_000 },
 };
 
 const PACKAGES = Object.keys(THRESHOLDS);
@@ -93,7 +94,16 @@ async function analyzePackage(name: string): Promise<Result> {
   const threshold = THRESHOLDS[name] ?? { warn: 5_000, fail: 10_000 };
 
   if (!existsSync(distEntry)) {
-    return { name, raw: 0, gzip: 0, brotli: 0, ...threshold, warnThreshold: threshold.warn, failThreshold: threshold.fail, status: "missing" };
+    return {
+      name,
+      raw: 0,
+      gzip: 0,
+      brotli: 0,
+      ...threshold,
+      warnThreshold: threshold.warn,
+      failThreshold: threshold.fail,
+      status: "missing",
+    };
   }
 
   // Write a synthetic entry that imports the full public API
@@ -111,7 +121,15 @@ async function analyzePackage(name: string): Promise<Result> {
   });
 
   if (!result.success || result.outputs.length === 0) {
-    return { name, raw: 0, gzip: 0, brotli: 0, warnThreshold: threshold.warn, failThreshold: threshold.fail, status: "missing" };
+    return {
+      name,
+      raw: 0,
+      gzip: 0,
+      brotli: 0,
+      warnThreshold: threshold.warn,
+      failThreshold: threshold.fail,
+      status: "missing",
+    };
   }
 
   const code = await result.outputs[0].arrayBuffer();
@@ -121,9 +139,7 @@ async function analyzePackage(name: string): Promise<Result> {
 
   const gzipSize = (gzipped as Buffer).length;
   const status: Result["status"] =
-    gzipSize > threshold.fail ? "fail" :
-    gzipSize > threshold.warn ? "warn" :
-    "ok";
+    gzipSize > threshold.fail ? "fail" : gzipSize > threshold.warn ? "warn" : "ok";
 
   return {
     name,
@@ -177,7 +193,8 @@ for (const name of PACKAGES) {
   const r = await analyzePackage(name);
   results.push(r);
 
-  const statusIcon = r.status === "ok" ? "✓" : r.status === "warn" ? "⚠" : r.status === "fail" ? "✗" : "?";
+  const statusIcon =
+    r.status === "ok" ? "✓" : r.status === "warn" ? "⚠" : r.status === "fail" ? "✗" : "?";
   const row = `${name.padEnd(20)} ${fmt(r.raw).padStart(9)} ${fmt(r.gzip).padStart(9)} ${fmt(r.brotli).padStart(9)}  ${statusIcon}      ≤${fmt(r.failThreshold)}`;
   console.log(colorize(r, row));
 
@@ -186,8 +203,13 @@ for (const name of PACKAGES) {
 
 console.log("─".repeat(70));
 
-const total = results.reduce((a, r) => ({ gzip: a.gzip + r.gzip, brotli: a.brotli + r.brotli }), { gzip: 0, brotli: 0 });
-console.log(`${"TOTAL (all primitives)".padEnd(20)} ${"".padStart(9)} ${fmt(total.gzip).padStart(9)} ${fmt(total.brotli).padStart(9)}`);
+const total = results.reduce((a, r) => ({ gzip: a.gzip + r.gzip, brotli: a.brotli + r.brotli }), {
+  gzip: 0,
+  brotli: 0,
+});
+console.log(
+  `${"TOTAL (all primitives)".padEnd(20)} ${"".padStart(9)} ${fmt(total.gzip).padStart(9)} ${fmt(total.brotli).padStart(9)}`,
+);
 console.log("━".repeat(70));
 
 // Competitor comparison reference

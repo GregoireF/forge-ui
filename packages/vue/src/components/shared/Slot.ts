@@ -5,7 +5,7 @@ export const Slot = defineComponent({
   inheritAttrs: false,
   setup(_props, { slots, attrs }) {
     return () => {
-      const children = slots['default']?.();
+      const children = slots["default"]?.();
       if (!children || children.length === 0) return null;
       const child = children[0];
       if (!child) return null;

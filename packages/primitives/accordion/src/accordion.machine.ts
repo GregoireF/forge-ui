@@ -1,5 +1,9 @@
 import { createMachine } from "@forge-ui/core";
-import type { AccordionContext, AccordionEvent, CreateAccordionOptions } from "./accordion.types.js";
+import type {
+  AccordionContext,
+  AccordionEvent,
+  CreateAccordionOptions,
+} from "./accordion.types.js";
 
 // ---------------------------------------------------------------------------
 // Actions

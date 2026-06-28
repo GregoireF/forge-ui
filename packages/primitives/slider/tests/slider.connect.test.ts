@@ -142,49 +142,65 @@ describe("connectSlider — getThumbProps", () => {
 
   it("onKeyDown ArrowRight sends INCREMENT with thumbIndex", () => {
     const { api, send } = makeApi();
-    api.getThumbProps(0).onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "INCREMENT", thumbIndex: 0 });
   });
 
   it("onKeyDown ArrowLeft sends DECREMENT with thumbIndex", () => {
     const { api, send } = makeApi();
-    api.getThumbProps(0).onKeyDown({ key: "ArrowLeft", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "ArrowLeft", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "DECREMENT", thumbIndex: 0 });
   });
 
   it("onKeyDown Home sends SET_MIN with thumbIndex", () => {
     const { api, send } = makeApi({ min: 5 });
-    api.getThumbProps(0).onKeyDown({ key: "Home", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "Home", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "SET_MIN", thumbIndex: 0 });
   });
 
   it("onKeyDown End sends SET_MAX with thumbIndex", () => {
     const { api, send } = makeApi({ max: 200 });
-    api.getThumbProps(0).onKeyDown({ key: "End", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "End", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "SET_MAX", thumbIndex: 0 });
   });
 
   it("onKeyDown PageUp sends INCREMENT_PAGE with thumbIndex", () => {
     const { api, send } = makeApi();
-    api.getThumbProps(0).onKeyDown({ key: "PageUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "PageUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "INCREMENT_PAGE", thumbIndex: 0 });
   });
 
   it("onKeyDown PageDown sends DECREMENT_PAGE with thumbIndex", () => {
     const { api, send } = makeApi();
-    api.getThumbProps(0).onKeyDown({ key: "PageDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "PageDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "DECREMENT_PAGE", thumbIndex: 0 });
   });
 
   it("thumb 1: ArrowRight sends INCREMENT thumbIndex:1", () => {
     const { api, send } = makeApi({ values: [20, 80] });
-    api.getThumbProps(1).onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(1)
+      .onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "INCREMENT", thumbIndex: 1 });
   });
 
   it("disabled: onKeyDown does nothing", () => {
     const { api, send } = makeApi({ disabled: true });
-    api.getThumbProps(0).onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getThumbProps(0)
+      .onKeyDown({ key: "ArrowRight", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -472,14 +488,26 @@ function makeMockTrackEl(rect: { left: number; top: number; width: number; heigh
 describe("connectSlider — onPointerDown with trackEl", () => {
   it("trackEl=null is no-op", () => {
     const { api, send } = makeApi({ trackEl: null });
-    const e = { button: 0, clientX: 50, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const e = {
+      button: 0,
+      clientX: 50,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).not.toHaveBeenCalled();
   });
 
   it("button !== 0 is no-op", () => {
-    const { api, send } = makeApi({ trackEl: makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 }) });
-    const e = { button: 2, clientX: 50, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const { api, send } = makeApi({
+      trackEl: makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 }),
+    });
+    const e = {
+      button: 2,
+      clientX: 50,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).not.toHaveBeenCalled();
   });
@@ -487,7 +515,12 @@ describe("connectSlider — onPointerDown with trackEl", () => {
   it("single thumb: sends POINTER_DOWN thumbIndex:0", () => {
     const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 20 });
     const { api, send } = makeApi({ trackEl, values: [0] });
-    const e = { button: 0, clientX: 75, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const e = {
+      button: 0,
+      clientX: 75,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 75, thumbIndex: 0 });
   });
@@ -496,7 +529,12 @@ describe("connectSlider — onPointerDown with trackEl", () => {
     const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 20 });
     // thumb 0 at 20, thumb 1 at 80 — click at 75 is closer to thumb 1
     const { api, send } = makeApi({ trackEl, values: [20, 80] });
-    const e = { button: 0, clientX: 75, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const e = {
+      button: 0,
+      clientX: 75,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 75, thumbIndex: 1 });
   });
@@ -504,7 +542,12 @@ describe("connectSlider — onPointerDown with trackEl", () => {
   it("range: click near thumb 0 selects thumb 0", () => {
     const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 20 });
     const { api, send } = makeApi({ trackEl, values: [20, 80] });
-    const e = { button: 0, clientX: 25, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const e = {
+      button: 0,
+      clientX: 25,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 25, thumbIndex: 0 });
   });
@@ -512,7 +555,12 @@ describe("connectSlider — onPointerDown with trackEl", () => {
   it("clamps to min when pointer is left of track", () => {
     const trackEl = makeMockTrackEl({ left: 50, top: 0, width: 100, height: 0 });
     const { api, send } = makeApi({ trackEl, values: [0] });
-    const e = { button: 0, clientX: 0, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const e = {
+      button: 0,
+      clientX: 0,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 0, thumbIndex: 0 });
   });
@@ -520,7 +568,12 @@ describe("connectSlider — onPointerDown with trackEl", () => {
   it("snaps to nearest step grid", () => {
     const trackEl = makeMockTrackEl({ left: 0, top: 0, width: 100, height: 0 });
     const { api, send } = makeApi({ trackEl, values: [0], step: 10 });
-    const e = { button: 0, clientX: 53, clientY: 0, preventDefault: vi.fn() } as unknown as PointerEvent;
+    const e = {
+      button: 0,
+      clientX: 53,
+      clientY: 0,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent;
     api.getTrackProps().onPointerDown(e);
     expect(send).toHaveBeenCalledWith({ type: "POINTER_DOWN", value: 50, thumbIndex: 0 });
   });
@@ -538,7 +591,7 @@ describe("connectSlider — aria-valuetext via getValueLabel", () => {
   });
 
   it("aria-valuetext reflects getValueLabel output with value and index", () => {
-    const getValueLabel = (v: number, i: number) => i === 0 ? `start: ${v}` : `end: ${v}`;
+    const getValueLabel = (v: number, i: number) => (i === 0 ? `start: ${v}` : `end: ${v}`);
     const { api } = makeApi({ values: [20, 80], getValueLabel });
     expect((api.getThumbProps(0) as Record<string, unknown>)["aria-valuetext"]).toBe("start: 20");
     expect((api.getThumbProps(1) as Record<string, unknown>)["aria-valuetext"]).toBe("end: 80");

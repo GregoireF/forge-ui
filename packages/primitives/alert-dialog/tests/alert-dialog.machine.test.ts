@@ -12,7 +12,10 @@ function make(opts: Partial<Parameters<typeof createAlertDialogMachine>[0]> = {}
 }
 
 beforeEach(() => {
-  vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+  vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+    cb(0);
+    return 0;
+  });
   vi.stubGlobal("cancelAnimationFrame", () => {});
 });
 
