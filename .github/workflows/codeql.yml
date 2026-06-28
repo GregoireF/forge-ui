@@ -1,23 +1,15 @@
 name: CodeQL
 
-# Why this exists:
-# Even a UI component library has SAST-detectable vulnerabilities:
-# - XSS vectors: if a connect function ever uses innerHTML or textContent
-#   with unsanitized user values (e.g. aria-label from props)
-# - Prototype pollution in state machine transitions
-# - Regex DoS in validation patterns
-# - Incorrect use of dangerouslySetInnerHTML in the React binding
+# SAST for a UI component library: XSS vectors in connect functions (innerHTML,
+# textContent with unsanitized props), prototype pollution in state machine
+# transitions, regex DoS in validation, dangerouslySetInnerHTML misuse.
 #
-# Why NOT blocking PRs:
-# CodeQL scans take 3-8 minutes. Blocking every PR on an 8-minute scan creates
-# friction. Instead: run on push to main (catches what merged) + weekly schedule
-# (catches newly published CVEs in existing code). Security advisories are raised
-# automatically via GitHub Advanced Security.
+# Not blocking PRs: CodeQL takes 3-8 min. Blocking creates friction without
+# equivalent signal — security advisories are raised async via GitHub Advanced
+# Security. Runs on push to main + weekly schedule (catches newly published CVEs).
 #
-# Why javascript-typescript combined query suite:
-# Our codebase is TypeScript-first. The combined suite runs both JS and TS
-# queries, which is more complete than JS-only (default). TypeScript-aware
-# queries can track types through generics and detect type-unsafe patterns.
+# javascript-typescript combined suite: TypeScript-aware queries track types
+# through generics, catching type-unsafe patterns the JS-only suite misses.
 
 on:
   push:
@@ -25,7 +17,6 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Weekly on Monday at 02:00 UTC — catches newly published CVEs affecting existing code.
     - cron: "0 2 * * 1"
 
 permissions: read-all
@@ -34,6 +25,7 @@ jobs:
   analyze:
     name: CodeQL (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       security-events: write
       contents: read
@@ -42,6 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [javascript-typescript]
+
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -50,14 +43,9 @@ jobs:
         uses: github/codeql-action/init@45775bd8235c68ba998cffa5171334d58593da47 # v3.28.15
         with:
           languages: ${{ matrix.language }}
-          # extended suite: includes security-and-quality queries (not just security).
-          # This catches code-quality issues (dead code, incorrect equality checks)
-          # that pure security suites miss.
           queries: security-and-quality
 
       - name: Autobuild
-        # TypeScript projects need compilation for accurate data-flow analysis.
-        # Autobuild runs tsc in the detected tsconfig roots.
         uses: github/codeql-action/autobuild@45775bd8235c68ba998cffa5171334d58593da47 # v3.28.15
 
       - name: Perform CodeQL Analysis
