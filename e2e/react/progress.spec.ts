@@ -28,17 +28,17 @@ test.describe("Progress — React (forge-ui)", () => {
   });
 
   test("progressbar has aria-valuenow=42 initially", async ({ page }) => {
-    const valuenow = parseInt(await track(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await track(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(42);
   });
 
   test("progressbar has aria-valuemin=0", async ({ page }) => {
-    const valuemin = parseInt(await track(page).getAttribute("aria-valuemin") ?? "-1");
+    const valuemin = parseInt((await track(page).getAttribute("aria-valuemin")) ?? "-1", 10);
     expect(valuemin).toBe(0);
   });
 
   test("progressbar has aria-valuemax=100", async ({ page }) => {
-    const valuemax = parseInt(await track(page).getAttribute("aria-valuemax") ?? "-1");
+    const valuemax = parseInt((await track(page).getAttribute("aria-valuemax")) ?? "-1", 10);
     expect(valuemax).toBe(100);
   });
 
@@ -56,13 +56,13 @@ test.describe("Progress — React (forge-ui)", () => {
 
   test("+10 button increases value to 52", async ({ page }) => {
     await page.getByRole("button", { name: "+10" }).first().click();
-    const valuenow = parseInt(await track(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await track(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(52);
   });
 
   test("−10 button decreases value to 32", async ({ page }) => {
     await page.getByRole("button", { name: "−10" }).first().click();
-    const valuenow = parseInt(await track(page).getAttribute("aria-valuenow") ?? "0");
+    const valuenow = parseInt((await track(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(32);
   });
 

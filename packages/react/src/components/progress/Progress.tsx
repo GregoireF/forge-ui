@@ -1,6 +1,6 @@
+import { connectProgress } from "@forge-ui/progress";
 import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
-import { connectProgress } from "@forge-ui/progress";
 import { Slot } from "../shared/Slot.js";
 
 // ---------------------------------------------------------------------------

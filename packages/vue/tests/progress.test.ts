@@ -3,7 +3,12 @@ import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent } from "vue";
 import { Progress } from "../src/components/progress/Progress.js";
 
-const { Root: ProgressRoot, Track: ProgressTrack, Fill: ProgressFill, ValueText: ProgressValueText } = Progress;
+const {
+  Root: ProgressRoot,
+  Track: ProgressTrack,
+  Fill: ProgressFill,
+  ValueText: ProgressValueText,
+} = Progress;
 
 afterEach(cleanup);
 

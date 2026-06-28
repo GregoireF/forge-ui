@@ -1,5 +1,5 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, render, screen, waitFor } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
 import {
@@ -155,7 +155,9 @@ describe("useCheckbox (Vue)", () => {
       render(
         defineComponent({
           components: { CheckboxRoot, CheckboxControl },
-          setup() { return { isChecked }; },
+          setup() {
+            return { isChecked };
+          },
           template: `<CheckboxRoot :checked="isChecked"><CheckboxControl data-testid="control" /></CheckboxRoot>`,
         }),
       );
@@ -170,7 +172,9 @@ describe("useCheckbox (Vue)", () => {
       render(
         defineComponent({
           components: { CheckboxRoot, CheckboxControl },
-          setup() { return { state }; },
+          setup() {
+            return { state };
+          },
           template: `<CheckboxRoot :checked="state"><CheckboxControl data-testid="control" /></CheckboxRoot>`,
         }),
       );
@@ -286,7 +290,9 @@ describe("useCheckbox (Vue)", () => {
         `,
       });
       render(fixture);
-      await waitFor(() => expect(screen.getByTestId("all")).toHaveAttribute("aria-checked", "mixed"));
+      await waitFor(() =>
+        expect(screen.getByTestId("all")).toHaveAttribute("aria-checked", "mixed"),
+      );
       await userEvent.click(screen.getByTestId("all"));
       await waitFor(() => {
         expect(screen.getByTestId("a")).toHaveAttribute("aria-checked", "true");
@@ -312,7 +318,9 @@ describe("useCheckbox (Vue)", () => {
         `,
       });
       render(fixture);
-      await waitFor(() => expect(screen.getByTestId("all")).toHaveAttribute("aria-checked", "true"));
+      await waitFor(() =>
+        expect(screen.getByTestId("all")).toHaveAttribute("aria-checked", "true"),
+      );
       await userEvent.click(screen.getByTestId("all"));
       await waitFor(() => {
         expect(screen.getByTestId("a")).toHaveAttribute("aria-checked", "false");

@@ -22,7 +22,9 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
   useLayoutEffect(() => {
     machine.setContext({
       ...(options.options !== undefined && { allOptions: options.options }),
-      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onHighlightedScroll !== undefined && {
+        onHighlightedScroll: options.onHighlightedScroll,
+      }),
       ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

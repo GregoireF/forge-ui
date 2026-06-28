@@ -3,7 +3,11 @@ import { Accordion } from "@forge-ui/react";
 export function AccordionDemoReact() {
   return (
     <div className="forge-demo" style={{ display: "block", padding: "1.5rem" }}>
-      <Accordion.Root type="single" collapsible style={{ width: "100%", maxWidth: "480px", margin: "0 auto" }}>
+      <Accordion.Root
+        type="single"
+        collapsible
+        style={{ width: "100%", maxWidth: "480px", margin: "0 auto" }}
+      >
         <Accordion.Item value="what">
           <Accordion.Header>
             <Accordion.Trigger>
@@ -12,8 +16,8 @@ export function AccordionDemoReact() {
             </Accordion.Trigger>
           </Accordion.Header>
           <Accordion.Content>
-            forge-ui is a headless component library built on a machine → connect → framework architecture,
-            giving you complete styling freedom.
+            forge-ui is a headless component library built on a machine → connect → framework
+            architecture, giving you complete styling freedom.
           </Accordion.Content>
         </Accordion.Item>
 
@@ -25,8 +29,8 @@ export function AccordionDemoReact() {
             </Accordion.Trigger>
           </Accordion.Header>
           <Accordion.Content>
-            Headless components handle behavior and accessibility while you own the styles.
-            No CSS overrides, no specificity wars.
+            Headless components handle behavior and accessibility while you own the styles. No CSS
+            overrides, no specificity wars.
           </Accordion.Content>
         </Accordion.Item>
 
@@ -38,8 +42,8 @@ export function AccordionDemoReact() {
             </Accordion.Trigger>
           </Accordion.Header>
           <Accordion.Content>
-            Every element gets <code>data-forge-scope</code> and <code>data-forge-part</code> attributes.
-            Style them with stable selectors that never break.
+            Every element gets <code>data-forge-scope</code> and <code>data-forge-part</code>{" "}
+            attributes. Style them with stable selectors that never break.
           </Accordion.Content>
         </Accordion.Item>
       </Accordion.Root>

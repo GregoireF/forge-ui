@@ -12,9 +12,9 @@
  *       file_pattern: axe-badge.json
  */
 
-import { readFileSync, writeFileSync } from "fs";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
+import { readFileSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
@@ -54,7 +54,10 @@ const a11yFailures = a11ySpecs.filter((s) =>
 
 const violationCount = a11yFailures.length;
 const color = violationCount === 0 ? "brightgreen" : "critical";
-const message = violationCount === 0 ? "0 violations" : `${violationCount} violation${violationCount > 1 ? "s" : ""}`;
+const message =
+  violationCount === 0
+    ? "0 violations"
+    : `${violationCount} violation${violationCount > 1 ? "s" : ""}`;
 
 const badge = {
   schemaVersion: 1,
@@ -65,7 +68,7 @@ const badge = {
 };
 
 const badgePath = resolve(repoRoot, "axe-badge.json");
-writeFileSync(badgePath, JSON.stringify(badge, null, 2) + "\n");
+writeFileSync(badgePath, `${JSON.stringify(badge, null, 2)}\n`);
 
 console.log(`Badge updated: ${message} (${color})`);
 if (violationCount > 0) {

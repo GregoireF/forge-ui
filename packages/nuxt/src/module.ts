@@ -357,22 +357,12 @@ export default defineNuxtModule({
       addComponent({ name, export: name, filePath: from });
     }
 
-    const switchComponents = [
-      "SwitchRoot",
-      "SwitchControl",
-      "SwitchThumb",
-      "SwitchLabel",
-    ] as const;
+    const switchComponents = ["SwitchRoot", "SwitchControl", "SwitchThumb", "SwitchLabel"] as const;
     for (const name of switchComponents) {
       addComponent({ name, export: name, filePath: from });
     }
 
-    const tabsComponents = [
-      "TabsRoot",
-      "TabsList",
-      "TabsTrigger",
-      "TabsPanel",
-    ] as const;
+    const tabsComponents = ["TabsRoot", "TabsList", "TabsTrigger", "TabsPanel"] as const;
     for (const name of tabsComponents) {
       addComponent({ name, export: name, filePath: from });
     }

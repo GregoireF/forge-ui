@@ -8,13 +8,20 @@ test.describe("DateRangePicker — React (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const trigger = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-trigger"]');
-  const content = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-content"]');
-  const header = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-header"]');
-  const grid = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-grid"]');
-  const prev = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-prev"]');
-  const next = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-next"]');
-  const clear = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-range-picker-clear"]');
+  const trigger = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-trigger"]');
+  const content = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-content"]');
+  const header = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-header"]');
+  const grid = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-grid"]');
+  const prev = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-prev"]');
+  const next = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-next"]');
+  const clear = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-range-picker-clear"]');
 
   test("trigger is visible", async ({ page }) => {
     await expect(trigger(page)).toBeVisible();
@@ -59,9 +66,7 @@ test.describe("DateRangePicker — React (forge-ui)", () => {
   });
 
   test("no axe violations when closed", async ({ page }) => {
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
     expect(results.violations).toEqual([]);
   });
 });

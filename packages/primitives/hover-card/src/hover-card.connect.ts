@@ -1,6 +1,11 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
 import { getAlignFromPlacement, getSideFromPlacement } from "@forge-ui/floating";
-import type { HoverCardContext, HoverCardEvent, HoverCardSend, HoverCardState } from "./hover-card.types.js";
+import type {
+  HoverCardContext,
+  HoverCardEvent,
+  HoverCardSend,
+  HoverCardState,
+} from "./hover-card.types.js";
 
 export type HoverCardApi = ReturnType<typeof connectHoverCard>;
 
@@ -23,8 +28,12 @@ export function connectHoverCard(
   const isOpen = snapshot.matches("open", "closing");
   const state = isOpen ? "open" : "closed";
 
-  const side = getSideFromPlacement(context.currentPlacement as Parameters<typeof getSideFromPlacement>[0]);
-  const align = getAlignFromPlacement(context.currentPlacement as Parameters<typeof getAlignFromPlacement>[0]);
+  const side = getSideFromPlacement(
+    context.currentPlacement as Parameters<typeof getSideFromPlacement>[0],
+  );
+  const align = getAlignFromPlacement(
+    context.currentPlacement as Parameters<typeof getAlignFromPlacement>[0],
+  );
 
   function scheduleOpen(): void {
     clearTimeout(context._closeTimerId);

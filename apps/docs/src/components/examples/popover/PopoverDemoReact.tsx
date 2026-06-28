@@ -7,15 +7,15 @@ export function PopoverDemoReact() {
         <Popover.Trigger>Open Popover</Popover.Trigger>
         <Popover.Portal>
           <Popover.Content sideOffset={8}>
-            <Popover.Title style={{ fontWeight: 600, marginBottom: "0.25rem", color: "var(--sl-color-white)" }}>
+            <Popover.Title
+              style={{ fontWeight: 600, marginBottom: "0.25rem", color: "var(--sl-color-white)" }}
+            >
               Settings
             </Popover.Title>
             <Popover.Description>
               Configure your preferences. Changes apply immediately.
             </Popover.Description>
-            <Popover.Close style={{ marginTop: "0.75rem", display: "block" }}>
-              Close
-            </Popover.Close>
+            <Popover.Close style={{ marginTop: "0.75rem", display: "block" }}>Close</Popover.Close>
             <Popover.Arrow />
           </Popover.Content>
         </Popover.Portal>

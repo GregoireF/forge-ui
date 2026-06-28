@@ -43,7 +43,8 @@ export function useDatePicker(options: UseDatePickerOptions = {}) {
     getCalendarGridProps: () => api.value.getCalendarGridProps(),
     getCalendarRowProps: (weekIndex: number) => api.value.getCalendarRowProps(weekIndex),
     getWeekdayHeaderProps: (dayIndex: number) => api.value.getWeekdayHeaderProps(dayIndex),
-    getCalendarCellProps: (date: CalendarDate, isOutsideMonth?: boolean) => api.value.getCalendarCellProps(date, isOutsideMonth),
+    getCalendarCellProps: (date: CalendarDate, isOutsideMonth?: boolean) =>
+      api.value.getCalendarCellProps(date, isOutsideMonth),
     getMonthGridProps: () => api.value.getMonthGridProps(),
     getMonthCellProps: (month: number) => api.value.getMonthCellProps(month),
     getYearGridProps: () => api.value.getYearGridProps(),

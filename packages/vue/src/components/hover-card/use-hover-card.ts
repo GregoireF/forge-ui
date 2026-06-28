@@ -1,4 +1,8 @@
-import type { CreateHoverCardMachineOptions, HoverCardPositioning, HoverCardSend } from "@forge-ui/hover-card";
+import type {
+  CreateHoverCardMachineOptions,
+  HoverCardPositioning,
+  HoverCardSend,
+} from "@forge-ui/hover-card";
 import { connectHoverCard, createHoverCardMachine } from "@forge-ui/hover-card";
 import { computed, useId, watchEffect } from "vue";
 import { useMachine } from "../../use-machine.js";
@@ -37,9 +41,12 @@ export function useHoverCard(options: UseHoverCardOptions = {}) {
   return {
     isOpen,
     send: send as HoverCardSend,
-    getTriggerProps: (): ReturnType<typeof api.value.getTriggerProps> => api.value.getTriggerProps(),
-    getPositionerProps: (): ReturnType<typeof api.value.getPositionerProps> => api.value.getPositionerProps(),
-    getContentProps: (): ReturnType<typeof api.value.getContentProps> => api.value.getContentProps(),
+    getTriggerProps: (): ReturnType<typeof api.value.getTriggerProps> =>
+      api.value.getTriggerProps(),
+    getPositionerProps: (): ReturnType<typeof api.value.getPositionerProps> =>
+      api.value.getPositionerProps(),
+    getContentProps: (): ReturnType<typeof api.value.getContentProps> =>
+      api.value.getContentProps(),
     getArrowProps: (): ReturnType<typeof api.value.getArrowProps> => api.value.getArrowProps(),
   };
 }

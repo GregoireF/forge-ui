@@ -1,7 +1,7 @@
-import type { PropType } from "vue";
-import { defineComponent, h } from "vue";
 import type { SeparatorOptions } from "@forge-ui/separator";
 import { connectSeparator } from "@forge-ui/separator";
+import type { PropType } from "vue";
+import { defineComponent, h } from "vue";
 
 const SeparatorRoot = defineComponent({
   name: "ForgeSeparator",

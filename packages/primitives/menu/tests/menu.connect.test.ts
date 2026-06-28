@@ -91,7 +91,9 @@ describe("connectMenu — getTriggerProps", () => {
   });
 
   it("aria-controls=contentId when open", () => {
-    expect(makeApi({ contentId: "my-menu-content" }, "open").api.getTriggerProps()["aria-controls"]).toBe("my-menu-content");
+    expect(
+      makeApi({ contentId: "my-menu-content" }, "open").api.getTriggerProps()["aria-controls"],
+    ).toBe("my-menu-content");
   });
 
   it("id=triggerId", () => {
@@ -186,7 +188,15 @@ describe("connectMenu — getContentProps", () => {
   it("ArrowDown sends NEXT_ITEM", () => {
     const { api, send } = makeApi();
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "ArrowDown", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowDown",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("NEXT_ITEM");
   });
@@ -194,7 +204,15 @@ describe("connectMenu — getContentProps", () => {
   it("ArrowUp sends PREV_ITEM", () => {
     const { api, send } = makeApi();
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "ArrowUp", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowUp",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("PREV_ITEM");
   });
@@ -202,7 +220,15 @@ describe("connectMenu — getContentProps", () => {
   it("Home sends FIRST_ITEM", () => {
     const { api, send } = makeApi();
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "Home", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Home",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("FIRST_ITEM");
   });
@@ -210,7 +236,15 @@ describe("connectMenu — getContentProps", () => {
   it("End sends LAST_ITEM", () => {
     const { api, send } = makeApi();
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "End", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "End",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("LAST_ITEM");
   });
@@ -218,7 +252,15 @@ describe("connectMenu — getContentProps", () => {
   it("Enter sends SELECT_HIGHLIGHTED when an item is highlighted", () => {
     const { api, send } = makeApi({ highlighted: "a" });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "Enter", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Enter",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("SELECT_HIGHLIGHTED");
   });
@@ -226,7 +268,15 @@ describe("connectMenu — getContentProps", () => {
   it("Escape sends ESCAPE_KEY", () => {
     const { api, send } = makeApi();
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "Escape", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Escape",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("ESCAPE_KEY");
   });
@@ -234,7 +284,15 @@ describe("connectMenu — getContentProps", () => {
   it("Tab sends CLOSE", () => {
     const { api, send } = makeApi();
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "Tab", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Tab",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("CLOSE");
   });
@@ -313,23 +371,33 @@ describe("connectMenu — getItemProps", () => {
 
 describe("connectMenu — getRadioItemProps", () => {
   it("role=menuitemradio", () => {
-    expect(makeApi().api.getRadioItemProps({ value: "a", checked: false }).role).toBe("menuitemradio");
+    expect(makeApi().api.getRadioItemProps({ value: "a", checked: false }).role).toBe(
+      "menuitemradio",
+    );
   });
 
   it("aria-checked=true when checked", () => {
-    expect(makeApi().api.getRadioItemProps({ value: "a", checked: true })["aria-checked"]).toBe(true);
+    expect(makeApi().api.getRadioItemProps({ value: "a", checked: true })["aria-checked"]).toBe(
+      true,
+    );
   });
 
   it("aria-checked=false when unchecked", () => {
-    expect(makeApi().api.getRadioItemProps({ value: "a", checked: false })["aria-checked"]).toBe(false);
+    expect(makeApi().api.getRadioItemProps({ value: "a", checked: false })["aria-checked"]).toBe(
+      false,
+    );
   });
 
   it("data-state=checked when checked", () => {
-    expect(makeApi().api.getRadioItemProps({ value: "a", checked: true })["data-state"]).toBe("checked");
+    expect(makeApi().api.getRadioItemProps({ value: "a", checked: true })["data-state"]).toBe(
+      "checked",
+    );
   });
 
   it("data-state=unchecked when not checked", () => {
-    expect(makeApi().api.getRadioItemProps({ value: "a", checked: false })["data-state"]).toBe("unchecked");
+    expect(makeApi().api.getRadioItemProps({ value: "a", checked: false })["data-state"]).toBe(
+      "unchecked",
+    );
   });
 
   it("onClick sends SELECT_ITEM when closeOnSelect=true (default)", () => {
@@ -340,7 +408,10 @@ describe("connectMenu — getRadioItemProps", () => {
 
   it("onClick does NOT send when closeOnSelect=false", () => {
     const { api, send } = makeApi();
-    (api.getRadioItemProps({ value: "a", checked: false, closeOnSelect: false }).onClick as () => void)();
+    (
+      api.getRadioItemProps({ value: "a", checked: false, closeOnSelect: false })
+        .onClick as () => void
+    )();
     expect(send).not.toHaveBeenCalled();
   });
 });
@@ -351,27 +422,39 @@ describe("connectMenu — getRadioItemProps", () => {
 
 describe("connectMenu — getCheckboxItemProps", () => {
   it("role=menuitemcheckbox", () => {
-    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: false }).role).toBe("menuitemcheckbox");
+    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: false }).role).toBe(
+      "menuitemcheckbox",
+    );
   });
 
   it("aria-checked=true when checked=true", () => {
-    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: true })["aria-checked"]).toBe(true);
+    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: true })["aria-checked"]).toBe(
+      true,
+    );
   });
 
   it("aria-checked='mixed' when checked='indeterminate'", () => {
-    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: "indeterminate" })["aria-checked"]).toBe("mixed");
+    expect(
+      makeApi().api.getCheckboxItemProps({ value: "a", checked: "indeterminate" })["aria-checked"],
+    ).toBe("mixed");
   });
 
   it("data-state=indeterminate when checked='indeterminate'", () => {
-    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: "indeterminate" })["data-state"]).toBe("indeterminate");
+    expect(
+      makeApi().api.getCheckboxItemProps({ value: "a", checked: "indeterminate" })["data-state"],
+    ).toBe("indeterminate");
   });
 
   it("data-state=checked when checked=true", () => {
-    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: true })["data-state"]).toBe("checked");
+    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: true })["data-state"]).toBe(
+      "checked",
+    );
   });
 
   it("data-state=unchecked when checked=false", () => {
-    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: false })["data-state"]).toBe("unchecked");
+    expect(makeApi().api.getCheckboxItemProps({ value: "a", checked: false })["data-state"]).toBe(
+      "unchecked",
+    );
   });
 
   it("onClick does NOT send by default (closeOnSelect=false default)", () => {
@@ -382,7 +465,10 @@ describe("connectMenu — getCheckboxItemProps", () => {
 
   it("onClick sends SELECT_ITEM when closeOnSelect=true", () => {
     const { api, send } = makeApi();
-    (api.getCheckboxItemProps({ value: "a", checked: false, closeOnSelect: true }).onClick as () => void)();
+    (
+      api.getCheckboxItemProps({ value: "a", checked: false, closeOnSelect: true })
+        .onClick as () => void
+    )();
     expect(send).toHaveBeenCalledWith({ type: "SELECT_ITEM", value: "a" });
   });
 });
@@ -508,7 +594,9 @@ describe("connectMenu — getItemIndicatorProps", () => {
   });
 
   it("data-state=indeterminate when 'indeterminate'", () => {
-    expect(makeApi().api.getItemIndicatorProps("indeterminate")["data-state"]).toBe("indeterminate");
+    expect(makeApi().api.getItemIndicatorProps("indeterminate")["data-state"]).toBe(
+      "indeterminate",
+    );
   });
 });
 
@@ -518,7 +606,9 @@ describe("connectMenu — getItemIndicatorProps", () => {
 
 describe("connectMenu — getContextMenuTriggerProps", () => {
   it("data-forge-part=context-menu-trigger", () => {
-    expect(makeApi().api.getContextMenuTriggerProps()["data-forge-part"]).toBe("context-menu-trigger");
+    expect(makeApi().api.getContextMenuTriggerProps()["data-forge-part"]).toBe(
+      "context-menu-trigger",
+    );
   });
 
   it("onContextMenu calls preventDefault and sends CONTEXT_MENU", () => {
@@ -550,7 +640,10 @@ describe("connectMenu — getPositionerProps (context menu mode)", () => {
 
 describe("connectMenu — getPositionerProps (floating mode)", () => {
   it("position matches positioning.strategy", () => {
-    const { api } = makeApi({ positioning: { ...BASE_POSITIONING, strategy: "absolute" }, isContextMenu: false });
+    const { api } = makeApi({
+      positioning: { ...BASE_POSITIONING, strategy: "absolute" },
+      isContextMenu: false,
+    });
     const style = api.getPositionerProps().style as Record<string, string>;
     expect(style.position).toBe("absolute");
   });
@@ -655,7 +748,9 @@ describe("connectMenu — getRadioGroupLabelProps", () => {
   });
 
   it("data-forge-part=radio-group-label", () => {
-    expect(makeApi().api.getRadioGroupLabelProps("theme")["data-forge-part"]).toBe("radio-group-label");
+    expect(makeApi().api.getRadioGroupLabelProps("theme")["data-forge-part"]).toBe(
+      "radio-group-label",
+    );
   });
 });
 
@@ -685,7 +780,15 @@ describe("connectMenu — contentKeyDown Space key", () => {
   it("Space sends SELECT_HIGHLIGHTED when item highlighted", () => {
     const { api, send } = makeApi({ highlighted: "a" });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: " ", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: " ",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("SELECT_HIGHLIGHTED");
   });
@@ -693,7 +796,15 @@ describe("connectMenu — contentKeyDown Space key", () => {
   it("Space does not send when nothing highlighted", () => {
     const { api, send } = makeApi({ highlighted: null });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: " ", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: " ",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).not.toHaveBeenCalled();
   });
@@ -707,16 +818,36 @@ describe("connectMenu — contentKeyDown typeahead", () => {
     ];
     const { api, send } = makeApi({ items, highlighted: null });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "a", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "a",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
-    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_ITEM", value: "apple", source: "keyboard" });
+    expect(send).toHaveBeenCalledWith({
+      type: "HIGHLIGHT_ITEM",
+      value: "apple",
+      source: "keyboard",
+    });
   });
 
   it("Ctrl+key does not trigger typeahead", () => {
     const items = [{ value: "a", label: "A" }];
     const { api, send } = makeApi({ items });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "a", ctrlKey: true, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "a",
+      ctrlKey: true,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).not.toHaveBeenCalled();
   });
@@ -725,7 +856,15 @@ describe("connectMenu — contentKeyDown typeahead", () => {
     const items = [{ value: "a", label: "A" }];
     const { api, send } = makeApi({ items });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "ArrowDown", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowDown",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     // ArrowDown sends NEXT_ITEM, NOT a typeahead HIGHLIGHT_ITEM
     expect(send).toHaveBeenCalledWith("NEXT_ITEM");
@@ -742,7 +881,12 @@ describe("connectMenu — triggerKeyDown", () => {
     const { api, send } = makeApi({}, "closed");
     const props = api.getTriggerProps();
     const handler = props.onKeyDown!;
-    const event = { key: "ArrowDown", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowDown",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("OPEN");
   });
@@ -750,7 +894,12 @@ describe("connectMenu — triggerKeyDown", () => {
   it("Enter sends OPEN when menu is closed", () => {
     const { api, send } = makeApi({}, "closed");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "Enter", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Enter",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("OPEN");
   });
@@ -758,7 +907,12 @@ describe("connectMenu — triggerKeyDown", () => {
   it("ArrowDown does NOT send OPEN when menu is already open", () => {
     const { api, send } = makeApi({}, "open");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "ArrowDown", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowDown",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).not.toHaveBeenCalledWith("OPEN");
   });
@@ -766,7 +920,12 @@ describe("connectMenu — triggerKeyDown", () => {
   it("Escape sends ESCAPE_KEY when menu is open", () => {
     const { api, send } = makeApi({}, "open");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "Escape", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Escape",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("ESCAPE_KEY");
   });
@@ -774,7 +933,12 @@ describe("connectMenu — triggerKeyDown", () => {
   it("Escape does nothing when menu is closed", () => {
     const { api, send } = makeApi({}, "closed");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "Escape", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "Escape",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).not.toHaveBeenCalled();
   });
@@ -782,7 +946,12 @@ describe("connectMenu — triggerKeyDown", () => {
   it("ArrowUp sends OPEN when menu is closed", () => {
     const { api, send } = makeApi({}, "closed");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "ArrowUp", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowUp",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("OPEN");
   });
@@ -791,7 +960,12 @@ describe("connectMenu — triggerKeyDown", () => {
     vi.useFakeTimers();
     const { api, send } = makeApi({}, "closed");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "ArrowUp", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowUp",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).toHaveBeenCalledWith("OPEN");
     vi.runAllTimers();
@@ -802,7 +976,12 @@ describe("connectMenu — triggerKeyDown", () => {
   it("ArrowUp does NOT send OPEN when menu is already open", () => {
     const { api, send } = makeApi({}, "open");
     const handler = api.getTriggerProps().onKeyDown!;
-    const event = { key: "ArrowUp", defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "ArrowUp",
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
     expect(send).not.toHaveBeenCalledWith("OPEN");
   });
@@ -1053,9 +1232,21 @@ describe("connectMenu — typeahead cycling", () => {
     ];
     const { api, send } = makeApi({ items, highlighted: "apple" });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "a", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "a",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
-    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_ITEM", value: "avocado", source: "keyboard" });
+    expect(send).toHaveBeenCalledWith({
+      type: "HIGHLIGHT_ITEM",
+      value: "avocado",
+      source: "keyboard",
+    });
   });
 
   it("wraps to first match when current item is last in matches", () => {
@@ -1065,16 +1256,36 @@ describe("connectMenu — typeahead cycling", () => {
     ];
     const { api, send } = makeApi({ items, highlighted: "avocado" });
     const handler = api.getContentProps().onKeyDown!;
-    const event = { key: "a", ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    const event = {
+      key: "a",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    };
     (handler as (e: typeof event) => void)(event);
-    expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_ITEM", value: "apple", source: "keyboard" });
+    expect(send).toHaveBeenCalledWith({
+      type: "HIGHLIGHT_ITEM",
+      value: "apple",
+      source: "keyboard",
+    });
   });
 
   it("second consecutive char press triggers clearTimeout (timerId defined path)", () => {
     const items = [{ value: "apple", label: "Apple" }];
     const { api } = makeApi({ items, highlighted: null });
     const handler = api.getContentProps().onKeyDown!;
-    const ev = (k: string) => ({ key: k, ctrlKey: false, altKey: false, metaKey: false, defaultPrevented: false, preventDefault: vi.fn(), stopPropagation: vi.fn() });
+    const ev = (k: string) => ({
+      key: k,
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      defaultPrevented: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    });
     (handler as (e: ReturnType<typeof ev>) => void)(ev("a"));
     expect(() => (handler as (e: ReturnType<typeof ev>) => void)(ev("p"))).not.toThrow();
   });

@@ -1,6 +1,6 @@
-﻿import type { InjectionKey, PropType } from "vue";
+﻿import type { TagsInputTranslations } from "@forge-ui/tags-input";
+import type { InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, ref, watch } from "vue";
-import type { TagsInputTranslations } from "@forge-ui/tags-input";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
 import { useTagsInput } from "./use-tags-input.js";
 
@@ -85,11 +85,21 @@ const TagsInputRoot = defineComponent({
       },
     );
 
-    const liveRegionStyle = { position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 };
+    const liveRegionStyle = {
+      position: "absolute",
+      width: "1px",
+      height: "1px",
+      padding: 0,
+      margin: "-1px",
+      overflow: "hidden",
+      clip: "rect(0,0,0,0)",
+      whiteSpace: "nowrap",
+      border: 0,
+    };
 
     return () =>
       h("div", api.getRootProps(), [
-        slots['default']?.(),
+        slots["default"]?.(),
         h("span", { ...api.getLiveRegionProps(), ref: liveRegionEl, style: liveRegionStyle }),
       ]);
   },
@@ -103,7 +113,7 @@ const TagsInputLabel = defineComponent({
   name: "ForgeTagsInputLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots['default']?.());
+    return () => h("label", api.getLabelProps(), slots["default"]?.());
   },
 });
 
@@ -149,7 +159,7 @@ const TagsInputTag = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
-    return () => h("span", api.getTagProps(props.value), slots['default']?.());
+    return () => h("span", api.getTagProps(props.value), slots["default"]?.());
   },
 });
 
@@ -164,8 +174,7 @@ const TagsInputTagDelete = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
-    return () =>
-      h("button", api.getTagDeleteProps(props.value), slots['default']?.() ?? "Ã—");
+    return () => h("button", api.getTagDeleteProps(props.value), slots["default"]?.() ?? "Ã—");
   },
 });
 
@@ -204,10 +213,10 @@ export const TagsInput = {
 } as const;
 
 export {
-  TagsInputRoot,
-  TagsInputLabel,
+  TagsInputHiddenInput,
   TagsInputInput,
+  TagsInputLabel,
+  TagsInputRoot,
   TagsInputTag,
   TagsInputTagDelete,
-  TagsInputHiddenInput,
 };

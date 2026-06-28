@@ -1,8 +1,8 @@
+import { fileURLToPath } from "node:url";
 import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import vue from "@astrojs/vue";
 import { defineConfig } from "astro/config";
-import { fileURLToPath } from "node:url";
 
 function src(pkg) {
   return fileURLToPath(new URL(`../../packages/${pkg}/src/index.ts`, import.meta.url));

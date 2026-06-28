@@ -26,17 +26,17 @@ test.describe("NumberInput — Vue (forge-ui)", () => {
   });
 
   test("aria-valuenow is 50 initially", async ({ page }) => {
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "-1");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "-1", 10);
     expect(valuenow).toBe(50);
   });
 
   test("aria-valuemin is 0", async ({ page }) => {
-    const valuemin = parseInt((await input(page).getAttribute("aria-valuemin")) ?? "-1");
+    const valuemin = parseInt((await input(page).getAttribute("aria-valuemin")) ?? "-1", 10);
     expect(valuemin).toBe(0);
   });
 
   test("aria-valuemax is 100", async ({ page }) => {
-    const valuemax = parseInt((await input(page).getAttribute("aria-valuemax")) ?? "-1");
+    const valuemax = parseInt((await input(page).getAttribute("aria-valuemax")) ?? "-1", 10);
     expect(valuemax).toBe(100);
   });
 
@@ -52,14 +52,14 @@ test.describe("NumberInput — Vue (forge-ui)", () => {
   test("ArrowUp increments value by step (50 → 51)", async ({ page }) => {
     await input(page).focus();
     await page.keyboard.press("ArrowUp");
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(51);
   });
 
   test("ArrowDown decrements value by step (50 → 49)", async ({ page }) => {
     await input(page).focus();
     await page.keyboard.press("ArrowDown");
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(49);
   });
 
@@ -67,28 +67,28 @@ test.describe("NumberInput — Vue (forge-ui)", () => {
   test("PageUp increments value by largeStep (50 → 60)", async ({ page }) => {
     await input(page).focus();
     await page.keyboard.press("PageUp");
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(60);
   });
 
   test("PageDown decrements value by largeStep (50 → 40)", async ({ page }) => {
     await input(page).focus();
     await page.keyboard.press("PageDown");
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(40);
   });
 
   test("Home sets value to min (0)", async ({ page }) => {
     await input(page).focus();
     await page.keyboard.press("Home");
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "-1");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "-1", 10);
     expect(valuenow).toBe(0);
   });
 
   test("End sets value to max (100)", async ({ page }) => {
     await input(page).focus();
     await page.keyboard.press("End");
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "-1");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "-1", 10);
     expect(valuenow).toBe(100);
   });
 
@@ -98,13 +98,13 @@ test.describe("NumberInput — Vue (forge-ui)", () => {
 
   test("increment button click increments value (50 → 51)", async ({ page }) => {
     await increment(page).click();
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(51);
   });
 
   test("decrement button click decrements value (50 → 49)", async ({ page }) => {
     await decrement(page).click();
-    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0");
+    const valuenow = parseInt((await input(page).getAttribute("aria-valuenow")) ?? "0", 10);
     expect(valuenow).toBe(49);
   });
 

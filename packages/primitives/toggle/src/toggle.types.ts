@@ -8,10 +8,7 @@ export interface ToggleContext {
   onPressedChange?: (pressed: boolean) => void;
 }
 
-export type ToggleEvent =
-  | { type: "TOGGLE" }
-  | { type: "PRESS" }
-  | { type: "RELEASE" };
+export type ToggleEvent = { type: "TOGGLE" } | { type: "PRESS" } | { type: "RELEASE" };
 
 export interface CreateToggleOptions {
   id?: string;

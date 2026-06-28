@@ -1,4 +1,39 @@
-import { Accordion, AlertDialog, Avatar, Checkbox, Collapsible, Combobox, ContextMenu, DateField, DatePicker, DateRangePicker, Dialog, DialogPortal, Field, HoverCard, Menu, NumberInput, Popover, Progress, RadioGroup, Select, Separator, Slider, Switch, Tabs, TagsInput, TimePicker, Toggle, ToggleGroup, Tooltip, VisuallyHidden, useAvatarContext, useDialog, useDatePickerContext, useDateRangePickerContext } from "@forge-ui/react";
+import {
+  Accordion,
+  AlertDialog,
+  Avatar,
+  Checkbox,
+  Collapsible,
+  Combobox,
+  ContextMenu,
+  DateField,
+  DatePicker,
+  DateRangePicker,
+  Dialog,
+  DialogPortal,
+  Field,
+  HoverCard,
+  Menu,
+  NumberInput,
+  Popover,
+  Progress,
+  RadioGroup,
+  Select,
+  Separator,
+  Slider,
+  Switch,
+  Tabs,
+  TagsInput,
+  TimePicker,
+  Toggle,
+  ToggleGroup,
+  Tooltip,
+  useAvatarContext,
+  useDatePickerContext,
+  useDateRangePickerContext,
+  useDialog,
+  VisuallyHidden,
+} from "@forge-ui/react";
 import { useState } from "react";
 
 export default function App() {
@@ -24,10 +59,7 @@ export default function App() {
         <NestedDialogDemo />
       </Section>
 
-      <Section
-        title="Dialog contrôlé"
-        description="open + onOpenChange — état géré à l'extérieur."
-      >
+      <Section title="Dialog contrôlé" description="open + onOpenChange — état géré à l'extérieur.">
         <ControlledDialogDemo />
       </Section>
 
@@ -46,11 +78,17 @@ export default function App() {
         <PopoverDemo />
       </Section>
 
-      <Section title="Select" description="WAI-ARIA 1.2 Select-Only Combobox. Keyboard + typeahead.">
+      <Section
+        title="Select"
+        description="WAI-ARIA 1.2 Select-Only Combobox. Keyboard + typeahead."
+      >
         <SelectDemo />
       </Section>
 
-      <Section title="Select multiple" description="Multi-sélection — reste ouvert après chaque choix.">
+      <Section
+        title="Select multiple"
+        description="Multi-sélection — reste ouvert après chaque choix."
+      >
         <SelectMultipleDemo />
       </Section>
 
@@ -104,11 +142,17 @@ export default function App() {
         <AsChildDemo />
       </Section>
 
-      <Section title="TagsInput" description="Saisie libre de tags. Enter=ajouter, Backspace=supprimer dernier.">
+      <Section
+        title="TagsInput"
+        description="Saisie libre de tags. Enter=ajouter, Backspace=supprimer dernier."
+      >
         <TagsInputDemo />
       </Section>
 
-      <Section title="Accordion" description="Panneau accordéon — simple, multiple, ou collapsible.">
+      <Section
+        title="Accordion"
+        description="Panneau accordéon — simple, multiple, ou collapsible."
+      >
         <AccordionDemo />
       </Section>
 
@@ -116,7 +160,10 @@ export default function App() {
         <CollapsibleDemo />
       </Section>
 
-      <Section title="Tabs" description="Navigation par onglets WAI-ARIA. Keyboard ArrowLeft/Right.">
+      <Section
+        title="Tabs"
+        description="Navigation par onglets WAI-ARIA. Keyboard ArrowLeft/Right."
+      >
         <TabsDemo />
       </Section>
 
@@ -128,7 +175,10 @@ export default function App() {
         <RadioGroupDemo />
       </Section>
 
-      <Section title="Slider" description="Curseur draggable. Arrow keys pour incrémenter/décrémenter.">
+      <Section
+        title="Slider"
+        description="Curseur draggable. Arrow keys pour incrémenter/décrémenter."
+      >
         <SliderDemo />
       </Section>
 
@@ -270,9 +320,9 @@ function AnimatedDialogDemo() {
         <Dialog.Content style={contentStyle}>
           <Dialog.Title style={titleStyle}>Dialog animé</Dialog.Title>
           <Dialog.Description style={descStyle}>
-            Le CSS <code>data-state</code> fait le travail — aucune prop <code>forceMount</code> nécessaire.
-            Le système <code>watchPresence</code> lit <code>animationDuration</code> et maintient le composant
-            monté jusqu'à <code>animationend</code>.
+            Le CSS <code>data-state</code> fait le travail — aucune prop <code>forceMount</code>{" "}
+            nécessaire. Le système <code>watchPresence</code> lit <code>animationDuration</code> et
+            maintient le composant monté jusqu'à <code>animationend</code>.
           </Dialog.Description>
           <div style={footerStyle}>
             <Dialog.Close style={btnGhostStyle}>Annuler</Dialog.Close>
@@ -408,8 +458,8 @@ function AlertDialogDemo() {
         <AlertDialog.Content style={contentStyle}>
           <AlertDialog.Title style={titleStyle}>Supprimer définitivement ?</AlertDialog.Title>
           <AlertDialog.Description style={descStyle}>
-            Cette action est irréversible. Toutes vos données seront supprimées.
-            Escape et click en dehors ne ferment <strong>pas</strong> ce dialog.
+            Cette action est irréversible. Toutes vos données seront supprimées. Escape et click en
+            dehors ne ferment <strong>pas</strong> ce dialog.
           </AlertDialog.Description>
           <div style={footerStyle}>
             <AlertDialog.Cancel style={btnGhostStyle}>Annuler</AlertDialog.Cancel>
@@ -453,9 +503,7 @@ function PopoverDemo() {
       </div>
 
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
-          Placement: top
-        </p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Placement: top</p>
         <Popover.Root positioning={{ placement: "top" }}>
           <Popover.Trigger style={btnStyle}>Top popover</Popover.Trigger>
           <Popover.Portal>
@@ -485,11 +533,18 @@ function PopoverDemo() {
                   style={{ position: "absolute", top: "-6px" }}
                   aria-hidden="true"
                 >
-                  <path d="M0,6 L6,0 L12,6 Z" fill="#fff" stroke="#e2e8f0" strokeWidth="1" strokeLinejoin="round" />
+                  <path
+                    d="M0,6 L6,0 L12,6 Z"
+                    fill="#fff"
+                    stroke="#e2e8f0"
+                    strokeWidth="1"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </Popover.Arrow>
               <Popover.Description style={{ ...descStyle, marginBottom: 0 }}>
-                La flèche est centrée par Floating UI. Utilisez <code>data-side</code> pour la rotation CSS.
+                La flèche est centrée par Floating UI. Utilisez <code>data-side</code> pour la
+                rotation CSS.
               </Popover.Description>
             </Popover.Content>
           </Popover.Portal>
@@ -507,26 +562,36 @@ function SelectDemo() {
   return (
     <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
-          Select simple
-        </p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Select simple</p>
         <Select.Root onValueChange={setValue}>
           <Select.Label style={labelStyle}>Framework</Select.Label>
           <Select.Trigger style={selectTriggerStyle}>
             <Select.Value>
               {/* Select.Placeholder : visible seulement quand aucune valeur n'est sélectionnée */}
-              <Select.Placeholder style={{ color: "#94a3b8" }}>Choisir un framework…</Select.Placeholder>
+              <Select.Placeholder style={{ color: "#94a3b8" }}>
+                Choisir un framework…
+              </Select.Placeholder>
             </Select.Value>
             <span style={{ marginLeft: "auto", opacity: 0.5 }}>▾</span>
           </Select.Trigger>
           <Select.Portal>
             <Select.Content style={selectContentStyle}>
-              <Select.Item value="react" style={selectItemStyle}>React</Select.Item>
-              <Select.Item value="vue" style={selectItemStyle}>Vue</Select.Item>
-              <Select.Item value="angular" style={selectItemStyle}>Angular</Select.Item>
+              <Select.Item value="react" style={selectItemStyle}>
+                React
+              </Select.Item>
+              <Select.Item value="vue" style={selectItemStyle}>
+                Vue
+              </Select.Item>
+              <Select.Item value="angular" style={selectItemStyle}>
+                Angular
+              </Select.Item>
               <Select.Separator style={separatorStyle} />
-              <Select.Item value="svelte" style={selectItemStyle}>Svelte</Select.Item>
-              <Select.Item value="solid" style={selectItemStyle}>Solid</Select.Item>
+              <Select.Item value="svelte" style={selectItemStyle}>
+                Svelte
+              </Select.Item>
+              <Select.Item value="solid" style={selectItemStyle}>
+                Solid
+              </Select.Item>
               <Select.Item value="qwik" disabled style={{ ...selectItemStyle, opacity: 0.4 }}>
                 Qwik (désactivé)
               </Select.Item>
@@ -541,9 +606,7 @@ function SelectDemo() {
       </div>
 
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
-          Avec groupes
-        </p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Avec groupes</p>
         <Select.Root>
           <Select.Label style={labelStyle}>Langage</Select.Label>
           <Select.Trigger style={selectTriggerStyle}>
@@ -554,15 +617,25 @@ function SelectDemo() {
             <Select.Content style={selectContentStyle}>
               <Select.Group>
                 <Select.GroupLabel style={groupLabelStyle}>Frontend</Select.GroupLabel>
-                <Select.Item value="ts" style={selectItemStyle}>TypeScript</Select.Item>
-                <Select.Item value="js" style={selectItemStyle}>JavaScript</Select.Item>
+                <Select.Item value="ts" style={selectItemStyle}>
+                  TypeScript
+                </Select.Item>
+                <Select.Item value="js" style={selectItemStyle}>
+                  JavaScript
+                </Select.Item>
               </Select.Group>
               <Select.Separator style={separatorStyle} />
               <Select.Group>
                 <Select.GroupLabel style={groupLabelStyle}>Backend</Select.GroupLabel>
-                <Select.Item value="go" style={selectItemStyle}>Go</Select.Item>
-                <Select.Item value="rust" style={selectItemStyle}>Rust</Select.Item>
-                <Select.Item value="python" style={selectItemStyle}>Python</Select.Item>
+                <Select.Item value="go" style={selectItemStyle}>
+                  Go
+                </Select.Item>
+                <Select.Item value="rust" style={selectItemStyle}>
+                  Rust
+                </Select.Item>
+                <Select.Item value="python" style={selectItemStyle}>
+                  Python
+                </Select.Item>
               </Select.Group>
             </Select.Content>
           </Select.Portal>
@@ -587,11 +660,21 @@ function SelectMultipleDemo() {
         </Select.Trigger>
         <Select.Portal>
           <Select.Content style={selectContentStyle}>
-            <Select.Item value="design" style={selectItemStyle}>Design</Select.Item>
-            <Select.Item value="dev" style={selectItemStyle}>Développement</Select.Item>
-            <Select.Item value="ux" style={selectItemStyle}>UX Research</Select.Item>
-            <Select.Item value="perf" style={selectItemStyle}>Performance</Select.Item>
-            <Select.Item value="a11y" style={selectItemStyle}>Accessibilité</Select.Item>
+            <Select.Item value="design" style={selectItemStyle}>
+              Design
+            </Select.Item>
+            <Select.Item value="dev" style={selectItemStyle}>
+              Développement
+            </Select.Item>
+            <Select.Item value="ux" style={selectItemStyle}>
+              UX Research
+            </Select.Item>
+            <Select.Item value="perf" style={selectItemStyle}>
+              Performance
+            </Select.Item>
+            <Select.Item value="a11y" style={selectItemStyle}>
+              Accessibilité
+            </Select.Item>
           </Select.Content>
         </Select.Portal>
       </Select.Root>
@@ -615,7 +698,9 @@ function CheckboxDemo() {
           <Checkbox.Control style={checkboxControlStyle}>
             <Checkbox.Indicator style={checkboxIndicatorStyle}>✓</Checkbox.Indicator>
           </Checkbox.Control>
-          <Checkbox.Label style={checkboxLabelStyle}>Accepter les CGU (uncontrolled)</Checkbox.Label>
+          <Checkbox.Label style={checkboxLabelStyle}>
+            Accepter les CGU (uncontrolled)
+          </Checkbox.Label>
         </div>
       </Checkbox.Root>
 
@@ -658,7 +743,9 @@ function CheckboxGroupDemo() {
     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
       <Checkbox.Group value={values} onValueChange={setValues}>
         <Checkbox.GroupAll>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}
+          >
             <Checkbox.Control style={{ ...checkboxControlStyle, background: "#f1f5f9" }}>
               <Checkbox.Indicator style={checkboxIndicatorStyle}>
                 {values.length === items.length ? "✓" : "—"}
@@ -671,7 +758,14 @@ function CheckboxGroupDemo() {
         </Checkbox.GroupAll>
         {items.map((item) => (
           <Checkbox.Root key={item.value} value={item.value}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", paddingLeft: "1.25rem" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                paddingLeft: "1.25rem",
+              }}
+            >
               <Checkbox.Control style={checkboxControlStyle}>
                 <Checkbox.Indicator style={checkboxIndicatorStyle}>✓</Checkbox.Indicator>
               </Checkbox.Control>
@@ -715,7 +809,13 @@ function SwitchDemo() {
 
       <Switch.Root invalid>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Switch.Control style={{ ...switchControlStyle(false), borderColor: "#dc2626", outline: "1px solid #dc2626" }}>
+          <Switch.Control
+            style={{
+              ...switchControlStyle(false),
+              borderColor: "#dc2626",
+              outline: "1px solid #dc2626",
+            }}
+          >
             <Switch.Thumb style={switchThumbStyle(false)} />
           </Switch.Control>
           <Switch.Label style={{ ...checkboxLabelStyle, color: "#dc2626" }}>
@@ -755,9 +855,13 @@ function TooltipDemo() {
           <Tooltip.Trigger style={btnStyle}>Interactive</Tooltip.Trigger>
           <Tooltip.Portal>
             <Tooltip.Content style={{ ...tooltipStyle, padding: "0.5rem 0.75rem" }}>
-              <p style={{ margin: 0, marginBottom: "0.25rem", fontSize: "0.8rem" }}>Cliquez le lien ↓</p>
+              <p style={{ margin: 0, marginBottom: "0.25rem", fontSize: "0.8rem" }}>
+                Cliquez le lien ↓
+              </p>
               {/* biome-ignore lint/a11y/useValidAnchor: demo interactive */}
-              <a href="#" style={{ color: "#38bdf8", fontSize: "0.8rem" }}>Lien dans le tooltip</a>
+              <a href="#" style={{ color: "#38bdf8", fontSize: "0.8rem" }}>
+                Lien dans le tooltip
+              </a>
             </Tooltip.Content>
           </Tooltip.Portal>
         </Tooltip.Root>
@@ -782,7 +886,17 @@ function TooltipDemo() {
           <Tooltip.Trigger style={btnGhostStyle}>Anchor demo</Tooltip.Trigger>
           {/* Tooltip.Anchor redirige le positioner vers cet élément au lieu du trigger */}
           <Tooltip.Anchor>
-            <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "#f59e0b", marginLeft: "0.5rem", verticalAlign: "middle" }} />
+            <span
+              style={{
+                display: "inline-block",
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#f59e0b",
+                marginLeft: "0.5rem",
+                verticalAlign: "middle",
+              }}
+            />
           </Tooltip.Anchor>
           <Tooltip.Portal>
             <Tooltip.Content style={tooltipStyle}>Positionné sur le point orange ↑</Tooltip.Content>
@@ -813,7 +927,12 @@ function HoverCardDemo() {
         <HoverCard.Trigger asChild>
           <a
             href="#"
-            style={{ color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" }}
+            style={{
+              color: "#6366f1",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              textDecoration: "underline",
+            }}
             onClick={(e) => e.preventDefault()}
           >
             @forge-ui
@@ -821,19 +940,40 @@ function HoverCardDemo() {
         </HoverCard.Trigger>
         <HoverCard.Portal>
           <HoverCard.Content style={hoverCardStyle}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                marginBottom: "0.5rem",
+              }}
+            >
               <div style={avatarStyle}>F</div>
               <div>
                 <p style={{ margin: 0, fontWeight: 600, fontSize: "0.9rem" }}>forge-ui</p>
-                <p style={{ margin: 0, fontSize: "0.75rem", color: "#64748b" }}>@forge-ui · headless UI</p>
+                <p style={{ margin: 0, fontSize: "0.75rem", color: "#64748b" }}>
+                  @forge-ui · headless UI
+                </p>
               </div>
             </div>
-            <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#374151", lineHeight: 1.5 }}>
-              Bibliothèque de primitives UI headless. Architecture 3 niveaux : machine → connect → bindings.
+            <p
+              style={{
+                margin: "0 0 0.5rem",
+                fontSize: "0.8rem",
+                color: "#374151",
+                lineHeight: 1.5,
+              }}
+            >
+              Bibliothèque de primitives UI headless. Architecture 3 niveaux : machine → connect →
+              bindings.
             </p>
             <div style={{ display: "flex", gap: "1rem", fontSize: "0.75rem", color: "#64748b" }}>
-              <span><strong style={{ color: "#1e293b" }}>142</strong> Following</span>
-              <span><strong style={{ color: "#1e293b" }}>2.4k</strong> Followers</span>
+              <span>
+                <strong style={{ color: "#1e293b" }}>142</strong> Following
+              </span>
+              <span>
+                <strong style={{ color: "#1e293b" }}>2.4k</strong> Followers
+              </span>
             </div>
           </HoverCard.Content>
         </HoverCard.Portal>
@@ -844,7 +984,12 @@ function HoverCardDemo() {
         <HoverCard.Trigger asChild>
           <a
             href="#"
-            style={{ color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" }}
+            style={{
+              color: "#6366f1",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              textDecoration: "underline",
+            }}
             onClick={(e) => e.preventDefault()}
           >
             Placement bottom
@@ -900,7 +1045,13 @@ function FieldDemo() {
           <input
             type="email"
             placeholder="vous@exemple.fr"
-            style={{ padding: "0.5rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "220px" }}
+            style={{
+              padding: "0.5rem",
+              border: "1px solid #cbd5e1",
+              borderRadius: "6px",
+              fontSize: "0.875rem",
+              width: "220px",
+            }}
             onBlur={(e) => setInvalid(e.target.value.length > 0 && !e.target.value.includes("@"))}
           />
         </Field.Control>
@@ -912,18 +1063,29 @@ function FieldDemo() {
         </Field.Error>
       </Field.Root>
 
-      <Field.Group data-testid="field-group" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <Field.Group
+        data-testid="field-group"
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+      >
         <Field.GroupLabel style={labelStyle}>Notifications</Field.GroupLabel>
         <Field.Root>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Field.Control><input type="checkbox" id="react-notif-email" /></Field.Control>
-            <Field.Label htmlFor="react-notif-email" style={{ fontSize: "0.875rem" }}>Par email</Field.Label>
+            <Field.Control>
+              <input type="checkbox" id="react-notif-email" />
+            </Field.Control>
+            <Field.Label htmlFor="react-notif-email" style={{ fontSize: "0.875rem" }}>
+              Par email
+            </Field.Label>
           </div>
         </Field.Root>
         <Field.Root>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Field.Control><input type="checkbox" id="react-notif-sms" /></Field.Control>
-            <Field.Label htmlFor="react-notif-sms" style={{ fontSize: "0.875rem" }}>Par SMS</Field.Label>
+            <Field.Control>
+              <input type="checkbox" id="react-notif-sms" />
+            </Field.Control>
+            <Field.Label htmlFor="react-notif-sms" style={{ fontSize: "0.875rem" }}>
+              Par SMS
+            </Field.Label>
           </div>
         </Field.Root>
       </Field.Group>
@@ -949,20 +1111,37 @@ function ComboboxDemo() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Single-select (filtre client-side)</p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Single-select (filtre client-side)
+        </p>
         <Combobox.Root onValueChange={setSelected}>
           <Combobox.Label style={labelStyle}>Langage préféré</Combobox.Label>
           <div style={{ display: "flex", gap: "0.25rem" }}>
             <Combobox.Input
-              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+              style={{
+                padding: "0.45rem 0.6rem",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                width: "200px",
+              }}
             />
-            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
-            <Combobox.ClearTrigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>✕</Combobox.ClearTrigger>
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>
+              ▾
+            </Combobox.Trigger>
+            <Combobox.ClearTrigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>
+              ✕
+            </Combobox.ClearTrigger>
           </div>
           <Combobox.Portal>
             <Combobox.Content style={comboboxContentStyle}>
               {languages.map((l) => (
-                <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                <Combobox.Item
+                  key={l.value}
+                  value={l.value}
+                  label={l.label}
+                  style={comboboxItemStyle}
+                >
                   <Combobox.ItemIndicator value={l.value}>✓ </Combobox.ItemIndicator>
                   <Combobox.ItemText>{l.label}</Combobox.ItemText>
                 </Combobox.Item>
@@ -970,25 +1149,50 @@ function ComboboxDemo() {
             </Combobox.Content>
           </Combobox.Portal>
         </Combobox.Root>
-        {selected.length > 0 && <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#64748b" }}>Sélectionné : {selected.join(", ")}</p>}
+        {selected.length > 0 && (
+          <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+            Sélectionné : {selected.join(", ")}
+          </p>
+        )}
       </div>
 
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Multi-select avec TagsInput</p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
+          Multi-select avec TagsInput
+        </p>
         <Combobox.Root multiple>
           <Combobox.Label style={labelStyle}>Langages maîtrisés</Combobox.Label>
           {/* Tags affichés au-dessus de l'input */}
-          <Combobox.TagsInput style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "4px" }}>
+          <Combobox.TagsInput
+            style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "4px" }}
+          >
             {languages.map((l) => (
               <Combobox.Tag
                 key={l.value}
                 value={l.value}
-                style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "2px 6px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "4px", fontSize: "0.75rem" }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  padding: "2px 6px",
+                  background: "#eff6ff",
+                  border: "1px solid #bfdbfe",
+                  borderRadius: "4px",
+                  fontSize: "0.75rem",
+                }}
               >
                 {l.label}
                 <Combobox.TagDelete
                   value={l.value}
-                  style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "#3b82f6", fontSize: "0.75rem", lineHeight: 1 }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    color: "#3b82f6",
+                    fontSize: "0.75rem",
+                    lineHeight: 1,
+                  }}
                 >
                   ✕
                 </Combobox.TagDelete>
@@ -998,14 +1202,27 @@ function ComboboxDemo() {
           <div style={{ display: "flex", gap: "0.25rem" }}>
             <Combobox.Input
               data-testid="combobox-tags-input"
-              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+              style={{
+                padding: "0.45rem 0.6rem",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                width: "200px",
+              }}
             />
-            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>
+              ▾
+            </Combobox.Trigger>
           </div>
           <Combobox.Portal>
             <Combobox.Content style={comboboxContentStyle}>
               {languages.map((l) => (
-                <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                <Combobox.Item
+                  key={l.value}
+                  value={l.value}
+                  label={l.label}
+                  style={comboboxItemStyle}
+                >
                   <Combobox.ItemIndicator value={l.value}>✓ </Combobox.ItemIndicator>
                   <Combobox.ItemText>{l.label}</Combobox.ItemText>
                 </Combobox.Item>
@@ -1016,31 +1233,54 @@ function ComboboxDemo() {
       </div>
 
       <div>
-        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>
-          Avec groupes
-        </p>
+        <p style={{ margin: "0 0 0.5rem", fontSize: "0.8rem", color: "#64748b" }}>Avec groupes</p>
         <Combobox.Root>
           <Combobox.Label style={labelStyle}>Langage</Combobox.Label>
           <div style={{ display: "flex", gap: "0.25rem" }}>
             <Combobox.Input
-              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+              style={{
+                padding: "0.45rem 0.6rem",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                width: "200px",
+              }}
             />
-            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>
+              ▾
+            </Combobox.Trigger>
           </div>
           <Combobox.Portal>
             <Combobox.Content style={comboboxContentStyle}>
               <Combobox.Group>
                 <Combobox.GroupLabel style={groupLabelStyle}>Frontend</Combobox.GroupLabel>
-                {[{ value: "ts", label: "TypeScript" }, { value: "js", label: "JavaScript" }].map((l) => (
-                  <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                {[
+                  { value: "ts", label: "TypeScript" },
+                  { value: "js", label: "JavaScript" },
+                ].map((l) => (
+                  <Combobox.Item
+                    key={l.value}
+                    value={l.value}
+                    label={l.label}
+                    style={comboboxItemStyle}
+                  >
                     <Combobox.ItemText>{l.label}</Combobox.ItemText>
                   </Combobox.Item>
                 ))}
               </Combobox.Group>
               <Combobox.Group>
                 <Combobox.GroupLabel style={groupLabelStyle}>Backend</Combobox.GroupLabel>
-                {[{ value: "py", label: "Python" }, { value: "rs", label: "Rust" }, { value: "go", label: "Go" }].map((l) => (
-                  <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                {[
+                  { value: "py", label: "Python" },
+                  { value: "rs", label: "Rust" },
+                  { value: "go", label: "Go" },
+                ].map((l) => (
+                  <Combobox.Item
+                    key={l.value}
+                    value={l.value}
+                    label={l.label}
+                    style={comboboxItemStyle}
+                  >
                     <Combobox.ItemText>{l.label}</Combobox.ItemText>
                   </Combobox.Item>
                 ))}
@@ -1058,20 +1298,37 @@ function ComboboxDemo() {
           <Combobox.Label style={labelStyle}>Langage personnalisé</Combobox.Label>
           <div style={{ display: "flex", gap: "0.25rem" }}>
             <Combobox.Input
-              style={{ padding: "0.45rem 0.6rem", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.875rem", width: "200px" }}
+              style={{
+                padding: "0.45rem 0.6rem",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                width: "200px",
+              }}
             />
-            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>▾</Combobox.Trigger>
-            <Combobox.ClearTrigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>✕</Combobox.ClearTrigger>
+            <Combobox.Trigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>
+              ▾
+            </Combobox.Trigger>
+            <Combobox.ClearTrigger style={{ ...btnGhostStyle, padding: "0.45rem 0.6rem" }}>
+              ✕
+            </Combobox.ClearTrigger>
           </div>
           <Combobox.Portal>
             <Combobox.Content style={comboboxContentStyle}>
               {languages.map((l) => (
-                <Combobox.Item key={l.value} value={l.value} label={l.label} style={comboboxItemStyle}>
+                <Combobox.Item
+                  key={l.value}
+                  value={l.value}
+                  label={l.label}
+                  style={comboboxItemStyle}
+                >
                   <Combobox.ItemIndicator value={l.value}>✓ </Combobox.ItemIndicator>
                   <Combobox.ItemText>{l.label}</Combobox.ItemText>
                 </Combobox.Item>
               ))}
-              <Combobox.CreateOption style={{ ...comboboxItemStyle, fontStyle: "italic", color: "#6366f1" }} />
+              <Combobox.CreateOption
+                style={{ ...comboboxItemStyle, fontStyle: "italic", color: "#6366f1" }}
+              />
             </Combobox.Content>
           </Combobox.Portal>
         </Combobox.Root>
@@ -1197,9 +1454,7 @@ function TagsInputDemo() {
         />
       </TagsInput.Root>
       {tags.length > 0 && (
-        <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-          Tags : {tags.join(", ")}
-        </p>
+        <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>Tags : {tags.join(", ")}</p>
       )}
     </div>
   );
@@ -1213,21 +1468,67 @@ function AccordionDemo() {
       <Accordion.Root type="single" collapsible defaultValue={[]}>
         <Accordion.Item value="what">
           <Accordion.Header>
-            <Accordion.Trigger data-testid="accordion-trigger-what" style={{ width: "100%", display: "flex", justifyContent: "space-between", padding: "0.75rem 1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+            <Accordion.Trigger
+              data-testid="accordion-trigger-what"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "0.75rem 1rem",
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+              }}
+            >
               Qu'est-ce que forge-ui ? <span aria-hidden="true">▾</span>
             </Accordion.Trigger>
           </Accordion.Header>
-          <Accordion.Content data-testid="accordion-content-what" style={{ padding: "0.75rem 1rem", border: "1px solid #e2e8f0", borderTop: "none", fontSize: "0.875rem", color: "#374151" }}>
+          <Accordion.Content
+            data-testid="accordion-content-what"
+            style={{
+              padding: "0.75rem 1rem",
+              border: "1px solid #e2e8f0",
+              borderTop: "none",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
             Une bibliothèque de composants UI headless avec architecture 3 niveaux.
           </Accordion.Content>
         </Accordion.Item>
         <Accordion.Item value="why" style={{ marginTop: "0.5rem" }}>
           <Accordion.Header>
-            <Accordion.Trigger data-testid="accordion-trigger-why" style={{ width: "100%", display: "flex", justifyContent: "space-between", padding: "0.75rem 1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+            <Accordion.Trigger
+              data-testid="accordion-trigger-why"
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "0.75rem 1rem",
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+              }}
+            >
               Pourquoi headless ? <span aria-hidden="true">▾</span>
             </Accordion.Trigger>
           </Accordion.Header>
-          <Accordion.Content data-testid="accordion-content-why" style={{ padding: "0.75rem 1rem", border: "1px solid #e2e8f0", borderTop: "none", fontSize: "0.875rem", color: "#374151" }}>
+          <Accordion.Content
+            data-testid="accordion-content-why"
+            style={{
+              padding: "0.75rem 1rem",
+              border: "1px solid #e2e8f0",
+              borderTop: "none",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
             Vous gardez le contrôle total du CSS — aucun style imposé.
           </Accordion.Content>
         </Accordion.Item>
@@ -1241,10 +1542,34 @@ function AccordionDemo() {
 function CollapsibleDemo() {
   return (
     <Collapsible.Root style={{ width: "100%", maxWidth: "400px" }}>
-      <Collapsible.Trigger data-testid="collapsible-trigger" style={{ width: "100%", padding: "0.75rem 1rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500, textAlign: "left", display: "flex", justifyContent: "space-between" }}>
+      <Collapsible.Trigger
+        data-testid="collapsible-trigger"
+        style={{
+          width: "100%",
+          padding: "0.75rem 1rem",
+          background: "#f8fafc",
+          border: "1px solid #e2e8f0",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "0.875rem",
+          fontWeight: 500,
+          textAlign: "left",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         Voir les détails <span aria-hidden="true">▾</span>
       </Collapsible.Trigger>
-      <Collapsible.Content data-testid="collapsible-content" style={{ padding: "0.75rem 1rem", border: "1px solid #e2e8f0", borderTop: "none", fontSize: "0.875rem", color: "#374151" }}>
+      <Collapsible.Content
+        data-testid="collapsible-content"
+        style={{
+          padding: "0.75rem 1rem",
+          border: "1px solid #e2e8f0",
+          borderTop: "none",
+          fontSize: "0.875rem",
+          color: "#374151",
+        }}
+      >
         Contenu masqué révélé par le trigger collapsible.
       </Collapsible.Content>
     </Collapsible.Root>
@@ -1257,24 +1582,72 @@ function TabsDemo() {
   return (
     <div style={{ width: "100%", maxWidth: "400px" }}>
       <Tabs.Root defaultValue="react">
-        <Tabs.List data-testid="tabs-list" style={{ display: "flex", borderBottom: "2px solid #e2e8f0", gap: "0.25rem" }}>
-          <Tabs.Trigger value="react" data-testid="tabs-trigger-react" style={{ padding: "0.5rem 1rem", border: "none", background: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+        <Tabs.List
+          data-testid="tabs-list"
+          style={{ display: "flex", borderBottom: "2px solid #e2e8f0", gap: "0.25rem" }}
+        >
+          <Tabs.Trigger
+            value="react"
+            data-testid="tabs-trigger-react"
+            style={{
+              padding: "0.5rem 1rem",
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+            }}
+          >
             React
           </Tabs.Trigger>
-          <Tabs.Trigger value="vue" data-testid="tabs-trigger-vue" style={{ padding: "0.5rem 1rem", border: "none", background: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+          <Tabs.Trigger
+            value="vue"
+            data-testid="tabs-trigger-vue"
+            style={{
+              padding: "0.5rem 1rem",
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+            }}
+          >
             Vue
           </Tabs.Trigger>
-          <Tabs.Trigger value="nuxt" data-testid="tabs-trigger-nuxt" style={{ padding: "0.5rem 1rem", border: "none", background: "none", cursor: "pointer", fontSize: "0.875rem", fontWeight: 500 }}>
+          <Tabs.Trigger
+            value="nuxt"
+            data-testid="tabs-trigger-nuxt"
+            style={{
+              padding: "0.5rem 1rem",
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+            }}
+          >
             Nuxt
           </Tabs.Trigger>
         </Tabs.List>
-        <Tabs.Panel value="react" data-testid="tabs-panel-react" style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}>
+        <Tabs.Panel
+          value="react"
+          data-testid="tabs-panel-react"
+          style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}
+        >
           React — bibliothèque UI pour créer des interfaces composant.
         </Tabs.Panel>
-        <Tabs.Panel value="vue" data-testid="tabs-panel-vue" style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}>
+        <Tabs.Panel
+          value="vue"
+          data-testid="tabs-panel-vue"
+          style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}
+        >
           Vue — framework progressif pour les interfaces utilisateur.
         </Tabs.Panel>
-        <Tabs.Panel value="nuxt" data-testid="tabs-panel-nuxt" style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}>
+        <Tabs.Panel
+          value="nuxt"
+          data-testid="tabs-panel-nuxt"
+          style={{ padding: "1rem 0", fontSize: "0.875rem", color: "#374151" }}
+        >
           Nuxt — framework full-stack basé sur Vue.
         </Tabs.Panel>
       </Tabs.Root>
@@ -1287,23 +1660,74 @@ function TabsDemo() {
 function ProgressDemo() {
   const [value, setValue] = useState(42);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", maxWidth: "400px" }}>
-      <Progress.Root value={value} max={100} aria-label="Chargement" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        width: "100%",
+        maxWidth: "400px",
+      }}
+    >
+      <Progress.Root
+        value={value}
+        max={100}
+        aria-label="Chargement"
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+      >
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Chargement</Progress.Label>
-          <Progress.ValueText data-testid="progress-value" style={{ fontSize: "0.875rem", color: "#64748b" }} />
+          <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>
+            Chargement
+          </Progress.Label>
+          <Progress.ValueText
+            data-testid="progress-value"
+            style={{ fontSize: "0.875rem", color: "#64748b" }}
+          />
         </div>
-        <Progress.Track data-testid="progress-track" style={{ height: "8px", background: "#e2e8f0", borderRadius: "999px", overflow: "hidden" }}>
-          <Progress.Fill data-testid="progress-fill" style={{ height: "100%", background: "#1e293b", transition: "width 0.3s", borderRadius: "999px" }} />
+        <Progress.Track
+          data-testid="progress-track"
+          style={{
+            height: "8px",
+            background: "#e2e8f0",
+            borderRadius: "999px",
+            overflow: "hidden",
+          }}
+        >
+          <Progress.Fill
+            data-testid="progress-fill"
+            style={{
+              height: "100%",
+              background: "#1e293b",
+              transition: "width 0.3s",
+              borderRadius: "999px",
+            }}
+          />
         </Progress.Track>
       </Progress.Root>
       <div style={{ display: "flex", gap: "0.5rem" }}>
-        <button style={btnStyle} onClick={() => setValue((v) => Math.max(0, v - 10))}>−10</button>
-        <button style={btnStyle} onClick={() => setValue((v) => Math.min(100, v + 10))}>+10</button>
+        <button style={btnStyle} onClick={() => setValue((v) => Math.max(0, v - 10))}>
+          −10
+        </button>
+        <button style={btnStyle} onClick={() => setValue((v) => Math.min(100, v + 10))}>
+          +10
+        </button>
       </div>
-      <Progress.Root data-testid="progress-indeterminate" aria-label="Indéterminé" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Indéterminé</Progress.Label>
-        <Progress.Track style={{ height: "8px", background: "#e2e8f0", borderRadius: "999px", overflow: "hidden" }}>
+      <Progress.Root
+        data-testid="progress-indeterminate"
+        aria-label="Indéterminé"
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+      >
+        <Progress.Label style={{ fontSize: "0.875rem", fontWeight: 500 }}>
+          Indéterminé
+        </Progress.Label>
+        <Progress.Track
+          style={{
+            height: "8px",
+            background: "#e2e8f0",
+            borderRadius: "999px",
+            overflow: "hidden",
+          }}
+        >
           <Progress.Fill style={{ height: "100%", background: "#6366f1", borderRadius: "999px" }} />
         </Progress.Track>
       </Progress.Root>
@@ -1329,16 +1753,29 @@ function RadioGroupDemo() {
           box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 9px #1e293b;
         }
       `}</style>
-      <RadioGroup.Root value={value} onValueChange={setValue} name="framework" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <RadioGroup.Root
+        value={value}
+        onValueChange={setValue}
+        name="framework"
+        style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+      >
         {[
           { value: "react", label: "React" },
           { value: "vue", label: "Vue" },
           { value: "angular", label: "Angular" },
         ].map((opt) => (
-          <RadioGroup.Item key={opt.value} value={opt.value} data-testid={`radio-item-${opt.value}`}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+          <RadioGroup.Item
+            key={opt.value}
+            value={opt.value}
+            data-testid={`radio-item-${opt.value}`}
+          >
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}
+            >
               <RadioGroup.Radio />
-              <RadioGroup.Label style={{ fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" }}>
+              <RadioGroup.Label
+                style={{ fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" }}
+              >
                 {opt.label}
               </RadioGroup.Label>
             </div>
@@ -1365,28 +1802,80 @@ function SliderDemo() {
   const [range, setRange] = useState([20, 80]);
   const [vertical, setVertical] = useState(60);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", width: "100%", maxWidth: "360px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+        width: "100%",
+        maxWidth: "360px",
+      }}
+    >
       {/* Horizontal avec marks */}
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "0.5rem",
+          }}
+        >
           <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Prix max</span>
-          <code data-testid="slider-value" style={{ fontSize: "0.875rem", color: "#64748b" }}>{value}€</code>
+          <code data-testid="slider-value" style={{ fontSize: "0.875rem", color: "#64748b" }}>
+            {value}€
+          </code>
         </div>
         <Slider.Root
           value={value}
           onValueChange={(vals) => setValue(vals[0] ?? 0)}
-          min={0} max={100} step={25}
+          min={0}
+          max={100}
+          step={25}
           marks={PRICE_MARKS}
           style={{ position: "relative", height: "28px", display: "flex", alignItems: "center" }}
           data-testid="slider-root"
         >
-          <Slider.Track data-testid="slider-track" style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
-            <Slider.Range style={{ position: "absolute", height: "100%", background: "#1e293b", borderRadius: "2px" }} />
+          <Slider.Track
+            data-testid="slider-track"
+            style={{
+              position: "relative",
+              height: "4px",
+              background: "#e2e8f0",
+              borderRadius: "2px",
+              flexGrow: 1,
+            }}
+          >
+            <Slider.Range
+              style={{
+                position: "absolute",
+                height: "100%",
+                background: "#1e293b",
+                borderRadius: "2px",
+              }}
+            />
           </Slider.Track>
-          <Slider.Thumb aria-label="Prix max" data-testid="slider-thumb" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)", cursor: "grab" }} />
+          <Slider.Thumb
+            aria-label="Prix max"
+            data-testid="slider-thumb"
+            style={{
+              display: "block",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              background: "#fff",
+              border: "2px solid #1e293b",
+              boxShadow: "0 1px 4px rgb(0 0 0 / 0.15)",
+              cursor: "grab",
+            }}
+          />
           <Slider.MarkerGroup style={{ position: "absolute", width: "100%", top: "20px", left: 0 }}>
             {PRICE_MARKS.map((m) => (
-              <Slider.Marker key={m.value} value={m.value} style={{ fontSize: "0.7rem", color: "#94a3b8", whiteSpace: "nowrap" }}>
+              <Slider.Marker
+                key={m.value}
+                value={m.value}
+                style={{ fontSize: "0.7rem", color: "#94a3b8", whiteSpace: "nowrap" }}
+              >
                 {m.label}
               </Slider.Marker>
             ))}
@@ -1396,22 +1885,72 @@ function SliderDemo() {
 
       {/* Range slider (2 thumbs) */}
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "0.5rem",
+          }}
+        >
           <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Fourchette</span>
-          <code style={{ fontSize: "0.875rem", color: "#64748b" }}>{range[0]}–{range[1]}</code>
+          <code style={{ fontSize: "0.875rem", color: "#64748b" }}>
+            {range[0]}–{range[1]}
+          </code>
         </div>
         <Slider.Root
           value={range}
           onValueChange={(vals) => setRange(vals)}
-          min={0} max={100} step={1}
+          min={0}
+          max={100}
+          step={1}
           style={{ position: "relative", height: "20px", display: "flex", alignItems: "center" }}
           data-testid="slider-range-root"
         >
-          <Slider.Track style={{ position: "relative", height: "4px", background: "#e2e8f0", borderRadius: "2px", flexGrow: 1 }}>
-            <Slider.Range style={{ position: "absolute", height: "100%", background: "#6366f1", borderRadius: "2px" }} />
+          <Slider.Track
+            style={{
+              position: "relative",
+              height: "4px",
+              background: "#e2e8f0",
+              borderRadius: "2px",
+              flexGrow: 1,
+            }}
+          >
+            <Slider.Range
+              style={{
+                position: "absolute",
+                height: "100%",
+                background: "#6366f1",
+                borderRadius: "2px",
+              }}
+            />
           </Slider.Track>
-          <Slider.Thumb index={0} aria-label="Minimum" style={{ display: "block", width: "18px", height: "18px", borderRadius: "50%", background: "#fff", border: "2px solid #6366f1", cursor: "grab" }} />
-          <Slider.Thumb index={1} aria-label="Maximum" style={{ display: "block", width: "18px", height: "18px", borderRadius: "50%", background: "#fff", border: "2px solid #6366f1", cursor: "grab" }} />
+          <Slider.Thumb
+            index={0}
+            aria-label="Minimum"
+            style={{
+              display: "block",
+              width: "18px",
+              height: "18px",
+              borderRadius: "50%",
+              background: "#fff",
+              border: "2px solid #6366f1",
+              cursor: "grab",
+            }}
+          />
+          <Slider.Thumb
+            index={1}
+            aria-label="Maximum"
+            style={{
+              display: "block",
+              width: "18px",
+              height: "18px",
+              borderRadius: "50%",
+              background: "#fff",
+              border: "2px solid #6366f1",
+              cursor: "grab",
+            }}
+          />
         </Slider.Root>
       </div>
 
@@ -1422,14 +1961,48 @@ function SliderDemo() {
           value={vertical}
           onValueChange={(vals) => setVertical(vals[0] ?? 0)}
           orientation="vertical"
-          min={0} max={100} step={1}
+          min={0}
+          max={100}
+          step={1}
           data-testid="slider-vertical-root"
-          style={{ position: "relative", width: "20px", height: "120px", display: "flex", justifyContent: "center" }}
+          style={{
+            position: "relative",
+            width: "20px",
+            height: "120px",
+            display: "flex",
+            justifyContent: "center",
+          }}
         >
-          <Slider.Track style={{ position: "absolute", width: "4px", height: "100%", background: "#e2e8f0", borderRadius: "2px" }}>
-            <Slider.Range style={{ position: "absolute", width: "100%", background: "#1e293b", borderRadius: "2px" }} />
+          <Slider.Track
+            style={{
+              position: "absolute",
+              width: "4px",
+              height: "100%",
+              background: "#e2e8f0",
+              borderRadius: "2px",
+            }}
+          >
+            <Slider.Range
+              style={{
+                position: "absolute",
+                width: "100%",
+                background: "#1e293b",
+                borderRadius: "2px",
+              }}
+            />
           </Slider.Track>
-          <Slider.Thumb aria-label="Volume" style={{ display: "block", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", border: "2px solid #1e293b", cursor: "grab" }} />
+          <Slider.Thumb
+            aria-label="Volume"
+            style={{
+              display: "block",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              background: "#fff",
+              border: "2px solid #1e293b",
+              cursor: "grab",
+            }}
+          />
         </Slider.Root>
         <code style={{ fontSize: "0.875rem", color: "#64748b" }}>{vertical}</code>
       </div>
@@ -1453,8 +2026,13 @@ function NumberInputDemo() {
           onValueChange={(v) => setValue(v)}
         >
           <NumberInput.Label style={labelStyle}>Quantité</NumberInput.Label>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.35rem" }}>
-            <NumberInput.DecrementTrigger data-testid="number-input-decrement" style={btnGhostStyle}>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.35rem" }}
+          >
+            <NumberInput.DecrementTrigger
+              data-testid="number-input-decrement"
+              style={btnGhostStyle}
+            >
               −
             </NumberInput.DecrementTrigger>
             <NumberInput.Input
@@ -1469,7 +2047,10 @@ function NumberInputDemo() {
                 fontSize: "0.875rem",
               }}
             />
-            <NumberInput.IncrementTrigger data-testid="number-input-increment" style={btnGhostStyle}>
+            <NumberInput.IncrementTrigger
+              data-testid="number-input-increment"
+              style={btnGhostStyle}
+            >
               +
             </NumberInput.IncrementTrigger>
           </div>
@@ -1486,8 +2067,19 @@ function NumberInputDemo() {
       <div>
         <NumberInput.Root defaultValue={25} min={0} max={100} disabled>
           <NumberInput.Label style={{ ...labelStyle, opacity: 0.5 }}>Désactivé</NumberInput.Label>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.35rem", opacity: 0.5 }}>
-            <NumberInput.DecrementTrigger data-testid="number-input-decrement-disabled" style={btnGhostStyle}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginTop: "0.35rem",
+              opacity: 0.5,
+            }}
+          >
+            <NumberInput.DecrementTrigger
+              data-testid="number-input-decrement-disabled"
+              style={btnGhostStyle}
+            >
               −
             </NumberInput.DecrementTrigger>
             <NumberInput.Input
@@ -1502,7 +2094,10 @@ function NumberInputDemo() {
                 fontSize: "0.875rem",
               }}
             />
-            <NumberInput.IncrementTrigger data-testid="number-input-increment-disabled" style={btnGhostStyle}>
+            <NumberInput.IncrementTrigger
+              data-testid="number-input-increment-disabled"
+              style={btnGhostStyle}
+            >
               +
             </NumberInput.IncrementTrigger>
           </div>
@@ -1541,24 +2136,46 @@ function DateFieldDemo() {
         >
           <DateField.MonthSegment
             data-testid="date-field-month"
-            style={{ minWidth: "3ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "3ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
           <DateField.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <DateField.DaySegment
             data-testid="date-field-day"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "2ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
           <DateField.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <DateField.YearSegment
             data-testid="date-field-year"
-            style={{ minWidth: "4ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "4ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
         </DateField.Group>
         <DateField.HiddenInput name="date" />
       </DateField.Root>
       {date && (
-        <p data-testid="date-field-value" style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-          Date : {date.year}-{String(date.month).padStart(2, "0")}-{String(date.day).padStart(2, "0")}
+        <p
+          data-testid="date-field-value"
+          style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}
+        >
+          Date : {date.year}-{String(date.month).padStart(2, "0")}-
+          {String(date.day).padStart(2, "0")}
         </p>
       )}
     </div>
@@ -1568,7 +2185,9 @@ function DateFieldDemo() {
 /* ── TimePicker ─────────────────────────────────────────────────────────────── */
 
 function TimePickerDemo() {
-  const [time, setTime] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+  const [time, setTime] = useState<{ hours: number; minutes: number; seconds: number } | null>(
+    null,
+  );
   const locale = typeof navigator !== "undefined" ? navigator.language : "en";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -1594,29 +2213,57 @@ function TimePickerDemo() {
         >
           <TimePicker.HoursSegment
             data-testid="time-picker-hours"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "2ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
           <TimePicker.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <TimePicker.MinutesSegment
             data-testid="time-picker-minutes"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "2ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
           <TimePicker.Separator style={{ color: "#94a3b8", userSelect: "none" }} />
           <TimePicker.SecondsSegment
             data-testid="time-picker-seconds"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "2ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
           <span style={{ marginLeft: "4px" }} />
           <TimePicker.PeriodSegment
             data-testid="time-picker-period"
-            style={{ minWidth: "2ch", outline: "none", padding: "1px 2px", borderRadius: "3px", cursor: "default" }}
+            style={{
+              minWidth: "2ch",
+              outline: "none",
+              padding: "1px 2px",
+              borderRadius: "3px",
+              cursor: "default",
+            }}
           />
         </TimePicker.Group>
         <TimePicker.HiddenInput name="time" />
       </TimePicker.Root>
       {time && (
-        <p data-testid="time-picker-value" style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-          Heure : {String(time.hours).padStart(2, "0")}:{String(time.minutes).padStart(2, "0")}:{String(time.seconds).padStart(2, "0")}
+        <p
+          data-testid="time-picker-value"
+          style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}
+        >
+          Heure : {String(time.hours).padStart(2, "0")}:{String(time.minutes).padStart(2, "0")}:
+          {String(time.seconds).padStart(2, "0")}
         </p>
       )}
     </div>
@@ -1634,29 +2281,67 @@ const calendarCellStyle = {
   lineHeight: 1,
 };
 
-const calPickerCellStyle = { textAlign: "center" as const, padding: "8px 4px", cursor: "pointer", borderRadius: "6px", fontSize: "0.8rem" };
+const calPickerCellStyle = {
+  textAlign: "center" as const,
+  padding: "8px 4px",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontSize: "0.8rem",
+};
 
 function DatePickerCalendarContent() {
   const api = useDatePickerContext();
-  const navBtn = { padding: "0.25rem 0.6rem", background: "transparent", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.9rem" };
+  const navBtn = {
+    padding: "0.25rem 0.6rem",
+    background: "transparent",
+    border: "1px solid #e2e8f0",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+  };
   // "open.month" handles no navigation events — only day/year views have prev/next buttons
-  const prevBtn = api.view === "day"
-    ? <DatePicker.PrevMonthButton data-testid="date-picker-prev" style={navBtn}>←</DatePicker.PrevMonthButton>
-    : api.view === "year"
-      ? <DatePicker.PrevYearRangeButton style={navBtn}>←</DatePicker.PrevYearRangeButton>
-      : <span style={{ width: "2rem" }} />;
-  const nextBtn = api.view === "day"
-    ? <DatePicker.NextMonthButton data-testid="date-picker-next" style={navBtn}>→</DatePicker.NextMonthButton>
-    : api.view === "year"
-      ? <DatePicker.NextYearRangeButton style={navBtn}>→</DatePicker.NextYearRangeButton>
-      : <span style={{ width: "2rem" }} />;
+  const prevBtn =
+    api.view === "day" ? (
+      <DatePicker.PrevMonthButton data-testid="date-picker-prev" style={navBtn}>
+        ←
+      </DatePicker.PrevMonthButton>
+    ) : api.view === "year" ? (
+      <DatePicker.PrevYearRangeButton style={navBtn}>←</DatePicker.PrevYearRangeButton>
+    ) : (
+      <span style={{ width: "2rem" }} />
+    );
+  const nextBtn =
+    api.view === "day" ? (
+      <DatePicker.NextMonthButton data-testid="date-picker-next" style={navBtn}>
+        →
+      </DatePicker.NextMonthButton>
+    ) : api.view === "year" ? (
+      <DatePicker.NextYearRangeButton style={navBtn}>→</DatePicker.NextYearRangeButton>
+    ) : (
+      <span style={{ width: "2rem" }} />
+    );
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "0.75rem",
+        }}
+      >
         {prevBtn}
         <DatePicker.ViewSwitchButton
           data-testid="date-picker-header"
-          style={{ fontWeight: 600, fontSize: "0.875rem", background: "none", border: "none", cursor: "pointer", padding: "0.25rem 0.5rem", borderRadius: "6px" }}
+          style={{
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "0.25rem 0.5rem",
+            borderRadius: "6px",
+          }}
         >
           {api.monthYearLabel}
         </DatePicker.ViewSwitchButton>
@@ -1664,14 +2349,38 @@ function DatePickerCalendarContent() {
       </div>
 
       {api.view === "day" && (
-        <DatePicker.CalendarGrid data-testid="date-picker-grid" style={{ display: "grid", gap: "2px" }}>
-          <DatePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
+        <DatePicker.CalendarGrid
+          data-testid="date-picker-grid"
+          style={{ display: "grid", gap: "2px" }}
+        >
+          <DatePicker.CalendarRow
+            weekIndex={-1}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(7, 1fr)",
+              gap: "2px",
+              marginBottom: "4px",
+            }}
+          >
             {api.weekdays.map((_, i) => (
-              <DatePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }} />
+              <DatePicker.WeekdayHeader
+                key={i}
+                dayIndex={i}
+                style={{
+                  textAlign: "center",
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  color: "#94a3b8",
+                }}
+              />
             ))}
           </DatePicker.CalendarRow>
           {api.weeks.map((week, wi) => (
-            <DatePicker.CalendarRow key={wi} weekIndex={wi} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+            <DatePicker.CalendarRow
+              key={wi}
+              weekIndex={wi}
+              style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}
+            >
               {week.map((cell) => (
                 <DatePicker.CalendarCell
                   key={`${cell.date.year}-${cell.date.month}-${cell.date.day}`}
@@ -1686,7 +2395,9 @@ function DatePickerCalendarContent() {
       )}
 
       {api.view === "month" && (
-        <DatePicker.MonthGrid style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+        <DatePicker.MonthGrid
+          style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}
+        >
           {Array.from({ length: 12 }, (_, i) => (
             <DatePicker.MonthCell key={i} month={i + 1} style={calPickerCellStyle} />
           ))}
@@ -1694,7 +2405,9 @@ function DatePickerCalendarContent() {
       )}
 
       {api.view === "year" && (
-        <DatePicker.YearGrid style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+        <DatePicker.YearGrid
+          style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}
+        >
           {api.yearRange.map((year) => (
             <DatePicker.YearCell key={year} year={year} style={calPickerCellStyle} />
           ))}
@@ -1714,7 +2427,13 @@ function DatePickerDemo() {
           data-testid="date-picker-root"
           locale={locale}
           firstDayOfWeek={1}
-          onValueChange={(d) => setSelected(d ? `${d.year}-${String(d.month).padStart(2,"0")}-${String(d.day).padStart(2,"0")}` : null)}
+          onValueChange={(d) =>
+            setSelected(
+              d
+                ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`
+                : null,
+            )
+          }
         >
           <DatePicker.Trigger data-testid="date-picker-trigger" style={btnStyle}>
             {selected ?? "Choisir une date"}
@@ -1740,7 +2459,10 @@ function DatePickerDemo() {
         </DatePicker.Root>
       </div>
       {selected && (
-        <p data-testid="date-picker-value" style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
+        <p
+          data-testid="date-picker-value"
+          style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}
+        >
           Sélectionné : {selected}
         </p>
       )}
@@ -1755,13 +2477,29 @@ function DateRangePickerCalendarGrid() {
   const weeks = api.weeksPerMonth[0] ?? [];
   return (
     <DateRangePicker.CalendarGrid style={{ display: "grid", gap: "2px" }}>
-      <DateRangePicker.CalendarRow weekIndex={-1} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" }}>
+      <DateRangePicker.CalendarRow
+        weekIndex={-1}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gap: "2px",
+          marginBottom: "4px",
+        }}
+      >
         {api.weekdays.map((_, i) => (
-          <DateRangePicker.WeekdayHeader key={i} dayIndex={i} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }} />
+          <DateRangePicker.WeekdayHeader
+            key={i}
+            dayIndex={i}
+            style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" }}
+          />
         ))}
       </DateRangePicker.CalendarRow>
       {weeks.map((week, wi) => (
-        <DateRangePicker.CalendarRow key={wi} weekIndex={wi} style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+        <DateRangePicker.CalendarRow
+          key={wi}
+          weekIndex={wi}
+          style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}
+        >
           {week.map((cell) => (
             <DateRangePicker.CalendarCell
               key={`${cell.date.year}-${cell.date.month}-${cell.date.day}`}
@@ -1789,7 +2527,9 @@ function DateRangePickerDemo() {
           numberOfMonths={1}
           onValueChange={(r) => {
             if (r?.start && r?.end) {
-              setRange(`${r.start.year}-${String(r.start.month).padStart(2,"0")}-${String(r.start.day).padStart(2,"0")} → ${r.end.year}-${String(r.end.month).padStart(2,"0")}-${String(r.end.day).padStart(2,"0")}`);
+              setRange(
+                `${r.start.year}-${String(r.start.month).padStart(2, "0")}-${String(r.start.day).padStart(2, "0")} → ${r.end.year}-${String(r.end.month).padStart(2, "0")}-${String(r.end.day).padStart(2, "0")}`,
+              );
             } else {
               setRange(null);
             }
@@ -1813,13 +2553,36 @@ function DateRangePickerDemo() {
               minWidth: "300px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-              <DateRangePicker.PrevMonthButton data-testid="date-range-picker-prev" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>←</DateRangePicker.PrevMonthButton>
-              <DateRangePicker.CalendarHeader data-testid="date-range-picker-header" style={{ fontWeight: 600, fontSize: "0.875rem" }} />
-              <DateRangePicker.NextMonthButton data-testid="date-range-picker-next" style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}>→</DateRangePicker.NextMonthButton>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "0.75rem",
+              }}
+            >
+              <DateRangePicker.PrevMonthButton
+                data-testid="date-range-picker-prev"
+                style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}
+              >
+                ←
+              </DateRangePicker.PrevMonthButton>
+              <DateRangePicker.CalendarHeader
+                data-testid="date-range-picker-header"
+                style={{ fontWeight: 600, fontSize: "0.875rem" }}
+              />
+              <DateRangePicker.NextMonthButton
+                data-testid="date-range-picker-next"
+                style={{ ...btnGhostStyle, padding: "0.25rem 0.6rem" }}
+              >
+                →
+              </DateRangePicker.NextMonthButton>
             </div>
             <DateRangePickerCalendarGrid />
-            <DateRangePicker.ClearButton data-testid="date-range-picker-clear" style={{ ...btnGhostStyle, marginTop: "0.75rem", width: "100%" }}>
+            <DateRangePicker.ClearButton
+              data-testid="date-range-picker-clear"
+              style={{ ...btnGhostStyle, marginTop: "0.75rem", width: "100%" }}
+            >
               Effacer
             </DateRangePicker.ClearButton>
           </DateRangePicker.Content>
@@ -1827,7 +2590,10 @@ function DateRangePickerDemo() {
         </DateRangePicker.Root>
       </div>
       {range && (
-        <p data-testid="date-range-picker-value" style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
+        <p
+          data-testid="date-range-picker-value"
+          style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}
+        >
           Plage : {range}
         </p>
       )}
@@ -1882,8 +2648,7 @@ function ToggleDemo() {
         aria-label="Gras"
         style={toggleStyle(bold, { fontWeight: "bold" })}
       >
-        <VisuallyHidden>Activer le</VisuallyHidden>
-        B
+        <VisuallyHidden>Activer le</VisuallyHidden>B
       </Toggle>
 
       <Toggle
@@ -1900,7 +2665,13 @@ function ToggleDemo() {
         data-testid="toggle-disabled"
         disabled
         aria-label="Souligné (désactivé)"
-        style={{ ...toggleStyle(false), border: "1px solid #e2e8f0", cursor: "not-allowed", opacity: 0.4, textDecoration: "underline" }}
+        style={{
+          ...toggleStyle(false),
+          border: "1px solid #e2e8f0",
+          cursor: "not-allowed",
+          opacity: 0.4,
+          textDecoration: "underline",
+        }}
       >
         U
       </Toggle>
@@ -1934,11 +2705,35 @@ function ToggleGroupDemo() {
         value={align}
         onValueChange={setAlign}
         aria-label="Alignement du texte"
-        style={{ display: "inline-flex", gap: "0.25rem", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem" }}
+        style={{
+          display: "inline-flex",
+          gap: "0.25rem",
+          border: "1px solid #e2e8f0",
+          borderRadius: "8px",
+          padding: "0.25rem",
+        }}
       >
-        <ToggleGroup.Item value="left" aria-label="Aligner à gauche" style={toggleGroupItemStyle(align.includes("left"))}>←</ToggleGroup.Item>
-        <ToggleGroup.Item value="center" aria-label="Centrer" style={toggleGroupItemStyle(align.includes("center"))}>↔</ToggleGroup.Item>
-        <ToggleGroup.Item value="right" aria-label="Aligner à droite" style={toggleGroupItemStyle(align.includes("right"))}>→</ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="left"
+          aria-label="Aligner à gauche"
+          style={toggleGroupItemStyle(align.includes("left"))}
+        >
+          ←
+        </ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="center"
+          aria-label="Centrer"
+          style={toggleGroupItemStyle(align.includes("center"))}
+        >
+          ↔
+        </ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="right"
+          aria-label="Aligner à droite"
+          style={toggleGroupItemStyle(align.includes("right"))}
+        >
+          →
+        </ToggleGroup.Item>
       </ToggleGroup.Root>
 
       <ToggleGroup.Root
@@ -1947,11 +2742,37 @@ function ToggleGroupDemo() {
         value={formats}
         onValueChange={(v) => setFormats(v)}
         aria-label="Formatage du texte"
-        style={{ display: "inline-flex", gap: "0.25rem", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem" }}
+        style={{
+          display: "inline-flex",
+          gap: "0.25rem",
+          border: "1px solid #e2e8f0",
+          borderRadius: "8px",
+          padding: "0.25rem",
+        }}
       >
-        <ToggleGroup.Item value="bold" aria-label="Gras" style={toggleGroupItemStyle(formats.includes("bold"), { fontWeight: "bold" })}>B</ToggleGroup.Item>
-        <ToggleGroup.Item value="italic" aria-label="Italique" style={toggleGroupItemStyle(formats.includes("italic"), { fontStyle: "italic" })}>I</ToggleGroup.Item>
-        <ToggleGroup.Item value="underline" aria-label="Souligné" style={toggleGroupItemStyle(formats.includes("underline"), { textDecoration: "underline" })}>U</ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="bold"
+          aria-label="Gras"
+          style={toggleGroupItemStyle(formats.includes("bold"), { fontWeight: "bold" })}
+        >
+          B
+        </ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="italic"
+          aria-label="Italique"
+          style={toggleGroupItemStyle(formats.includes("italic"), { fontStyle: "italic" })}
+        >
+          I
+        </ToggleGroup.Item>
+        <ToggleGroup.Item
+          value="underline"
+          aria-label="Souligné"
+          style={toggleGroupItemStyle(formats.includes("underline"), {
+            textDecoration: "underline",
+          })}
+        >
+          U
+        </ToggleGroup.Item>
       </ToggleGroup.Root>
     </div>
   );
@@ -2016,33 +2837,71 @@ function MenuDemo() {
           <Menu.Content style={menuContentStyle}>
             <Menu.Label style={menuGroupLabelStyle}>Fichier</Menu.Label>
             {/* navigate prop — simule une navigation router */}
-            <Menu.Item value="new" label="Nouveau" style={menuItemStyle} navigate={() => console.log("[navigate] /new")}>Nouveau fichier</Menu.Item>
-            <Menu.Item value="open" label="Ouvrir" style={menuItemStyle}>Ouvrir…</Menu.Item>
+            <Menu.Item
+              value="new"
+              label="Nouveau"
+              style={menuItemStyle}
+              navigate={() => console.log("[navigate] /new")}
+            >
+              Nouveau fichier
+            </Menu.Item>
+            <Menu.Item value="open" label="Ouvrir" style={menuItemStyle}>
+              Ouvrir…
+            </Menu.Item>
             <Menu.Separator style={menuSepStyle} />
             <Menu.Group id="edit-group">
-              <Menu.GroupLabel groupId="edit-group" style={menuGroupLabelStyle}>Edition</Menu.GroupLabel>
-              <Menu.Item value="cut" label="Couper" style={menuItemStyle}>Couper</Menu.Item>
-              <Menu.Item value="copy" label="Copier" style={menuItemStyle}>Copier</Menu.Item>
-              <Menu.Item value="paste" label="Coller" disabled style={{ ...menuItemStyle, opacity: 0.45 }}>Coller</Menu.Item>
+              <Menu.GroupLabel groupId="edit-group" style={menuGroupLabelStyle}>
+                Edition
+              </Menu.GroupLabel>
+              <Menu.Item value="cut" label="Couper" style={menuItemStyle}>
+                Couper
+              </Menu.Item>
+              <Menu.Item value="copy" label="Copier" style={menuItemStyle}>
+                Copier
+              </Menu.Item>
+              <Menu.Item
+                value="paste"
+                label="Coller"
+                disabled
+                style={{ ...menuItemStyle, opacity: 0.45 }}
+              >
+                Coller
+              </Menu.Item>
             </Menu.Group>
             <Menu.Separator style={menuSepStyle} />
             <Menu.Label style={menuGroupLabelStyle}>Theme</Menu.Label>
             <Menu.RadioGroup groupId="theme" value={theme} onValueChange={setTheme}>
               {(["light", "dark", "system"] as const).map((t) => (
                 <Menu.RadioItem key={t} value={t} style={menuItemStyle} closeOnSelect={false}>
-                  <Menu.ItemIndicator><span style={{ marginRight: 6 }}>✓</span></Menu.ItemIndicator>
+                  <Menu.ItemIndicator>
+                    <span style={{ marginRight: 6 }}>✓</span>
+                  </Menu.ItemIndicator>
                   {t.charAt(0).toUpperCase() + t.slice(1)}
                 </Menu.RadioItem>
               ))}
             </Menu.RadioGroup>
             <Menu.Separator style={menuSepStyle} />
             <Menu.Label style={menuGroupLabelStyle}>Vue</Menu.Label>
-            <Menu.CheckboxItem value="grid" checked={showGrid} onCheckedChange={setShowGrid} style={menuItemStyle}>
-              <Menu.ItemIndicator><span style={{ marginRight: 6 }}>✓</span></Menu.ItemIndicator>
+            <Menu.CheckboxItem
+              value="grid"
+              checked={showGrid}
+              onCheckedChange={setShowGrid}
+              style={menuItemStyle}
+            >
+              <Menu.ItemIndicator>
+                <span style={{ marginRight: 6 }}>✓</span>
+              </Menu.ItemIndicator>
               Grille
             </Menu.CheckboxItem>
-            <Menu.CheckboxItem value="ruler" checked={showRuler} onCheckedChange={setShowRuler} style={menuItemStyle}>
-              <Menu.ItemIndicator><span style={{ marginRight: 6 }}>✓</span></Menu.ItemIndicator>
+            <Menu.CheckboxItem
+              value="ruler"
+              checked={showRuler}
+              onCheckedChange={setShowRuler}
+              style={menuItemStyle}
+            >
+              <Menu.ItemIndicator>
+                <span style={{ marginRight: 6 }}>✓</span>
+              </Menu.ItemIndicator>
               Regle
             </Menu.CheckboxItem>
             <Menu.Separator style={menuSepStyle} />
@@ -2052,14 +2911,24 @@ function MenuDemo() {
                 Partager ▶
               </Menu.SubTrigger>
               <Menu.SubContent style={menuContentStyle}>
-                <Menu.Item value="share-link" label="Lien" style={menuItemStyle}>Lien</Menu.Item>
-                <Menu.Item value="share-email" label="Email" style={menuItemStyle}>Email</Menu.Item>
+                <Menu.Item value="share-link" label="Lien" style={menuItemStyle}>
+                  Lien
+                </Menu.Item>
+                <Menu.Item value="share-email" label="Email" style={menuItemStyle}>
+                  Email
+                </Menu.Item>
                 <Menu.Separator style={menuSepStyle} />
                 <Menu.Sub>
-                  <Menu.SubTrigger value="social" label="Social" style={menuItemStyle}>Reseaux ▶</Menu.SubTrigger>
+                  <Menu.SubTrigger value="social" label="Social" style={menuItemStyle}>
+                    Reseaux ▶
+                  </Menu.SubTrigger>
                   <Menu.SubContent style={menuContentStyle}>
-                    <Menu.Item value="twitter" style={menuItemStyle}>Twitter</Menu.Item>
-                    <Menu.Item value="linkedin" style={menuItemStyle}>LinkedIn</Menu.Item>
+                    <Menu.Item value="twitter" style={menuItemStyle}>
+                      Twitter
+                    </Menu.Item>
+                    <Menu.Item value="linkedin" style={menuItemStyle}>
+                      LinkedIn
+                    </Menu.Item>
                   </Menu.SubContent>
                 </Menu.Sub>
               </Menu.SubContent>
@@ -2070,7 +2939,9 @@ function MenuDemo() {
       <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
         {lastSelect && <div>Selection : {lastSelect}</div>}
         <div>Theme : {theme}</div>
-        <div>Grille : {showGrid ? "oui" : "non"} | Regle : {showRuler ? "oui" : "non"}</div>
+        <div>
+          Grille : {showGrid ? "oui" : "non"} | Regle : {showRuler ? "oui" : "non"}
+        </div>
       </div>
     </div>
   );
@@ -2086,8 +2957,12 @@ function MenuClickOnlySubDemo() {
         <Menu.Trigger style={btnStyle}>Options ▾</Menu.Trigger>
         <Menu.Portal>
           <Menu.Content style={menuContentStyle}>
-            <Menu.Item value="action-a" style={menuItemStyle}>Action A</Menu.Item>
-            <Menu.Item value="action-b" style={menuItemStyle}>Action B</Menu.Item>
+            <Menu.Item value="action-a" style={menuItemStyle}>
+              Action A
+            </Menu.Item>
+            <Menu.Item value="action-b" style={menuItemStyle}>
+              Action B
+            </Menu.Item>
             <Menu.Separator style={menuSepStyle} />
             {/* openOnHover={false} — only click opens the sub-menu */}
             <Menu.Sub>
@@ -2095,8 +2970,12 @@ function MenuClickOnlySubDemo() {
                 Plus (clic) ▶
               </Menu.SubTrigger>
               <Menu.SubContent style={menuContentStyle}>
-                <Menu.Item value="advanced-a" style={menuItemStyle}>Avance A</Menu.Item>
-                <Menu.Item value="advanced-b" style={menuItemStyle}>Avance B</Menu.Item>
+                <Menu.Item value="advanced-a" style={menuItemStyle}>
+                  Avance A
+                </Menu.Item>
+                <Menu.Item value="advanced-b" style={menuItemStyle}>
+                  Avance B
+                </Menu.Item>
               </Menu.SubContent>
             </Menu.Sub>
           </Menu.Content>
@@ -2120,7 +2999,18 @@ function MenuAnchorDemo() {
       <Menu.Root open={open} onOpenChange={setOpen} onSelect={setLastSelect}>
         {/* Anchor — the positioner will float relative to this element */}
         <Menu.Anchor>
-          <div style={{ width: "200px", padding: "0.5rem", background: "#f1f5f9", border: "2px dashed #94a3b8", borderRadius: "8px", textAlign: "center", fontSize: "0.8rem", color: "#64748b" }}>
+          <div
+            style={{
+              width: "200px",
+              padding: "0.5rem",
+              background: "#f1f5f9",
+              border: "2px dashed #94a3b8",
+              borderRadius: "8px",
+              textAlign: "center",
+              fontSize: "0.8rem",
+              color: "#64748b",
+            }}
+          >
             Ancre (reference)
           </div>
         </Menu.Anchor>
@@ -2129,16 +3019,24 @@ function MenuAnchorDemo() {
         </Menu.Trigger>
         <Menu.Portal>
           <Menu.Content style={menuContentStyle}>
-            <Menu.Item value="profile" style={menuItemStyle}>Profil</Menu.Item>
-            <Menu.Item value="settings" style={menuItemStyle}>Parametres</Menu.Item>
+            <Menu.Item value="profile" style={menuItemStyle}>
+              Profil
+            </Menu.Item>
+            <Menu.Item value="settings" style={menuItemStyle}>
+              Parametres
+            </Menu.Item>
             <Menu.Separator style={menuSepStyle} />
-            <Menu.Item value="logout" style={menuItemStyle}>Deconnexion</Menu.Item>
+            <Menu.Item value="logout" style={menuItemStyle}>
+              Deconnexion
+            </Menu.Item>
           </Menu.Content>
         </Menu.Portal>
       </Menu.Root>
       <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
         {lastSelect && <div>Selection : {lastSelect}</div>}
-        <div style={{ color: "#94a3b8" }}>Le menu se positionne par rapport a l'ancre (cadre tirete)</div>
+        <div style={{ color: "#94a3b8" }}>
+          Le menu se positionne par rapport a l'ancre (cadre tirete)
+        </div>
       </div>
     </div>
   );
@@ -2153,14 +3051,31 @@ function ContextMenuDemo() {
     <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap" }}>
       <ContextMenu.Root onSelect={setLastSelect}>
         <ContextMenu.Trigger>
-          <div style={{ width: "200px", height: "80px", background: "#1e40af", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "0.8rem", userSelect: "none" }}>
+          <div
+            style={{
+              width: "200px",
+              height: "80px",
+              background: "#1e40af",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              fontSize: "0.8rem",
+              userSelect: "none",
+            }}
+          >
             Clic-droit ici
           </div>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
           <ContextMenu.Content style={menuContentStyle}>
-            <ContextMenu.Item value="inspect" style={menuItemStyle}>Inspecter</ContextMenu.Item>
-            <ContextMenu.Item value="reload" style={menuItemStyle}>Recharger</ContextMenu.Item>
+            <ContextMenu.Item value="inspect" style={menuItemStyle}>
+              Inspecter
+            </ContextMenu.Item>
+            <ContextMenu.Item value="reload" style={menuItemStyle}>
+              Recharger
+            </ContextMenu.Item>
             <ContextMenu.Separator style={menuSepStyle} />
             <ContextMenu.CheckboxItem
               value="bookmark"
@@ -2168,7 +3083,9 @@ function ContextMenuDemo() {
               onCheckedChange={setBookmarked}
               style={menuItemStyle}
             >
-              <ContextMenu.ItemIndicator><span style={{ marginRight: 6 }}>★</span></ContextMenu.ItemIndicator>
+              <ContextMenu.ItemIndicator>
+                <span style={{ marginRight: 6 }}>★</span>
+              </ContextMenu.ItemIndicator>
               Marquer comme favori
             </ContextMenu.CheckboxItem>
             <ContextMenu.Separator style={menuSepStyle} />
@@ -2178,20 +3095,32 @@ function ContextMenuDemo() {
                 Partager ▶
               </ContextMenu.SubTrigger>
               <ContextMenu.SubContent style={menuContentStyle}>
-                <ContextMenu.Item value="share-link" style={menuItemStyle}>Lien</ContextMenu.Item>
-                <ContextMenu.Item value="share-email" style={menuItemStyle}>Email</ContextMenu.Item>
+                <ContextMenu.Item value="share-link" style={menuItemStyle}>
+                  Lien
+                </ContextMenu.Item>
+                <ContextMenu.Item value="share-email" style={menuItemStyle}>
+                  Email
+                </ContextMenu.Item>
                 <ContextMenu.Separator style={menuSepStyle} />
                 <ContextMenu.Sub>
-                  <ContextMenu.SubTrigger value="social" label="Social" style={menuItemStyle}>Reseaux ▶</ContextMenu.SubTrigger>
+                  <ContextMenu.SubTrigger value="social" label="Social" style={menuItemStyle}>
+                    Reseaux ▶
+                  </ContextMenu.SubTrigger>
                   <ContextMenu.SubContent style={menuContentStyle}>
-                    <ContextMenu.Item value="twitter" style={menuItemStyle}>Twitter</ContextMenu.Item>
-                    <ContextMenu.Item value="linkedin" style={menuItemStyle}>LinkedIn</ContextMenu.Item>
+                    <ContextMenu.Item value="twitter" style={menuItemStyle}>
+                      Twitter
+                    </ContextMenu.Item>
+                    <ContextMenu.Item value="linkedin" style={menuItemStyle}>
+                      LinkedIn
+                    </ContextMenu.Item>
                   </ContextMenu.SubContent>
                 </ContextMenu.Sub>
               </ContextMenu.SubContent>
             </ContextMenu.Sub>
             <ContextMenu.Separator style={menuSepStyle} />
-            <ContextMenu.Item value="copy-link" style={menuItemStyle}>Copier le lien</ContextMenu.Item>
+            <ContextMenu.Item value="copy-link" style={menuItemStyle}>
+              Copier le lien
+            </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
       </ContextMenu.Root>
@@ -2209,7 +3138,9 @@ function AvatarDemo() {
   return (
     <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
       {/* Broken image → immediate fallback */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}
+      >
         <Avatar.Root style={avatarRootStyle}>
           <Avatar.Image src="https://invalid.domain/broken.jpg" alt="Bob" style={avatarImgStyle} />
           <Avatar.Fallback style={avatarFallbackStyle}>BO</Avatar.Fallback>
@@ -2218,7 +3149,9 @@ function AvatarDemo() {
       </div>
 
       {/* No src → immediate fallback */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}
+      >
         <Avatar.Root style={avatarRootStyle}>
           <Avatar.Image alt="Carol" style={avatarImgStyle} />
           <Avatar.Fallback style={avatarFallbackStyle}>CA</Avatar.Fallback>
@@ -2227,10 +3160,14 @@ function AvatarDemo() {
       </div>
 
       {/* delayMs on Fallback (not Root) — prevents flash-of-fallback */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}
+      >
         <Avatar.Root style={avatarRootStyle}>
           <Avatar.Image src="https://invalid.domain/slow.jpg" alt="Dave" style={avatarImgStyle} />
-          <Avatar.Fallback delayMs={600} style={avatarFallbackStyle}>DA</Avatar.Fallback>
+          <Avatar.Fallback delayMs={600} style={avatarFallbackStyle}>
+            DA
+          </Avatar.Fallback>
         </Avatar.Root>
         <span style={{ fontSize: "0.75rem", color: "#64748b" }}>delayMs=600 (Fallback)</span>
       </div>
@@ -2239,7 +3176,9 @@ function AvatarDemo() {
       <AutoInitialsAvatar name="John Doe" />
 
       {/* asChild: Fallback rendered as a <div> */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}
+      >
         <Avatar.Root style={avatarRootStyle}>
           <Avatar.Image alt="Eve" style={avatarImgStyle} />
           <Avatar.Fallback asChild style={avatarFallbackStyle}>
