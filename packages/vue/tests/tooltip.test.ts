@@ -15,15 +15,17 @@ import {
 
 afterEach(cleanup);
 
-function TestTooltip(opts: {
-  openDelay?: number;
-  closeDelay?: number;
-  interactive?: boolean;
-  disabled?: boolean;
-  closeOnPointerDown?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-} = {}) {
+function TestTooltip(
+  opts: {
+    openDelay?: number;
+    closeDelay?: number;
+    interactive?: boolean;
+    disabled?: boolean;
+    closeOnPointerDown?: boolean;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+  } = {},
+) {
   return defineComponent({
     render() {
       return h(
@@ -303,9 +305,14 @@ describe("Tooltip (Vue)", () => {
                     {
                       default: () => [
                         h(TooltipTrigger, { "data-testid": "trigger-a" }, () => "A"),
-                        h(TooltipPortal, {}, {
-                          default: () => h(TooltipContent, { "data-testid": "content-a" }, () => "Tip A"),
-                        }),
+                        h(
+                          TooltipPortal,
+                          {},
+                          {
+                            default: () =>
+                              h(TooltipContent, { "data-testid": "content-a" }, () => "Tip A"),
+                          },
+                        ),
                       ],
                     },
                   ),
@@ -315,9 +322,14 @@ describe("Tooltip (Vue)", () => {
                     {
                       default: () => [
                         h(TooltipTrigger, { "data-testid": "trigger-b" }, () => "B"),
-                        h(TooltipPortal, {}, {
-                          default: () => h(TooltipContent, { "data-testid": "content-b" }, () => "Tip B"),
-                        }),
+                        h(
+                          TooltipPortal,
+                          {},
+                          {
+                            default: () =>
+                              h(TooltipContent, { "data-testid": "content-b" }, () => "Tip B"),
+                          },
+                        ),
                       ],
                     },
                   ),
@@ -367,11 +379,7 @@ describe("Tooltip (Vue)", () => {
                           {},
                           {
                             default: () =>
-                              h(
-                                TooltipContent,
-                                { "data-testid": "content" },
-                                () => "Tip",
-                              ),
+                              h(TooltipContent, { "data-testid": "content" }, () => "Tip"),
                           },
                         ),
                       ],

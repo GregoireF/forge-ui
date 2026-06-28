@@ -131,7 +131,9 @@ describe("Collapsible (React)", () => {
       render(
         <Collapsible.Root>
           <Collapsible.Trigger data-testid="trigger">Toggle</Collapsible.Trigger>
-          <Collapsible.Content forceMount data-testid="content">Content</Collapsible.Content>
+          <Collapsible.Content forceMount data-testid="content">
+            Content
+          </Collapsible.Content>
         </Collapsible.Root>,
       );
       expect(screen.getByTestId("content")).toBeInTheDocument();
@@ -142,7 +144,9 @@ describe("Collapsible (React)", () => {
       render(
         <Collapsible.Root defaultOpen>
           <Collapsible.Trigger data-testid="trigger">Toggle</Collapsible.Trigger>
-          <Collapsible.Content forceMount data-testid="content">Content</Collapsible.Content>
+          <Collapsible.Content forceMount data-testid="content">
+            Content
+          </Collapsible.Content>
         </Collapsible.Root>,
       );
       expect(screen.getByTestId("content")).toHaveAttribute("data-state", "open");

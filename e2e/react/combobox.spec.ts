@@ -41,7 +41,9 @@ const multiContent = (page: import("@playwright/test").Page) =>
   page.locator('[data-forge-scope="combobox"][data-forge-part="content"]').nth(1);
 
 const multiOptions = (page: import("@playwright/test").Page) =>
-  page.locator('[data-forge-scope="combobox"][data-forge-part="content"]').nth(1)
+  page
+    .locator('[data-forge-scope="combobox"][data-forge-part="content"]')
+    .nth(1)
     .locator('[data-forge-part="option"]');
 
 test.describe("Combobox — React (forge-ui)", () => {
@@ -212,7 +214,9 @@ test.describe("Combobox — React (forge-ui)", () => {
 
   test("clicking an option selects it", async ({ page }) => {
     await comboboxTrigger(page).click();
-    const rustOption = page.locator('[data-forge-scope="combobox"][data-forge-part="option"]', { hasText: "Rust" }).first();
+    const rustOption = page
+      .locator('[data-forge-scope="combobox"][data-forge-part="option"]', { hasText: "Rust" })
+      .first();
     await rustOption.click();
     await expect(comboboxContent(page)).not.toBeAttached();
     await expect(comboboxInput(page)).toHaveValue("Rust");
@@ -220,9 +224,14 @@ test.describe("Combobox — React (forge-ui)", () => {
 
   test("selected option gets data-selected attribute on reopen", async ({ page }) => {
     await comboboxTrigger(page).click();
-    await page.locator('[data-forge-scope="combobox"][data-forge-part="option"]', { hasText: "Go" }).first().click();
+    await page
+      .locator('[data-forge-scope="combobox"][data-forge-part="option"]', { hasText: "Go" })
+      .first()
+      .click();
     await comboboxTrigger(page).click();
-    const goOption = page.locator('[data-forge-scope="combobox"][data-forge-part="option"]', { hasText: "Go" }).first();
+    const goOption = page
+      .locator('[data-forge-scope="combobox"][data-forge-part="option"]', { hasText: "Go" })
+      .first();
     await expect(goOption).toHaveAttribute("data-selected", "");
   });
 

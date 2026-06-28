@@ -121,54 +121,56 @@ export function makeComputePositionActivity<
         ...(extraMiddleware ?? []),
       ];
 
-      computePosition(reference, positionerEl, { placement, strategy, middleware }).then((result) => {
-        if (!active) return;
+      computePosition(reference, positionerEl, { placement, strategy, middleware }).then(
+        (result) => {
+          if (!active) return;
 
-        ctx.x = result.x;
-        ctx.y = result.y;
-        ctx.currentPlacement = result.placement;
+          ctx.x = result.x;
+          ctx.y = result.y;
+          ctx.currentPlacement = result.placement;
 
-        // Arrow position.
-        if (ctx.arrowEl && result.middlewareData.arrow) {
-          const { x: ax, y: ay } = result.middlewareData.arrow;
-          if (ax != null) (ctx.arrowEl as HTMLElement).style.left = `${ax}px`;
-          if (ay != null) (ctx.arrowEl as HTMLElement).style.top = `${ay}px`;
-        }
+          // Arrow position.
+          if (ctx.arrowEl && result.middlewareData.arrow) {
+            const { x: ax, y: ay } = result.middlewareData.arrow;
+            if (ax != null) (ctx.arrowEl as HTMLElement).style.left = `${ax}px`;
+            if (ay != null) (ctx.arrowEl as HTMLElement).style.top = `${ay}px`;
+          }
 
-        // data-hidden for hideWhenDetached (written on content div).
-        if (hideWhenDetached) {
-          const hidden = result.middlewareData.hide?.referenceHidden ?? false;
-          contentEl.dataset["hidden"] = String(hidden);
-        }
+          // data-hidden for hideWhenDetached (written on content div).
+          if (hideWhenDetached) {
+            const hidden = result.middlewareData.hide?.referenceHidden ?? false;
+            contentEl.dataset["hidden"] = String(hidden);
+          }
 
-        // CSS var for transform-origin and data-side/align/placement.
-        contentEl.style.setProperty(
-          "--forge-floating-transform-origin",
-          getTransformOrigin(result.placement),
-        );
-        contentEl.dataset["side"] = getSideFromPlacement(result.placement);
-        contentEl.dataset["align"] = getAlignFromPlacement(result.placement);
-        contentEl.dataset["placement"] = result.placement;
+          // CSS var for transform-origin and data-side/align/placement.
+          contentEl.style.setProperty(
+            "--forge-floating-transform-origin",
+            getTransformOrigin(result.placement),
+          );
+          contentEl.dataset["side"] = getSideFromPlacement(result.placement);
+          contentEl.dataset["align"] = getAlignFromPlacement(result.placement);
+          contentEl.dataset["placement"] = result.placement;
 
-        if (!positioned) {
-          positioned = true;
-          ctx.positioned = true;
-          // Reveal the positioner via direct DOM writes that bypass React/Vue's
-          // render cycle entirely. Using a CSS custom property (--forge-revealed)
-          // decouples reveal from React/Vue inline-style reconciliation: even if
-          // a deferred React/Vue render with positioned=false runs AFTER this
-          // point, it only sets style.opacity="var(--forge-revealed,0)" which
-          // re-evaluates to 1 because --forge-revealed is already "1".
-          // Write top/left first so the element is never briefly visible at
-          // stale coordinates when the CSS variable is toggled on.
-          positionerEl.style.top = `${result.y}px`;
-          positionerEl.style.left = `${result.x}px`;
-          positionerEl.style.setProperty("--forge-revealed", "1");
-          positionerEl.style.pointerEvents = "";
-        }
+          if (!positioned) {
+            positioned = true;
+            ctx.positioned = true;
+            // Reveal the positioner via direct DOM writes that bypass React/Vue's
+            // render cycle entirely. Using a CSS custom property (--forge-revealed)
+            // decouples reveal from React/Vue inline-style reconciliation: even if
+            // a deferred React/Vue render with positioned=false runs AFTER this
+            // point, it only sets style.opacity="var(--forge-revealed,0)" which
+            // re-evaluates to 1 because --forge-revealed is already "1".
+            // Write top/left first so the element is never briefly visible at
+            // stale coordinates when the CSS variable is toggled on.
+            positionerEl.style.top = `${result.y}px`;
+            positionerEl.style.left = `${result.x}px`;
+            positionerEl.style.setProperty("--forge-revealed", "1");
+            positionerEl.style.pointerEvents = "";
+          }
 
-        notify();
-      });
+          notify();
+        },
+      );
     }
 
     let autoUpdateCleanup: (() => void) | undefined;

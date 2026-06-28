@@ -21,7 +21,13 @@ export function useField(options: CreateFieldOptions = {}): FieldApi {
   const [hasError, setHasError] = useState(false);
 
   // Sync description/error registration state when unmounting during strict mode double-invoke.
-  useLayoutEffect(() => () => { setHasDescription(false); setHasError(false); }, []);
+  useLayoutEffect(
+    () => () => {
+      setHasDescription(false);
+      setHasError(false);
+    },
+    [],
+  );
 
   const context = useMemo<FieldContext>(
     () => ({
@@ -34,7 +40,15 @@ export function useField(options: CreateFieldOptions = {}): FieldApi {
       hasError,
     }),
     // biome-ignore lint/correctness/useExhaustiveDependencies: dep on specific option primitives, not the options object
-    [ids, options.invalid, options.required, options.disabled, options.readOnly, hasDescription, hasError],
+    [
+      ids,
+      options.invalid,
+      options.required,
+      options.disabled,
+      options.readOnly,
+      hasDescription,
+      hasError,
+    ],
   );
 
   const connect = useMemo(() => connectField(context), [context]);

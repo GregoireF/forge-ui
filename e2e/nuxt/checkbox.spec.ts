@@ -52,7 +52,9 @@ test.describe("Checkbox — Nuxt (forge-ui)", () => {
   });
 
   // WAI-ARIA §3.7: clicking indeterminate → checked (not unchecked)
-  test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({ page }) => {
+  test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({
+    page,
+  }) => {
     await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
     await secondCheckbox(page).click();
     await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "true");
@@ -63,14 +65,18 @@ test.describe("Checkbox — Nuxt (forge-ui)", () => {
   });
 
   test("disabled checkbox has data-disabled attribute", async ({ page }) => {
-    const disabled = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"][data-disabled]');
+    const disabled = page.locator(
+      '[data-forge-scope="checkbox"][data-forge-part="root"][data-disabled]',
+    );
     await expect(disabled.first()).toBeVisible();
   });
 
   // WAI-ARIA: disabled checkbox must expose aria-disabled=true so AT can
   // announce it is non-interactive, not just visually dimmed.
   test("disabled checkbox has aria-disabled=true", async ({ page }) => {
-    const thirdCheckbox = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"]').nth(2);
+    const thirdCheckbox = page
+      .locator('[data-forge-scope="checkbox"][data-forge-part="root"]')
+      .nth(2);
     await expect(thirdCheckbox).toHaveAttribute("aria-disabled", "true");
   });
 

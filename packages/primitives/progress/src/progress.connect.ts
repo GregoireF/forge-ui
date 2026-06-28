@@ -7,7 +7,11 @@ export interface ProgressConnectOptions {
   min?: number;
 }
 
-function getState(value: number | null, min: number, max: number): "indeterminate" | "complete" | "loading" {
+function getState(
+  value: number | null,
+  min: number,
+  max: number,
+): "indeterminate" | "complete" | "loading" {
   if (value === null) return "indeterminate";
   if (value >= max) return "complete";
   if (value <= min) return "loading";

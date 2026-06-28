@@ -14,7 +14,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "bun run ../../../tooling/scripts/build.ts",
     "dev": "tsc --watch --noEmit",
@@ -31,4 +33,3 @@
     "typescript": "^5.8.3"
   }
 }
-

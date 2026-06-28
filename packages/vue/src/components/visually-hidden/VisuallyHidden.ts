@@ -1,6 +1,6 @@
-﻿import { defineComponent, h } from "vue";
-import type { VisuallyHiddenOptions } from "@forge-ui/visually-hidden";
+﻿import type { VisuallyHiddenOptions } from "@forge-ui/visually-hidden";
 import { connectVisuallyHidden } from "@forge-ui/visually-hidden";
+import { defineComponent, h } from "vue";
 
 const VisuallyHiddenRoot = defineComponent({
   name: "ForgeVisuallyHidden",
@@ -10,7 +10,7 @@ const VisuallyHiddenRoot = defineComponent({
   setup(props, { slots, attrs }) {
     return () => {
       const api = connectVisuallyHidden({ focusable: props.focusable } as VisuallyHiddenOptions);
-      return h("span", { ...api.getProps(), ...attrs }, slots['default']?.());
+      return h("span", { ...api.getProps(), ...attrs }, slots["default"]?.());
     };
   },
 });

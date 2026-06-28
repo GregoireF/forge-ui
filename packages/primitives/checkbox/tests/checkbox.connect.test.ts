@@ -188,7 +188,9 @@ describe("connectCheckbox — getIndicatorProps", () => {
 
   it("data-state reflects checked state", () => {
     expect(makeApi({}, "checked").api.getIndicatorProps()["data-state"]).toBe("checked");
-    expect(makeApi({}, "indeterminate").api.getIndicatorProps()["data-state"]).toBe("indeterminate");
+    expect(makeApi({}, "indeterminate").api.getIndicatorProps()["data-state"]).toBe(
+      "indeterminate",
+    );
     expect(makeApi({}, "unchecked").api.getIndicatorProps()["data-state"]).toBe("unchecked");
   });
 });

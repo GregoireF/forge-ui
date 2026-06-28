@@ -1,5 +1,10 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import type { TagsInputContext, TagsInputEvent, TagsInputSend, TagsInputState } from "./tags-input.types.js";
+import type {
+  TagsInputContext,
+  TagsInputEvent,
+  TagsInputSend,
+  TagsInputState,
+} from "./tags-input.types.js";
 
 export type TagsInputApi = ReturnType<typeof connectTagsInput>;
 
@@ -61,7 +66,8 @@ export function connectTagsInput(
           if ((e.target as HTMLInputElement).value.trim()) send({ type: "ADD_TAG" });
           send({ type: "BLUR" });
         },
-        onInput: (e: Event) => send({ type: "INPUT_CHANGE", value: (e.target as HTMLInputElement).value }),
+        onInput: (e: Event) =>
+          send({ type: "INPUT_CHANGE", value: (e.target as HTMLInputElement).value }),
         onKeyDown: (e: KeyboardEvent) => {
           if (e.key === "Enter" || (context.delimiter && e.key === context.delimiter)) {
             e.preventDefault();

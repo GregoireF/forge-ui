@@ -4,23 +4,47 @@
  */
 
 @keyframes forge-fade-scale-in {
-  from { opacity: 0; scale: 0.97; translate: 0 -6px; }
-  to   { opacity: 1; scale: 1;    translate: none; }
+  from {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 -6px;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: none;
+  }
 }
 
 @keyframes forge-fade-scale-out {
-  from { opacity: 1; scale: 1;    translate: none; }
-  to   { opacity: 0; scale: 0.97; translate: 0 6px; }
+  from {
+    opacity: 1;
+    scale: 1;
+    translate: none;
+  }
+  to {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 6px;
+  }
 }
 
 @keyframes forge-overlay-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes forge-overlay-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* Dialog */
@@ -91,7 +115,9 @@
 
 /* DatePicker / DateRangePicker — hover on cells */
 [data-forge-scope="date-picker"][data-forge-part="cell"]:hover,
-[data-forge-scope="date-range-picker"][data-forge-part="cell"]:not([data-in-range]):not([data-range-start]):not([data-range-end]):hover {
+[data-forge-scope="date-range-picker"][data-forge-part="cell"]:not([data-in-range]):not(
+  [data-range-start]
+):not([data-range-end]):hover {
   background: #f1f5f9;
   border-radius: 6px;
 }
@@ -104,7 +130,9 @@
   border-radius: 6px;
 }
 [data-forge-scope="date-picker"][data-forge-part="cell"][data-today],
-[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-today]:not([data-range-start]):not([data-range-end]) {
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-today]:not(
+  [data-range-start]
+):not([data-range-end]) {
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 2px;

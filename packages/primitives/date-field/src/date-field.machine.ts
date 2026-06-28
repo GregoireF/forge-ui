@@ -140,9 +140,10 @@ function increment({
   if (context.disabled || context.readOnly || !context.focusedSegment) return;
   const seg = context.focusedSegment;
   const current = getSegmentValue(context, seg) ?? SEGMENT_MIN[seg] - 1;
-  const max = seg === "day" && context.monthValue && context.yearValue
-    ? getDaysInMonth(context.yearValue, context.monthValue)
-    : SEGMENT_MAX[seg];
+  const max =
+    seg === "day" && context.monthValue && context.yearValue
+      ? getDaysInMonth(context.yearValue, context.monthValue)
+      : SEGMENT_MAX[seg];
   const next = current >= max ? SEGMENT_MIN[seg] : current + 1;
   const update = setSegmentValue(seg, next);
   setContext({ ...update, typingBuffer: "" });
@@ -160,9 +161,10 @@ function decrement({
   if (context.disabled || context.readOnly || !context.focusedSegment) return;
   const seg = context.focusedSegment;
   const current = getSegmentValue(context, seg) ?? SEGMENT_MAX[seg] + 1;
-  const max = seg === "day" && context.monthValue && context.yearValue
-    ? getDaysInMonth(context.yearValue, context.monthValue)
-    : SEGMENT_MAX[seg];
+  const max =
+    seg === "day" && context.monthValue && context.yearValue
+      ? getDaysInMonth(context.yearValue, context.monthValue)
+      : SEGMENT_MAX[seg];
   const next = current <= SEGMENT_MIN[seg] ? max : current - 1;
   const update = setSegmentValue(seg, next);
   setContext({ ...update, typingBuffer: "" });
@@ -258,7 +260,9 @@ export function createDateFieldMachine(options: CreateDateFieldOptions) {
       readOnly: options.readOnly ?? false,
       ...(options.min !== undefined && { min: options.min }),
       ...(options.max !== undefined && { max: options.max }),
-      ...(options.isDateUnavailable !== undefined && { isDateUnavailable: options.isDateUnavailable }),
+      ...(options.isDateUnavailable !== undefined && {
+        isDateUnavailable: options.isDateUnavailable,
+      }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
     },
     initial: "idle",

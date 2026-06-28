@@ -1,12 +1,6 @@
 import { mergeRefs } from "@forge-ui/core";
 import type { HTMLAttributes, ReactNode, RefCallback } from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useRef } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../shared/Slot.js";
@@ -21,7 +15,9 @@ type MenuApi = UseMenuReturn;
 
 const MenuCtx = createContext<MenuApi | null>(null);
 const MenuPresenceCtx = createContext<ReturnType<typeof usePresence> | null>(null);
-const MenuSubTriggersCtx = createContext<React.MutableRefObject<Map<string, () => void>> | null>(null);
+const MenuSubTriggersCtx = createContext<React.MutableRefObject<Map<string, () => void>> | null>(
+  null,
+);
 
 function useCtx(): MenuApi {
   const ctx = useContext(MenuCtx);
@@ -69,9 +65,7 @@ function Root({ children, ...opts }: MenuRootProps) {
   return (
     <MenuCtx.Provider value={api}>
       <MenuPresenceCtx.Provider value={presence}>
-        <MenuSubTriggersCtx.Provider value={subTriggersRef}>
-          {children}
-        </MenuSubTriggersCtx.Provider>
+        <MenuSubTriggersCtx.Provider value={subTriggersRef}>{children}</MenuSubTriggersCtx.Provider>
       </MenuPresenceCtx.Provider>
     </MenuCtx.Provider>
   );
@@ -89,7 +83,14 @@ export interface MenuTriggerProps extends Omit<HTMLAttributes<HTMLButtonElement>
 
 function Trigger({ asChild, children, disabled, ...rest }: MenuTriggerProps) {
   const api = useCtx();
-  const { onKeyDown, onKeydown: _kd, ref, ...triggerRest } = api.getTriggerProps(disabled !== undefined ? { disabled } : undefined) as ReturnType<typeof api.getTriggerProps> & { onKeydown?: unknown };
+  const {
+    onKeyDown,
+    onKeydown: _kd,
+    ref,
+    ...triggerRest
+  } = api.getTriggerProps(disabled !== undefined ? { disabled } : undefined) as ReturnType<
+    typeof api.getTriggerProps
+  > & { onKeydown?: unknown };
   const props = { ...triggerRest, onKeyDown, ...rest, ref };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <button {...props}>{children}</button>;
@@ -187,7 +188,15 @@ function Content({
 
   if (!forceMount && !isPresent) return null;
 
-  const { ref: contentRef, onKeyDown: baseKeyDown, onKeydown: _kd, ...contentRest } = api.getContentProps() as ReturnType<typeof api.getContentProps> & { onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void; onKeydown?: unknown };
+  const {
+    ref: contentRef,
+    onKeyDown: baseKeyDown,
+    onKeydown: _kd,
+    ...contentRest
+  } = api.getContentProps() as ReturnType<typeof api.getContentProps> & {
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+    onKeydown?: unknown;
+  };
   const positionerProps = api.getPositionerProps();
 
   const mergedRef = mergeRefs(
@@ -226,9 +235,11 @@ function Content({
     ref: mergedRef,
   };
 
-  const innerEl = asChild
-    ? <Slot {...mergedContentProps}>{children}</Slot>
-    : <div {...mergedContentProps}>{children}</div>;
+  const innerEl = asChild ? (
+    <Slot {...mergedContentProps}>{children}</Slot>
+  ) : (
+    <div {...mergedContentProps}>{children}</div>
+  );
 
   return (
     <>
@@ -243,9 +254,7 @@ function Content({
           style={{ position: "fixed", inset: 0, zIndex: 49 }}
         />
       )}
-      <div {...positionerProps}>
-        {innerEl}
-      </div>
+      <div {...positionerProps}>{innerEl}</div>
     </>
   );
 }
@@ -260,7 +269,9 @@ export interface MenuArrowProps extends HTMLAttributes<HTMLSpanElement> {
 
 function Arrow({ asChild, ...rest }: MenuArrowProps) {
   const api = useCtx();
-  const { ref, ...arrowRest } = api.getArrowProps() as ReturnType<typeof api.getArrowProps> & { ref?: RefCallback<HTMLSpanElement> };
+  const { ref, ...arrowRest } = api.getArrowProps() as ReturnType<typeof api.getArrowProps> & {
+    ref?: RefCallback<HTMLSpanElement>;
+  };
   const props = { ...arrowRest, ...rest, ref };
   if (asChild) return <Slot {...props} />;
   return (
@@ -290,7 +301,9 @@ export interface MenuAnchorProps extends HTMLAttributes<HTMLSpanElement> {
 
 function Anchor({ asChild, children, ...rest }: MenuAnchorProps) {
   const api = useCtx();
-  const { ref, ...anchorRest } = api.getAnchorProps() as ReturnType<typeof api.getAnchorProps> & { ref?: RefCallback<HTMLSpanElement> };
+  const { ref, ...anchorRest } = api.getAnchorProps() as ReturnType<typeof api.getAnchorProps> & {
+    ref?: RefCallback<HTMLSpanElement>;
+  };
   const props = { ...anchorRest, ...rest, ref };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <span {...props}>{children}</span>;
@@ -336,11 +349,26 @@ function Item({
   // useLayoutEffect fires before the parent Content's useEffect, ensuring items are
   // in context.items before Content dispatches FIRST_ITEM.
   useLayoutEffect(() => {
-    api.registerItem({ value, label: label ?? value, ...(textValue !== undefined && { textValue }), disabled });
+    api.registerItem({
+      value,
+      label: label ?? value,
+      ...(textValue !== undefined && { textValue }),
+      disabled,
+    });
     return () => api.unregisterItem(value);
   }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { onMouseEnter, onMouseLeave, onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getItemProps(value, disabled) as ReturnType<typeof api.getItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+  const {
+    onMouseEnter,
+    onMouseLeave,
+    onMousemove: _mm,
+    onMouseleave: _ml,
+    onClick: baseClick,
+    ...itemRest
+  } = api.getItemProps(value, disabled) as ReturnType<typeof api.getItemProps> & {
+    onMousemove?: unknown;
+    onMouseleave?: unknown;
+  };
 
   const props = {
     ...itemRest,
@@ -371,7 +399,11 @@ export interface MenuLabelProps extends HTMLAttributes<HTMLDivElement> {
 
 function Label({ children, ...rest }: MenuLabelProps) {
   const api = useCtx();
-  return <div {...api.getLabelProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getLabelProps()} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -396,7 +428,11 @@ export interface MenuGroupProps extends HTMLAttributes<HTMLDivElement> {
 
 function Group({ id, children, ...rest }: MenuGroupProps) {
   const api = useCtx();
-  return <div {...api.getGroupProps(id)} {...rest}>{children}</div>;
+  return (
+    <div {...api.getGroupProps(id)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 export interface MenuGroupLabelProps extends HTMLAttributes<HTMLDivElement> {
@@ -406,7 +442,11 @@ export interface MenuGroupLabelProps extends HTMLAttributes<HTMLDivElement> {
 
 function GroupLabel({ groupId, children, ...rest }: MenuGroupLabelProps) {
   const api = useCtx();
-  return <div {...api.getGroupLabelProps(groupId)} {...rest}>{children}</div>;
+  return (
+    <div {...api.getGroupLabelProps(groupId)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -424,7 +464,9 @@ function RadioGroup({ groupId, value, onValueChange, children, ...rest }: MenuRa
   const api = useCtx();
   return (
     <MenuRadioGroupCtx.Provider value={{ groupId, value, onValueChange }}>
-      <div {...api.getRadioGroupProps(groupId)} {...rest}>{children}</div>
+      <div {...api.getRadioGroupProps(groupId)} {...rest}>
+        {children}
+      </div>
     </MenuRadioGroupCtx.Provider>
   );
 }
@@ -436,7 +478,11 @@ export interface MenuRadioGroupLabelProps extends HTMLAttributes<HTMLDivElement>
 
 function RadioGroupLabel({ groupId, children, ...rest }: MenuRadioGroupLabelProps) {
   const api = useCtx();
-  return <div {...api.getRadioGroupLabelProps(groupId)} {...rest}>{children}</div>;
+  return (
+    <div {...api.getRadioGroupLabelProps(groupId)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -454,7 +500,16 @@ export interface MenuRadioItemProps extends Omit<HTMLAttributes<HTMLDivElement>,
   closeOnSelect?: boolean;
 }
 
-function RadioItem({ value, label, textValue, disabled = false, asChild, children, closeOnSelect = true, ...rest }: MenuRadioItemProps) {
+function RadioItem({
+  value,
+  label,
+  textValue,
+  disabled = false,
+  asChild,
+  children,
+  closeOnSelect = true,
+  ...rest
+}: MenuRadioItemProps) {
   const api = useCtx();
   const radioCtx = useContext(MenuRadioGroupCtx);
   if (!radioCtx) throw new Error("Menu.RadioItem must be inside <Menu.RadioGroup>");
@@ -462,11 +517,25 @@ function RadioItem({ value, label, textValue, disabled = false, asChild, childre
   const checked = radioCtx.value === value;
 
   useLayoutEffect(() => {
-    api.registerItem({ value, label: label ?? value, ...(textValue !== undefined && { textValue }), disabled });
+    api.registerItem({
+      value,
+      label: label ?? value,
+      ...(textValue !== undefined && { textValue }),
+      disabled,
+    });
     return () => api.unregisterItem(value);
   }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { onMouseEnter, onMouseLeave, onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getRadioItemProps({ value, checked, disabled, closeOnSelect }) as ReturnType<typeof api.getRadioItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+  const {
+    onMouseEnter,
+    onMouseLeave,
+    onMousemove: _mm,
+    onMouseleave: _ml,
+    onClick: baseClick,
+    ...itemRest
+  } = api.getRadioItemProps({ value, checked, disabled, closeOnSelect }) as ReturnType<
+    typeof api.getRadioItemProps
+  > & { onMousemove?: unknown; onMouseleave?: unknown };
 
   const props = {
     ...itemRest,
@@ -521,11 +590,25 @@ function CheckboxItem({
   const api = useCtx();
 
   useLayoutEffect(() => {
-    api.registerItem({ value, label: label ?? value, ...(textValue !== undefined && { textValue }), disabled });
+    api.registerItem({
+      value,
+      label: label ?? value,
+      ...(textValue !== undefined && { textValue }),
+      disabled,
+    });
     return () => api.unregisterItem(value);
   }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { onMouseEnter, onMouseLeave, onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getCheckboxItemProps({ value, checked, disabled, closeOnSelect }) as ReturnType<typeof api.getCheckboxItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+  const {
+    onMouseEnter,
+    onMouseLeave,
+    onMousemove: _mm,
+    onMouseleave: _ml,
+    onClick: baseClick,
+    ...itemRest
+  } = api.getCheckboxItemProps({ value, checked, disabled, closeOnSelect }) as ReturnType<
+    typeof api.getCheckboxItemProps
+  > & { onMousemove?: unknown; onMouseleave?: unknown };
 
   const props = {
     ...itemRest,
@@ -595,12 +678,19 @@ function Sub({ children, onMenuSelect, openDelay = 200, closeDelay = 300 }: Menu
   const childPresence = usePresence(childApi.isOpen);
 
   return (
-    <MenuSubCtx.Provider value={{ childApi, childPresence, subMenuId: childApi.id, openDelay, closeDelay, parentTriggersRef }}>
+    <MenuSubCtx.Provider
+      value={{
+        childApi,
+        childPresence,
+        subMenuId: childApi.id,
+        openDelay,
+        closeDelay,
+        parentTriggersRef,
+      }}
+    >
       {/* Override MenuSubTriggersCtx with ownTriggersRef so SubContent and deeper
           SubTriggers read from this level's map, not the grandparent's. */}
-      <MenuSubTriggersCtx.Provider value={ownTriggersRef}>
-        {children}
-      </MenuSubTriggersCtx.Provider>
+      <MenuSubTriggersCtx.Provider value={ownTriggersRef}>{children}</MenuSubTriggersCtx.Provider>
     </MenuSubCtx.Provider>
   );
 }
@@ -620,7 +710,16 @@ export interface MenuSubTriggerProps extends Omit<HTMLAttributes<HTMLDivElement>
   openOnHover?: boolean;
 }
 
-function SubTrigger({ disabled = false, children, value, label, textValue, asChild, openOnHover = true, ...rest }: MenuSubTriggerProps) {
+function SubTrigger({
+  disabled = false,
+  children,
+  value,
+  label,
+  textValue,
+  asChild,
+  openOnHover = true,
+  ...rest
+}: MenuSubTriggerProps) {
   const parentApi = useCtx();
   const sub = useContext(MenuSubCtx);
   if (!sub) throw new Error("Menu.SubTrigger must be inside <Menu.Sub>");
@@ -633,20 +732,38 @@ function SubTrigger({ disabled = false, children, value, label, textValue, asChi
     const openSubmenu = () => {
       clearTimeout(closeTimerRef.current);
       childApi.setOpen(true);
-      setTimeout(() => { childApi.focusContent(); childApi.send("FIRST_ITEM"); }, 10);
+      setTimeout(() => {
+        childApi.focusContent();
+        childApi.send("FIRST_ITEM");
+      }, 10);
     };
     // Register in the PARENT's triggers map, not the own map.
     // The outer Content/SubContent reads from its direct Sub's ownTriggersRef (= parentTriggersRef here).
     parentTriggersRef?.current.set(value, openSubmenu);
-    return () => { parentTriggersRef?.current.delete(value); };
+    return () => {
+      parentTriggersRef?.current.delete(value);
+    };
   }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useLayoutEffect(() => {
-    parentApi.registerItem({ value, label: label ?? value, ...(textValue !== undefined && { textValue }), disabled });
+    parentApi.registerItem({
+      value,
+      label: label ?? value,
+      ...(textValue !== undefined && { textValue }),
+      disabled,
+    });
     return () => parentApi.unregisterItem(value);
   }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { onMouseEnter: _pme, onMouseLeave: _pml, onMousemove: _mm, onMouseleave: _ml, ...subTriggerBaseProps } = parentApi.getSubTriggerProps(subMenuId, childApi.isOpen, disabled) as ReturnType<typeof parentApi.getSubTriggerProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+  const {
+    onMouseEnter: _pme,
+    onMouseLeave: _pml,
+    onMousemove: _mm,
+    onMouseleave: _ml,
+    ...subTriggerBaseProps
+  } = parentApi.getSubTriggerProps(subMenuId, childApi.isOpen, disabled) as ReturnType<
+    typeof parentApi.getSubTriggerProps
+  > & { onMousemove?: unknown; onMouseleave?: unknown };
 
   const props = {
     ...subTriggerBaseProps,
@@ -661,7 +778,10 @@ function SubTrigger({ disabled = false, children, value, label, textValue, asChi
     onMouseLeave() {
       if (openOnHover) {
         clearTimeout(openTimerRef.current);
-        closeTimerRef.current = setTimeout(() => { if (!childApi.isOpen) return; childApi.setOpen(false); }, closeDelay);
+        closeTimerRef.current = setTimeout(() => {
+          if (!childApi.isOpen) return;
+          childApi.setOpen(false);
+        }, closeDelay);
       }
     },
     onClick() {
@@ -670,7 +790,10 @@ function SubTrigger({ disabled = false, children, value, label, textValue, asChi
         clearTimeout(closeTimerRef.current);
         childApi.send("TOGGLE");
         if (!childApi.isOpen) {
-          setTimeout(() => { childApi.focusContent(); childApi.send("FIRST_ITEM"); }, 10);
+          setTimeout(() => {
+            childApi.focusContent();
+            childApi.send("FIRST_ITEM");
+          }, 10);
         }
       }
     },
@@ -690,7 +813,13 @@ export interface MenuSubContentProps extends Omit<HTMLAttributes<HTMLDivElement>
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
-function SubContent({ asChild, forceMount, children, onKeyDown: restKeyDown, ...rest }: MenuSubContentProps) {
+function SubContent({
+  asChild,
+  forceMount,
+  children,
+  onKeyDown: restKeyDown,
+  ...rest
+}: MenuSubContentProps) {
   const parentApi = useCtx();
   const sub = useContext(MenuSubCtx);
   if (!sub) throw new Error("Menu.SubContent must be inside <Menu.Sub>");
@@ -706,14 +835,26 @@ function SubContent({ asChild, forceMount, children, onKeyDown: restKeyDown, ...
 
   // ARIA roving tabindex: keyboard highlight moves real focus to the sub-menu item.
   useEffect(() => {
-    if (childApi.isOpen && childApi.highlighted !== null && childApi.highlightSource === "keyboard") {
+    if (
+      childApi.isOpen &&
+      childApi.highlighted !== null &&
+      childApi.highlightSource === "keyboard"
+    ) {
       childApi.focusHighlightedItem();
     }
   }, [childApi.highlighted, childApi.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!forceMount && !isPresent) return null;
 
-  const { ref: contentRef, onKeyDown: baseKeyDown, onKeydown: _kd, ...contentRest } = childApi.getContentProps() as ReturnType<typeof childApi.getContentProps> & { onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void; onKeydown?: unknown };
+  const {
+    ref: contentRef,
+    onKeyDown: baseKeyDown,
+    onKeydown: _kd,
+    ...contentRest
+  } = childApi.getContentProps() as ReturnType<typeof childApi.getContentProps> & {
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+    onKeydown?: unknown;
+  };
   const positionerProps = childApi.getPositionerProps();
 
   const mergedRef = mergeRefs(
@@ -755,16 +896,24 @@ function SubContent({ asChild, forceMount, children, onKeyDown: restKeyDown, ...
       baseKeyDown?.(e);
       restKeyDown?.(e);
     },
-    onMouseEnter() { clearTimeout(closeTimerRef.current); },
+    onMouseEnter() {
+      clearTimeout(closeTimerRef.current);
+    },
     onMouseLeave() {
       closeTimerRef.current = setTimeout(() => childApi.setOpen(false), closeDelay);
     },
     ref: mergedRef,
   };
 
-  const subPortalContent = asChild
-    ? <div {...positionerProps}><Slot {...mergedProps}>{children}</Slot></div>
-    : <div {...positionerProps}><div {...mergedProps}>{children}</div></div>;
+  const subPortalContent = asChild ? (
+    <div {...positionerProps}>
+      <Slot {...mergedProps}>{children}</Slot>
+    </div>
+  ) : (
+    <div {...positionerProps}>
+      <div {...mergedProps}>{children}</div>
+    </div>
+  );
 
   return <DialogPortal>{subPortalContent}</DialogPortal>;
 }
@@ -816,23 +965,23 @@ export const Menu = {
 } as const;
 
 export {
-  Root as MenuRoot,
-  Trigger as MenuTrigger,
-  Portal as MenuPortal,
-  Content as MenuContent,
-  Arrow as MenuArrow,
   Anchor as MenuAnchor,
-  Item as MenuItem,
-  Label as MenuLabel,
-  Separator as MenuSeparator,
+  Arrow as MenuArrow,
+  CheckboxItem as MenuCheckboxItem,
+  Content as MenuContent,
   Group as MenuGroup,
   GroupLabel as MenuGroupLabel,
+  Item as MenuItem,
+  ItemIndicator as MenuItemIndicator,
+  Label as MenuLabel,
+  Portal as MenuPortal,
   RadioGroup as MenuRadioGroup,
   RadioGroupLabel as MenuRadioGroupLabel,
   RadioItem as MenuRadioItem,
-  CheckboxItem as MenuCheckboxItem,
-  ItemIndicator as MenuItemIndicator,
+  Root as MenuRoot,
+  Separator as MenuSeparator,
   Sub as MenuSub,
-  SubTrigger as MenuSubTrigger,
   SubContent as MenuSubContent,
+  SubTrigger as MenuSubTrigger,
+  Trigger as MenuTrigger,
 };

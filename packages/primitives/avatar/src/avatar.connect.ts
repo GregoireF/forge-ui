@@ -1,10 +1,5 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import type {
-  AvatarContext,
-  AvatarEvent,
-  AvatarSend,
-  AvatarState,
-} from "./avatar.types.js";
+import type { AvatarContext, AvatarEvent, AvatarSend, AvatarState } from "./avatar.types.js";
 
 // ---------------------------------------------------------------------------
 // Utility

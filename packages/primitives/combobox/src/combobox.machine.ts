@@ -1,7 +1,13 @@
 import { createMachine, makeWatchOutsideActivity } from "@forge-ui/core";
 import type { FloatingPositioning } from "@forge-ui/floating";
 import { makeComputePositionActivity } from "@forge-ui/floating";
-import type { ComboboxContext, ComboboxEvent, ComboboxOption, ComboboxState, ComboboxTranslations } from "./combobox.types.js";
+import type {
+  ComboboxContext,
+  ComboboxEvent,
+  ComboboxOption,
+  ComboboxState,
+  ComboboxTranslations,
+} from "./combobox.types.js";
 import { defaultComboboxTranslations } from "./combobox.types.js";
 
 // ---------------------------------------------------------------------------
@@ -101,7 +107,10 @@ export interface CreateComboboxMachineOptions {
   onValueChange?: (value: string[]) => void;
   onOpenChange?: (open: boolean) => void;
   onHighlightChange?: (value: string | null) => void;
-  filterFn?: (option: { value: string; label: string; disabled?: boolean }, inputValue: string) => boolean;
+  filterFn?: (
+    option: { value: string; label: string; disabled?: boolean },
+    inputValue: string,
+  ) => boolean;
   options?: ComboboxOption[];
   onHighlightedScroll?: (value: string, index: number) => void;
   onCreateOption?: (value: string) => void;
@@ -141,10 +150,14 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
       ...(options.onInputChange !== undefined && { onInputChange: options.onInputChange }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
-      ...(options.onHighlightChange !== undefined && { onHighlightChange: options.onHighlightChange }),
+      ...(options.onHighlightChange !== undefined && {
+        onHighlightChange: options.onHighlightChange,
+      }),
       ...(options.filterFn !== undefined && { filterFn: options.filterFn }),
       ...(options.options !== undefined && { allOptions: options.options }),
-      ...(options.onHighlightedScroll !== undefined && { onHighlightedScroll: options.onHighlightedScroll }),
+      ...(options.onHighlightedScroll !== undefined && {
+        onHighlightedScroll: options.onHighlightedScroll,
+      }),
       ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
       translations: { ...defaultComboboxTranslations, ...options.translations },
       triggerEl: null,
@@ -184,28 +197,35 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
               ({ setContext, event }) => {
                 setContext({ inputValue: event.value, highlighted: null });
               },
-              ({ context }) => { context.onInputChange?.(context.inputValue); },
+              ({ context }) => {
+                context.onInputChange?.(context.inputValue);
+              },
               invokeOnOpenChange(true),
             ],
           },
 
           CLEAR: {
             actions: [
-              ({ setContext }) => setContext({ value: [], inputValue: "", highlighted: null, selectedLabels: {} }),
+              ({ setContext }) =>
+                setContext({ value: [], inputValue: "", highlighted: null, selectedLabels: {} }),
               invokeOnValueChange,
             ],
           },
 
           REGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              const exists = context.options.some((o) => o.value === event.option.value);
-              if (!exists) setContext({ options: [...context.options, event.option] });
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                const exists = context.options.some((o) => o.value === event.option.value);
+                if (!exists) setContext({ options: [...context.options, event.option] });
+              },
+            ],
           },
           UNREGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              setContext({ options: context.options.filter((o) => o.value !== event.value) });
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                setContext({ options: context.options.filter((o) => o.value !== event.value) });
+              },
+            ],
           },
         },
       },
@@ -260,7 +280,9 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
               ({ setContext, event }) => {
                 setContext({ inputValue: event.value, highlighted: null });
               },
-              ({ context }) => { context.onInputChange?.(context.inputValue); },
+              ({ context }) => {
+                context.onInputChange?.(context.inputValue);
+              },
             ],
           },
 
@@ -281,7 +303,11 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
                   else nextLabels[value] = opt?.label ?? value;
                   setContext({ value: next, highlighted: value, selectedLabels: nextLabels });
                 } else {
-                  setContext({ value: [value], inputValue: opt?.label ?? value, highlighted: value });
+                  setContext({
+                    value: [value],
+                    inputValue: opt?.label ?? value,
+                    highlighted: value,
+                  });
                 }
               },
               invokeOnValueChange,
@@ -325,7 +351,12 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           HIGHLIGHT_NEXT: {
             actions: [
               ({ context, setContext }) => {
-                setContext({ highlighted: getNextHighlighted(getEffectiveOptions(context), context.highlighted) });
+                setContext({
+                  highlighted: getNextHighlighted(
+                    getEffectiveOptions(context),
+                    context.highlighted,
+                  ),
+                });
               },
               invokeOnHighlightChange,
               invokeOnHighlightedScroll,
@@ -334,7 +365,12 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           HIGHLIGHT_PREV: {
             actions: [
               ({ context, setContext }) => {
-                setContext({ highlighted: getPrevHighlighted(getEffectiveOptions(context), context.highlighted) });
+                setContext({
+                  highlighted: getPrevHighlighted(
+                    getEffectiveOptions(context),
+                    context.highlighted,
+                  ),
+                });
               },
               invokeOnHighlightChange,
               invokeOnHighlightedScroll,
@@ -343,7 +379,9 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           HIGHLIGHT_FIRST: {
             actions: [
               ({ context, setContext }) => {
-                setContext({ highlighted: getEnabled(getEffectiveOptions(context))[0]?.value ?? null });
+                setContext({
+                  highlighted: getEnabled(getEffectiveOptions(context))[0]?.value ?? null,
+                });
               },
               invokeOnHighlightChange,
               invokeOnHighlightedScroll,
@@ -379,15 +417,19 @@ export function createComboboxMachine(options: CreateComboboxMachineOptions) {
           },
 
           REGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              const exists = context.options.some((o) => o.value === event.option.value);
-              if (!exists) setContext({ options: [...context.options, event.option] });
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                const exists = context.options.some((o) => o.value === event.option.value);
+                if (!exists) setContext({ options: [...context.options, event.option] });
+              },
+            ],
           },
           UNREGISTER_OPTION: {
-            actions: [({ context, setContext, event }) => {
-              setContext({ options: context.options.filter((o) => o.value !== event.value) });
-            }],
+            actions: [
+              ({ context, setContext, event }) => {
+                setContext({ options: context.options.filter((o) => o.value !== event.value) });
+              },
+            ],
           },
         },
       },

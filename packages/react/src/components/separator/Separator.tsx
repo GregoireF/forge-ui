@@ -1,6 +1,6 @@
-import type { HTMLAttributes } from "react";
 import type { SeparatorOptions } from "@forge-ui/separator";
 import { connectSeparator } from "@forge-ui/separator";
+import type { HTMLAttributes } from "react";
 
 export interface SeparatorProps
   extends SeparatorOptions,

@@ -72,7 +72,7 @@ const NumberInputRoot = defineComponent({
     watch(api.value, (v) => emit("update:value", v));
 
     provide(numberInputKey, api);
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -87,8 +87,8 @@ const NumberInputLabel = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots['default']);
-      return h("label", merged, slots['default']?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("label", merged, slots["default"]?.());
     };
   },
 });
@@ -104,8 +104,8 @@ const NumberInputControl = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...api.getControlProps(), ...attrs };
-      if (props.asChild) return h(Slot, merged, slots['default']);
-      return h("div", merged, slots['default']?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("div", merged, slots["default"]?.());
     };
   },
 });
@@ -179,8 +179,8 @@ const NumberInputIncrementTrigger = defineComponent({
       };
 
       const merged = { ...triggerAttrs, onPointerdown, onPointerup, onPointerleave, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots['default']);
-      return h("button", merged, slots['default']?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("button", merged, slots["default"]?.());
     };
   },
 });
@@ -213,8 +213,8 @@ const NumberInputDecrementTrigger = defineComponent({
       };
 
       const merged = { ...triggerAttrs, onPointerdown, onPointerup, onPointerleave, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots['default']);
-      return h("button", merged, slots['default']?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("button", merged, slots["default"]?.());
     };
   },
 });

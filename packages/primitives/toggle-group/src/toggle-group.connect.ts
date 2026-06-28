@@ -15,10 +15,7 @@ type ToggleGroupSend = (event: ToggleGroupEvent) => void;
  * (mirrors the APG recommendation and RadioGroup behaviour in this codebase).
  * Home → first item, End → last item.
  */
-function navigateToolbar(
-  e: KeyboardEvent,
-  context: ToggleGroupContext,
-): boolean {
+function navigateToolbar(e: KeyboardEvent, context: ToggleGroupContext): boolean {
   const isHorizontal = context.orientation === "horizontal";
   const isNext =
     (isHorizontal && e.key === "ArrowRight") ||
@@ -26,8 +23,7 @@ function navigateToolbar(
     // Always support both axes per APG ("should not restrict")
     e.key === "ArrowRight" ||
     e.key === "ArrowDown";
-  const isPrev =
-    e.key === "ArrowLeft" || e.key === "ArrowUp";
+  const isPrev = e.key === "ArrowLeft" || e.key === "ArrowUp";
   const isFirst = e.key === "Home";
   const isLast = e.key === "End";
 
@@ -41,9 +37,7 @@ function navigateToolbar(
   if (!toolbar) return true;
 
   const items = [
-    ...toolbar.querySelectorAll<HTMLElement>(
-      '[data-forge-part="item"]:not([disabled])',
-    ),
+    ...toolbar.querySelectorAll<HTMLElement>('[data-forge-part="item"]:not([disabled])'),
   ];
   if (items.length === 0) return true;
 

@@ -192,9 +192,7 @@ describe("Avatar (Vue) — forceMount", () => {
 
   it("forceMount + delayMs: in DOM but CSS-hidden during delay window", async () => {
     vi.useFakeTimers();
-    render(
-      makeFixture({ src: "https://example.com/photo.jpg", delayMs: 600, forceMount: true }),
-    );
+    render(makeFixture({ src: "https://example.com/photo.jpg", delayMs: 600, forceMount: true }));
     // Wait for machine → loading (onMounted); delayMs gate → data-state=hidden, forceMount keeps in DOM.
     await waitFor(() =>
       expect(screen.getByTestId("fallback")).toHaveAttribute("data-state", "hidden"),
