@@ -13,6 +13,8 @@
   "timezone": "Europe/Paris",
   "schedule": ["every weekend"],
 
+  "baseBranches": ["develop"],
+
   "packageManager": "bun",
 
   "commitMessagePrefix": "⬆️ ",
