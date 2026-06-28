@@ -4,7 +4,9 @@
     "noEmit": true,
     "paths": {
       "@forge-ui/vue": ["../../packages/vue/src/index.ts"],
-      "@forge-ui/core": ["../../packages/core/src/index.ts"]
+      "@forge-ui/core": ["../../packages/core/src/index.ts"],
+      "@forge-ui/floating": ["../../packages/floating/src/index.ts"],
+      "@forge-ui/menu": ["../../packages/primitives/menu/src/index.ts"]
     }
   },
   "include": ["src"]

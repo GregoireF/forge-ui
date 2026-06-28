@@ -44,9 +44,7 @@ function Root({ children, open: openProp, ...opts }: PopoverRootProps) {
 
   return (
     <PopoverCtx.Provider value={api}>
-      <PopoverPresenceCtx.Provider value={presence}>
-        {children}
-      </PopoverPresenceCtx.Provider>
+      <PopoverPresenceCtx.Provider value={presence}>{children}</PopoverPresenceCtx.Provider>
     </PopoverCtx.Provider>
   );
 }
@@ -217,6 +215,16 @@ function Description({ asChild, children, ...rest }: PopoverDescriptionProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "Popover.Root";
+Trigger.displayName = "Popover.Trigger";
+Anchor.displayName = "Popover.Anchor";
+Portal.displayName = "Popover.Portal";
+Content.displayName = "Popover.Content";
+Arrow.displayName = "Popover.Arrow";
+Close.displayName = "Popover.Close";
+Title.displayName = "Popover.Title";
+Description.displayName = "Popover.Description";
 
 export const Popover = {
   Root,

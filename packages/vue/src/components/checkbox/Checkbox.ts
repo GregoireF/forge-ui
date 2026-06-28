@@ -1,4 +1,4 @@
-import type { ComputedRef, InjectionKey, PropType } from "vue";
+﻿import type { ComputedRef, InjectionKey, PropType } from "vue";
 import { computed, defineComponent, h, inject, onUnmounted, provide, ref, watch } from "vue";
 import type { CheckboxChecked, UseCheckboxReturn } from "./use-checkbox.js";
 import { useCheckbox } from "./use-checkbox.js";
@@ -43,11 +43,15 @@ const CheckboxGroup = defineComponent({
     required: { type: Boolean, default: false },
     name: { type: String, default: undefined },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: string[]) => true,
+  },
   setup(props, { slots, emit }) {
     const isControlled = computed(() => props.value !== undefined);
     const internal = ref<string[]>(props.defaultValue ?? []);
-    const currentValue = computed(() => (isControlled.value ? (props.value ?? []) : internal.value));
+    const currentValue = computed(() =>
+      isControlled.value ? (props.value ?? []) : internal.value,
+    );
     const allValues = ref(new Set<string>());
 
     const commit = (next: string[]) => {
@@ -88,7 +92,7 @@ const CheckboxGroup = defineComponent({
       h(
         "div",
         { role: "group", "data-forge-scope": "checkbox", "data-forge-part": "group" },
-        slots.default?.(),
+        slots["default"]?.(),
       );
   },
 });
@@ -120,7 +124,9 @@ const CheckboxRoot = defineComponent({
       default: undefined,
     },
   },
-  emits: ["update:checked"],
+  emits: {
+    "update:checked": (_v: CheckboxChecked) => true,
+  },
   setup(props, { slots, emit }) {
     const group = inject(checkboxGroupKey, null);
     const isInGroup = computed(() => group !== null && props.value !== undefined);
@@ -170,7 +176,7 @@ const CheckboxRoot = defineComponent({
         }
       : api;
 
-    // One-way sync: group state → machine display state.
+    // One-way sync: group state â†’ machine display state.
     // Only fire when the machine state doesn't already match (prevents no-op sends).
     watch(effectiveChecked, (v) => {
       if (v === undefined) return;
@@ -193,7 +199,7 @@ const CheckboxRoot = defineComponent({
       const inputProps = api.getHiddenInputProps();
       const name = effectiveName.value;
       return h("div", api.getRootProps(), [
-        slots.default?.(),
+        slots["default"]?.(),
         name
           ? h("input", {
               ...inputProps,
@@ -214,7 +220,7 @@ const CheckboxControl = defineComponent({
   name: "ForgeCheckboxControl",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("button", api.getControlProps(), slots.default?.());
+    return () => h("button", api.getControlProps(), slots["default"]?.());
   },
 });
 
@@ -231,7 +237,7 @@ const CheckboxIndicator = defineComponent({
     const api = useCtx();
     return () => {
       if (!props.forceMount && !api.isChecked.value && !api.isIndeterminate.value) return null;
-      return h("span", api.getIndicatorProps(), slots.default?.());
+      return h("span", api.getIndicatorProps(), slots["default"]?.());
     };
   },
 });
@@ -244,12 +250,12 @@ const CheckboxLabel = defineComponent({
   name: "ForgeCheckboxLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots.default?.());
+    return () => h("label", api.getLabelProps(), slots["default"]?.());
   },
 });
 
 // ---------------------------------------------------------------------------
-// GroupAll — select-all control
+// GroupAll â€” select-all control
 // ---------------------------------------------------------------------------
 
 const CheckboxGroupAll = defineComponent({
@@ -261,9 +267,9 @@ const CheckboxGroupAll = defineComponent({
     const group = inject(checkboxGroupKey);
     if (!group) throw new Error("<Checkbox.GroupAll> must be inside <Checkbox.Group>");
 
-    // No onCheckedChange — calling group.selectAll/deselectAll inside onCheckedChange
-    // causes a reactivity loop: machine fires onCheckedChange → group state changes →
-    // watch fires → machine sends again → repeat. Instead, we intercept onClick directly.
+    // No onCheckedChange â€” calling group.selectAll/deselectAll inside onCheckedChange
+    // causes a reactivity loop: machine fires onCheckedChange â†’ group state changes â†’
+    // watch fires â†’ machine sends again â†’ repeat. Instead, we intercept onClick directly.
     const api = useCheckbox({
       checked: group.groupChecked.value,
       ...(props.disabled !== undefined || group.disabled
@@ -271,7 +277,7 @@ const CheckboxGroupAll = defineComponent({
         : {}),
     });
 
-    // One-way sync: group state → machine display state.
+    // One-way sync: group state â†’ machine display state.
     watch(group.groupChecked, (v) => {
       const target = v === "indeterminate" ? "indeterminate" : v ? "checked" : "unchecked";
       if (api.dataState.value !== target) {
@@ -301,7 +307,7 @@ const CheckboxGroupAll = defineComponent({
 
     provide(checkboxKey, modifiedApi);
 
-    return () => h("div", api.getRootProps(), slots.default?.());
+    return () => h("div", api.getRootProps(), slots["default"]?.());
   },
 });
 
@@ -319,10 +325,10 @@ export const Checkbox = {
 } as const;
 
 export {
-  CheckboxRoot,
   CheckboxControl,
-  CheckboxIndicator,
-  CheckboxLabel,
   CheckboxGroup,
   CheckboxGroupAll,
+  CheckboxIndicator,
+  CheckboxLabel,
+  CheckboxRoot,
 };

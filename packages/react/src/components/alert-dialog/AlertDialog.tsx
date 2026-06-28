@@ -32,9 +32,7 @@ function Root({ children, defaultOpen, ...opts }: AlertDialogRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <AlertDialogCtx.Provider value={api}>
-      <AlertDialogPresenceCtx.Provider value={presence}>
-        {children}
-      </AlertDialogPresenceCtx.Provider>
+      <AlertDialogPresenceCtx.Provider value={presence}>{children}</AlertDialogPresenceCtx.Provider>
     </AlertDialogCtx.Provider>
   );
 }
@@ -248,6 +246,16 @@ function Action({ asChild, children, ...rest }: AlertDialogActionProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "AlertDialog.Root";
+Trigger.displayName = "AlertDialog.Trigger";
+Portal.displayName = "AlertDialog.Portal";
+Overlay.displayName = "AlertDialog.Overlay";
+Content.displayName = "AlertDialog.Content";
+Title.displayName = "AlertDialog.Title";
+Description.displayName = "AlertDialog.Description";
+Cancel.displayName = "AlertDialog.Cancel";
+Action.displayName = "AlertDialog.Action";
 
 export const AlertDialog = {
   Root,

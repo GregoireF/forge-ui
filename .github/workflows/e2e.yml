@@ -1,17 +1,14 @@
 name: E2E
 
 # Why separate from ci.yml:
-# Unit tests + typecheck are stable — their badge reflects code quality.
-# E2E tests exercise real browsers and can be transiently flaky (WebKit pointer
-# events, Nuxt SSR cold start). A flaky WebKit pointer test must NOT turn the
-# code-quality badge red. Separation gives two independent signals.
+# Unit tests + typecheck are stable. E2E exercises real browsers and can be
+# transiently flaky (WebKit pointer events, Nuxt SSR cold start). A flaky
+# browser test must NOT turn the code-quality badge red.
 #
 # Why 3 browsers:
 # - Chromium: reference implementation, Chrome + Edge (~70% desktop share)
-# - Firefox: Gecko engine, historically ahead on ARIA tree implementation,
-#   10% market share. focus() on div vs button differs.
-# - WebKit: Safari + ALL iOS browsers (iOS WebKit is mandatory). Safari was the
-#   last major engine to ship pointer capture (needed by Slider drag). Must verify.
+# - Firefox: Gecko engine, ARIA tree ahead of spec, 10% market share
+# - WebKit: Safari + ALL iOS browsers (iOS WebKit is mandatory)
 
 on:
   push:
@@ -37,28 +34,37 @@ concurrency:
 permissions: read-all
 
 jobs:
-  # ---------------------------------------------------------------------------
-  # Matrix: run all specs on each browser independently.
-  # fail-fast: false — a WebKit failure must not cancel the Chromium a11y run
-  # that feeds the badge. We want to see ALL browsers' results.
-  # ---------------------------------------------------------------------------
   e2e:
     name: E2E (${{ matrix.browser }})
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
+
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
           bun-version: latest
+
+      - name: Cache Bun store
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -66,13 +72,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build packages
-        # Required: playground dev servers import @forge-ui/* which resolves
-        # to workspace packages. TypeScript project references need dist/ built.
         run: bun run build
 
       - name: Install Playwright browser
-        # Install only the target browser to keep CI fast (~90s vs ~4min for all).
-        # --with-deps installs OS-level libs (libglib, libwebkit2gtk, etc.)
+        # Install only the target browser — ~90s vs ~4min for all three.
         run: bun x playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run E2E tests
@@ -82,7 +85,6 @@ jobs:
           CI: true
 
       - name: Upload test results
-        # Upload even on failure so we can diagnose flaky browser-specific issues.
         if: always()
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
@@ -90,30 +92,26 @@ jobs:
           path: e2e/test-results/
           retention-days: 7
 
-  # ---------------------------------------------------------------------------
-  # Badge update: runs only on push to main, only when all browsers pass.
-  # Uses Chromium results exclusively for the axe-core badge because:
-  # - axe-core ARIA violations are engine-independent (they check attributes, not rendering)
-  # - Chromium is the reference implementation and most widely used
-  # - A WebKit pointer-event failure ≠ a11y violation; they must not conflate
-  # ---------------------------------------------------------------------------
+  # Badge update: only on push to main, only when all browsers pass.
+  # Chromium is used exclusively for the axe badge (a11y violations are
+  # attribute-based, engine-independent; a WebKit pointer-event failure ≠ a11y violation).
   axe-badge:
     name: Update axe badge
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: e2e
-    # Only commit on push to main. PRs don't have write permissions from forks,
-    # and committing a badge on every PR would create noise in git history.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          bun-version: latest
+          node-version: "24"
 
       - name: Download Chromium test results
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89 # v4.2.1
@@ -125,7 +123,7 @@ jobs:
         run: node e2e/update-axe-badge.mjs
 
       - name: Commit badge
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_message: "chore: update axe-core badge [skip ci]"
           file_pattern: axe-badge.json

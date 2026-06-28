@@ -1,5 +1,5 @@
+import { clearRegistry, pushLayer } from "@forge-ui/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { pushLayer, clearRegistry } from "@forge-ui/core";
 import { createComboboxMachine } from "../src/combobox.machine.js";
 
 let active: ReturnType<typeof createComboboxMachine>[] = [];
@@ -758,7 +758,9 @@ describe("createComboboxMachine — positioning boundary/middleware", () => {
   });
 
   it("middleware stored in positioning context when provided (line 168)", () => {
-    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createComboboxMachine>[0]["positioning"]["middleware"];
+    const middleware = [{ name: "offset" }] as unknown as Parameters<
+      typeof createComboboxMachine
+    >[0]["positioning"]["middleware"];
     const m = make({ positioning: { middleware } });
     expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
   });

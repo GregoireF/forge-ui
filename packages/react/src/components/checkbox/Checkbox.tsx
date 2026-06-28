@@ -1,9 +1,9 @@
 import type { HTMLAttributes, LabelHTMLAttributes, MouseEvent, ReactNode } from "react";
 import { createContext, useContext, useEffect } from "react";
-import type { UseCheckboxGroupOptions, UseCheckboxGroupReturn } from "./use-checkbox-group.js";
-import { useCheckboxGroup } from "./use-checkbox-group.js";
 import type { UseCheckboxOptions, UseCheckboxReturn } from "./use-checkbox.js";
 import { useCheckbox } from "./use-checkbox.js";
+import type { UseCheckboxGroupOptions, UseCheckboxGroupReturn } from "./use-checkbox-group.js";
+import { useCheckboxGroup } from "./use-checkbox-group.js";
 
 // ---------------------------------------------------------------------------
 // Contexts
@@ -207,6 +207,13 @@ function Label({ children, ...rest }: CheckboxLabelProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "Checkbox.Root";
+Control.displayName = "Checkbox.Control";
+Indicator.displayName = "Checkbox.Indicator";
+Label.displayName = "Checkbox.Label";
+Group.displayName = "Checkbox.Group";
+GroupAll.displayName = "Checkbox.GroupAll";
 
 export const Checkbox = {
   Root,

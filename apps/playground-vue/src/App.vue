@@ -2,7 +2,10 @@
 import {
   Accordion,
   AlertDialog,
-  Checkbox,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  AvatarRoot,
   CheckboxControl,
   CheckboxGroup,
   CheckboxGroupAll,
@@ -11,6 +14,7 @@ import {
   CheckboxRoot,
   Collapsible,
   Combobox,
+  ContextMenu,
   DateField,
   DatePicker,
   DateRangePicker,
@@ -21,35 +25,278 @@ import {
   FieldGroupLabel,
   FieldRequiredIndicator,
   HoverCard,
-  HoverCardArrow,
   HoverCardContent,
   HoverCardPortal,
   HoverCardRoot,
   HoverCardTrigger,
+  injectAvatarContext,
+  Menu,
+  NumberInput,
   Popover,
   Progress,
   RadioGroup,
   Select,
-  NumberInput,
+  Separator,
   Slider,
-  Switch,
   SwitchControl,
   SwitchLabel,
   SwitchRoot,
   SwitchThumb,
   Tabs,
+  TagsInput,
   TimePicker,
-  Tooltip,
+  Toggle,
+  ToggleGroup,
   TooltipAnchor,
   TooltipContent,
   TooltipPortal,
   TooltipProvider,
   TooltipRoot,
   TooltipTrigger,
-  TagsInput,
+  useAvatar,
+  useDatePickerContext,
+  useDateRangePickerContext,
   useDialog,
+  VisuallyHidden,
 } from "@forge-ui/vue";
-import { ref } from "vue";
+import { defineComponent, h, ref } from "vue";
+
+const calendarCellStyle = {
+  textAlign: "center" as const,
+  padding: "5px 2px",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontSize: "0.8rem",
+  lineHeight: 1,
+};
+
+const calPickerCellStyle = {
+  textAlign: "center" as const,
+  padding: "8px 4px",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontSize: "0.8rem",
+};
+const calNavBtn = {
+  padding: "0.25rem 0.6rem",
+  background: "transparent",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "0.9rem",
+};
+
+const DatePickerCalendarContent = defineComponent({
+  name: "DatePickerCalendarContent",
+  setup() {
+    const api = useDatePickerContext();
+    return () => {
+      const view = api.view.value;
+      // "open.month" handles no navigation events — only day/year views have prev/next buttons
+      const prevBtn =
+        view === "day"
+          ? h(
+              DatePicker.PrevMonthButton,
+              { "data-testid": "date-picker-prev", style: calNavBtn },
+              { default: () => "←" },
+            )
+          : view === "year"
+            ? h(DatePicker.PrevYearRangeButton, { style: calNavBtn }, { default: () => "←" })
+            : h("span", { style: { width: "2rem" } });
+      const nextBtn =
+        view === "day"
+          ? h(
+              DatePicker.NextMonthButton,
+              { "data-testid": "date-picker-next", style: calNavBtn },
+              { default: () => "→" },
+            )
+          : view === "year"
+            ? h(DatePicker.NextYearRangeButton, { style: calNavBtn }, { default: () => "→" })
+            : h("span", { style: { width: "2rem" } });
+
+      const header = h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "0.75rem",
+          },
+        },
+        [
+          prevBtn,
+          h(
+            DatePicker.ViewSwitchButton,
+            {
+              "data-testid": "date-picker-header",
+              style: {
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "0.25rem 0.5rem",
+                borderRadius: "6px",
+              },
+            },
+            { default: () => [api.monthYearLabel.value] },
+          ),
+          nextBtn,
+        ],
+      );
+
+      let body;
+      if (view === "day") {
+        const weekdays = api.weekdays.value;
+        const weeks = api.weeks.value;
+        body = h(
+          DatePicker.CalendarGrid,
+          { "data-testid": "date-picker-grid", style: { display: "grid", gap: "2px" } },
+          {
+            default: () => [
+              h(
+                DatePicker.CalendarRow,
+                {
+                  weekIndex: -1,
+                  style: {
+                    display: "grid",
+                    gridTemplateColumns: "repeat(7, 1fr)",
+                    gap: "2px",
+                    marginBottom: "4px",
+                  },
+                },
+                {
+                  default: () =>
+                    weekdays.map((_, i) =>
+                      h(DatePicker.WeekdayHeader, {
+                        dayIndex: i,
+                        style: {
+                          textAlign: "center",
+                          fontSize: "0.7rem",
+                          fontWeight: 600,
+                          color: "#94a3b8",
+                        },
+                      }),
+                    ),
+                },
+              ),
+              ...weeks.map((week, wi) =>
+                h(
+                  DatePicker.CalendarRow,
+                  {
+                    weekIndex: wi,
+                    style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" },
+                  },
+                  {
+                    default: () =>
+                      week.map((cell) =>
+                        h(DatePicker.CalendarCell, {
+                          date: cell.date,
+                          isOutsideMonth: cell.isOutsideMonth,
+                          style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 },
+                        }),
+                      ),
+                  },
+                ),
+              ),
+            ],
+          },
+        );
+      } else if (view === "month") {
+        body = h(
+          DatePicker.MonthGrid,
+          { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" } },
+          {
+            default: () =>
+              Array.from({ length: 12 }, (_, i) =>
+                h(DatePicker.MonthCell, { month: i + 1, style: calPickerCellStyle }),
+              ),
+          },
+        );
+      } else {
+        body = h(
+          DatePicker.YearGrid,
+          { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" } },
+          {
+            default: () =>
+              api.yearRange.value.map((year) =>
+                h(DatePicker.YearCell, { year, style: calPickerCellStyle }),
+              ),
+          },
+        );
+      }
+
+      return h("div", {}, [header, body]);
+    };
+  },
+});
+
+const DateRangePickerCalendarGrid = defineComponent({
+  name: "DateRangePickerCalendarGrid",
+  setup() {
+    const api = useDateRangePickerContext();
+    return () => {
+      const weekdays = api.weekdays.value;
+      const weeks = api.weeksPerMonth.value[0] ?? [];
+      return h(
+        DateRangePicker.CalendarGrid,
+        { style: { display: "grid", gap: "2px" } },
+        {
+          default: () => [
+            h(
+              DateRangePicker.CalendarRow,
+              {
+                weekIndex: -1,
+                style: {
+                  display: "grid",
+                  gridTemplateColumns: "repeat(7, 1fr)",
+                  gap: "2px",
+                  marginBottom: "4px",
+                },
+              },
+              {
+                default: () =>
+                  weekdays.map((_, i) =>
+                    h(DateRangePicker.WeekdayHeader, {
+                      dayIndex: i,
+                      style: {
+                        textAlign: "center",
+                        fontSize: "0.7rem",
+                        fontWeight: 600,
+                        color: "#94a3b8",
+                      },
+                    }),
+                  ),
+              },
+            ),
+            ...weeks.map((week, wi) =>
+              h(
+                DateRangePicker.CalendarRow,
+                {
+                  weekIndex: wi,
+                  style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" },
+                },
+                {
+                  default: () =>
+                    week.map((cell) =>
+                      h(DateRangePicker.CalendarCell, {
+                        date: cell.date,
+                        isOutsideMonth: cell.isOutsideMonth,
+                        style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 },
+                      }),
+                    ),
+                },
+              ),
+            ),
+          ],
+        },
+      );
+    };
+  },
+});
+
+const locale = typeof navigator !== "undefined" ? navigator.language : "en";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
@@ -66,6 +313,73 @@ const dateFieldValue = ref<{ year: number; month: number; day: number } | null>(
 const timePickerValue = ref<{ hours: number; minutes: number; seconds: number } | null>(null);
 const datePickerSelected = ref<string | null>(null);
 const dateRangePickerRange = ref<string | null>(null);
+
+// ── Menu state ───────────────────────────────────────────────────────────────
+const menuLastSelect = ref<string | null>(null);
+const menuTheme = ref("system");
+const menuShowGrid = ref(false);
+const menuShowRuler = ref(true);
+const menuClickOnlySelect = ref<string | null>(null);
+const menuAnchorOpen = ref(false);
+const menuAnchorSelect = ref<string | null>(null);
+const ctxMenuSelect = ref<string | null>(null);
+const ctxMenuBookmarked = ref(false);
+
+const menuContentStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  padding: "4px",
+  boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)",
+  minWidth: "160px",
+  outline: "none",
+} as const;
+const menuItemStyle = {
+  padding: "6px 12px",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.875rem",
+  outline: "none",
+  userSelect: "none" as const,
+};
+const menuGroupLabelStyle = {
+  padding: "4px 12px 2px",
+  fontSize: "0.7rem",
+  color: "#94a3b8",
+  fontWeight: 600,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+};
+const menuSepStyle = { height: "1px", background: "#e2e8f0", margin: "4px 0" };
+
+function onDateFieldChange(d: { year: number; month: number; day: number } | null) {
+  dateFieldValue.value = d;
+}
+function onTimePickerChange(t: { hours: number; minutes: number; seconds: number } | null) {
+  timePickerValue.value = t;
+}
+function onDatePickerChange(d: { year: number; month: number; day: number } | null) {
+  datePickerSelected.value = d
+    ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`
+    : null;
+}
+function onDateRangePickerChange(
+  r: {
+    start: { year: number; month: number; day: number } | null;
+    end: { year: number; month: number; day: number } | null;
+  } | null,
+) {
+  if (r?.start && r?.end) {
+    dateRangePickerRange.value = `${r.start.year}-${String(r.start.month).padStart(2, "0")}-${String(r.start.day).padStart(2, "0")} → ${r.end.year}-${String(r.end.month).padStart(2, "0")}-${String(r.end.day).padStart(2, "0")}`;
+  } else {
+    dateRangePickerRange.value = null;
+  }
+}
+
+const toggleBold = ref(false);
+const toggleItalic = ref(true);
+const toggleGroupAlign = ref<string[]>([]);
+const toggleGroupFormats = ref<string[]>([]);
 
 const alertConfirming = ref(false);
 function handleAlertConfirm() {
@@ -96,7 +410,15 @@ const btnGhostStyle = {
 } as const;
 
 const btnDangerStyle = { ...btnStyle, background: "#dc2626" } as const;
-const tooltipStyle = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
+const tooltipStyle = {
+  background: "#1e293b",
+  color: "#f1f5f9",
+  borderRadius: "6px",
+  padding: "0.35rem 0.6rem",
+  fontSize: "0.8rem",
+  boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
+  maxWidth: "240px",
+} as const;
 
 const overlayStyle = {
   position: "fixed" as const,
@@ -129,13 +451,64 @@ const popoverStyle = {
 };
 
 const titleStyle = { margin: "0 0 0.5rem", fontSize: "1.05rem", fontWeight: 600 };
-const descStyle = { color: "#64748b", marginBottom: "1.5rem", fontSize: "0.875rem", lineHeight: 1.5 };
+const descStyle = {
+  color: "#64748b",
+  marginBottom: "1.5rem",
+  fontSize: "0.875rem",
+  lineHeight: 1.5,
+};
 const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem" };
 const sectionStyle = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
 const sectionTitleStyle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
 const sectionDescStyle = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
 
-const labelStyle = { display: "block", fontSize: "0.8rem", fontWeight: 500, color: "#374151", marginBottom: "0.35rem" };
+const avatarRootStyle = {
+  display: "inline-flex",
+  position: "relative",
+  width: "48px",
+  height: "48px",
+  borderRadius: "50%",
+  overflow: "hidden",
+  background: "#e2e8f0",
+};
+const avatarImgStyle = { width: "100%", height: "100%", objectFit: "cover" };
+const avatarFallbackStyle = {
+  position: "absolute",
+  inset: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "0.875rem",
+  fontWeight: 600,
+  color: "#475569",
+  background: "#e2e8f0",
+};
+
+// Reads initials from the nearest <Avatar.Root> via injectAvatarContext.
+// injectAvatarContext must be called inside setup() — hence the defineComponent wrapper.
+const AvatarInitialsFallback = defineComponent({
+  name: "AvatarInitialsFallback",
+  props: { style: { type: Object, default: undefined } },
+  setup(props, { slots }) {
+    const { initials } = injectAvatarContext();
+    return () =>
+      h(
+        AvatarFallback,
+        { style: props.style },
+        {
+          default: () => initials.value || slots["default"]?.(),
+        },
+      );
+  },
+});
+
+const labelStyle = {
+  display: "block",
+  fontSize: "0.8rem",
+  fontWeight: 500,
+  color: "#374151",
+  marginBottom: "0.35rem",
+};
 const selectTriggerStyle = {
   display: "flex",
   alignItems: "center",
@@ -158,24 +531,125 @@ const selectContentStyle = {
   listStyle: "none",
   margin: 0,
 } as const;
-const selectItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
-const separatorStyle = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
-const groupLabelStyle = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
+const selectItemStyle = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+};
+const separatorStyle = {
+  height: "1px",
+  background: "#e2e8f0",
+  margin: "0.25rem 0",
+  listStyle: "none" as const,
+};
+const groupLabelStyle = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  listStyle: "none" as const,
+};
 
-const checkboxControlStyle = { width: "18px", height: "18px", border: "2px solid #cbd5e1", borderRadius: "4px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 };
-const checkboxIndicatorStyle = { fontSize: "11px", fontWeight: 700, color: "#1e293b", lineHeight: 1 };
+const checkboxControlStyle = {
+  width: "18px",
+  height: "18px",
+  border: "2px solid #cbd5e1",
+  borderRadius: "4px",
+  background: "#fff",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  flexShrink: 0,
+};
+const checkboxIndicatorStyle = {
+  fontSize: "11px",
+  fontWeight: 700,
+  color: "#1e293b",
+  lineHeight: 1,
+};
 const checkboxLabelStyle = { fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" };
-const switchOffStyle = { width: "44px", height: "24px", borderRadius: "12px", background: "#cbd5e1", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center", transition: "background 0.15s", flexShrink: 0 };
+const switchOffStyle = {
+  width: "44px",
+  height: "24px",
+  borderRadius: "12px",
+  background: "#cbd5e1",
+  border: "none",
+  cursor: "pointer",
+  padding: "2px",
+  display: "flex",
+  alignItems: "center",
+  transition: "background 0.15s",
+  flexShrink: 0,
+};
 const switchOnStyle = { ...switchOffStyle, background: "#1e293b" };
-const switchThumbOffStyle = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
+const switchThumbOffStyle = {
+  width: "20px",
+  height: "20px",
+  borderRadius: "50%",
+  background: "#fff",
+  boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)",
+  transform: "translateX(0)",
+  transition: "transform 0.15s",
+};
 const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px)" };
 
-const comboboxContentStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
-const comboboxItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
+const comboboxContentStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none" as const,
+  margin: 0,
+  maxHeight: "200px",
+  overflowY: "auto" as const,
+};
+const comboboxItemStyle = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+  display: "flex",
+  alignItems: "center",
+  gap: "0.25rem",
+};
 
-const hoverCardStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", minWidth: "260px", maxWidth: "320px", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)" } as const;
-const hoverCardAvatarStyle = { width: "40px", height: "40px", borderRadius: "50%", background: "#6366f1", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1.1rem", flexShrink: 0 } as const;
-const hoverCardLinkStyle = { color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline", cursor: "pointer" } as const;
+const hoverCardStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "10px",
+  padding: "1rem",
+  minWidth: "260px",
+  maxWidth: "320px",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+} as const;
+const hoverCardAvatarStyle = {
+  width: "40px",
+  height: "40px",
+  borderRadius: "50%",
+  background: "#6366f1",
+  color: "#fff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontWeight: 700,
+  fontSize: "1.1rem",
+  flexShrink: 0,
+} as const;
+const hoverCardLinkStyle = {
+  color: "#6366f1",
+  fontWeight: 500,
+  fontSize: "0.9rem",
+  textDecoration: "underline",
+  cursor: "pointer",
+} as const;
 
 const fieldInvalid = ref(false);
 const fieldEmail = ref("");
@@ -1028,7 +1502,7 @@ const radioGroupValue = ref<string>("react");
         </div>
         <Slider.Root
           :value="sliderValue"
-          :on-value-change="(v) => sliderValue = v[0]"
+          :on-value-change="(v) => sliderValue = v[0] ?? 0"
           :min="0"
           :max="100"
           :step="1"
@@ -1096,7 +1570,8 @@ const radioGroupValue = ref<string>("react");
       <div style="display:flex;flex-direction:column;gap:0.75rem">
         <DateField.Root
           data-testid="date-field-root"
-          @value-change="(d) => dateFieldValue = d"
+          :locale="locale"
+          :on-value-change="onDateFieldChange"
         >
           <DateField.Group
             data-testid="date-field-group"
@@ -1104,21 +1579,22 @@ const radioGroupValue = ref<string>("react");
               display: 'inline-flex', alignItems: 'center', gap: '2px',
               padding: '0.45rem 0.75rem', border: '1px solid #cbd5e1', borderRadius: '6px',
               fontSize: '0.875rem', background: '#fff', fontVariantNumeric: 'tabular-nums',
+              cursor: 'text',
             }"
           >
             <DateField.MonthSegment
               data-testid="date-field-month"
-              :style="{ minWidth: '3ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '3ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
             <DateField.Separator :style="{ color: '#94a3b8', userSelect: 'none' }" />
             <DateField.DaySegment
               data-testid="date-field-day"
-              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
             <DateField.Separator :style="{ color: '#94a3b8', userSelect: 'none' }" />
             <DateField.YearSegment
               data-testid="date-field-year"
-              :style="{ minWidth: '4ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '4ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
           </DateField.Group>
           <DateField.HiddenInput name="date" />
@@ -1136,7 +1612,8 @@ const radioGroupValue = ref<string>("react");
       <div style="display:flex;flex-direction:column;gap:0.75rem">
         <TimePicker.Root
           data-testid="time-picker-root"
-          @value-change="(t) => timePickerValue = t"
+          :locale="locale"
+          :on-value-change="onTimePickerChange"
         >
           <TimePicker.Group
             data-testid="time-picker-group"
@@ -1144,26 +1621,27 @@ const radioGroupValue = ref<string>("react");
               display: 'inline-flex', alignItems: 'center', gap: '2px',
               padding: '0.45rem 0.75rem', border: '1px solid #cbd5e1', borderRadius: '6px',
               fontSize: '0.875rem', background: '#fff', fontVariantNumeric: 'tabular-nums',
+              cursor: 'text',
             }"
           >
             <TimePicker.HoursSegment
               data-testid="time-picker-hours"
-              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
             <TimePicker.Separator :style="{ color: '#94a3b8', userSelect: 'none' }" />
             <TimePicker.MinutesSegment
               data-testid="time-picker-minutes"
-              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
             <TimePicker.Separator :style="{ color: '#94a3b8', userSelect: 'none' }" />
             <TimePicker.SecondsSegment
               data-testid="time-picker-seconds"
-              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
             <span style="margin-left:4px" />
             <TimePicker.PeriodSegment
               data-testid="time-picker-period"
-              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px' }"
+              :style="{ minWidth: '2ch', outline: 'none', padding: '1px 2px', borderRadius: '3px', cursor: 'default' }"
             />
           </TimePicker.Group>
           <TimePicker.HiddenInput name="time" />
@@ -1179,30 +1657,29 @@ const radioGroupValue = ref<string>("react");
       <h2 :style="sectionTitleStyle">DatePicker</h2>
       <p :style="sectionDescStyle">Calendrier popup pour sélectionner une date. Vues jour/mois/année.</p>
       <div style="display:flex;flex-direction:column;gap:0.75rem">
-        <DatePicker.Root
-          data-testid="date-picker-root"
-          @value-change="(d) => datePickerSelected = d ? `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}` : null"
-        >
-          <DatePicker.Trigger data-testid="date-picker-trigger" :style="btnStyle">
-            {{ datePickerSelected ?? 'Choisir une date' }}
-          </DatePicker.Trigger>
-          <DatePicker.Content
-            data-testid="date-picker-content"
-            :style="{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-              background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px',
-              padding: '1rem', boxShadow: '0 8px 30px rgb(0 0 0 / 0.12)', zIndex: 50, minWidth: '280px',
-            }"
+        <div style="position:relative;display:inline-block">
+          <DatePicker.Root
+            data-testid="date-picker-root"
+            :locale="locale"
+            :first-day-of-week="1"
+            :on-value-change="onDatePickerChange"
           >
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
-              <DatePicker.PrevMonthButton data-testid="date-picker-prev" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">←</DatePicker.PrevMonthButton>
-              <DatePicker.CalendarHeader data-testid="date-picker-header" :style="{ fontWeight: 600, fontSize: '0.875rem' }" />
-              <DatePicker.NextMonthButton data-testid="date-picker-next" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">→</DatePicker.NextMonthButton>
-            </div>
-            <DatePicker.CalendarGrid data-testid="date-picker-grid" :style="{ display: 'grid', gap: '2px' }" />
-          </DatePicker.Content>
-          <DatePicker.HiddenInput name="date" />
-        </DatePicker.Root>
+            <DatePicker.Trigger data-testid="date-picker-trigger" :style="btnStyle">
+              {{ datePickerSelected ?? 'Choisir une date' }}
+            </DatePicker.Trigger>
+            <DatePicker.Content
+              data-testid="date-picker-content"
+              :style="{
+                position: 'absolute', top: 'calc(100% + 4px)', left: 0,
+                background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px',
+                padding: '1rem', boxShadow: '0 8px 30px rgb(0 0 0 / 0.12)', zIndex: 50, minWidth: '280px',
+              }"
+            >
+              <DatePickerCalendarContent />
+            </DatePicker.Content>
+            <DatePicker.HiddenInput name="date" />
+          </DatePicker.Root>
+        </div>
         <p v-if="datePickerSelected" data-testid="date-picker-value" style="margin:0;font-size:0.8rem;color:#64748b">
           Sélectionné : {{ datePickerSelected }}
         </p>
@@ -1214,36 +1691,145 @@ const radioGroupValue = ref<string>("react");
       <h2 :style="sectionTitleStyle">DateRangePicker</h2>
       <p :style="sectionDescStyle">Sélection d'une plage de dates (début → fin). Double calendrier, presets.</p>
       <div style="display:flex;flex-direction:column;gap:0.75rem">
-        <DateRangePicker.Root
-          data-testid="date-range-picker-root"
-          @value-change="(r) => dateRangePickerRange = r ? `${r.start?.year ?? '?'} → ${r.end?.year ?? '?'}` : null"
-        >
-          <DateRangePicker.Trigger data-testid="date-range-picker-trigger" :style="btnStyle">
-            {{ dateRangePickerRange ?? 'Choisir une plage' }}
-          </DateRangePicker.Trigger>
-          <DateRangePicker.Content
-            data-testid="date-range-picker-content"
-            :style="{
-              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-              background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px',
-              padding: '1rem', boxShadow: '0 8px 30px rgb(0 0 0 / 0.12)', zIndex: 50, minWidth: '300px',
-            }"
+        <div style="position:relative;display:inline-block">
+          <DateRangePicker.Root
+            data-testid="date-range-picker-root"
+            :locale="locale"
+            :first-day-of-week="1"
+            :number-of-months="1"
+            :on-value-change="onDateRangePickerChange"
           >
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+            <DateRangePicker.Trigger data-testid="date-range-picker-trigger" :style="btnStyle">
+              {{ dateRangePickerRange ?? 'Choisir une plage' }}
+            </DateRangePicker.Trigger>
+            <DateRangePicker.Content
+              data-testid="date-range-picker-content"
+              :style="{
+                position: 'absolute', top: 'calc(100% + 4px)', left: 0,
+                background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px',
+                padding: '1rem', boxShadow: '0 8px 30px rgb(0 0 0 / 0.12)', zIndex: 50, minWidth: '300px',
+              }"
+            >
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
               <DateRangePicker.PrevMonthButton data-testid="date-range-picker-prev" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">←</DateRangePicker.PrevMonthButton>
               <DateRangePicker.CalendarHeader data-testid="date-range-picker-header" :style="{ fontWeight: 600, fontSize: '0.875rem' }" />
               <DateRangePicker.NextMonthButton data-testid="date-range-picker-next" :style="{ ...btnGhostStyle, padding: '0.25rem 0.6rem' }">→</DateRangePicker.NextMonthButton>
             </div>
-            <DateRangePicker.CalendarGrid data-testid="date-range-picker-grid" :style="{ display: 'grid', gap: '2px' }" />
+            <DateRangePickerCalendarGrid />
             <DateRangePicker.ClearButton data-testid="date-range-picker-clear" :style="{ ...btnGhostStyle, marginTop: '0.75rem', width: '100%' }">
               Effacer
             </DateRangePicker.ClearButton>
-          </DateRangePicker.Content>
-          <DateRangePicker.HiddenInputs start-name="start" end-name="end" />
-        </DateRangePicker.Root>
+            </DateRangePicker.Content>
+            <DateRangePicker.HiddenInputs start-name="start" end-name="end" />
+          </DateRangePicker.Root>
+        </div>
         <p v-if="dateRangePickerRange" data-testid="date-range-picker-value" style="margin:0;font-size:0.8rem;color:#64748b">
           Plage : {{ dateRangePickerRange }}
         </p>
+      </div>
+    </section>
+
+    <!-- ── Toggle ────────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Toggle</h2>
+      <p :style="sectionDescStyle">Bouton bascule — role=button + aria-pressed. WAI-ARIA Button Pattern §3.5.</p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <Toggle.Root
+          data-testid="toggle-bold"
+          :pressed="toggleBold"
+          @update:pressed="(p: boolean) => toggleBold = p"
+          aria-label="Gras"
+          :style="{
+            padding: '0.5rem 1rem', border: `1px solid ${toggleBold ? '#1e293b' : '#cbd5e1'}`,
+            borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold',
+            background: toggleBold ? '#1e293b' : 'transparent',
+            color: toggleBold ? '#fff' : 'inherit',
+            transition: 'background 120ms, border-color 120ms, color 120ms',
+          }"
+        >
+          <VisuallyHidden.Root>Activer le gras</VisuallyHidden.Root>B
+        </Toggle.Root>
+        <Toggle.Root
+          data-testid="toggle-italic"
+          :pressed="toggleItalic"
+          @update:pressed="(p: boolean) => toggleItalic = p"
+          aria-label="Italique"
+          :style="{
+            padding: '0.5rem 1rem', border: `1px solid ${toggleItalic ? '#1e293b' : '#cbd5e1'}`,
+            borderRadius: '6px', cursor: 'pointer', fontStyle: 'italic',
+            background: toggleItalic ? '#1e293b' : 'transparent',
+            color: toggleItalic ? '#fff' : 'inherit',
+            transition: 'background 120ms, border-color 120ms, color 120ms',
+          }"
+        >I</Toggle.Root>
+        <Toggle.Root
+          data-testid="toggle-disabled"
+          disabled
+          aria-label="Souligné (désactivé)"
+          :style="{ padding: '0.5rem 1rem', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'not-allowed', background: 'transparent', opacity: 0.4, textDecoration: 'underline' }"
+        >U</Toggle.Root>
+      </div>
+    </section>
+
+    <!-- ── ToggleGroup ────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">ToggleGroup</h2>
+      <p :style="sectionDescStyle">Barre d'outils de toggles — role=toolbar + roving tabindex. WAI-ARIA APG Toolbar Pattern.</p>
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <ToggleGroup.Root
+          data-testid="toggle-group-text-align"
+          type="single"
+          :value="toggleGroupAlign"
+          @update:value="(v: string[]) => toggleGroupAlign = v"
+          aria-label="Alignement du texte"
+          :style="{ display: 'inline-flex', gap: '0.25rem', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.25rem' }"
+        >
+          <ToggleGroup.Item value="left" aria-label="Aligner à gauche" :style="{ padding: '0.5rem 0.75rem', border: 'none', borderRadius: '6px', cursor: 'pointer', background: toggleGroupAlign.includes('left') ? '#1e293b' : 'transparent', color: toggleGroupAlign.includes('left') ? '#fff' : 'inherit', transition: 'background 120ms' }">←</ToggleGroup.Item>
+          <ToggleGroup.Item value="center" aria-label="Centrer" :style="{ padding: '0.5rem 0.75rem', border: 'none', borderRadius: '6px', cursor: 'pointer', background: toggleGroupAlign.includes('center') ? '#1e293b' : 'transparent', color: toggleGroupAlign.includes('center') ? '#fff' : 'inherit', transition: 'background 120ms' }">↔</ToggleGroup.Item>
+          <ToggleGroup.Item value="right" aria-label="Aligner à droite" :style="{ padding: '0.5rem 0.75rem', border: 'none', borderRadius: '6px', cursor: 'pointer', background: toggleGroupAlign.includes('right') ? '#1e293b' : 'transparent', color: toggleGroupAlign.includes('right') ? '#fff' : 'inherit', transition: 'background 120ms' }">→</ToggleGroup.Item>
+        </ToggleGroup.Root>
+        <ToggleGroup.Root
+          data-testid="toggle-group-formatting"
+          type="multiple"
+          :value="toggleGroupFormats"
+          @update:value="(v: string[]) => toggleGroupFormats = v"
+          aria-label="Formatage du texte"
+          :style="{ display: 'inline-flex', gap: '0.25rem', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.25rem' }"
+        >
+          <ToggleGroup.Item value="bold" aria-label="Gras" :style="{ padding: '0.5rem 0.75rem', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', background: toggleGroupFormats.includes('bold') ? '#1e293b' : 'transparent', color: toggleGroupFormats.includes('bold') ? '#fff' : 'inherit', transition: 'background 120ms' }">B</ToggleGroup.Item>
+          <ToggleGroup.Item value="italic" aria-label="Italique" :style="{ padding: '0.5rem 0.75rem', border: 'none', borderRadius: '6px', cursor: 'pointer', fontStyle: 'italic', background: toggleGroupFormats.includes('italic') ? '#1e293b' : 'transparent', color: toggleGroupFormats.includes('italic') ? '#fff' : 'inherit', transition: 'background 120ms' }">I</ToggleGroup.Item>
+          <ToggleGroup.Item value="underline" aria-label="Souligné" :style="{ padding: '0.5rem 0.75rem', border: 'none', borderRadius: '6px', cursor: 'pointer', textDecoration: 'underline', background: toggleGroupFormats.includes('underline') ? '#1e293b' : 'transparent', color: toggleGroupFormats.includes('underline') ? '#fff' : 'inherit', transition: 'background 120ms' }">U</ToggleGroup.Item>
+        </ToggleGroup.Root>
+      </div>
+    </section>
+
+    <!-- ── Separator ─────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Separator</h2>
+      <p :style="sectionDescStyle">Séparateur sémantique (role=separator) ou décoratif (role=none + aria-hidden).</p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <span style="font-size:0.85rem">Contenu au-dessus</span>
+        <Separator.Root :style="{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0' }" />
+        <span style="font-size:0.85rem">Séparateur sémantique (role=separator)</span>
+        <Separator.Root :decorative="true" :style="{ border: 'none', borderTop: '1px dashed #e2e8f0', margin: '0' }" />
+        <span style="font-size:0.85rem">Séparateur décoratif (role=none, aria-hidden)</span>
+      </div>
+    </section>
+
+    <!-- ── VisuallyHidden ─────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">VisuallyHidden</h2>
+      <p :style="sectionDescStyle">Contenu visible pour les lecteurs d'écran, invisible visuellement. Utile pour les labels SR.</p>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <button
+          type="button"
+          aria-label="Fermer la fenêtre"
+          :style="{ ...btnStyle, width: '2.5rem', height: '2.5rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }"
+        >
+          <VisuallyHidden.Root>Fermer la fenêtre</VisuallyHidden.Root>
+          ✕
+        </button>
+        <p style="margin:0;font-size:0.8rem;color:#64748b">Le bouton ci-dessus a un label SR "Fermer la fenêtre" invisible visuellement.</p>
       </div>
     </section>
 
@@ -1270,6 +1856,236 @@ const radioGroupValue = ref<string>("react");
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
+
+    <!-- ── Menu (DropdownMenu) ───────────────────────────────────────────────── -->
+    </section>
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Menu (DropdownMenu)</h2>
+      <p :style="sectionDescStyle">WAI-ARIA Menu Button. Sous-menus N niveaux, radio, checkbox, typeahead, navigate prop.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <Menu.Root :on-select="(v: string) => { menuLastSelect = v }">
+          <Menu.Trigger :style="btnStyle">Actions ▾</Menu.Trigger>
+          <Menu.Portal>
+            <Menu.Content :style="menuContentStyle">
+              <Menu.Label :style="menuGroupLabelStyle">Fichier</Menu.Label>
+              <Menu.Item value="new" label="Nouveau" :style="menuItemStyle" :navigate="() => console.log('[navigate] /new')">Nouveau fichier</Menu.Item>
+              <Menu.Item value="open" label="Ouvrir" :style="menuItemStyle">Ouvrir…</Menu.Item>
+              <Menu.Separator :style="menuSepStyle" />
+              <Menu.Group id="edit-group">
+                <Menu.GroupLabel group-id="edit-group" :style="menuGroupLabelStyle">Edition</Menu.GroupLabel>
+                <Menu.Item value="cut" :style="menuItemStyle">Couper</Menu.Item>
+                <Menu.Item value="copy" :style="menuItemStyle">Copier</Menu.Item>
+                <Menu.Item value="paste" :disabled="true" :style="{ ...menuItemStyle, opacity: 0.45 }">Coller</Menu.Item>
+              </Menu.Group>
+              <Menu.Separator :style="menuSepStyle" />
+              <Menu.Label :style="menuGroupLabelStyle">Theme</Menu.Label>
+              <Menu.RadioGroup group-id="theme" :value="menuTheme" :on-value-change="(v: string) => { menuTheme = v }">
+                <Menu.RadioItem v-for="t in ['light', 'dark', 'system']" :key="t" :value="t" :style="menuItemStyle" :close-on-select="false">
+                  <Menu.ItemIndicator><span style="margin-right:6px">✓</span></Menu.ItemIndicator>
+                  {{ t.charAt(0).toUpperCase() + t.slice(1) }}
+                </Menu.RadioItem>
+              </Menu.RadioGroup>
+              <Menu.Separator :style="menuSepStyle" />
+              <Menu.Label :style="menuGroupLabelStyle">Vue</Menu.Label>
+              <Menu.CheckboxItem value="grid" :checked="menuShowGrid" :on-checked-change="(v: boolean) => { menuShowGrid = v }" :style="menuItemStyle">
+                <Menu.ItemIndicator><span style="margin-right:6px">✓</span></Menu.ItemIndicator>
+                Grille
+              </Menu.CheckboxItem>
+              <Menu.CheckboxItem value="ruler" :checked="menuShowRuler" :on-checked-change="(v: boolean) => { menuShowRuler = v }" :style="menuItemStyle">
+                <Menu.ItemIndicator><span style="margin-right:6px">✓</span></Menu.ItemIndicator>
+                Regle
+              </Menu.CheckboxItem>
+              <Menu.Separator :style="menuSepStyle" />
+              <!-- Sub 2 niveaux -->
+              <Menu.Sub>
+                <Menu.SubTrigger value="share" label="Partager" :style="menuItemStyle">Partager ▶</Menu.SubTrigger>
+                <Menu.SubContent :style="menuContentStyle">
+                  <Menu.Item value="share-link" :style="menuItemStyle">Lien</Menu.Item>
+                  <Menu.Item value="share-email" :style="menuItemStyle">Email</Menu.Item>
+                  <Menu.Separator :style="menuSepStyle" />
+                  <Menu.Sub>
+                    <Menu.SubTrigger value="social" label="Social" :style="menuItemStyle">Reseaux ▶</Menu.SubTrigger>
+                    <Menu.SubContent :style="menuContentStyle">
+                      <Menu.Item value="twitter" :style="menuItemStyle">Twitter</Menu.Item>
+                      <Menu.Item value="linkedin" :style="menuItemStyle">LinkedIn</Menu.Item>
+                    </Menu.SubContent>
+                  </Menu.Sub>
+                </Menu.SubContent>
+              </Menu.Sub>
+            </Menu.Content>
+          </Menu.Portal>
+        </Menu.Root>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="menuLastSelect">Selection : {{ menuLastSelect }}</div>
+          <div>Theme : {{ menuTheme }}</div>
+          <div>Grille : {{ menuShowGrid ? 'oui' : 'non' }} | Regle : {{ menuShowRuler ? 'oui' : 'non' }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Menu — Sub click-only ─────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Menu — Sub click-only (open-on-hover=false)</h2>
+      <p :style="sectionDescStyle">SubTrigger avec open-on-hover=false — seul le clic ouvre le sous-menu.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <Menu.Root :on-select="(v: string) => { menuClickOnlySelect = v }">
+          <Menu.Trigger :style="btnStyle">Options ▾</Menu.Trigger>
+          <Menu.Portal>
+            <Menu.Content :style="menuContentStyle">
+              <Menu.Item value="action-a" :style="menuItemStyle">Action A</Menu.Item>
+              <Menu.Item value="action-b" :style="menuItemStyle">Action B</Menu.Item>
+              <Menu.Separator :style="menuSepStyle" />
+              <Menu.Sub>
+                <Menu.SubTrigger value="more" label="Plus" :style="menuItemStyle" :open-on-hover="false">Plus (clic) ▶</Menu.SubTrigger>
+                <Menu.SubContent :style="menuContentStyle">
+                  <Menu.Item value="advanced-a" :style="menuItemStyle">Avance A</Menu.Item>
+                  <Menu.Item value="advanced-b" :style="menuItemStyle">Avance B</Menu.Item>
+                </Menu.SubContent>
+              </Menu.Sub>
+            </Menu.Content>
+          </Menu.Portal>
+        </Menu.Root>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="menuClickOnlySelect">Selection : {{ menuClickOnlySelect }}</div>
+          <div style="color:#94a3b8">Hover ne suffit pas — clic requis</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Menu — Anchor ─────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Menu — Anchor</h2>
+      <p :style="sectionDescStyle">Menu.Anchor positionne le floating par rapport a un element arbitraire, pas le trigger.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <div>
+          <Menu.Root :open="menuAnchorOpen" :on-open-change="(v: boolean) => { menuAnchorOpen = v }" :on-select="(v: string) => { menuAnchorSelect = v }">
+            <Menu.Anchor>
+              <div style="width:200px;padding:0.5rem;background:#f1f5f9;border:2px dashed #94a3b8;border-radius:8px;text-align:center;font-size:0.8rem;color:#64748b">
+                Ancre (reference)
+              </div>
+            </Menu.Anchor>
+            <Menu.Trigger :style="{ ...btnStyle, marginTop: '0.5rem' }">
+              {{ menuAnchorOpen ? 'Fermer' : 'Ouvrir (ancre)' }}
+            </Menu.Trigger>
+            <Menu.Portal>
+              <Menu.Content :style="menuContentStyle">
+                <Menu.Item value="profile" :style="menuItemStyle">Profil</Menu.Item>
+                <Menu.Item value="settings" :style="menuItemStyle">Parametres</Menu.Item>
+                <Menu.Separator :style="menuSepStyle" />
+                <Menu.Item value="logout" :style="menuItemStyle">Deconnexion</Menu.Item>
+              </Menu.Content>
+            </Menu.Portal>
+          </Menu.Root>
+        </div>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="menuAnchorSelect">Selection : {{ menuAnchorSelect }}</div>
+          <div style="color:#94a3b8">Le menu se positionne par rapport a l'ancre</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ContextMenu ───────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">ContextMenu (avec Sub)</h2>
+      <p :style="sectionDescStyle">Clic-droit + sous-menus imbriques — auto-portal vers document.body.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <ContextMenu.Root :on-select="(v: string) => { ctxMenuSelect = v }">
+          <ContextMenu.Trigger>
+            <div style="width:200px;height:80px;background:#1e40af;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;user-select:none">
+              Clic-droit ici
+            </div>
+          </ContextMenu.Trigger>
+          <ContextMenu.Portal>
+            <ContextMenu.Content :style="menuContentStyle">
+              <ContextMenu.Item value="inspect" :style="menuItemStyle">Inspecter</ContextMenu.Item>
+              <ContextMenu.Item value="reload" :style="menuItemStyle">Recharger</ContextMenu.Item>
+              <ContextMenu.Separator :style="menuSepStyle" />
+              <ContextMenu.CheckboxItem value="bookmark" :checked="ctxMenuBookmarked" :on-checked-change="(v: boolean) => { ctxMenuBookmarked = v }" :style="menuItemStyle">
+                <ContextMenu.ItemIndicator><span style="margin-right:6px">★</span></ContextMenu.ItemIndicator>
+                Marquer comme favori
+              </ContextMenu.CheckboxItem>
+              <ContextMenu.Separator :style="menuSepStyle" />
+              <ContextMenu.Sub>
+                <ContextMenu.SubTrigger value="share" label="Partager" :style="menuItemStyle">Partager ▶</ContextMenu.SubTrigger>
+                <ContextMenu.SubContent :style="menuContentStyle">
+                  <ContextMenu.Item value="share-link" :style="menuItemStyle">Lien</ContextMenu.Item>
+                  <ContextMenu.Item value="share-email" :style="menuItemStyle">Email</ContextMenu.Item>
+                  <ContextMenu.Separator :style="menuSepStyle" />
+                  <ContextMenu.Sub>
+                    <ContextMenu.SubTrigger value="social" label="Social" :style="menuItemStyle">Reseaux ▶</ContextMenu.SubTrigger>
+                    <ContextMenu.SubContent :style="menuContentStyle">
+                      <ContextMenu.Item value="twitter" :style="menuItemStyle">Twitter</ContextMenu.Item>
+                      <ContextMenu.Item value="linkedin" :style="menuItemStyle">LinkedIn</ContextMenu.Item>
+                    </ContextMenu.SubContent>
+                  </ContextMenu.Sub>
+                </ContextMenu.SubContent>
+              </ContextMenu.Sub>
+              <ContextMenu.Separator :style="menuSepStyle" />
+              <ContextMenu.Item value="copy-link" :style="menuItemStyle">Copier le lien</ContextMenu.Item>
+            </ContextMenu.Content>
+          </ContextMenu.Portal>
+        </ContextMenu.Root>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="ctxMenuSelect">Selection : {{ ctxMenuSelect }}</div>
+          <div>Favori : {{ ctxMenuBookmarked ? '★' : '☆' }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Avatar ───────────────────────────────────────────────────────────── -->
+    <section :style="sectionStyle">
+      <h2 :style="sectionTitleStyle">Avatar</h2>
+      <p :style="sectionDescStyle">Image avec fallback accessible. delayMs sur Fallback évite le flash du fallback sur les connexions rapides.</p>
+      <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+
+        <!-- Image cassée → fallback immédiat -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root :style="avatarRootStyle">
+            <Avatar.Image src="https://invalid.domain/broken.jpg" alt="Bob" :style="avatarImgStyle" />
+            <Avatar.Fallback :style="avatarFallbackStyle">BO</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">Image cassée</span>
+        </div>
+
+        <!-- Sans image -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root :style="avatarRootStyle">
+            <Avatar.Image alt="Carol" :style="avatarImgStyle" />
+            <Avatar.Fallback :style="avatarFallbackStyle">CA</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">Sans image</span>
+        </div>
+
+        <!-- delayMs=600 sur Fallback (pas Root) -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root :style="avatarRootStyle">
+            <Avatar.Image src="https://invalid.domain/slow.jpg" alt="Dave" :style="avatarImgStyle" />
+            <Avatar.Fallback :delay-ms="600" :style="avatarFallbackStyle">DA</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">delayMs=600 (Fallback)</span>
+        </div>
+
+        <!-- Auto-initiales via compound component + injectAvatarContext -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root name="John Doe" :style="avatarRootStyle">
+            <Avatar.Image alt="John Doe" :style="avatarImgStyle" />
+            <AvatarInitialsFallback :style="avatarFallbackStyle" />
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">initials (context)</span>
+        </div>
+
+        <!-- asChild: Fallback rendu comme un div -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root :style="avatarRootStyle">
+            <Avatar.Image alt="Eve" :style="avatarImgStyle" />
+            <Avatar.Fallback as-child :style="avatarFallbackStyle">
+              <div>EV</div>
+            </Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">asChild (div)</span>
+        </div>
+
+      </div>
     </section>
   </main>
 </template>
@@ -1297,6 +2113,88 @@ const radioGroupValue = ref<string>("react");
 @keyframes forge-overlay-out {
   from { opacity: 1; }
   to   { opacity: 0; }
+}
+
+/* DateField / TimePicker — group focus-within border + segment states */
+[data-forge-scope="date-field"][data-forge-part="group"]:focus-within,
+[data-forge-scope="time-picker"][data-forge-part="group"]:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: 0;
+  border-color: #3b82f6;
+  border-radius: 6px;
+}
+[data-forge-part^="segment-"][data-placeholder] {
+  color: #94a3b8;
+}
+[data-forge-part^="segment-"][data-focused] {
+  background: #dbeafe;
+  border-radius: 3px;
+  color: #1e40af;
+}
+
+/* DatePicker hover */
+[data-forge-scope="date-picker"][data-forge-part="cell"]:hover,
+[data-forge-scope="date-range-picker"][data-forge-part="cell"]:not([data-in-range]):not([data-range-start]):not([data-range-end]):hover {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+/* DatePicker / DateRangePicker — selected cell, today, focused cell */
+[data-forge-scope="date-picker"][data-forge-part="cell"][aria-selected="true"],
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-state="selected"] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px;
+}
+[data-forge-scope="date-picker"][data-forge-part="cell"][data-today],
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-today]:not([data-range-start]):not([data-range-end]) {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+[data-forge-scope="date-picker"][data-forge-part="cell"][data-focused],
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-focused] {
+  outline: 2px solid #94a3b8;
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+
+/* DateRangePicker — range visualization */
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-range-start] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px 0 0 6px;
+}
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-range-end] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 0 6px 6px 0;
+}
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-in-range] {
+  background: #e2e8f0;
+  border-radius: 0;
+}
+[data-forge-scope="date-range-picker"][data-forge-part="cell"][data-range-start][data-range-end] {
+  border-radius: 6px;
+}
+
+/* Month/Year cells — hover, selected, focused */
+[data-forge-scope="date-picker"][data-forge-part="month-cell"]:hover,
+[data-forge-scope="date-picker"][data-forge-part="year-cell"]:hover {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+[data-forge-scope="date-picker"][data-forge-part="month-cell"][aria-selected="true"],
+[data-forge-scope="date-picker"][data-forge-part="year-cell"][aria-selected="true"] {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 6px;
+}
+[data-forge-scope="date-picker"][data-forge-part="month-cell"][data-focused],
+[data-forge-scope="date-picker"][data-forge-part="year-cell"][data-focused] {
+  outline: 2px solid #94a3b8;
+  outline-offset: -1px;
+  border-radius: 6px;
 }
 
 /* Dialog */

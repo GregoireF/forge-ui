@@ -1,6 +1,7 @@
+import type { MachineSnapshot } from "@forge-ui/core";
 import { describe, expect, it, vi } from "vitest";
 import { connectTimePicker } from "../src/time-picker.connect.js";
-import type { TimePickerContext, TimePickerEvent, TimePickerState } from "../src/time-picker.types.js";
+import type { TimePickerContext, TimePickerState } from "../src/time-picker.types.js";
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -28,15 +29,15 @@ function makeCtx(overrides: Partial<TimePickerContext> = {}): TimePickerContext 
 function makeApi(ctxOverrides: Partial<TimePickerContext> = {}) {
   const ctx = makeCtx(ctxOverrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  const snapshot = {
-    value: "idle" as TimePickerState,
+  const machine = { setContext: vi.fn<(updates: Partial<TimePickerContext>) => void>() };
+  const snapshot: MachineSnapshot<TimePickerContext, TimePickerState> = {
+    value: "idle",
     context: ctx,
-    matches: (s: string) => s === "idle",
+    matches: (...values) => values.includes("idle"),
     tags: [],
     hasTag: () => false,
   };
-  const api = connectTimePicker(snapshot as any, send, machine as any);
+  const api = connectTimePicker(snapshot, send, machine);
   return { api, send };
 }
 
@@ -202,9 +203,9 @@ describe("connectTimePicker — getSecondsSegmentProps", () => {
 // ---------------------------------------------------------------------------
 
 describe("connectTimePicker — getPeriodSegmentProps (12h)", () => {
-  it("role is spinbutton", () => {
+  it("has no role (not a spinbutton — no numeric aria-value range)", () => {
     const { api } = makeApi({ hourCycle: 12 });
-    expect(api.getPeriodSegmentProps().role).toBe("spinbutton");
+    expect((api.getPeriodSegmentProps() as Record<string, unknown>).role).toBeUndefined();
   });
 
   it("aria-label is 'AM/PM'", () => {
@@ -255,9 +256,12 @@ describe("connectTimePicker — getSeparatorProps", () => {
 // ---------------------------------------------------------------------------
 
 describe("connectTimePicker — keyboard handling", () => {
-  function fireKey(props: Record<string, unknown>, key: string) {
+  function fireKey(
+    props: { onKeyDown?: (e: KeyboardEvent) => void } & Record<string, unknown>,
+    key: string,
+  ) {
     const event = { key, preventDefault: vi.fn() } as unknown as KeyboardEvent;
-    (props as any).onKeyDown(event);
+    props.onKeyDown?.(event);
     return event;
   }
 
@@ -356,12 +360,22 @@ describe("connectTimePicker — assembledTime and hidden input", () => {
   });
 
   it("assembledTime null when seconds missing (showSeconds:true)", () => {
-    const { api } = makeApi({ hoursValue: 14, minutesValue: 30, secondsValue: null, showSeconds: true });
+    const { api } = makeApi({
+      hoursValue: 14,
+      minutesValue: 30,
+      secondsValue: null,
+      showSeconds: true,
+    });
     expect(api.assembledTime).toBeNull();
   });
 
   it("isoValue is HH:MM:SS format", () => {
-    const { api } = makeApi({ hoursValue: 9, minutesValue: 5, secondsValue: 0, showSeconds: false });
+    const { api } = makeApi({
+      hoursValue: 9,
+      minutesValue: 5,
+      secondsValue: 0,
+      showSeconds: false,
+    });
     expect(api.isoValue).toBe("09:05:00");
   });
 
@@ -376,5 +390,179 @@ describe("connectTimePicker — assembledTime and hidden input", () => {
     expect(props.name).toBe("time");
     expect(props["aria-hidden"]).toBe(true);
     expect(props.type).toBe("hidden");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// displayHours — 12-hour mode
+// ---------------------------------------------------------------------------
+
+describe("connectTimePicker — displayHours 12h", () => {
+  it("returns hours as-is for regular 12h value (e.g. 9 → 9)", () => {
+    const { api } = makeApi({ hourCycle: 12, hoursValue: 9, period: "AM" });
+    expect(api.displayValues.hours).toBe("09");
+  });
+
+  it("returns 12 when hoursValue is 0 in 12h mode", () => {
+    const { api } = makeApi({ hourCycle: 12, hoursValue: 0, period: "AM" });
+    expect(api.displayValues.hours).toBe("12");
+  });
+
+  it("returns 12 when hoursValue is 12 in 12h mode", () => {
+    const { api } = makeApi({ hourCycle: 12, hoursValue: 12, period: "PM" });
+    expect(api.displayValues.hours).toBe("12");
+  });
+
+  it("returns 1 when hoursValue is 13 in 12h mode (PM)", () => {
+    const { api } = makeApi({ hourCycle: 12, hoursValue: 13, period: "PM" });
+    expect(api.displayValues.hours).toBe("01");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPeriodSegmentProps — keyboard events
+// ---------------------------------------------------------------------------
+
+describe("connectTimePicker — getPeriodSegmentProps keyboard", () => {
+  function fireKey(api: ReturnType<typeof makeApi>["api"], key: string) {
+    const event = { key, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    api.getPeriodSegmentProps().onKeyDown(event);
+    return event;
+  }
+
+  it("ArrowUp sends TOGGLE_PERIOD", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    fireKey(api, "ArrowUp");
+    expect(send).toHaveBeenCalledWith("TOGGLE_PERIOD");
+  });
+
+  it("ArrowDown sends TOGGLE_PERIOD", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    fireKey(api, "ArrowDown");
+    expect(send).toHaveBeenCalledWith("TOGGLE_PERIOD");
+  });
+
+  it("ArrowRight sends NEXT_SEGMENT", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    fireKey(api, "ArrowRight");
+    expect(send).toHaveBeenCalledWith("NEXT_SEGMENT");
+  });
+
+  it("ArrowLeft sends PREV_SEGMENT", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    fireKey(api, "ArrowLeft");
+    expect(send).toHaveBeenCalledWith("PREV_SEGMENT");
+  });
+
+  it("'a' key sends TOGGLE_PERIOD when period is PM", () => {
+    const { api, send } = makeApi({ hourCycle: 12, period: "PM" });
+    fireKey(api, "a");
+    expect(send).toHaveBeenCalledWith("TOGGLE_PERIOD");
+  });
+
+  it("'a' key does nothing when period is already AM", () => {
+    const { api, send } = makeApi({ hourCycle: 12, period: "AM" });
+    fireKey(api, "a");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("'p' key sends TOGGLE_PERIOD when period is AM", () => {
+    const { api, send } = makeApi({ hourCycle: 12, period: "AM" });
+    fireKey(api, "p");
+    expect(send).toHaveBeenCalledWith("TOGGLE_PERIOD");
+  });
+
+  it("'p' key does nothing when period is already PM", () => {
+    const { api, send } = makeApi({ hourCycle: 12, period: "PM" });
+    fireKey(api, "p");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("'P' key (uppercase) sends TOGGLE_PERIOD when period is AM", () => {
+    const { api, send } = makeApi({ hourCycle: 12, period: "AM" });
+    fireKey(api, "P");
+    expect(send).toHaveBeenCalledWith("TOGGLE_PERIOD");
+  });
+
+  it("'A' key (uppercase) sends TOGGLE_PERIOD when period is PM", () => {
+    const { api, send } = makeApi({ hourCycle: 12, period: "PM" });
+    fireKey(api, "A");
+    expect(send).toHaveBeenCalledWith("TOGGLE_PERIOD");
+  });
+
+  it("unhandled key does nothing", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    fireKey(api, "Escape");
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getSecondsSegmentProps — with actual value
+// ---------------------------------------------------------------------------
+
+describe("connectTimePicker — getSecondsSegmentProps with value", () => {
+  it("aria-valuetext is padded seconds value", () => {
+    const { api } = makeApi({ showSeconds: true, secondsValue: 45 });
+    expect(api.getSecondsSegmentProps()["aria-valuetext"]).toBe("45");
+  });
+
+  it("aria-valuetext is 'blank' when secondsValue is null", () => {
+    const { api } = makeApi({ showSeconds: true, secondsValue: null });
+    expect(api.getSecondsSegmentProps()["aria-valuetext"]).toBe("blank");
+  });
+
+  it("data-placeholder set when secondsValue is null", () => {
+    const { api } = makeApi({ showSeconds: true, secondsValue: null });
+    expect(api.getSecondsSegmentProps()["data-placeholder"]).toBe("");
+  });
+
+  it("data-placeholder absent when secondsValue is set", () => {
+    const { api } = makeApi({ showSeconds: true, secondsValue: 30 });
+    expect(api.getSecondsSegmentProps()["data-placeholder"]).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// assembledTime — showSeconds branches
+// ---------------------------------------------------------------------------
+
+describe("connectTimePicker — assembledTime showSeconds branch", () => {
+  it("assembledTime includes seconds when showSeconds=true and all values set", () => {
+    const { api } = makeApi({
+      hoursValue: 9,
+      minutesValue: 30,
+      showSeconds: true,
+      secondsValue: 45,
+    });
+    expect(api.assembledTime).toEqual({ hours: 9, minutes: 30, seconds: 45 });
+  });
+
+  it("assembledTime is null when showSeconds=true and secondsValue is null", () => {
+    const { api } = makeApi({
+      hoursValue: 9,
+      minutesValue: 30,
+      showSeconds: true,
+      secondsValue: null,
+    });
+    expect(api.assembledTime).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPeriodSegmentProps — focus / blur
+// ---------------------------------------------------------------------------
+
+describe("connectTimePicker — getPeriodSegmentProps focus/blur", () => {
+  it("onFocus sends FOCUS_SEGMENT with 'period'", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    api.getPeriodSegmentProps().onFocus();
+    expect(send).toHaveBeenCalledWith({ type: "FOCUS_SEGMENT", segment: "period" });
+  });
+
+  it("onBlur sends BLUR_SEGMENT", () => {
+    const { api, send } = makeApi({ hourCycle: 12 });
+    api.getPeriodSegmentProps().onBlur();
+    expect(send).toHaveBeenCalledWith("BLUR_SEGMENT");
   });
 });

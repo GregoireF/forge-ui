@@ -5,7 +5,14 @@ import {
   getSideFromPlacement,
   getTransformOrigin,
 } from "@forge-ui/floating";
-import type { KeyEventLike, SelectContext, SelectEvent, SelectOption, SelectSend, SelectState } from "./select.types.js";
+import type {
+  KeyEventLike,
+  SelectContext,
+  SelectEvent,
+  SelectOption,
+  SelectSend,
+  SelectState,
+} from "./select.types.js";
 
 export type SelectApi = ReturnType<typeof connectSelect>;
 
@@ -52,11 +59,13 @@ function createTypeahead(
     if (matches.length > 1) {
       const idx = matches.findIndex((o) => o.value === current);
       if (idx !== -1) {
-        onMatch(matches[(idx + 1) % matches.length].value);
+        const next = matches[(idx + 1) % matches.length];
+        if (next) onMatch(next.value);
         return;
       }
     }
-    onMatch(matches[0].value);
+    const first = matches[0];
+    if (first) onMatch(first.value);
   }
 
   return { handleChar };
@@ -167,11 +176,12 @@ export function connectSelect(
     options: effectiveOpts,
 
     /** The label text for the currently selected value(s). Empty string when nothing is selected. */
-    valueLabel: context.value.length === 0
-      ? ""
-      : context.multiple
-        ? context.value.map(resolveLabel).join(", ")
-        : resolveLabel(context.value[0]),
+    valueLabel:
+      context.value.length === 0
+        ? ""
+        : context.multiple
+          ? context.value.map(resolveLabel).join(", ")
+          : resolveLabel(context.value[0] ?? ""),
 
     /** Machine-level placeholder. Prefer using SelectValue's placeholder prop in compounds. */
     placeholder: context.placeholder,
@@ -224,7 +234,9 @@ export function connectSelect(
           position: context.positioning.strategy,
           top: `${context.y}px`,
           left: `${context.x}px`,
-          width: context.positioning.sameWidth ? `${context.triggerEl?.offsetWidth ?? 0}px` : "max-content",
+          width: context.positioning.sameWidth
+            ? `${context.triggerEl?.offsetWidth ?? 0}px`
+            : "max-content",
           // Opacity is driven by the CSS custom property --forge-revealed set
           // directly on the DOM node by the floating activity. Using a CSS var
           // here means React/Vue re-renders with positioned=false can never

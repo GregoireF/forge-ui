@@ -1,6 +1,11 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type {
+  DialogContentCallbacks,
+  DialogContext,
+  DialogEvent,
+  DialogState,
+} from "@forge-ui/dialog";
 import { connectDialog } from "@forge-ui/dialog";
-import type { DialogContentCallbacks, DialogContext, DialogEvent, DialogState } from "@forge-ui/dialog";
 
 export type { DialogContentCallbacks as AlertDialogContentCallbacks };
 

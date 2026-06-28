@@ -1,7 +1,7 @@
-import type { CalendarDate, CreateDateFieldOptions } from "@forge-ui/date-field";
+﻿import type { CalendarDate, CreateDateFieldOptions } from "@forge-ui/date-field";
 import type { InjectionKey, PropType } from "vue";
-import { defineComponent, h, inject, provide, watch } from "vue";
-import type { UseDateFieldReturn } from "./use-date-field.js";
+import { defineComponent, h, inject, nextTick, provide, watch } from "vue";
+import type { UseDateFieldOptions, UseDateFieldReturn } from "./use-date-field.js";
 import { useDateField } from "./use-date-field.js";
 
 const dateFieldKey: InjectionKey<UseDateFieldReturn> = Symbol("forge-date-field");
@@ -25,9 +25,14 @@ const DateFieldRoot = defineComponent({
     locale: { type: String, default: undefined },
     disabled: { type: Boolean, default: undefined },
     readOnly: { type: Boolean, default: undefined },
-    onValueChange: { type: Function as PropType<CreateDateFieldOptions["onValueChange"]>, default: undefined },
+    onValueChange: {
+      type: Function as PropType<CreateDateFieldOptions["onValueChange"]>,
+      default: undefined,
+    },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: CalendarDate | null) => true,
+  },
   setup(props, { slots, emit }) {
     const api = useDateField({
       ...(props.id !== undefined && { id: props.id }),
@@ -37,7 +42,7 @@ const DateFieldRoot = defineComponent({
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.readOnly !== undefined && { readOnly: props.readOnly }),
       ...(props.onValueChange !== undefined && { onValueChange: props.onValueChange }),
-    });
+    } as UseDateFieldOptions);
 
     watch(
       () => props.value,
@@ -54,8 +59,18 @@ const DateFieldRoot = defineComponent({
 
     watch(api.assembledDate, (v) => emit("update:value", v));
 
+    watch(api.focusedSegment, async (seg) => {
+      if (!seg) return;
+      const groupId = api.getGroupProps().id;
+      await nextTick();
+      const groupEl = document.getElementById(groupId);
+      if (!groupEl) return;
+      const el = groupEl.querySelector<HTMLElement>(`[data-forge-part="segment-${seg}"]`);
+      if (el && document.activeElement !== el) el.focus();
+    });
+
     provide(dateFieldKey, api);
-    return () => slots.default?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -68,16 +83,19 @@ const DateFieldGroup = defineComponent({
   props: { asChild: { type: Boolean, default: false } },
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(), ...attrs }, slots.default?.());
+    return () => h("div", { ...api.getGroupProps(), ...attrs }, slots["default"]?.());
   },
 });
 
 // ---------------------------------------------------------------------------
-// Segment helper — remaps onKeyDown → onKeydown for Vue
+// Segment helper â€” remaps onKeyDown â†’ onKeydown for Vue
 // ---------------------------------------------------------------------------
 
 function remapKeyDown(props: Record<string, unknown>): Record<string, unknown> {
-  const { onKeyDown, ...rest } = props as { onKeyDown?: (e: KeyboardEvent) => void; [k: string]: unknown };
+  const { onKeyDown, ...rest } = props as {
+    onKeyDown?: (e: KeyboardEvent) => void;
+    [k: string]: unknown;
+  };
   return { ...rest, ...(onKeyDown && { onKeydown: onKeyDown }) };
 }
 
@@ -91,7 +109,7 @@ const DateFieldMonthSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getMonthSegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.month ?? "MM"]);
+      return h("div", merged, slots["default"]?.() ?? [api.displayValues.value.month ?? "MM"]);
     };
   },
 });
@@ -106,7 +124,7 @@ const DateFieldDaySegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getDaySegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.day ?? "DD"]);
+      return h("div", merged, slots["default"]?.() ?? [api.displayValues.value.day ?? "DD"]);
     };
   },
 });
@@ -121,7 +139,7 @@ const DateFieldYearSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getYearSegmentProps()), ...attrs };
-      return h("div", merged, slots.default?.() ?? [api.displayValues.value.year ?? "YYYY"]);
+      return h("div", merged, slots["default"]?.() ?? [api.displayValues.value.year ?? "YYYY"]);
     };
   },
 });
@@ -134,7 +152,7 @@ const DateFieldSeparator = defineComponent({
   name: "ForgeDateFieldSeparator",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("span", { ...api.getSeparatorProps(), ...attrs }, slots.default?.());
+    return () => h("span", { ...api.getSeparatorProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -166,11 +184,11 @@ export const DateField = {
 } as const;
 
 export {
-  DateFieldRoot,
-  DateFieldGroup,
-  DateFieldMonthSegment,
   DateFieldDaySegment,
-  DateFieldYearSegment,
-  DateFieldSeparator,
+  DateFieldGroup,
   DateFieldHiddenInput,
+  DateFieldMonthSegment,
+  DateFieldRoot,
+  DateFieldSeparator,
+  DateFieldYearSegment,
 };

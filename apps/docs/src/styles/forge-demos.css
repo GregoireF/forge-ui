@@ -30,7 +30,9 @@
   cursor: pointer;
   font-size: 0.875rem;
   font-family: inherit;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   line-height: 1;
 }
 
@@ -269,7 +271,9 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 }
 
 [data-forge-scope="checkbox"][data-forge-part="control"][data-state="checked"] {
@@ -330,7 +334,8 @@
   box-shadow: 0 1px 3px rgba(0 0 0 / 0.3);
 }
 
-[data-forge-scope="switch"][data-forge-part="control"][data-state="checked"] [data-forge-part="thumb"] {
+[data-forge-scope="switch"][data-forge-part="control"][data-state="checked"]
+  [data-forge-part="thumb"] {
   transform: translateX(1.25rem);
 }
 
@@ -447,7 +452,9 @@
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
   font-family: inherit;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 [data-forge-scope="tabs"][data-forge-part="trigger"][data-state="active"] {

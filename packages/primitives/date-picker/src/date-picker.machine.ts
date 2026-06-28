@@ -1,9 +1,9 @@
 import {
   createMachine,
+  makeFocusActivity,
   makeKeyboardActivity,
   makeLayerActivity,
   makeWatchOutsideActivity,
-  makeFocusActivity,
 } from "@forge-ui/core";
 import {
   addDays,
@@ -27,10 +27,12 @@ import type {
 // ---------------------------------------------------------------------------
 
 function clampToValid(date: CalendarDate, ctx: DatePickerContext): CalendarDate {
-  if (!isDateDisabled(date, ctx.min, ctx.max, ctx.isDateUnavailable, ctx.disabledWeekdays)) return date;
+  if (!isDateDisabled(date, ctx.min, ctx.max, ctx.isDateUnavailable, ctx.disabledWeekdays))
+    return date;
   for (let i = 1; i <= 365; i++) {
     const next = addDays(date, i);
-    if (!isDateDisabled(next, ctx.min, ctx.max, ctx.isDateUnavailable, ctx.disabledWeekdays)) return next;
+    if (!isDateDisabled(next, ctx.min, ctx.max, ctx.isDateUnavailable, ctx.disabledWeekdays))
+      return next;
   }
   return date;
 }
@@ -74,7 +76,16 @@ function selectDay({
   event: Extract<DatePickerEvent, { type: "SELECT_DAY" }>;
 }) {
   if (context.disabled || context.readOnly) return;
-  if (isDateDisabled(event.date, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) return;
+  if (
+    isDateDisabled(
+      event.date,
+      context.min,
+      context.max,
+      context.isDateUnavailable,
+      context.disabledWeekdays,
+    )
+  )
+    return;
   setContext({ value: event.date, focusedDate: event.date });
   context.onValueChange?.(event.date);
 }
@@ -87,7 +98,16 @@ function selectFocused({
   setContext: (u: Partial<DatePickerContext>) => void;
 }) {
   if (context.disabled || context.readOnly) return;
-  if (isDateDisabled(context.focusedDate, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) return;
+  if (
+    isDateDisabled(
+      context.focusedDate,
+      context.min,
+      context.max,
+      context.isDateUnavailable,
+      context.disabledWeekdays,
+    )
+  )
+    return;
   setContext({ value: context.focusedDate });
   context.onValueChange?.(context.focusedDate);
 }
@@ -117,7 +137,11 @@ function selectMonth({
 }) {
   const { focusedDate } = context;
   const maxDay = getDaysInMonth(focusedDate.year, event.month);
-  const next = { year: focusedDate.year, month: event.month, day: Math.min(focusedDate.day, maxDay) };
+  const next = {
+    year: focusedDate.year,
+    month: event.month,
+    day: Math.min(focusedDate.day, maxDay),
+  };
   setContext({ focusedDate: clampToValid(next, context) });
 }
 
@@ -132,7 +156,11 @@ function selectYear({
 }) {
   const { focusedDate } = context;
   const maxDay = getDaysInMonth(event.year, focusedDate.month);
-  const next = { year: event.year, month: focusedDate.month, day: Math.min(focusedDate.day, maxDay) };
+  const next = {
+    year: event.year,
+    month: focusedDate.month,
+    day: Math.min(focusedDate.day, maxDay),
+  };
   setContext({ focusedDate: clampToValid(next, context) });
 }
 
@@ -199,7 +227,15 @@ function moveFocus(delta: number) {
     setContext: (u: Partial<DatePickerContext>) => void;
   }) => {
     const next = addDays(context.focusedDate, delta);
-    if (!isDateDisabled(next, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) {
+    if (
+      !isDateDisabled(
+        next,
+        context.min,
+        context.max,
+        context.isDateUnavailable,
+        context.disabledWeekdays,
+      )
+    ) {
       setContext({ focusedDate: next });
     }
   };
@@ -214,7 +250,15 @@ function moveFocusMonths(delta: number) {
     setContext: (u: Partial<DatePickerContext>) => void;
   }) => {
     const next = addMonths(context.focusedDate, delta);
-    if (!isDateDisabled(next, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) {
+    if (
+      !isDateDisabled(
+        next,
+        context.min,
+        context.max,
+        context.isDateUnavailable,
+        context.disabledWeekdays,
+      )
+    ) {
       setContext({ focusedDate: next });
     }
   };
@@ -229,7 +273,15 @@ function moveFocusYears(delta: number) {
     setContext: (u: Partial<DatePickerContext>) => void;
   }) => {
     const next = addMonths(context.focusedDate, delta * 12);
-    if (!isDateDisabled(next, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) {
+    if (
+      !isDateDisabled(
+        next,
+        context.min,
+        context.max,
+        context.isDateUnavailable,
+        context.disabledWeekdays,
+      )
+    ) {
       setContext({ focusedDate: next });
     }
   };
@@ -257,7 +309,15 @@ function focusWeekStart({
   const currentDow = getDayOfWeek(focusedDate.year, focusedDate.month, focusedDate.day);
   const daysBack = (currentDow - firstDayOfWeek + 7) % 7;
   const next = addDays(focusedDate, -daysBack);
-  if (!isDateDisabled(next, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) {
+  if (
+    !isDateDisabled(
+      next,
+      context.min,
+      context.max,
+      context.isDateUnavailable,
+      context.disabledWeekdays,
+    )
+  ) {
     setContext({ focusedDate: next });
   }
 }
@@ -273,7 +333,15 @@ function focusWeekEnd({
   const currentDow = getDayOfWeek(focusedDate.year, focusedDate.month, focusedDate.day);
   const daysForward = (firstDayOfWeek + 6 - currentDow + 7) % 7;
   const next = addDays(focusedDate, daysForward);
-  if (!isDateDisabled(next, context.min, context.max, context.isDateUnavailable, context.disabledWeekdays)) {
+  if (
+    !isDateDisabled(
+      next,
+      context.min,
+      context.max,
+      context.isDateUnavailable,
+      context.disabledWeekdays,
+    )
+  ) {
     setContext({ focusedDate: next });
   }
 }
@@ -382,7 +450,9 @@ export function createDatePickerMachine(options: CreateDatePickerOptions) {
       triggerEl: null,
       ...(options.min !== undefined && { min: options.min }),
       ...(options.max !== undefined && { max: options.max }),
-      ...(options.isDateUnavailable !== undefined && { isDateUnavailable: options.isDateUnavailable }),
+      ...(options.isDateUnavailable !== undefined && {
+        isDateUnavailable: options.isDateUnavailable,
+      }),
       ...(options.disabledWeekdays !== undefined && { disabledWeekdays: options.disabledWeekdays }),
       ...(options.presets !== undefined && { presets: options.presets }),
       ...(options.onValueChange !== undefined && { onValueChange: options.onValueChange }),

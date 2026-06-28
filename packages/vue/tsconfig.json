@@ -28,7 +28,12 @@
       "@forge-ui/date-field": ["../primitives/date-field/src/index.ts"],
       "@forge-ui/time-picker": ["../primitives/time-picker/src/index.ts"],
       "@forge-ui/date-picker": ["../primitives/date-picker/src/index.ts"],
-      "@forge-ui/date-range-picker": ["../primitives/date-range-picker/src/index.ts"]
+      "@forge-ui/date-range-picker": ["../primitives/date-range-picker/src/index.ts"],
+      "@forge-ui/toggle": ["../primitives/toggle/src/index.ts"],
+      "@forge-ui/toggle-group": ["../primitives/toggle-group/src/index.ts"],
+      "@forge-ui/separator": ["../primitives/separator/src/index.ts"],
+      "@forge-ui/visually-hidden": ["../primitives/visually-hidden/src/index.ts"],
+      "@forge-ui/menu": ["../primitives/menu/src/index.ts"]
     }
   },
   "include": ["src"],
@@ -57,6 +62,11 @@
     { "path": "../primitives/date-field" },
     { "path": "../primitives/time-picker" },
     { "path": "../primitives/date-picker" },
-    { "path": "../primitives/date-range-picker" }
+    { "path": "../primitives/date-range-picker" },
+    { "path": "../primitives/toggle" },
+    { "path": "../primitives/toggle-group" },
+    { "path": "../primitives/separator" },
+    { "path": "../primitives/visually-hidden" },
+    { "path": "../primitives/menu" }
   ]
 }

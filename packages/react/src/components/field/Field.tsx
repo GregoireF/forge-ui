@@ -124,7 +124,9 @@ function FieldError({ asChild, children, ...rest }: FieldErrorProps) {
 // and aria-labelledby so screen readers announce the group label.
 // ---------------------------------------------------------------------------
 
-interface FieldGroupContextValue { labelId: string }
+interface FieldGroupContextValue {
+  labelId: string;
+}
 const FieldGroupCtx = createContext<FieldGroupContextValue | null>(null);
 
 export interface FieldGroupProps extends HTMLAttributes<HTMLDivElement> {
@@ -157,6 +159,15 @@ function GroupLabel({ asChild, children, ...rest }: FieldGroupLabelProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "Field.Root";
+Label.displayName = "Field.Label";
+RequiredIndicator.displayName = "Field.RequiredIndicator";
+Control.displayName = "Field.Control";
+Description.displayName = "Field.Description";
+FieldError.displayName = "Field.Error";
+Group.displayName = "Field.Group";
+GroupLabel.displayName = "Field.GroupLabel";
 
 export const Field = {
   Root,

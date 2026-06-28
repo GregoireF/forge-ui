@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { render, screen } from "@testing-library/vue";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, h } from "vue";
+import { defineComponent } from "vue";
 import { Select } from "../src/components/select/Select.js";
 
 // Destructure at module level — dot-notation doesn't work in template strings
@@ -15,7 +15,6 @@ const {
   Content: SelectContent,
   Item: SelectItem,
   ItemText: SelectItemText,
-  ItemIndicator: SelectItemIndicator,
   Separator: SelectSeparator,
   Group: SelectGroup,
   GroupLabel: SelectGroupLabel,
@@ -171,8 +170,14 @@ describe("Select (Vue)", () => {
     it("marks pre-selected option as aria-selected=true", async () => {
       render(makeFixture({ defaultValue: "apple", defaultLabel: "Apple" }));
       await user.click(screen.getByTestId("trigger"));
-      expect(screen.getByRole("option", { name: "Apple" })).toHaveAttribute("aria-selected", "true");
-      expect(screen.getByRole("option", { name: "Banana" })).toHaveAttribute("aria-selected", "false");
+      expect(screen.getByRole("option", { name: "Apple" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(screen.getByRole("option", { name: "Banana" })).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
     });
   });
 
@@ -256,7 +261,15 @@ describe("Select (Vue)", () => {
   describe("compound component API", () => {
     it("renders Separator between options", async () => {
       const WithSeparator = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectSeparator },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectSeparator,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
@@ -277,7 +290,16 @@ describe("Select (Vue)", () => {
 
     it("renders Group and GroupLabel", async () => {
       const WithGroup = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectGroup, SelectGroupLabel },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectGroup,
+          SelectGroupLabel,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
@@ -323,13 +345,22 @@ describe("Select (Vue)", () => {
 
     it("Value span has data-forge-scope=select", () => {
       render(makeFixture());
-      const valueSpan = document.querySelector('[data-forge-scope="select"][data-forge-part="value"]');
+      const valueSpan = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="value"]',
+      );
       expect(valueSpan).toBeInTheDocument();
     });
 
     it("Placeholder span has data-forge-scope=select", () => {
       const WithPlaceholder = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectPlaceholder, SelectPortal, SelectContent, SelectItem },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectPlaceholder,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger">
@@ -340,13 +371,23 @@ describe("Select (Vue)", () => {
         `,
       });
       render(WithPlaceholder);
-      const placeholder = document.querySelector('[data-forge-scope="select"][data-forge-part="placeholder"]');
+      const placeholder = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="placeholder"]',
+      );
       expect(placeholder).toBeInTheDocument();
     });
 
     it("ItemText has data-forge-scope=select", async () => {
       const WithItemText = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectItemText },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectItemText,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
@@ -360,13 +401,23 @@ describe("Select (Vue)", () => {
       });
       render(WithItemText);
       await user.click(screen.getByTestId("trigger"));
-      const itemText = document.querySelector('[data-forge-scope="select"][data-forge-part="item-text"]');
+      const itemText = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="item-text"]',
+      );
       expect(itemText).toBeInTheDocument();
     });
 
     it("Separator has data-forge-scope=select", async () => {
       const WithSeparator = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectSeparator },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectSeparator,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
@@ -382,13 +433,24 @@ describe("Select (Vue)", () => {
       });
       render(WithSeparator);
       await user.click(screen.getByTestId("trigger"));
-      const sep = document.querySelector('[data-forge-scope="select"][data-forge-part="separator"]');
+      const sep = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="separator"]',
+      );
       expect(sep).toBeInTheDocument();
     });
 
     it("Group and GroupLabel have data-forge-scope=select", async () => {
       const WithGroup = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectGroup, SelectGroupLabel },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectGroup,
+          SelectGroupLabel,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
@@ -405,14 +467,26 @@ describe("Select (Vue)", () => {
       });
       render(WithGroup);
       await user.click(screen.getByTestId("trigger"));
-      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group"]')).toBeInTheDocument();
-      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="select"][data-forge-part="group"]'),
+      ).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]'),
+      ).toBeInTheDocument();
     });
 
     it("Indicator has data-forge-scope=select, data-forge-part=indicator, and data-state=closed", () => {
       const SelectIndicator = Select.Indicator;
       const WithIndicator = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectIndicator },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectIndicator,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger">
@@ -433,7 +507,15 @@ describe("Select (Vue)", () => {
     it("Indicator data-state=open when select is open", async () => {
       const SelectIndicator = Select.Indicator;
       const WithIndicator = defineComponent({
-        components: { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectItem, SelectIndicator },
+        components: {
+          SelectRoot,
+          SelectTrigger,
+          SelectValue,
+          SelectPortal,
+          SelectContent,
+          SelectItem,
+          SelectIndicator,
+        },
         template: `
           <SelectRoot>
             <SelectTrigger data-testid="trigger">

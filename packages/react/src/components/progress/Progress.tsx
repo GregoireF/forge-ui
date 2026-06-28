@@ -1,6 +1,6 @@
+import { connectProgress } from "@forge-ui/progress";
 import type { HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext } from "react";
-import { connectProgress } from "@forge-ui/progress";
 import { Slot } from "../shared/Slot.js";
 
 // ---------------------------------------------------------------------------
@@ -112,6 +112,12 @@ function ValueText({ asChild, ...rest }: ProgressValueTextProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "Progress.Root";
+Track.displayName = "Progress.Track";
+Fill.displayName = "Progress.Fill";
+Label.displayName = "Progress.Label";
+ValueText.displayName = "Progress.ValueText";
 
 export const Progress = {
   Root,

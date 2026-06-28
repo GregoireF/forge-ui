@@ -34,7 +34,11 @@ export interface TimePickerGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
 function Group({ children, ...rest }: TimePickerGroupProps) {
   const api = useCtx();
-  return <div {...api.getGroupProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getGroupProps()} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -46,7 +50,7 @@ export interface TimePickerHoursSegmentProps extends HTMLAttributes<HTMLDivEleme
 function HoursSegment({ children, ...rest }: TimePickerHoursSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getHoursSegmentProps()} {...rest}>
+    <div {...(api.getHoursSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.hours ?? "HH"}
     </div>
   );
@@ -57,7 +61,7 @@ export interface TimePickerMinutesSegmentProps extends HTMLAttributes<HTMLDivEle
 function MinutesSegment({ children, ...rest }: TimePickerMinutesSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getMinutesSegmentProps()} {...rest}>
+    <div {...(api.getMinutesSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.minutes ?? "MM"}
     </div>
   );
@@ -68,7 +72,7 @@ export interface TimePickerSecondsSegmentProps extends HTMLAttributes<HTMLDivEle
 function SecondsSegment({ children, ...rest }: TimePickerSecondsSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getSecondsSegmentProps()} {...rest}>
+    <div {...(api.getSecondsSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.seconds ?? "SS"}
     </div>
   );
@@ -79,7 +83,7 @@ export interface TimePickerPeriodSegmentProps extends HTMLAttributes<HTMLDivElem
 function PeriodSegment({ children, ...rest }: TimePickerPeriodSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getPeriodSegmentProps()} {...rest}>
+    <div {...(api.getPeriodSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.period ?? "AM"}
     </div>
   );
@@ -93,7 +97,11 @@ export interface TimePickerSeparatorProps extends HTMLAttributes<HTMLSpanElement
 
 function Separator({ children, ...rest }: TimePickerSeparatorProps) {
   const api = useCtx();
-  return <span {...api.getSeparatorProps()} {...rest}>{children}</span>;
+  return (
+    <span {...api.getSeparatorProps()} {...rest}>
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -112,6 +120,15 @@ function HiddenInput({ name }: TimePickerHiddenInputProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "TimePicker.Root";
+Group.displayName = "TimePicker.Group";
+HoursSegment.displayName = "TimePicker.HoursSegment";
+MinutesSegment.displayName = "TimePicker.MinutesSegment";
+SecondsSegment.displayName = "TimePicker.SecondsSegment";
+PeriodSegment.displayName = "TimePicker.PeriodSegment";
+Separator.displayName = "TimePicker.Separator";
+HiddenInput.displayName = "TimePicker.HiddenInput";
 
 export const TimePicker = {
   Root,

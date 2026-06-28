@@ -1,0 +1,10 @@
+/* forge-ui/css — full bundle
+ *
+ * Includes ALL animations (not wrapped in prefers-reduced-motion).
+ * If you want automatic motion suppression, import motion-safe.css instead.
+ *
+ *   import '@forge-ui/css'             ← this file (full)
+ *   import '@forge-ui/css/motion-safe' ← prefers-reduced-motion wrapped
+ *   import '@forge-ui/css/animations'  ← keyframes + selectors only (no sr-only)
+ */
+@import "./animations.css";

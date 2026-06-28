@@ -37,9 +37,7 @@ function Root({ children, ...opts }: HoverCardRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <HoverCardCtx.Provider value={api}>
-      <HoverCardPresenceCtx.Provider value={presence}>
-        {children}
-      </HoverCardPresenceCtx.Provider>
+      <HoverCardPresenceCtx.Provider value={presence}>{children}</HoverCardPresenceCtx.Provider>
     </HoverCardCtx.Provider>
   );
 }
@@ -101,7 +99,11 @@ function Content({ asChild, forceMount, children, ...rest }: HoverCardContentPro
 
   const positionerProps = api.getPositionerProps();
   const contentProps = api.getContentProps();
-  const { style: userStyle, positioning: _positioning, ...restProps } = rest as HoverCardContentProps;
+  const {
+    style: userStyle,
+    positioning: _positioning,
+    ...restProps
+  } = rest as HoverCardContentProps;
 
   const mergedContentProps = {
     ...contentProps,
@@ -142,6 +144,12 @@ function Arrow({ children }: HoverCardArrowProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "HoverCard.Root";
+Trigger.displayName = "HoverCard.Trigger";
+Portal.displayName = "HoverCard.Portal";
+Content.displayName = "HoverCard.Content";
+Arrow.displayName = "HoverCard.Arrow";
 
 export const HoverCard = {
   Root,

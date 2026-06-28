@@ -1,6 +1,10 @@
-import type { CreateHoverCardMachineOptions, HoverCardApi, HoverCardPositioning } from "@forge-ui/hover-card";
+import type {
+  CreateHoverCardMachineOptions,
+  HoverCardApi,
+  HoverCardPositioning,
+  HoverCardSend,
+} from "@forge-ui/hover-card";
 import { connectHoverCard, createHoverCardMachine } from "@forge-ui/hover-card";
-import type { HoverCardSend } from "@forge-ui/hover-card";
 import { useId, useLayoutEffect, useState } from "react";
 import { useMachine } from "../../use-machine.js";
 

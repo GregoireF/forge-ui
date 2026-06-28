@@ -1,5 +1,11 @@
 ﻿import { mergeRefs } from "@forge-ui/core";
-import type { CSSProperties, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
+import type {
+  CSSProperties,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  ReactNode,
+} from "react";
 import { createContext, useContext, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
@@ -33,9 +39,7 @@ function Root({ children, ...opts }: ComboboxRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <ComboboxCtx.Provider value={api}>
-      <ComboboxPresenceCtx.Provider value={presence}>
-        {children}
-      </ComboboxPresenceCtx.Provider>
+      <ComboboxPresenceCtx.Provider value={presence}>{children}</ComboboxPresenceCtx.Provider>
     </ComboboxCtx.Provider>
   );
 }
@@ -68,7 +72,13 @@ function Input({ asChild, ...rest }: ComboboxInputProps) {
   const api = useCtx();
   // React uses onChange / onKeyDown (camelCase). The connect emits onInput/onKeydown.
   // Strip connect's onInput/onKeydown and wire them up correctly for React.
-  const { onInput, onKeydown, ref: machineRef, autocomplete, ...inputProps } = api.getInputProps() as ReturnType<typeof api.getInputProps> & {
+  const {
+    onInput,
+    onKeydown,
+    ref: machineRef,
+    autocomplete,
+    ...inputProps
+  } = api.getInputProps() as ReturnType<typeof api.getInputProps> & {
     onInput?: (e: Event) => void;
     onKeydown?: (e: KeyboardEvent) => void;
     ref?: (el: HTMLInputElement | null) => void;
@@ -218,7 +228,10 @@ function Item({ value, label, disabled = false, asChild, children, ...rest }: Co
 
   // Connect emits onMousemove / onMouseleave (Vue lowercase).
   // Remap to React camelCase onMouseMove / onMouseLeave.
-  const { onMousemove, onMouseleave, onClick, ...optionProps } = api.getOptionProps({ value, disabled });
+  const { onMousemove, onMouseleave, onClick, ...optionProps } = api.getOptionProps({
+    value,
+    disabled,
+  });
   const props = {
     ...optionProps,
     ...rest,
@@ -235,10 +248,16 @@ function Item({ value, label, disabled = false, asChild, children, ...rest }: Co
 // ItemText â€" semantic label span
 // ---------------------------------------------------------------------------
 
-export interface ComboboxItemTextProps { children: ReactNode }
+export interface ComboboxItemTextProps {
+  children: ReactNode;
+}
 
 function ItemText({ children }: ComboboxItemTextProps) {
-  return <span data-forge-scope="combobox" data-forge-part="item-text">{children}</span>;
+  return (
+    <span data-forge-scope="combobox" data-forge-part="item-text">
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -253,7 +272,11 @@ export interface ComboboxItemIndicatorProps {
 function ItemIndicator({ value, children }: ComboboxItemIndicatorProps) {
   const api = useCtx();
   if (!api.value.includes(value)) return null;
-  return <span data-forge-scope="combobox" data-forge-part="item-indicator">{children}</span>;
+  return (
+    <span data-forge-scope="combobox" data-forge-part="item-indicator">
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -268,11 +291,7 @@ function TagsInput({ children, ...rest }: ComboboxTagsInputProps) {
   const api = useCtx();
   if (!api.value.length) return null;
   return (
-    <div
-      data-forge-scope="combobox"
-      data-forge-part="tags-input"
-      {...rest}
-    >
+    <div data-forge-scope="combobox" data-forge-part="tags-input" {...rest}>
       {children}
     </div>
   );
@@ -288,12 +307,7 @@ function Tag({ value: tagValue, children, ...rest }: ComboboxTagProps) {
   if (!api.value.includes(tagValue)) return null;
   const label = api.selectedLabels[tagValue] ?? tagValue;
   return (
-    <span
-      data-forge-scope="combobox"
-      data-forge-part="tag"
-      data-value={tagValue}
-      {...rest}
-    >
+    <span data-forge-scope="combobox" data-forge-part="tag" data-value={tagValue} {...rest}>
       {children ?? label}
     </span>
   );
@@ -365,7 +379,8 @@ function CreateOption({ children, ...rest }: ComboboxCreateOptionProps) {
   const api = useCtx();
   if (!api.hasCreateOption) return null;
   const label = api.createOptionLabel;
-  const content = typeof children === "function" ? children(label) : (children ?? `CrÃ©er "${label}"`);
+  const content =
+    typeof children === "function" ? children(label) : (children ?? `CrÃ©er "${label}"`);
   return (
     <li {...api.getCreateOptionProps()} {...rest}>
       {content}
@@ -376,6 +391,23 @@ function CreateOption({ children, ...rest }: ComboboxCreateOptionProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "Combobox.Root";
+Label.displayName = "Combobox.Label";
+Input.displayName = "Combobox.Input";
+Trigger.displayName = "Combobox.Trigger";
+ClearTrigger.displayName = "Combobox.ClearTrigger";
+Portal.displayName = "Combobox.Portal";
+Content.displayName = "Combobox.Content";
+Item.displayName = "Combobox.Item";
+ItemText.displayName = "Combobox.ItemText";
+ItemIndicator.displayName = "Combobox.ItemIndicator";
+ComboboxGroupComp.displayName = "Combobox.Group";
+ComboboxGroupLabelComp.displayName = "Combobox.GroupLabel";
+CreateOption.displayName = "Combobox.CreateOption";
+TagsInput.displayName = "Combobox.TagsInput";
+Tag.displayName = "Combobox.Tag";
+TagDelete.displayName = "Combobox.TagDelete";
 
 export const Combobox = {
   Root,

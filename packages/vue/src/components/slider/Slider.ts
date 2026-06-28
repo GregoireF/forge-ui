@@ -1,4 +1,4 @@
-import type { SliderMark } from "@forge-ui/slider";
+﻿import type { SliderMark } from "@forge-ui/slider";
 import type { ComponentPublicInstance, InjectionKey, PropType } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { Slot } from "../shared/Slot.js";
@@ -29,12 +29,17 @@ const SliderRoot = defineComponent({
     orientation: { type: String as PropType<"horizontal" | "vertical">, default: undefined },
     disabled: { type: Boolean, default: undefined },
     marks: { type: Array as PropType<SliderMark[]>, default: undefined },
-    getValueLabel: { type: Function as PropType<(v: number, i: number) => string>, default: undefined },
+    getValueLabel: {
+      type: Function as PropType<(v: number, i: number) => string>,
+      default: undefined,
+    },
     onValueChange: { type: Function as PropType<(v: number[]) => void>, default: undefined },
     onValueCommit: { type: Function as PropType<(v: number[]) => void>, default: undefined },
     asChild: { type: Boolean, default: false },
   },
-  emits: ["update:value"],
+  emits: {
+    "update:value": (_v: number[]) => true,
+  },
   setup(props, { slots, attrs, emit }) {
     const api = useSlider({
       ...(props.id !== undefined && { id: props.id }),
@@ -66,8 +71,8 @@ const SliderRoot = defineComponent({
     provide(sliderKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots.default);
-      return h("div", rootProps, slots.default?.());
+      if (props.asChild) return h(Slot, rootProps, slots["default"]);
+      return h("div", rootProps, slots["default"]?.());
     };
   },
 });
@@ -83,10 +88,11 @@ const SliderTrack = defineComponent({
     const api = useCtx();
     return () => {
       const { ref: trackRef, onPointerDown, ...trackAttrs } = api.getTrackProps();
-      const vueRef = (el: Element | ComponentPublicInstance | null) => trackRef(el instanceof Element ? el : null);
+      const vueRef = (el: Element | ComponentPublicInstance | null) =>
+        trackRef(el instanceof Element ? el : null);
       const merged = { ...trackAttrs, onPointerdown: onPointerDown, ref: vueRef, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("div", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("div", merged, slots["default"]?.());
     };
   },
 });
@@ -105,14 +111,14 @@ const SliderRange = defineComponent({
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
       // connect styles (left/right) must win over user styles
       const merged = { ...rangeAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
-      if (props.asChild) return h(Slot, merged, slots.default);
+      if (props.asChild) return h(Slot, merged, slots["default"]);
       return h("div", merged);
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// Thumb — index identifies which value this thumb controls
+// Thumb â€” index identifies which value this thumb controls
 // ---------------------------------------------------------------------------
 
 const SliderThumb = defineComponent({
@@ -126,12 +132,17 @@ const SliderThumb = defineComponent({
     const api = useCtx();
     return () => {
       // Strip React-only handlers (Vue uses lowercase variants from connect)
-      const { onKeyDown: _kd, onPointerDown: _pd, style: connectStyle, ...thumbAttrs } = api.getThumbProps(props.index);
+      const {
+        onKeyDown: _kd,
+        onPointerDown: _pd,
+        style: connectStyle,
+        ...thumbAttrs
+      } = api.getThumbProps(props.index);
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
       // connect styles (position/left/transform) must win over user styles
       const merged = { ...thumbAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
-      if (props.asChild) return h(Slot, merged, slots.default);
-      return h("div", merged, slots.default?.());
+      if (props.asChild) return h(Slot, merged, slots["default"]);
+      return h("div", merged, slots["default"]?.());
     };
   },
 });
@@ -153,7 +164,7 @@ const SliderHiddenInput = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// MarkerGroup — container for tick marks, positioned relative to the track
+// MarkerGroup â€” container for tick marks, positioned relative to the track
 // ---------------------------------------------------------------------------
 
 const SliderMarkerGroup = defineComponent({
@@ -163,13 +174,17 @@ const SliderMarkerGroup = defineComponent({
     return () => {
       const { style: connectStyle, ...groupAttrs } = api.getMarkerGroupProps();
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
-      return h("div", { ...groupAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } }, slots.default?.());
+      return h(
+        "div",
+        { ...groupAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } },
+        slots["default"]?.(),
+      );
     };
   },
 });
 
 // ---------------------------------------------------------------------------
-// Marker — single tick mark at a given value
+// Marker â€” single tick mark at a given value
 // ---------------------------------------------------------------------------
 
 const SliderMarker = defineComponent({
@@ -182,7 +197,11 @@ const SliderMarker = defineComponent({
     return () => {
       const { style: connectStyle, ...markerAttrs } = api.getMarkerProps(props.value);
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
-      return h("span", { ...markerAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } }, slots.default?.());
+      return h(
+        "span",
+        { ...markerAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } },
+        slots["default"]?.(),
+      );
     };
   },
 });
@@ -201,4 +220,12 @@ export const Slider = {
   Marker: SliderMarker,
 } as const;
 
-export { SliderHiddenInput, SliderMarker, SliderMarkerGroup, SliderRange, SliderRoot, SliderThumb, SliderTrack };
+export {
+  SliderHiddenInput,
+  SliderMarker,
+  SliderMarkerGroup,
+  SliderRange,
+  SliderRoot,
+  SliderThumb,
+  SliderTrack,
+};

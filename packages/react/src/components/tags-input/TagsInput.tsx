@@ -1,6 +1,13 @@
-import type { ButtonHTMLAttributes, CSSProperties, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from "react";
-import { createContext, useContext, useEffect, useRef } from "react";
 import type { TagsInputTranslations } from "@forge-ui/tags-input";
+import type {
+  ButtonHTMLAttributes,
+  CSSProperties,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  ReactNode,
+} from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import type { UseTagsInputOptions, UseTagsInputReturn } from "./use-tags-input.js";
 import { useTagsInput } from "./use-tags-input.js";
 
@@ -84,7 +91,17 @@ function Root({
         <span
           {...api.getLiveRegionProps()}
           ref={liveRegionRef}
-          style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}
+          style={{
+            position: "absolute",
+            width: "1px",
+            height: "1px",
+            padding: 0,
+            margin: "-1px",
+            overflow: "hidden",
+            clip: "rect(0,0,0,0)",
+            whiteSpace: "nowrap",
+            border: 0,
+          }}
         />
       </div>
     </TagsInputCtx.Provider>
@@ -109,7 +126,8 @@ function Label({ children, ...rest }: TagsInputLabelProps) {
 // Input
 // ---------------------------------------------------------------------------
 
-export interface TagsInputInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {}
+export interface TagsInputInputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {}
 
 function Input({ ...rest }: TagsInputInputProps) {
   const api = useCtx();
@@ -171,7 +189,8 @@ function Tag({ value, children, ...rest }: TagsInputTagProps) {
 // TagDelete
 // ---------------------------------------------------------------------------
 
-export interface TagsInputTagDeleteProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "tabIndex" | "onClick"> {
+export interface TagsInputTagDeleteProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "tabIndex" | "onClick"> {
   value: string;
 }
 
@@ -202,6 +221,13 @@ function HiddenInput({ name }: TagsInputHiddenInputProps) {
 // Namespace export
 // ---------------------------------------------------------------------------
 
+Root.displayName = "TagsInput.Root";
+Label.displayName = "TagsInput.Label";
+Input.displayName = "TagsInput.Input";
+Tag.displayName = "TagsInput.Tag";
+TagDelete.displayName = "TagsInput.TagDelete";
+HiddenInput.displayName = "TagsInput.HiddenInput";
+
 export const TagsInput = {
   Root,
   Label,
@@ -212,10 +238,10 @@ export const TagsInput = {
 } as const;
 
 export {
-  Root as TagsInputRoot,
-  Label as TagsInputLabel,
+  HiddenInput as TagsInputHiddenInput,
   Input as TagsInputInput,
+  Label as TagsInputLabel,
+  Root as TagsInputRoot,
   Tag as TagsInputTag,
   TagDelete as TagsInputTagDelete,
-  HiddenInput as TagsInputHiddenInput,
 };

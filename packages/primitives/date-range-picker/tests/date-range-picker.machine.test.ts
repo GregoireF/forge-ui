@@ -360,3 +360,190 @@ describe("createDateRangePickerMachine — SET_VALUE", () => {
     expect(ctx.endDate).toBeNull();
   });
 });
+
+// ---------------------------------------------------------------------------
+// openCalendar — selectionPhase branch when partial range
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — openCalendar phase", () => {
+  it("resumes 'end' phase when opening with start set but no end", () => {
+    const m = make({ defaultValue: { start: jan15, end: null } });
+    m.send("OPEN");
+    expect(m.getSnapshot().context.selectionPhase).toBe("end");
+  });
+
+  it("resets to 'start' phase when opening with full range set", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    expect(m.getSnapshot().context.selectionPhase).toBe("start");
+  });
+
+  it("clears hoveredDate when opening", () => {
+    const m = make({ defaultValue: { start: jan15, end: null } });
+    m.send("OPEN");
+    expect(m.getSnapshot().context.hoveredDate).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// NAVIGATE_TO_MONTH
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — NAVIGATE_TO_MONTH", () => {
+  it("sets focusedDate to the given year/month (preserving day)", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    m.send({ type: "NAVIGATE_TO_MONTH", year: 2024, month: 9 });
+    const ctx = m.getSnapshot().context;
+    expect(ctx.focusedDate.year).toBe(2024);
+    expect(ctx.focusedDate.month).toBe(9);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Focus day navigation (FOCUS_PREV_DAY, FOCUS_NEXT_DAY, etc.)
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — focus day navigation", () => {
+  it("FOCUS_NEXT_DAY advances focusedDate by 1 day", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    m.send("FOCUS_NEXT_DAY");
+    expect(m.getSnapshot().context.focusedDate.day).toBe(jan15.day + 1);
+  });
+
+  it("FOCUS_PREV_DAY goes back 1 day", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    m.send("FOCUS_PREV_DAY");
+    expect(m.getSnapshot().context.focusedDate.day).toBe(jan15.day - 1);
+  });
+
+  it("FOCUS_NEXT_WEEK advances focusedDate by 7 days", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    m.send("FOCUS_NEXT_WEEK");
+    expect(m.getSnapshot().context.focusedDate.day).toBe(jan15.day + 7);
+  });
+
+  it("FOCUS_PREV_WEEK goes back 7 days", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    m.send("FOCUS_PREV_WEEK");
+    expect(m.getSnapshot().context.focusedDate.day).toBe(jan15.day - 7);
+  });
+
+  it("FOCUS_NEXT_DAY does not move past max", () => {
+    const jan16: CalendarDate = { year: 2024, month: 1, day: 16 };
+    const m = make({
+      defaultValue: { start: jan15, end: null },
+      max: { year: 2024, month: 1, day: 16 },
+    });
+    m.send("OPEN");
+    m.send("FOCUS_NEXT_DAY");
+    expect(m.getSnapshot().context.focusedDate).toEqual(jan16);
+    m.send("FOCUS_NEXT_DAY");
+    expect(m.getSnapshot().context.focusedDate).toEqual(jan16);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Focus month navigation (FOCUS_PREV_MONTH, FOCUS_NEXT_MONTH)
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — focus month navigation", () => {
+  it("FOCUS_NEXT_MONTH advances focusedDate by 1 month", () => {
+    const m = make({ defaultValue: { start: jan15, end: jan20 } });
+    m.send("OPEN");
+    m.send("FOCUS_NEXT_MONTH");
+    expect(m.getSnapshot().context.focusedDate.month).toBe(2);
+  });
+
+  it("FOCUS_PREV_MONTH goes back 1 month", () => {
+    const m = make({ defaultValue: { start: jun15, end: jun20 } });
+    m.send("OPEN");
+    m.send("FOCUS_PREV_MONTH");
+    expect(m.getSnapshot().context.focusedDate.month).toBe(5);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// FOCUS_DAY
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — FOCUS_DAY", () => {
+  it("sets focusedDate to the given date", () => {
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "FOCUS_DAY", date: jun20 });
+    expect(m.getSnapshot().context.focusedDate).toEqual(jun20);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// FOCUS_WEEK_START and FOCUS_WEEK_END
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — week boundary focus", () => {
+  it("FOCUS_WEEK_START moves to Sunday when firstDayOfWeek=0", () => {
+    // jan15 2024 is a Monday. Week start (Sunday) = jan14.
+    const m = make({ defaultValue: { start: jan15, end: jan20 }, firstDayOfWeek: 0 });
+    m.send("OPEN");
+    m.send("FOCUS_WEEK_START");
+    expect(m.getSnapshot().context.focusedDate.day).toBe(14);
+  });
+
+  it("FOCUS_WEEK_END moves to Saturday when firstDayOfWeek=0", () => {
+    // jan15 2024 is a Monday. Week end (Saturday) = jan20.
+    const m = make({ defaultValue: { start: jan15, end: jan20 }, firstDayOfWeek: 0 });
+    m.send("OPEN");
+    m.send("FOCUS_WEEK_END");
+    expect(m.getSnapshot().context.focusedDate.day).toBe(20);
+  });
+
+  it("FOCUS_WEEK_START stays put when already at week start", () => {
+    const jan14: CalendarDate = { year: 2024, month: 1, day: 14 };
+    const m = make({ defaultValue: { start: jan14, end: jan20 }, firstDayOfWeek: 0 });
+    m.send("OPEN");
+    m.send("FOCUS_WEEK_START");
+    expect(m.getSnapshot().context.focusedDate).toEqual(jan14);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SET_CONTENT_EL and SET_TRIGGER_EL
+// ---------------------------------------------------------------------------
+
+describe("createDateRangePickerMachine — element refs", () => {
+  it("SET_CONTENT_EL updates contentEl in closed state", () => {
+    const m = make();
+    const el = {} as HTMLElement;
+    m.send({ type: "SET_CONTENT_EL", el });
+    expect(m.getSnapshot().context.contentEl).toBe(el);
+  });
+
+  it("SET_TRIGGER_EL updates triggerEl in closed state", () => {
+    const m = make();
+    const el = {} as HTMLElement;
+    m.send({ type: "SET_TRIGGER_EL", el });
+    expect(m.getSnapshot().context.triggerEl).toBe(el);
+  });
+
+  it("SET_CONTENT_EL updates contentEl in open state", () => {
+    const m = make();
+    m.send("OPEN");
+    const el = document.createElement("div");
+    m.send({ type: "SET_CONTENT_EL", el });
+    expect(m.getSnapshot().context.contentEl).toBe(el);
+  });
+
+  it("SET_TRIGGER_EL updates triggerEl in open state", () => {
+    const trigger = document.createElement("button");
+    document.body.appendChild(trigger);
+    const m = make();
+    m.send("OPEN");
+    m.send({ type: "SET_TRIGGER_EL", el: trigger });
+    expect(m.getSnapshot().context.triggerEl).toBe(trigger);
+    document.body.removeChild(trigger);
+  });
+});

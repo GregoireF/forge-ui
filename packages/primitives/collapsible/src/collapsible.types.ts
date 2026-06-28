@@ -7,9 +7,7 @@ export interface CollapsibleContext {
   onOpenChange?: (open: boolean) => void;
 }
 
-export type CollapsibleEvent =
-  | { type: "TOGGLE" }
-  | { type: "SET_OPEN"; open: boolean };
+export type CollapsibleEvent = { type: "TOGGLE" } | { type: "SET_OPEN"; open: boolean };
 
 export interface CreateCollapsibleOptions {
   id?: string;

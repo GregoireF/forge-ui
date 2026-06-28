@@ -134,7 +134,7 @@ describe("trapFocus", () => {
 
   it("wraps focus from last to first on Tab", () => {
     container.innerHTML = `<button id="a">A</button><button id="b">B</button>`;
-    const [a, b] = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
+    const [, b] = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     b.focus();
     const event = makeEvent({});
     const preventDefault = vi.spyOn(event, "preventDefault");
@@ -145,7 +145,7 @@ describe("trapFocus", () => {
 
   it("wraps focus from first to last on Shift+Tab", () => {
     container.innerHTML = `<button id="a">A</button><button id="b">B</button>`;
-    const [a, b] = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
+    const [a] = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     a.focus();
     const event = makeEvent({ shiftKey: true });
     const preventDefault = vi.spyOn(event, "preventDefault");
@@ -156,7 +156,7 @@ describe("trapFocus", () => {
 
   it("does not intercept Tab when focus is not at a boundary", () => {
     container.innerHTML = `<button id="a">A</button><button id="b">B</button><button id="c">C</button>`;
-    const [a, b] = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
+    const [a] = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     a.focus();
     const event = makeEvent({});
     const preventDefault = vi.spyOn(event, "preventDefault");

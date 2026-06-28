@@ -105,9 +105,12 @@ function typeDigit({
       else committed = context.period === "PM" ? committed + 12 : committed;
       hoursUpdate = committed;
     }
-    const update = seg === "hours" ? { hoursValue: context.hourCycle === 12 ? hoursUpdate : committed }
-      : seg === "minutes" ? { minutesValue: committed }
-      : { secondsValue: committed };
+    const update =
+      seg === "hours"
+        ? { hoursValue: context.hourCycle === 12 ? hoursUpdate : committed }
+        : seg === "minutes"
+          ? { minutesValue: committed }
+          : { secondsValue: committed };
 
     const order = segmentOrder(context);
     const idx = order.indexOf(seg);
@@ -117,9 +120,12 @@ function typeDigit({
     const time = tryBuildTime(draft);
     if (time) context.onValueChange?.(time);
   } else {
-    const update = seg === "hours" ? { hoursValue: newVal }
-      : seg === "minutes" ? { minutesValue: newVal }
-      : { secondsValue: newVal };
+    const update =
+      seg === "hours"
+        ? { hoursValue: newVal }
+        : seg === "minutes"
+          ? { minutesValue: newVal }
+          : { secondsValue: newVal };
     setContext({ ...update, typingBuffer: newBuffer });
   }
 }
@@ -157,13 +163,18 @@ function increment({
   };
   const maxVal = maxVals[seg] ?? 59;
   const minVal = minVals[seg] ?? 0;
-  const current = getSegmentValue(context, seg) ?? minVal - step;
+  const rawCurrent = getSegmentValue(context, seg);
+  // ArrowUp from blank → max (scrolling up from nothing lands at top)
+  const current = rawCurrent ?? maxVal - step;
   let next = current + step;
   if (next > maxVal) next = minVal;
 
-  const update = seg === "hours" ? { hoursValue: next }
-    : seg === "minutes" ? { minutesValue: next }
-    : { secondsValue: next };
+  const update =
+    seg === "hours"
+      ? { hoursValue: next }
+      : seg === "minutes"
+        ? { minutesValue: next }
+        : { secondsValue: next };
   setContext({ ...update, typingBuffer: "" });
   const time = tryBuildTime({ ...context, ...update });
   if (time) context.onValueChange?.(time);
@@ -206,9 +217,12 @@ function decrement({
   let next = current - step;
   if (next < minVal) next = maxVal;
 
-  const update = seg === "hours" ? { hoursValue: next }
-    : seg === "minutes" ? { minutesValue: next }
-    : { secondsValue: next };
+  const update =
+    seg === "hours"
+      ? { hoursValue: next }
+      : seg === "minutes"
+        ? { minutesValue: next }
+        : { secondsValue: next };
   setContext({ ...update, typingBuffer: "" });
   const time = tryBuildTime({ ...context, ...update });
   if (time) context.onValueChange?.(time);
@@ -260,7 +274,13 @@ function setValueAction({
   } else {
     const { hours, minutes, seconds } = event.time;
     const period = hours >= 12 ? "PM" : "AM";
-    setContext({ hoursValue: hours, minutesValue: minutes, secondsValue: seconds, period, typingBuffer: "" });
+    setContext({
+      hoursValue: hours,
+      minutesValue: minutes,
+      secondsValue: seconds,
+      period,
+      typingBuffer: "",
+    });
     context.onValueChange?.(event.time);
   }
 }

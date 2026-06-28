@@ -1,5 +1,4 @@
-import type { CreateCheckboxMachineOptions } from "@forge-ui/checkbox";
-import type { CheckboxChecked } from "@forge-ui/checkbox";
+import type { CheckboxChecked, CreateCheckboxMachineOptions } from "@forge-ui/checkbox";
 import { connectCheckbox, createCheckboxMachine } from "@forge-ui/checkbox";
 import { computed, useId, watch } from "vue";
 import { useMachine } from "../../use-machine.js";
@@ -22,7 +21,8 @@ export function useCheckbox(options: UseCheckboxOptions = {}) {
       (checked) => {
         if (checked === undefined) return;
         const state = machine.getSnapshot().value as string;
-        const target = checked === "indeterminate" ? "indeterminate" : checked ? "checked" : "unchecked";
+        const target =
+          checked === "indeterminate" ? "indeterminate" : checked ? "checked" : "unchecked";
         if (state === target) return;
         if (checked === "indeterminate") machine.send("SET_INDETERMINATE");
         else if (checked) machine.send("CHECK");

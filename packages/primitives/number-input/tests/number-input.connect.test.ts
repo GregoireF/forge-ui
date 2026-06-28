@@ -99,7 +99,7 @@ describe("connectNumberInput — getInputProps", () => {
   });
 
   it("aria-valuetext from getValueLabel when provided", () => {
-    const getValueLabel = (v: number) => v < 33 ? "low" : "medium";
+    const getValueLabel = (v: number) => (v < 33 ? "low" : "medium");
     const { api } = makeApi({ value: 20, getValueLabel });
     expect(api.getInputProps()["aria-valuetext"]).toBe("low");
   });
@@ -112,61 +112,81 @@ describe("connectNumberInput — getInputProps", () => {
   // Keyboard events — WAI-ARIA §3.21 spinbutton keyboard interaction
   it("ArrowUp sends INCREMENT", () => {
     const { api, send } = makeApi();
-    api.getInputProps().onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "INCREMENT" });
   });
 
   it("ArrowDown sends DECREMENT", () => {
     const { api, send } = makeApi();
-    api.getInputProps().onKeyDown({ key: "ArrowDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "ArrowDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "DECREMENT" });
   });
 
   it("PageUp sends INCREMENT_PAGE", () => {
     const { api, send } = makeApi();
-    api.getInputProps().onKeyDown({ key: "PageUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "PageUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "INCREMENT_PAGE" });
   });
 
   it("PageDown sends DECREMENT_PAGE", () => {
     const { api, send } = makeApi();
-    api.getInputProps().onKeyDown({ key: "PageDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "PageDown", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "DECREMENT_PAGE" });
   });
 
   it("Home sends SET_MIN when min is finite", () => {
     const { api, send } = makeApi({ min: 5 });
-    api.getInputProps().onKeyDown({ key: "Home", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "Home", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "SET_MIN" });
   });
 
   it("Home is no-op when min is -Infinity", () => {
     const { api, send } = makeApi({ min: Number.NEGATIVE_INFINITY });
-    api.getInputProps().onKeyDown({ key: "Home", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "Home", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ type: "SET_MIN" }));
   });
 
   it("End sends SET_MAX when max is finite", () => {
     const { api, send } = makeApi({ max: 100 });
-    api.getInputProps().onKeyDown({ key: "End", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "End", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "SET_MAX" });
   });
 
   it("End is no-op when max is Infinity", () => {
     const { api, send } = makeApi({ max: Number.POSITIVE_INFINITY });
-    api.getInputProps().onKeyDown({ key: "End", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "End", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ type: "SET_MAX" }));
   });
 
   it("disabled: keyboard events are no-op", () => {
     const { api, send } = makeApi({ disabled: true });
-    api.getInputProps().onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalled();
   });
 
   it("readOnly: keyboard events are no-op", () => {
     const { api, send } = makeApi({ readOnly: true });
-    api.getInputProps().onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    api
+      .getInputProps()
+      .onKeyDown({ key: "ArrowUp", preventDefault: vi.fn() } as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -237,6 +257,30 @@ describe("connectNumberInput — onKeydown (Vue alias)", () => {
     callKeydown(api, "Tab");
     expect(send).not.toHaveBeenCalled();
   });
+
+  it("Home → SET_MIN when min is finite", () => {
+    const { api, send } = makeApi({ min: 5 });
+    callKeydown(api, "Home");
+    expect(send).toHaveBeenCalledWith({ type: "SET_MIN" });
+  });
+
+  it("Home → no-op when min is -Infinity", () => {
+    const { api, send } = makeApi({ min: Number.NEGATIVE_INFINITY });
+    callKeydown(api, "Home");
+    expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ type: "SET_MIN" }));
+  });
+
+  it("End → SET_MAX when max is finite", () => {
+    const { api, send } = makeApi({ max: 100 });
+    callKeydown(api, "End");
+    expect(send).toHaveBeenCalledWith({ type: "SET_MAX" });
+  });
+
+  it("End → no-op when max is Infinity", () => {
+    const { api, send } = makeApi({ max: Number.POSITIVE_INFINITY });
+    callKeydown(api, "End");
+    expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ type: "SET_MAX" }));
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -270,14 +314,18 @@ describe("connectNumberInput — stepper triggers", () => {
 
   it("increment: onPointerDown sends INCREMENT then SPIN_START_UP", () => {
     const { api, send } = makeApi();
-    api.getIncrementTriggerProps().onPointerDown({ button: 0, preventDefault: vi.fn() } as unknown as PointerEvent);
+    api
+      .getIncrementTriggerProps()
+      .onPointerDown({ button: 0, preventDefault: vi.fn() } as unknown as PointerEvent);
     expect(send).toHaveBeenNthCalledWith(1, { type: "INCREMENT" });
     expect(send).toHaveBeenNthCalledWith(2, { type: "SPIN_START_UP" });
   });
 
   it("decrement: onPointerDown sends DECREMENT then SPIN_START_DOWN", () => {
     const { api, send } = makeApi();
-    api.getDecrementTriggerProps().onPointerDown({ button: 0, preventDefault: vi.fn() } as unknown as PointerEvent);
+    api
+      .getDecrementTriggerProps()
+      .onPointerDown({ button: 0, preventDefault: vi.fn() } as unknown as PointerEvent);
     expect(send).toHaveBeenNthCalledWith(1, { type: "DECREMENT" });
     expect(send).toHaveBeenNthCalledWith(2, { type: "SPIN_START_DOWN" });
   });
@@ -296,13 +344,17 @@ describe("connectNumberInput — stepper triggers", () => {
 
   it("disabled: onPointerDown is no-op", () => {
     const { api, send } = makeApi({ disabled: true });
-    api.getIncrementTriggerProps().onPointerDown({ button: 0, preventDefault: vi.fn() } as unknown as PointerEvent);
+    api
+      .getIncrementTriggerProps()
+      .onPointerDown({ button: 0, preventDefault: vi.fn() } as unknown as PointerEvent);
     expect(send).not.toHaveBeenCalled();
   });
 
   it("non-primary button: onPointerDown is no-op", () => {
     const { api, send } = makeApi();
-    api.getIncrementTriggerProps().onPointerDown({ button: 2, preventDefault: vi.fn() } as unknown as PointerEvent);
+    api
+      .getIncrementTriggerProps()
+      .onPointerDown({ button: 2, preventDefault: vi.fn() } as unknown as PointerEvent);
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -314,6 +366,18 @@ describe("connectNumberInput — stepper triggers", () => {
   it("decrement: data-forge-part=decrement-trigger", () => {
     const { api } = makeApi();
     expect(api.getDecrementTriggerProps()["data-forge-part"]).toBe("decrement-trigger");
+  });
+
+  it("decrement: onPointerUp sends SPIN_STOP", () => {
+    const { api, send } = makeApi();
+    api.getDecrementTriggerProps().onPointerUp();
+    expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
+  });
+
+  it("decrement: onPointerLeave sends SPIN_STOP", () => {
+    const { api, send } = makeApi();
+    api.getDecrementTriggerProps().onPointerLeave();
+    expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
   });
 
   it("aria-disabled on increment when value is at max", () => {
@@ -428,5 +492,116 @@ describe("connectNumberInput — top-level props", () => {
   it("isSpinning=true in spinning.down state", () => {
     const { api } = makeApi({}, "spinning.down");
     expect(api.isSpinning).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Vue lowercase pointer aliases — increment trigger
+// ---------------------------------------------------------------------------
+
+describe("connectNumberInput — increment trigger Vue pointer aliases", () => {
+  it("onPointerdown sends INCREMENT then SPIN_START_UP", () => {
+    const { api, send } = makeApi();
+    const props = api.getIncrementTriggerProps() as Record<string, (e: unknown) => void>;
+    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    expect(send).toHaveBeenNthCalledWith(1, { type: "INCREMENT" });
+    expect(send).toHaveBeenNthCalledWith(2, { type: "SPIN_START_UP" });
+  });
+
+  it("onPointerdown: disabled is no-op", () => {
+    const { api, send } = makeApi({ disabled: true });
+    const props = api.getIncrementTriggerProps() as Record<string, (e: unknown) => void>;
+    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onPointerdown: non-primary button is no-op", () => {
+    const { api, send } = makeApi();
+    const props = api.getIncrementTriggerProps() as Record<string, (e: unknown) => void>;
+    props["onPointerdown"]({ button: 2, preventDefault: vi.fn() });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onPointerup sends SPIN_STOP", () => {
+    const { api, send } = makeApi();
+    const props = api.getIncrementTriggerProps() as Record<string, () => void>;
+    props["onPointerup"]();
+    expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
+  });
+
+  it("onPointerleave sends SPIN_STOP", () => {
+    const { api, send } = makeApi();
+    const props = api.getIncrementTriggerProps() as Record<string, () => void>;
+    props["onPointerleave"]();
+    expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Vue lowercase pointer aliases — decrement trigger
+// ---------------------------------------------------------------------------
+
+describe("connectNumberInput — decrement trigger Vue pointer aliases", () => {
+  it("onPointerdown sends DECREMENT then SPIN_START_DOWN", () => {
+    const { api, send } = makeApi();
+    const props = api.getDecrementTriggerProps() as Record<string, (e: unknown) => void>;
+    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    expect(send).toHaveBeenNthCalledWith(1, { type: "DECREMENT" });
+    expect(send).toHaveBeenNthCalledWith(2, { type: "SPIN_START_DOWN" });
+  });
+
+  it("onPointerdown: disabled is no-op", () => {
+    const { api, send } = makeApi({ disabled: true });
+    const props = api.getDecrementTriggerProps() as Record<string, (e: unknown) => void>;
+    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onPointerup sends SPIN_STOP", () => {
+    const { api, send } = makeApi();
+    const props = api.getDecrementTriggerProps() as Record<string, () => void>;
+    props["onPointerup"]();
+    expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
+  });
+
+  it("onPointerleave sends SPIN_STOP", () => {
+    const { api, send } = makeApi();
+    const props = api.getDecrementTriggerProps() as Record<string, () => void>;
+    props["onPointerleave"]();
+    expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Vue input aliases (onInput_vue, onChange)
+// ---------------------------------------------------------------------------
+
+describe("connectNumberInput — Vue input aliases", () => {
+  it("onInput_vue sends SET_INPUT_TEXT", () => {
+    const { api, send } = makeApi();
+    const props = api.getInputProps() as Record<string, (e: unknown) => void>;
+    props["onInput_vue"]({ target: { value: "42" } });
+    expect(send).toHaveBeenCalledWith({ type: "SET_INPUT_TEXT", text: "42" });
+  });
+
+  it("onInput_vue: disabled is no-op", () => {
+    const { api, send } = makeApi({ disabled: true });
+    const props = api.getInputProps() as Record<string, (e: unknown) => void>;
+    props["onInput_vue"]({ target: { value: "42" } });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("onChange sends SET_INPUT_TEXT", () => {
+    const { api, send } = makeApi();
+    const props = api.getInputProps() as Record<string, (e: unknown) => void>;
+    props["onChange"]({ target: { value: "99" } });
+    expect(send).toHaveBeenCalledWith({ type: "SET_INPUT_TEXT", text: "99" });
+  });
+
+  it("onChange: readOnly is no-op", () => {
+    const { api, send } = makeApi({ readOnly: true });
+    const props = api.getInputProps() as Record<string, (e: unknown) => void>;
+    props["onChange"]({ target: { value: "99" } });
+    expect(send).not.toHaveBeenCalled();
   });
 });

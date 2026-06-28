@@ -1,28 +1,19 @@
 name: Bundle Size
 
-# Why this exists:
-# forge-ui is a consumer-facing library. Every byte added to a connect function
-# is paid by the end user who downloads the consuming app. Without a size gate,
-# we could silently regress (e.g. a utility import that pulls in lodash).
+# forge-ui is a consumer-facing library. Every byte in a connect function is
+# paid by the end user downloading the consuming app. Without a size gate,
+# a utility import pulling in lodash would land silently.
 #
-# The existing tooling/scripts/bundle-size.ts uses esbuild to tree-shake,
-# minify, and measure gzip + brotli per primitive. Thresholds are per-primitive
-# and calibrated against Radix UI and Zag.js public benchmarks.
+# tooling/scripts/bundle-size.ts uses esbuild (tree-shake + minify + gzip/brotli)
+# per primitive, with thresholds calibrated against Radix UI and Zag.js.
 #
-# Why on pull_request only (not push):
-# Size regressions are introduced in PRs. Reporting after the fact on main
-# is too late. PR comments give actionable, in-context feedback.
-#
-# Why not size-limit (the popular alternative):
-# We already have a custom script that (a) understands our monorepo structure,
-# (b) measures per primitive (not per framework binding), and (c) includes
-# competitor reference sizes. Adding size-limit would duplicate this.
+# Runs on pull_request only: size regressions are introduced in PRs.
+# Reporting after the fact on main is too late for review.
 
 on:
   pull_request:
     branches: [main]
     paths:
-      # Only run when source code changes — not on docs, CI config, tests
       - "packages/**"
       - "tooling/scripts/bundle-size.ts"
       - ".github/workflows/bundle-size.yml"
@@ -42,6 +33,7 @@ jobs:
   bundle-size:
     name: Bundle size check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
       pull-requests: write
@@ -50,10 +42,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
           bun-version: latest
+
+      - name: Cache Bun store
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -65,13 +69,15 @@ jobs:
 
       - name: Run bundle size analysis
         id: size
-        # --fail-on-threshold exits with code 1 if any primitive exceeds its threshold.
-        # We capture the output for the PR comment and badge update.
-        run: bun run size:ci 2>&1 | tee /tmp/bundle-report.txt; echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+        shell: bash
+        # --fail-on-threshold exits 1 if any primitive exceeds its threshold.
+        # continue-on-error so the PR comment always posts, even on failure.
+        run: |
+          bun run size:ci 2>&1 | tee /tmp/bundle-report.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
         continue-on-error: true
 
       - name: Post PR comment
-        # Only on PRs — push to main doesn't need a comment.
         if: github.event_name == 'pull_request'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
@@ -79,8 +85,20 @@ jobs:
             const fs = require('fs');
             const report = fs.readFileSync('/tmp/bundle-report.txt', 'utf8');
             const exitCode = '${{ steps.size.outputs.exit_code }}';
-            const status = exitCode === '0' ? '✅ All primitives under budget' : '❌ Bundle size threshold exceeded';
-            const body = `## Bundle Size Report\n\n${status}\n\n\`\`\`\n${report}\n\`\`\`\n\n*Thresholds calibrated against Radix UI and Zag.js public benchmarks.*`;
+            const status = exitCode === '0'
+              ? '✅ All primitives under budget'
+              : '❌ Bundle size threshold exceeded';
+            const body = [
+              '## Bundle Size Report',
+              '',
+              status,
+              '',
+              '```',
+              report,
+              '```',
+              '',
+              '*Thresholds calibrated against Radix UI and Zag.js public benchmarks.*',
+            ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
@@ -88,7 +106,9 @@ jobs:
               issue_number: context.issue.number,
             });
 
-            const existing = comments.find(c => c.body.includes('Bundle Size Report') && c.user.login === 'github-actions[bot]');
+            const existing = comments.find(
+              c => c.body.includes('Bundle Size Report') && c.user.login === 'github-actions[bot]'
+            );
             if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -107,33 +127,28 @@ jobs:
 
       - name: Update bundle size badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        # Inline badge update: green if under budget, red if over.
-        # We don't report exact bytes in the badge because the badge represents
-        # the budget status, not a specific size (sizes vary per primitive).
+        shell: bash
         run: |
           EXIT="${{ steps.size.outputs.exit_code }}"
-          if [ "$EXIT" = "0" ]; then
-            MSG="under budget"
-            COLOR="brightgreen"
-          else
-            MSG="over budget"
-            COLOR="critical"
+          if [ "$EXIT" = "0" ]; then MSG="under budget"; COLOR="brightgreen"
+          else MSG="over budget"; COLOR="critical"
           fi
           node -e "
             const fs = require('fs');
-            const badge = { schemaVersion: 1, label: 'bundle size', message: '$MSG', color: '$COLOR' };
+            const badge = { schemaVersion: 1, label: 'bundle size', message: '${MSG}', color: '${COLOR}' };
             fs.writeFileSync('bundle-size-badge.json', JSON.stringify(badge, null, 2) + '\n');
           "
 
       - name: Commit bundle badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_message: "chore: update bundle size badge [skip ci]"
           file_pattern: bundle-size-badge.json
 
       - name: Fail if over threshold
         if: steps.size.outputs.exit_code != '0'
+        shell: bash
         run: |
           echo "::error::Bundle size threshold exceeded. See the PR comment for details."
           exit 1

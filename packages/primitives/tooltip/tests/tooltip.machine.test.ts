@@ -149,7 +149,9 @@ describe("createTooltipMachine — positioning boundary/middleware", () => {
   });
 
   it("middleware array is stored in positioning context when provided (line 59)", () => {
-    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createTooltipMachine>[0]["positioning"]["middleware"];
+    const middleware = [{ name: "offset" }] as unknown as Parameters<
+      typeof createTooltipMachine
+    >[0]["positioning"]["middleware"];
     const m = make({ id: "test", positioning: { middleware } });
     m.start();
     expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);

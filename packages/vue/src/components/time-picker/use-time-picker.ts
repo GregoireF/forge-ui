@@ -1,6 +1,6 @@
 import type { CreateTimePickerOptions } from "@forge-ui/time-picker";
 import { connectTimePicker, createTimePickerMachine } from "@forge-ui/time-picker";
-import { computed, useId, watch } from "vue";
+import { computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseTimePickerOptions extends Omit<CreateTimePickerOptions, "id"> {

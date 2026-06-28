@@ -1,5 +1,5 @@
-import { createMachine } from "@forge-ui/core";
 import type { ActivityFn } from "@forge-ui/core";
+import { createMachine } from "@forge-ui/core";
 import type {
   CreateNumberInputOptions,
   NumberInputContext,
@@ -27,7 +27,7 @@ function clampSnap(value: number, min: number, max: number, step: number): numbe
 }
 
 function parseNumber(text: string): number | null {
-  const cleaned = text.trim().replace(/[^\d.\-]/g, "");
+  const cleaned = text.trim().replace(/[^\d.-]/g, "");
   if (cleaned === "" || cleaned === "-") return null;
   const n = parseFloat(cleaned);
   return Number.isNaN(n) ? null : n;
@@ -64,7 +64,10 @@ function increment({
   if (context.disabled || context.readOnly) return;
   const current = context.value ?? context.min;
   const next = clampSnap(current + context.step, context.min, context.max, context.step);
-  setContext({ value: next, inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) });
+  setContext({
+    value: next,
+    inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions),
+  });
   context.onValueChange?.(next);
   context.onValueCommit?.(next);
 }
@@ -79,7 +82,10 @@ function decrement({
   if (context.disabled || context.readOnly) return;
   const current = context.value ?? context.max;
   const next = clampSnap(current - context.step, context.min, context.max, context.step);
-  setContext({ value: next, inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) });
+  setContext({
+    value: next,
+    inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions),
+  });
   context.onValueChange?.(next);
   context.onValueCommit?.(next);
 }
@@ -94,7 +100,10 @@ function incrementPage({
   if (context.disabled || context.readOnly) return;
   const current = context.value ?? context.min;
   const next = clampSnap(current + context.largeStep, context.min, context.max, context.step);
-  setContext({ value: next, inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) });
+  setContext({
+    value: next,
+    inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions),
+  });
   context.onValueChange?.(next);
   context.onValueCommit?.(next);
 }
@@ -109,7 +118,10 @@ function decrementPage({
   if (context.disabled || context.readOnly) return;
   const current = context.value ?? context.max;
   const next = clampSnap(current - context.largeStep, context.min, context.max, context.step);
-  setContext({ value: next, inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) });
+  setContext({
+    value: next,
+    inputText: formatNumber(next, context.locale, context.fractionDigits, context.formatOptions),
+  });
   context.onValueChange?.(next);
   context.onValueCommit?.(next);
 }
@@ -126,7 +138,10 @@ function setValue({
   const next = event.value !== null ? clamp(event.value, context.min, context.max) : null;
   setContext({
     value: next,
-    inputText: next !== null ? formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) : "",
+    inputText:
+      next !== null
+        ? formatNumber(next, context.locale, context.fractionDigits, context.formatOptions)
+        : "",
   });
   context.onValueChange?.(next);
 }
@@ -139,7 +154,15 @@ function setMin({
   setContext: (u: Partial<NumberInputContext>) => void;
 }) {
   if (context.disabled || context.readOnly) return;
-  setContext({ value: context.min, inputText: formatNumber(context.min, context.locale, context.fractionDigits, context.formatOptions) });
+  setContext({
+    value: context.min,
+    inputText: formatNumber(
+      context.min,
+      context.locale,
+      context.fractionDigits,
+      context.formatOptions,
+    ),
+  });
   context.onValueChange?.(context.min);
   context.onValueCommit?.(context.min);
 }
@@ -152,7 +175,15 @@ function setMax({
   setContext: (u: Partial<NumberInputContext>) => void;
 }) {
   if (context.disabled || context.readOnly) return;
-  setContext({ value: context.max, inputText: formatNumber(context.max, context.locale, context.fractionDigits, context.formatOptions) });
+  setContext({
+    value: context.max,
+    inputText: formatNumber(
+      context.max,
+      context.locale,
+      context.fractionDigits,
+      context.formatOptions,
+    ),
+  });
   context.onValueChange?.(context.max);
   context.onValueCommit?.(context.max);
 }
@@ -194,15 +225,20 @@ function onBlur({
 }) {
   // Parse → clamp → round to fractionDigits → format on blur
   const parsed = parseNumber(context.inputText);
-  const clamped = parsed !== null ? clampSnap(parsed, context.min, context.max, context.step) : null;
+  const clamped =
+    parsed !== null ? clampSnap(parsed, context.min, context.max, context.step) : null;
   const rounded = clamped !== null ? Number(clamped.toFixed(context.fractionDigits)) : null;
-  const next = rounded !== null ? rounded : (context.allowEmpty ? null : context.value);
+  const next = rounded !== null ? rounded : context.allowEmpty ? null : context.value;
+  const prevValue = context.value;
   setContext({
     focused: false,
     value: next,
-    inputText: next !== null ? formatNumber(next, context.locale, context.fractionDigits, context.formatOptions) : "",
+    inputText:
+      next !== null
+        ? formatNumber(next, context.locale, context.fractionDigits, context.formatOptions)
+        : "",
   });
-  if (next !== context.value) {
+  if (next !== prevValue) {
     context.onValueChange?.(next);
   }
   context.onValueCommit?.(next);
@@ -261,9 +297,15 @@ export function createNumberInputMachine(options: CreateNumberInputOptions) {
   const locale = options.locale ?? "en";
   const formatOptions = options.formatOptions;
 
-  const rawInitial = options.value !== undefined ? options.value : (options.defaultValue !== undefined ? options.defaultValue : null);
+  const rawInitial =
+    options.value !== undefined
+      ? options.value
+      : options.defaultValue !== undefined
+        ? options.defaultValue
+        : null;
   const initialValue = rawInitial !== null ? clamp(rawInitial ?? 0, min, max) : null;
-  const initialText = initialValue !== null ? formatNumber(initialValue, locale, fractionDigits, formatOptions) : "";
+  const initialText =
+    initialValue !== null ? formatNumber(initialValue, locale, fractionDigits, formatOptions) : "";
 
   return createMachine<NumberInputContext, NumberInputState, NumberInputEvent>({
     id: `forge-number-input:${options.id ?? "root"}`,

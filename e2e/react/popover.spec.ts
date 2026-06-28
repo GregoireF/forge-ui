@@ -2,17 +2,6 @@ import { expect, test } from "@playwright/test";
 
 const URL = "http://localhost:3000";
 
-async function waitForRevealed(page: import("@playwright/test").Page, selector: string) {
-  await page.waitForFunction(
-    (sel) => {
-      const el = document.querySelector(sel) as HTMLElement | null;
-      return el ? el.style.getPropertyValue("--forge-revealed") === "1" : false;
-    },
-    selector,
-    { timeout: 5000 },
-  );
-}
-
 test.describe("Popover — React (forge-ui)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(URL);

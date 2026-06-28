@@ -1,8 +1,34 @@
 <script setup lang="ts">
-// Explicit imports for dot-notation namespaces used in templates.
-// Without these, the Vue template compiler emits resolveComponent("HoverCard.Root")
-// which fails in SSR because no component is registered under that dot-notation name.
-import { Accordion, Collapsible, Combobox, DateField, DatePicker, DateRangePicker, HoverCard, NumberInput, Progress, RadioGroup, Slider, Tabs, TagsInput, TimePicker } from "@forge-ui/vue";
+// Namespace objects (dot-notation API) need an explicit import even with @forge-ui/nuxt.
+// The Vue template compiler resolves <Accordion.Root> by looking up `Accordion` in the
+// script scope. Nuxt's addImports works for composables but for plain objects used as
+// component namespaces, a direct import is the reliable approach across all SSR modes.
+// Flat API (<AccordionRoot>, <AccordionItem>, etc.) needs NO import at all.
+import {
+  Accordion,
+  AlertDialog,
+  Avatar,
+  Collapsible,
+  Combobox,
+  ContextMenu,
+  DateField,
+  DatePicker,
+  DateRangePicker,
+  Dialog,
+  Field,
+  HoverCard,
+  Menu,
+  NumberInput,
+  Popover,
+  Progress,
+  RadioGroup,
+  Select,
+  Slider,
+  Tabs,
+  TagsInput,
+  TimePicker,
+  useDialog,
+} from "@forge-ui/vue";
 
 const hookDialog = useDialog({
   onOpenChange: (o) => console.log("[useDialog] open:", o),
@@ -28,7 +54,12 @@ const btn = {
   fontSize: "0.875rem",
 } as const;
 
-const btnGhost = { ...btn, background: "transparent", color: "#1e293b", border: "1px solid #cbd5e1" } as const;
+const btnGhost = {
+  ...btn,
+  background: "transparent",
+  color: "#1e293b",
+  border: "1px solid #cbd5e1",
+} as const;
 
 const overlay = { position: "fixed" as const, inset: 0, background: "rgb(0 0 0 / 0.45)" };
 
@@ -56,7 +87,13 @@ const popoverPanel = {
   boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
 };
 
-const labelS = { display: "block", fontSize: "0.8rem", fontWeight: 500, color: "#374151", marginBottom: "0.35rem" };
+const labelS = {
+  display: "block",
+  fontSize: "0.8rem",
+  fontWeight: 500,
+  color: "#374151",
+  marginBottom: "0.35rem",
+};
 const selectTrigger = {
   display: "flex",
   alignItems: "center",
@@ -79,9 +116,28 @@ const selectContent = {
   listStyle: "none",
   margin: 0,
 } as const;
-const selectItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
-const separatorS = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
-const groupLabelS = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
+const selectItem = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+};
+const separatorS = {
+  height: "1px",
+  background: "#e2e8f0",
+  margin: "0.25rem 0",
+  listStyle: "none" as const,
+};
+const groupLabelS = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  listStyle: "none" as const,
+};
 
 const titleS = { margin: "0 0 0.5rem", fontSize: "1.05rem", fontWeight: 600 };
 const descS = { color: "#64748b", marginBottom: "1.5rem", fontSize: "0.875rem", lineHeight: 1.5 };
@@ -90,26 +146,107 @@ const section = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
 const sectionTitle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
 const sectionDesc = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
 
-const checkboxControl = { width: "18px", height: "18px", border: "2px solid #cbd5e1", borderRadius: "4px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 };
+const checkboxControl = {
+  width: "18px",
+  height: "18px",
+  border: "2px solid #cbd5e1",
+  borderRadius: "4px",
+  background: "#fff",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  flexShrink: 0,
+};
 const checkboxIndicator = { fontSize: "11px", fontWeight: 700, color: "#1e293b", lineHeight: 1 };
 const checkboxLabel = { fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" };
-const switchOff = { width: "44px", height: "24px", borderRadius: "12px", background: "#cbd5e1", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center", transition: "background 0.15s", flexShrink: 0 };
+const switchOff = {
+  width: "44px",
+  height: "24px",
+  borderRadius: "12px",
+  background: "#cbd5e1",
+  border: "none",
+  cursor: "pointer",
+  padding: "2px",
+  display: "flex",
+  alignItems: "center",
+  transition: "background 0.15s",
+  flexShrink: 0,
+};
 const switchOn = { ...switchOff, background: "#1e293b" };
-const thumbOff = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
+const thumbOff = {
+  width: "20px",
+  height: "20px",
+  borderRadius: "50%",
+  background: "#fff",
+  boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)",
+  transform: "translateX(0)",
+  transition: "transform 0.15s",
+};
 const thumbOn = { ...thumbOff, transform: "translateX(20px)" };
 
 const checkboxControlled = ref<boolean | "indeterminate">("indeterminate");
 const groupValues = ref<string[]>(["react"]);
 const switchChecked = ref(false);
 
-const tooltipS = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
+const tooltipS = {
+  background: "#1e293b",
+  color: "#f1f5f9",
+  borderRadius: "6px",
+  padding: "0.35rem 0.6rem",
+  fontSize: "0.8rem",
+  boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
+  maxWidth: "240px",
+} as const;
 const btnDanger = { ...btn, background: "#dc2626" } as const;
 
-const comboboxContent = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
-const comboboxItem = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
-const groupLabel = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
-const hoverCardStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", minWidth: "260px", maxWidth: "320px", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)" } as const;
-const hoverCardLink = { color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline" as const, cursor: "pointer" } as const;
+const comboboxContent = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none" as const,
+  margin: 0,
+  maxHeight: "200px",
+  overflowY: "auto" as const,
+};
+const comboboxItem = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+  display: "flex",
+  alignItems: "center",
+  gap: "0.25rem",
+};
+const groupLabel = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  listStyle: "none" as const,
+};
+const hoverCardStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "10px",
+  padding: "1rem",
+  minWidth: "260px",
+  maxWidth: "320px",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+} as const;
+const hoverCardLink = {
+  color: "#6366f1",
+  fontWeight: 500,
+  fontSize: "0.9rem",
+  textDecoration: "underline" as const,
+  cursor: "pointer",
+} as const;
 
 const fieldInvalid = ref(false);
 const fieldEmail = ref("");
@@ -139,13 +276,50 @@ function handleDeleteConfirm() {
     console.log("[AlertDialog] delete confirmed");
   }, 1200);
 }
+
+// ── Menu ─────────────────────────────────────────────────────────────────────
+const menuLastSelect = ref<string | null>(null);
+const menuTheme = ref("system");
+const menuShowGrid = ref(false);
+const menuShowRuler = ref(true);
+const ctxMenuSelect = ref<string | null>(null);
+const ctxMenuBookmarked = ref(false);
+const menuAnchorOpen = ref(false);
+const menuAnchorSelect = ref<string | null>(null);
+
+const menuContentS = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  padding: "4px",
+  boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)",
+  minWidth: "160px",
+  outline: "none",
+} as const;
+const menuItemS = {
+  padding: "6px 12px",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.875rem",
+  outline: "none",
+  userSelect: "none" as const,
+};
+const menuGroupS = {
+  padding: "4px 12px 2px",
+  fontSize: "0.7rem",
+  color: "#94a3b8",
+  fontWeight: 600,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+};
+const menuSepS = { height: "1px", background: "#e2e8f0", margin: "4px 0" };
 </script>
 
 <template>
   <main style="display:flex;flex-direction:column;gap:0;padding:2rem;max-width:680px;margin:0 auto;font-family:system-ui,sans-serif">
     <h1 style="margin:0;font-size:1.5rem">forge-ui — Nuxt Playground</h1>
     <p style="color:#64748b;font-size:0.8rem;margin:0.25rem 0 0">
-      Aucun import — <code>@forge-ui/nuxt</code> auto-importe tout.
+      Flat API : zéro import (<code>CheckboxRoot</code>, etc.) — Namespace API : un import suffit (<code>import { Dialog } from '@forge-ui/vue'</code>).
     </p>
 
     <!-- ── Animations CSS (data-state) ──────────────────────────────────────── -->
@@ -176,7 +350,7 @@ function handleDeleteConfirm() {
     <section :style="section">
       <h2 :style="sectionTitle">Dialog</h2>
       <p :style="sectionDesc">Modal — Escape + click outside pour fermer.</p>
-      <dialog-root>
+      <Dialog.Root>
         <Dialog.Trigger :style="btn">Ouvrir le dialog</Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Overlay :style="overlay" />
@@ -191,7 +365,7 @@ function handleDeleteConfirm() {
             </div>
           </Dialog.Content>
         </Dialog.Portal>
-      </dialog-root>
+      </Dialog.Root>
     </section>
 
     <!-- ── Dialog imbriqué ────────────────────────────────────────────────── -->
@@ -947,7 +1121,7 @@ function handleDeleteConfirm() {
         </div>
         <Slider.Root
           :value="sliderValue"
-          :on-value-change="(v) => sliderValue = v[0]"
+          :on-value-change="(v) => sliderValue = v[0] ?? 0"
           :min="0"
           :max="100"
           :step="1"
@@ -1013,7 +1187,7 @@ function handleDeleteConfirm() {
       <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">DateField</h2>
       <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">Saisie de date en segments indépendants (MM/JJ/AAAA). WAI-ARIA spinbutton par segment.</p>
       <div style="display:flex;flex-direction:column;gap:0.75rem">
-        <DateField.Root data-testid="date-field-root" @value-change="(d) => dateFieldValue = d">
+        <DateField.Root data-testid="date-field-root" :on-value-change="(d) => dateFieldValue = d">
           <DateField.Group
             data-testid="date-field-group"
             :style="{ display:'inline-flex', alignItems:'center', gap:'2px', padding:'0.45rem 0.75rem', border:'1px solid #cbd5e1', borderRadius:'6px', fontSize:'0.875rem', background:'#fff' }"
@@ -1037,7 +1211,7 @@ function handleDeleteConfirm() {
       <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:600">TimePicker</h2>
       <p style="margin:0 0 1rem;color:#64748b;font-size:0.8rem">Saisie d'heure en segments (HH:MM:SS AM/PM). WAI-ARIA spinbutton par segment.</p>
       <div style="display:flex;flex-direction:column;gap:0.75rem">
-        <TimePicker.Root data-testid="time-picker-root" @value-change="(t) => timePickerValue = t">
+        <TimePicker.Root data-testid="time-picker-root" :on-value-change="(t) => timePickerValue = t">
           <TimePicker.Group
             data-testid="time-picker-group"
             :style="{ display:'inline-flex', alignItems:'center', gap:'2px', padding:'0.45rem 0.75rem', border:'1px solid #cbd5e1', borderRadius:'6px', fontSize:'0.875rem', background:'#fff' }"
@@ -1065,7 +1239,7 @@ function handleDeleteConfirm() {
       <div style="display:flex;flex-direction:column;gap:0.75rem">
         <DatePicker.Root
           data-testid="date-picker-root"
-          @value-change="(d) => datePickerSelected = d ? `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}` : null"
+          :on-value-change="(d) => datePickerSelected = d ? `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}` : null"
         >
           <DatePicker.Trigger data-testid="date-picker-trigger" :style="btn">{{ datePickerSelected ?? 'Choisir une date' }}</DatePicker.Trigger>
           <DatePicker.Content
@@ -1094,7 +1268,7 @@ function handleDeleteConfirm() {
       <div style="display:flex;flex-direction:column;gap:0.75rem">
         <DateRangePicker.Root
           data-testid="date-range-picker-root"
-          @value-change="(r) => dateRangePickerRange = r ? `${r.start?.year ?? '?'} → ${r.end?.year ?? '?'}` : null"
+          :on-value-change="(r) => dateRangePickerRange = r ? `${r.start?.year ?? '?'} → ${r.end?.year ?? '?'}` : null"
         >
           <DateRangePicker.Trigger data-testid="date-range-picker-trigger" :style="btn">{{ dateRangePickerRange ?? 'Choisir une plage' }}</DateRangePicker.Trigger>
           <DateRangePicker.Content
@@ -1114,6 +1288,206 @@ function handleDeleteConfirm() {
         <p v-if="dateRangePickerRange" data-testid="date-range-picker-value" style="margin:0;font-size:0.8rem;color:#64748b">
           Plage : {{ dateRangePickerRange }}
         </p>
+      </div>
+    </section>
+
+    <!-- ── Menu (DropdownMenu) ──────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
+      <h2 :style="sectionTitle">Menu (DropdownMenu)</h2>
+      <p :style="sectionDesc">WAI-ARIA Menu Button. N-level sub-menus, radio, checkbox, typeahead.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <Menu.Root :on-select="(v: string) => menuLastSelect = v">
+          <Menu.Trigger :style="btn">Actions ▾</Menu.Trigger>
+          <Menu.Portal>
+            <Menu.Content :style="menuContentS">
+              <Menu.Label :style="menuGroupS">Fichier</Menu.Label>
+              <Menu.Item value="new" :style="menuItemS" :navigate="() => console.log('[navigate] /new')">Nouveau fichier</Menu.Item>
+              <Menu.Item value="open" :style="menuItemS">Ouvrir...</Menu.Item>
+              <Menu.Separator :style="menuSepS" />
+              <Menu.Group id="edit-g">
+                <Menu.GroupLabel group-id="edit-g" :style="menuGroupS">Edition</Menu.GroupLabel>
+                <Menu.Item value="cut" :style="menuItemS">Couper</Menu.Item>
+                <Menu.Item value="copy" :style="menuItemS">Copier</Menu.Item>
+                <Menu.Item value="paste" :disabled="true" :style="{ ...menuItemS, opacity: 0.45 }">Coller</Menu.Item>
+              </Menu.Group>
+              <Menu.Separator :style="menuSepS" />
+              <Menu.Label :style="menuGroupS">Theme</Menu.Label>
+              <Menu.RadioGroup group-id="theme" :value="menuTheme" :on-value-change="(v: string) => menuTheme = v">
+                <Menu.RadioItem v-for="t in ['light', 'dark', 'system']" :key="t" :value="t" :style="menuItemS" :close-on-select="false">
+                  <Menu.ItemIndicator><span style="margin-right:6px">✓</span></Menu.ItemIndicator>
+                  {{ t.charAt(0).toUpperCase() + t.slice(1) }}
+                </Menu.RadioItem>
+              </Menu.RadioGroup>
+              <Menu.Separator :style="menuSepS" />
+              <Menu.Label :style="menuGroupS">Vue</Menu.Label>
+              <Menu.CheckboxItem value="grid" :checked="menuShowGrid" :on-checked-change="(v: boolean) => menuShowGrid = v" :style="menuItemS">
+                <Menu.ItemIndicator><span style="margin-right:6px">✓</span></Menu.ItemIndicator>
+                Grille
+              </Menu.CheckboxItem>
+              <Menu.CheckboxItem value="ruler" :checked="menuShowRuler" :on-checked-change="(v: boolean) => menuShowRuler = v" :style="menuItemS">
+                <Menu.ItemIndicator><span style="margin-right:6px">✓</span></Menu.ItemIndicator>
+                Regle
+              </Menu.CheckboxItem>
+              <Menu.Separator :style="menuSepS" />
+              <Menu.Sub>
+                <Menu.SubTrigger value="share" :style="menuItemS">Partager ▶</Menu.SubTrigger>
+                <Menu.SubContent :style="menuContentS">
+                  <Menu.Item value="share-link" :style="menuItemS">Lien</Menu.Item>
+                  <Menu.Item value="share-email" :style="menuItemS">Email</Menu.Item>
+                  <Menu.Separator :style="menuSepS" />
+                  <Menu.Sub>
+                    <Menu.SubTrigger value="social" :style="menuItemS">Reseaux ▶</Menu.SubTrigger>
+                    <Menu.SubContent :style="menuContentS">
+                      <Menu.Item value="twitter" :style="menuItemS">Twitter</Menu.Item>
+                      <Menu.Item value="linkedin" :style="menuItemS">LinkedIn</Menu.Item>
+                    </Menu.SubContent>
+                  </Menu.Sub>
+                </Menu.SubContent>
+              </Menu.Sub>
+            </Menu.Content>
+          </Menu.Portal>
+        </Menu.Root>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="menuLastSelect">Selection : {{ menuLastSelect }}</div>
+          <div>Theme : {{ menuTheme }}</div>
+          <div>Grille : {{ menuShowGrid ? 'oui' : 'non' }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Menu — Anchor ────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0;border-bottom:1px solid #e2e8f0">
+      <h2 :style="sectionTitle">Menu — Anchor</h2>
+      <p :style="sectionDesc">Menu.Anchor positionne le floating par rapport a un element arbitraire.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <div>
+          <Menu.Root :open="menuAnchorOpen" :on-open-change="(v: boolean) => menuAnchorOpen = v" :on-select="(v: string) => menuAnchorSelect = v">
+            <Menu.Anchor>
+              <div style="width:200px;padding:0.5rem;background:#f1f5f9;border:2px dashed #94a3b8;border-radius:8px;text-align:center;font-size:0.8rem;color:#64748b">
+                Ancre (reference)
+              </div>
+            </Menu.Anchor>
+            <Menu.Trigger :style="{ ...btn, marginTop: '0.5rem' }">
+              {{ menuAnchorOpen ? 'Fermer' : 'Ouvrir (ancre)' }}
+            </Menu.Trigger>
+            <Menu.Portal>
+              <Menu.Content :style="menuContentS">
+                <Menu.Item value="profile" :style="menuItemS">Profil</Menu.Item>
+                <Menu.Item value="settings" :style="menuItemS">Parametres</Menu.Item>
+                <Menu.Separator :style="menuSepS" />
+                <Menu.Item value="logout" :style="menuItemS">Deconnexion</Menu.Item>
+              </Menu.Content>
+            </Menu.Portal>
+          </Menu.Root>
+        </div>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="menuAnchorSelect">Selection : {{ menuAnchorSelect }}</div>
+          <div style="color:#94a3b8">Le menu se positionne par rapport a l'ancre</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ContextMenu (avec Sub) ────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0">
+      <h2 :style="sectionTitle">ContextMenu (avec Sub)</h2>
+      <p :style="sectionDesc">Clic-droit + sous-menus imbriques — auto-portal vers document.body.</p>
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <ContextMenu.Root :on-select="(v: string) => ctxMenuSelect = v">
+          <ContextMenu.Trigger>
+            <div style="width:200px;height:80px;background:#1e40af;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;user-select:none">
+              Clic-droit ici
+            </div>
+          </ContextMenu.Trigger>
+          <ContextMenu.Portal>
+            <ContextMenu.Content :style="menuContentS">
+              <ContextMenu.Item value="inspect" :style="menuItemS">Inspecter</ContextMenu.Item>
+              <ContextMenu.Item value="reload" :style="menuItemS">Recharger</ContextMenu.Item>
+              <ContextMenu.Separator :style="menuSepS" />
+              <ContextMenu.CheckboxItem value="bookmark" :checked="ctxMenuBookmarked" :on-checked-change="(v: boolean) => ctxMenuBookmarked = v" :style="menuItemS">
+                <ContextMenu.ItemIndicator><span style="margin-right:6px">★</span></ContextMenu.ItemIndicator>
+                Marquer comme favori
+              </ContextMenu.CheckboxItem>
+              <ContextMenu.Separator :style="menuSepS" />
+              <ContextMenu.Sub>
+                <ContextMenu.SubTrigger value="share" :style="menuItemS">Partager ▶</ContextMenu.SubTrigger>
+                <ContextMenu.SubContent :style="menuContentS">
+                  <ContextMenu.Item value="share-link" :style="menuItemS">Lien</ContextMenu.Item>
+                  <ContextMenu.Item value="share-email" :style="menuItemS">Email</ContextMenu.Item>
+                  <ContextMenu.Separator :style="menuSepS" />
+                  <ContextMenu.Sub>
+                    <ContextMenu.SubTrigger value="social" :style="menuItemS">Reseaux ▶</ContextMenu.SubTrigger>
+                    <ContextMenu.SubContent :style="menuContentS">
+                      <ContextMenu.Item value="twitter" :style="menuItemS">Twitter</ContextMenu.Item>
+                      <ContextMenu.Item value="linkedin" :style="menuItemS">LinkedIn</ContextMenu.Item>
+                    </ContextMenu.SubContent>
+                  </ContextMenu.Sub>
+                </ContextMenu.SubContent>
+              </ContextMenu.Sub>
+              <ContextMenu.Separator :style="menuSepS" />
+              <ContextMenu.Item value="copy-link" :style="menuItemS">Copier le lien</ContextMenu.Item>
+            </ContextMenu.Content>
+          </ContextMenu.Portal>
+        </ContextMenu.Root>
+        <div style="font-size:0.8rem;color:#64748b">
+          <div v-if="ctxMenuSelect">Selection : {{ ctxMenuSelect }}</div>
+          <div>Favori : {{ ctxMenuBookmarked ? '★' : '☆' }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Avatar ───────────────────────────────────────────────────────────── -->
+    <section style="padding:1.5rem 0">
+      <h2 :style="sectionTitle">Avatar</h2>
+      <p :style="sectionDesc">Image avec fallback accessible. delayMs sur Fallback évite le flash sur les connexions rapides.</p>
+      <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+
+        <!-- Image cassée → fallback immédiat -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root style="display:inline-flex;position:relative;width:48px;height:48px;border-radius:50%;overflow:hidden;background:#e2e8f0">
+            <Avatar.Image src="https://invalid.domain/broken.jpg" alt="Bob" style="width:100%;height:100%;object-fit:cover" />
+            <Avatar.Fallback style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:600;color:#475569;background:#e2e8f0">BO</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">Image cassée</span>
+        </div>
+
+        <!-- Sans image -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root style="display:inline-flex;position:relative;width:48px;height:48px;border-radius:50%;overflow:hidden;background:#e2e8f0">
+            <Avatar.Image alt="Carol" style="width:100%;height:100%;object-fit:cover" />
+            <Avatar.Fallback style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:600;color:#475569;background:#e2e8f0">CA</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">Sans image</span>
+        </div>
+
+        <!-- delayMs=600 sur Fallback (pas Root) -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root style="display:inline-flex;position:relative;width:48px;height:48px;border-radius:50%;overflow:hidden;background:#e2e8f0">
+            <Avatar.Image src="https://invalid.domain/slow.jpg" alt="Dave" style="width:100%;height:100%;object-fit:cover" />
+            <Avatar.Fallback :delay-ms="600" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:600;color:#475569;background:#e2e8f0">DA</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">delayMs=600 (Fallback)</span>
+        </div>
+
+        <!-- name prop → initials (api.initials = "JD") -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root name="John Doe" style="display:inline-flex;position:relative;width:48px;height:48px;border-radius:50%;overflow:hidden;background:#e2e8f0">
+            <Avatar.Image alt="John Doe" style="width:100%;height:100%;object-fit:cover" />
+            <Avatar.Fallback style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:600;color:#475569;background:#e2e8f0">JD</Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">name + initials</span>
+        </div>
+
+        <!-- asChild: Fallback rendu comme un div -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+          <Avatar.Root style="display:inline-flex;position:relative;width:48px;height:48px;border-radius:50%;overflow:hidden;background:#e2e8f0">
+            <Avatar.Image alt="Eve" style="width:100%;height:100%;object-fit:cover" />
+            <Avatar.Fallback as-child style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:600;color:#475569;background:#e2e8f0">
+              <div>EV</div>
+            </Avatar.Fallback>
+          </Avatar.Root>
+          <span style="font-size:0.75rem;color:#64748b">asChild (div)</span>
+        </div>
+
       </div>
     </section>
   </main>

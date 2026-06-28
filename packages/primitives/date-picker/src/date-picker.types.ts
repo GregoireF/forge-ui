@@ -1,4 +1,10 @@
-import type { CalendarCell, CalendarDate, DatePreset, MonthInfo, WeekdayHeader } from "./calendar.js";
+import type {
+  CalendarCell,
+  CalendarDate,
+  DatePreset,
+  MonthInfo,
+  WeekdayHeader,
+} from "./calendar.js";
 
 export type { CalendarCell, CalendarDate, DatePreset, MonthInfo, WeekdayHeader };
 

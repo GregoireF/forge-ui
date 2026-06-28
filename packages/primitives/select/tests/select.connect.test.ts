@@ -279,7 +279,13 @@ describe("connectSelect — getOptionProps", () => {
 
 describe("connectSelect — onKeyDown keyboard interactions", () => {
   function fire(api: ReturnType<typeof connectSelect>, key: string, ctrlKey = false) {
-    const e = { key, ctrlKey, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    const e = {
+      key,
+      ctrlKey,
+      altKey: false,
+      metaKey: false,
+      preventDefault: vi.fn(),
+    } as unknown as KeyboardEvent;
     api.getTriggerProps().onKeyDown(e);
     return e;
   }
@@ -380,7 +386,13 @@ describe("connectSelect — onKeyDown keyboard interactions", () => {
 
   it("Ctrl+key when open does NOT trigger typeahead", () => {
     const { api, send } = makeApi({ options: OPTIONS }, "open");
-    const e = { key: "a", ctrlKey: true, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    const e = {
+      key: "a",
+      ctrlKey: true,
+      altKey: false,
+      metaKey: false,
+      preventDefault: vi.fn(),
+    } as unknown as KeyboardEvent;
     api.getTriggerProps().onKeyDown(e);
     expect(send).not.toHaveBeenCalled();
   });
@@ -482,21 +494,30 @@ describe("connectSelect — getOptionProps mouse events", () => {
   // Vue uses lowercase native DOM event names (onMousemove / onMouseleave)
   it("onMousemove (Vue alias) highlights non-disabled option", () => {
     const { api, send } = makeApi({ highlighted: null }, "open");
-    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<string, () => void>;
+    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<
+      string,
+      () => void
+    >;
     props["onMousemove"]();
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
   });
 
   it("onMousemove (Vue alias) on already-highlighted is no-op", () => {
     const { api, send } = makeApi({ highlighted: "react" }, "open");
-    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<string, () => void>;
+    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<
+      string,
+      () => void
+    >;
     props["onMousemove"]();
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onMouseleave (Vue alias) clears highlight", () => {
     const { api, send } = makeApi({ highlighted: "react" }, "open");
-    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<string, () => void>;
+    const props = api.getOptionProps({ value: "react", disabled: false }) as Record<
+      string,
+      () => void
+    >;
     props["onMouseleave"]();
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
   });
@@ -513,7 +534,9 @@ describe("connectSelect — getPositionerProps", () => {
   });
 
   it("style.position matches positioning strategy", () => {
-    const { api } = makeApi({ positioning: { strategy: "fixed", placement: "bottom" } as SelectContext["positioning"] });
+    const { api } = makeApi({
+      positioning: { strategy: "fixed", placement: "bottom" } as SelectContext["positioning"],
+    });
     expect(api.getPositionerProps().style.position).toBe("fixed");
   });
 
@@ -539,7 +562,11 @@ describe("connectSelect — getPositionerProps", () => {
 
   it("width is triggerEl.offsetWidth in px when sameWidth=true (line 215)", () => {
     const { api } = makeApi({
-      positioning: { strategy: "absolute", placement: "bottom", sameWidth: true } as SelectContext["positioning"],
+      positioning: {
+        strategy: "absolute",
+        placement: "bottom",
+        sameWidth: true,
+      } as SelectContext["positioning"],
       triggerEl: null,
     });
     // triggerEl is null → offsetWidth ?? 0 → "0px"
@@ -630,7 +657,13 @@ describe("connectSelect — ref callbacks", () => {
 
 describe("connectSelect — keyboard branch coverage", () => {
   function fire(api: ReturnType<typeof connectSelect>, key: string) {
-    const e = { key, ctrlKey: false, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    const e = {
+      key,
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      preventDefault: vi.fn(),
+    } as unknown as KeyboardEvent;
     api.getTriggerProps().onKeyDown(e);
     return e;
   }
@@ -739,7 +772,13 @@ describe("connectSelect — virtual scroll (allOptions)", () => {
   it("typeahead matches against allOptions when provided", () => {
     // "a" matches "Alpha" from allOptions (not from OPTIONS)
     const { api, send } = makeApi({ allOptions: ALL_OPTIONS, options: OPTIONS }, "open");
-    const e = { key: "a", ctrlKey: false, altKey: false, metaKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
+    const e = {
+      key: "a",
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false,
+      preventDefault: vi.fn(),
+    } as unknown as KeyboardEvent;
     api.getTriggerProps().onKeyDown(e);
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "a" });
   });

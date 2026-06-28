@@ -30,9 +30,7 @@ function Root({ children, ...opts }: DatePickerRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <DatePickerCtx.Provider value={api}>
-      <DatePickerPresenceCtx.Provider value={presence}>
-        {children}
-      </DatePickerPresenceCtx.Provider>
+      <DatePickerPresenceCtx.Provider value={presence}>{children}</DatePickerPresenceCtx.Provider>
     </DatePickerCtx.Provider>
   );
 }
@@ -105,7 +103,11 @@ export interface DatePickerCalendarHeaderProps extends HTMLAttributes<HTMLDivEle
 
 function CalendarHeader({ children, ...rest }: DatePickerCalendarHeaderProps) {
   const api = useCtx();
-  return <div {...api.getCalendarHeaderProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getCalendarHeaderProps()} {...rest}>
+      {children ?? api.monthYearLabel}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -116,27 +118,47 @@ export interface DatePickerNavButtonProps extends ButtonHTMLAttributes<HTMLButto
 
 function PrevMonthButton({ children, ...rest }: DatePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getPrevMonthButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getPrevMonthButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 function NextMonthButton({ children, ...rest }: DatePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getNextMonthButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getNextMonthButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 function ViewSwitchButton({ children, ...rest }: DatePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getViewSwitchButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getViewSwitchButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 function PrevYearRangeButton({ children, ...rest }: DatePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getPrevYearRangeButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getPrevYearRangeButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 function NextYearRangeButton({ children, ...rest }: DatePickerNavButtonProps) {
   const api = useCtx();
-  return <button {...api.getNextYearRangeButtonProps()} {...rest}>{children}</button>;
+  return (
+    <button {...api.getNextYearRangeButtonProps()} {...rest}>
+      {children}
+    </button>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -147,7 +169,11 @@ export interface DatePickerCalendarGridProps extends HTMLAttributes<HTMLDivEleme
 
 function CalendarGrid({ children, ...rest }: DatePickerCalendarGridProps) {
   const api = useCtx();
-  return <div {...api.getCalendarGridProps()} {...rest}>{children}</div>;
+  return (
+    <div {...(api.getCalendarGridProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -160,7 +186,11 @@ export interface DatePickerCalendarRowProps extends HTMLAttributes<HTMLDivElemen
 
 function CalendarRow({ weekIndex, children, ...rest }: DatePickerCalendarRowProps) {
   const api = useCtx();
-  return <div {...api.getCalendarRowProps(weekIndex)} {...rest}>{children}</div>;
+  return (
+    <div {...api.getCalendarRowProps(weekIndex)} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 export interface DatePickerWeekdayHeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -169,7 +199,11 @@ export interface DatePickerWeekdayHeaderProps extends HTMLAttributes<HTMLDivElem
 
 function WeekdayHeader({ dayIndex, children, ...rest }: DatePickerWeekdayHeaderProps) {
   const api = useCtx();
-  return <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>{children}</div>;
+  return (
+    <div {...api.getWeekdayHeaderProps(dayIndex)} {...rest}>
+      {children ?? api.weekdays[dayIndex]?.narrow}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -200,7 +234,11 @@ export interface DatePickerMonthGridProps extends HTMLAttributes<HTMLDivElement>
 
 function MonthGrid({ children, ...rest }: DatePickerMonthGridProps) {
   const api = useCtx();
-  return <div {...api.getMonthGridProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getMonthGridProps()} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 export interface DatePickerMonthCellProps extends HTMLAttributes<HTMLDivElement> {
@@ -224,7 +262,11 @@ export interface DatePickerYearGridProps extends HTMLAttributes<HTMLDivElement> 
 
 function YearGrid({ children, ...rest }: DatePickerYearGridProps) {
   const api = useCtx();
-  return <div {...api.getYearGridProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getYearGridProps()} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 export interface DatePickerYearCellProps extends HTMLAttributes<HTMLDivElement> {
@@ -252,7 +294,11 @@ export interface DatePickerPresetProps extends ButtonHTMLAttributes<HTMLButtonEl
 
 function Preset({ preset, children, ...rest }: DatePickerPresetProps) {
   const api = useCtx();
-  return <button {...api.getPresetProps(preset)} {...rest}>{children ?? preset.label}</button>;
+  return (
+    <button {...api.getPresetProps(preset)} {...rest}>
+      {children ?? preset.label}
+    </button>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -271,6 +317,39 @@ function HiddenInput({ name }: DatePickerHiddenInputProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Context hook — for consumers who need to access api data inside the tree
+// ---------------------------------------------------------------------------
+
+export function useDatePickerContext(): DatePickerApi {
+  return useCtx();
+}
+
+// ---------------------------------------------------------------------------
+// Namespace export
+// ---------------------------------------------------------------------------
+
+Root.displayName = "DatePicker.Root";
+Trigger.displayName = "DatePicker.Trigger";
+Portal.displayName = "DatePicker.Portal";
+Content.displayName = "DatePicker.Content";
+CalendarHeader.displayName = "DatePicker.CalendarHeader";
+ViewSwitchButton.displayName = "DatePicker.ViewSwitchButton";
+PrevMonthButton.displayName = "DatePicker.PrevMonthButton";
+NextMonthButton.displayName = "DatePicker.NextMonthButton";
+PrevYearRangeButton.displayName = "DatePicker.PrevYearRangeButton";
+NextYearRangeButton.displayName = "DatePicker.NextYearRangeButton";
+CalendarGrid.displayName = "DatePicker.CalendarGrid";
+CalendarRow.displayName = "DatePicker.CalendarRow";
+WeekdayHeader.displayName = "DatePicker.WeekdayHeader";
+CalendarCell.displayName = "DatePicker.CalendarCell";
+MonthGrid.displayName = "DatePicker.MonthGrid";
+MonthCell.displayName = "DatePicker.MonthCell";
+YearGrid.displayName = "DatePicker.YearGrid";
+YearCell.displayName = "DatePicker.YearCell";
+Preset.displayName = "DatePicker.Preset";
+HiddenInput.displayName = "DatePicker.HiddenInput";
 
 export const DatePicker = {
   Root,

@@ -31,17 +31,48 @@ function useItemCtx(): RadioItemCtx {
 // Root
 // ---------------------------------------------------------------------------
 
-export interface RadioGroupRootProps extends UseRadioGroupOptions {
+export interface RadioGroupRootProps
+  extends UseRadioGroupOptions,
+    Omit<HTMLAttributes<HTMLDivElement>, keyof UseRadioGroupOptions | "children"> {
   children: ReactNode;
   asChild?: boolean;
 }
 
-function Root({ children, asChild, ...opts }: RadioGroupRootProps) {
-  const api = useRadioGroup(opts);
+function Root({
+  children,
+  asChild,
+  value,
+  defaultValue,
+  onValueChange,
+  disabled,
+  required,
+  orientation,
+  name,
+  id,
+  ...rest
+}: RadioGroupRootProps) {
+  const api = useRadioGroup({
+    ...(value !== undefined && { value }),
+    ...(defaultValue !== undefined && { defaultValue }),
+    ...(onValueChange !== undefined && { onValueChange }),
+    ...(disabled !== undefined && { disabled }),
+    ...(required !== undefined && { required }),
+    ...(orientation !== undefined && { orientation }),
+    ...(name !== undefined && { name }),
+    ...(id !== undefined && { id }),
+  });
   const props = api.getRootProps();
   return (
     <RadioGroupCtx.Provider value={api}>
-      {asChild ? <Slot {...props}>{children}</Slot> : <div {...props}>{children}</div>}
+      {asChild ? (
+        <Slot {...props} {...rest}>
+          {children}
+        </Slot>
+      ) : (
+        <div {...props} {...rest}>
+          {children}
+        </div>
+      )}
     </RadioGroupCtx.Provider>
   );
 }
@@ -117,6 +148,12 @@ function HiddenInput() {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "RadioGroup.Root";
+Item.displayName = "RadioGroup.Item";
+Radio.displayName = "RadioGroup.Radio";
+Label.displayName = "RadioGroup.Label";
+HiddenInput.displayName = "RadioGroup.HiddenInput";
 
 export const RadioGroup = {
   Root,

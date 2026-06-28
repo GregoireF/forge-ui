@@ -1,6 +1,6 @@
-import { connectAccordion, createAccordionMachine } from "@forge-ui/accordion";
 import type { CreateAccordionOptions } from "@forge-ui/accordion";
-import { computed, useId, watch } from "vue";
+import { connectAccordion, createAccordionMachine } from "@forge-ui/accordion";
+import { computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseAccordionOptions extends Omit<CreateAccordionOptions, "id"> {
@@ -13,21 +13,6 @@ export function useAccordion(options: UseAccordionOptions = {}) {
 
   const machine = createAccordionMachine({ id, ...options });
   const { snapshot, send } = useMachine(machine);
-
-  // Sync controlled `value` prop
-  if (options.value !== undefined) {
-    watch(
-      () => options.value,
-      (v) => {
-        if (v === undefined) return;
-        const normalized = Array.isArray(v) ? v : [v];
-        const current = machine.getSnapshot().context.value;
-        if (JSON.stringify(current) === JSON.stringify(normalized)) return;
-        machine.send({ type: "SET_VALUE", value: normalized });
-      },
-      { immediate: true },
-    );
-  }
 
   const api = computed(() => connectAccordion(snapshot.value, send, machine));
 

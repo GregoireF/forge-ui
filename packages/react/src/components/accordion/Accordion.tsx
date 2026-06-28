@@ -17,7 +17,8 @@ function useCtx(): AccordionApi {
 
 function useItemValue(): string {
   const val = useContext(AccordionItemCtx);
-  if (val === null) throw new Error("Accordion.Header/Trigger/Content must be inside <Accordion.Item>");
+  if (val === null)
+    throw new Error("Accordion.Header/Trigger/Content must be inside <Accordion.Item>");
   return val;
 }
 
@@ -122,6 +123,12 @@ function Content({ children, asChild, forceMount, ...rest }: AccordionContentPro
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "Accordion.Root";
+Item.displayName = "Accordion.Item";
+Header.displayName = "Accordion.Header";
+Trigger.displayName = "Accordion.Trigger";
+Content.displayName = "Accordion.Content";
 
 export const Accordion = {
   Root,

@@ -27,10 +27,22 @@ export function useTimePicker(options: UseTimePickerOptions = {}) {
         });
       }
     }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
+    // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
   }, [options.value]);
 
-  return connectTimePicker(snapshot, send, machine);
+  const api = connectTimePicker(snapshot, send, machine);
+
+  useLayoutEffect(() => {
+    const seg = api.focusedSegment;
+    if (!seg) return;
+    const groupEl = document.getElementById(`${id}-group`);
+    if (!groupEl) return;
+    const el = groupEl.querySelector<HTMLElement>(`[data-forge-part="segment-${seg}"]`);
+    if (el && document.activeElement !== el) el.focus();
+    // biome-ignore lint/correctness/useExhaustiveDependencies: intentional DOM focus sync
+  }, [api.focusedSegment]);
+
+  return api;
 }
 
 export type UseTimePickerReturn = ReturnType<typeof useTimePicker>;

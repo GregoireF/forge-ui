@@ -106,6 +106,10 @@
         "typescript": "*",
       },
     },
+    "packages/css": {
+      "name": "@forge-ui/css",
+      "version": "0.0.0",
+    },
     "packages/floating": {
       "name": "@forge-ui/floating",
       "version": "0.0.0",
@@ -149,6 +153,16 @@
       "dependencies": {
         "@forge-ui/core": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/avatar": {
+      "name": "@forge-ui/avatar",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
       },
       "devDependencies": {
         "typescript": "*",
@@ -245,6 +259,17 @@
         "typescript": "^5.8.3",
       },
     },
+    "packages/primitives/menu": {
+      "name": "@forge-ui/menu",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+        "@forge-ui/floating": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/number-input": {
       "name": "@forge-ui/number-input",
       "version": "0.0.0",
@@ -290,6 +315,13 @@
         "@forge-ui/core": "workspace:*",
         "@forge-ui/floating": "workspace:*",
       },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/separator": {
+      "name": "@forge-ui/separator",
+      "version": "0.0.0",
       "devDependencies": {
         "typescript": "*",
       },
@@ -344,6 +376,26 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/toggle": {
+      "name": "@forge-ui/toggle",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
+    "packages/primitives/toggle-group": {
+      "name": "@forge-ui/toggle-group",
+      "version": "0.0.0",
+      "dependencies": {
+        "@forge-ui/core": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/primitives/tooltip": {
       "name": "@forge-ui/tooltip",
       "version": "0.0.0",
@@ -355,29 +407,46 @@
         "typescript": "*",
       },
     },
+    "packages/primitives/visually-hidden": {
+      "name": "@forge-ui/visually-hidden",
+      "version": "0.0.0",
+      "devDependencies": {
+        "typescript": "*",
+      },
+    },
     "packages/react": {
       "name": "@forge-ui/react",
       "version": "0.0.0",
       "dependencies": {
         "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
+        "@forge-ui/avatar": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
         "@forge-ui/collapsible": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
         "@forge-ui/core": "workspace:*",
+        "@forge-ui/date-field": "workspace:*",
+        "@forge-ui/date-picker": "workspace:*",
+        "@forge-ui/date-range-picker": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
+        "@forge-ui/menu": "workspace:*",
         "@forge-ui/number-input": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/progress": "workspace:*",
         "@forge-ui/radio-group": "workspace:*",
         "@forge-ui/select": "workspace:*",
+        "@forge-ui/separator": "workspace:*",
         "@forge-ui/slider": "workspace:*",
         "@forge-ui/switch": "workspace:*",
         "@forge-ui/tabs": "workspace:*",
         "@forge-ui/tags-input": "workspace:*",
+        "@forge-ui/time-picker": "workspace:*",
+        "@forge-ui/toggle": "workspace:*",
+        "@forge-ui/toggle-group": "workspace:*",
         "@forge-ui/tooltip": "workspace:*",
+        "@forge-ui/visually-hidden": "workspace:*",
       },
       "devDependencies": {
         "@testing-library/jest-dom": "^6.0.0",
@@ -401,23 +470,33 @@
       "dependencies": {
         "@forge-ui/accordion": "workspace:*",
         "@forge-ui/alert-dialog": "workspace:*",
+        "@forge-ui/avatar": "workspace:*",
         "@forge-ui/checkbox": "workspace:*",
         "@forge-ui/collapsible": "workspace:*",
         "@forge-ui/combobox": "workspace:*",
         "@forge-ui/core": "workspace:*",
+        "@forge-ui/date-field": "workspace:*",
+        "@forge-ui/date-picker": "workspace:*",
+        "@forge-ui/date-range-picker": "workspace:*",
         "@forge-ui/dialog": "workspace:*",
         "@forge-ui/field": "workspace:*",
         "@forge-ui/hover-card": "workspace:*",
+        "@forge-ui/menu": "workspace:*",
         "@forge-ui/number-input": "workspace:*",
         "@forge-ui/popover": "workspace:*",
         "@forge-ui/progress": "workspace:*",
         "@forge-ui/radio-group": "workspace:*",
         "@forge-ui/select": "workspace:*",
+        "@forge-ui/separator": "workspace:*",
         "@forge-ui/slider": "workspace:*",
         "@forge-ui/switch": "workspace:*",
         "@forge-ui/tabs": "workspace:*",
         "@forge-ui/tags-input": "workspace:*",
+        "@forge-ui/time-picker": "workspace:*",
+        "@forge-ui/toggle": "workspace:*",
+        "@forge-ui/toggle-group": "workspace:*",
         "@forge-ui/tooltip": "workspace:*",
+        "@forge-ui/visually-hidden": "workspace:*",
       },
       "devDependencies": {
         "@testing-library/vue": "^8.1.0",
@@ -735,6 +814,8 @@
 
     "@forge-ui/alert-dialog": ["@forge-ui/alert-dialog@workspace:packages/primitives/alert-dialog"],
 
+    "@forge-ui/avatar": ["@forge-ui/avatar@workspace:packages/primitives/avatar"],
+
     "@forge-ui/checkbox": ["@forge-ui/checkbox@workspace:packages/primitives/checkbox"],
 
     "@forge-ui/collapsible": ["@forge-ui/collapsible@workspace:packages/primitives/collapsible"],
@@ -742,6 +823,8 @@
     "@forge-ui/combobox": ["@forge-ui/combobox@workspace:packages/primitives/combobox"],
 
     "@forge-ui/core": ["@forge-ui/core@workspace:packages/core"],
+
+    "@forge-ui/css": ["@forge-ui/css@workspace:packages/css"],
 
     "@forge-ui/date-field": ["@forge-ui/date-field@workspace:packages/primitives/date-field"],
 
@@ -757,6 +840,8 @@
 
     "@forge-ui/hover-card": ["@forge-ui/hover-card@workspace:packages/primitives/hover-card"],
 
+    "@forge-ui/menu": ["@forge-ui/menu@workspace:packages/primitives/menu"],
+
     "@forge-ui/number-input": ["@forge-ui/number-input@workspace:packages/primitives/number-input"],
 
     "@forge-ui/nuxt": ["@forge-ui/nuxt@workspace:packages/nuxt"],
@@ -771,6 +856,8 @@
 
     "@forge-ui/select": ["@forge-ui/select@workspace:packages/primitives/select"],
 
+    "@forge-ui/separator": ["@forge-ui/separator@workspace:packages/primitives/separator"],
+
     "@forge-ui/slider": ["@forge-ui/slider@workspace:packages/primitives/slider"],
 
     "@forge-ui/switch": ["@forge-ui/switch@workspace:packages/primitives/switch"],
@@ -781,7 +868,13 @@
 
     "@forge-ui/time-picker": ["@forge-ui/time-picker@workspace:packages/primitives/time-picker"],
 
+    "@forge-ui/toggle": ["@forge-ui/toggle@workspace:packages/primitives/toggle"],
+
+    "@forge-ui/toggle-group": ["@forge-ui/toggle-group@workspace:packages/primitives/toggle-group"],
+
     "@forge-ui/tooltip": ["@forge-ui/tooltip@workspace:packages/primitives/tooltip"],
+
+    "@forge-ui/visually-hidden": ["@forge-ui/visually-hidden@workspace:packages/primitives/visually-hidden"],
 
     "@forge-ui/vue": ["@forge-ui/vue@workspace:packages/vue"],
 

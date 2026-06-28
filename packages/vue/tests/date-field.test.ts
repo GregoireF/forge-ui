@@ -1,6 +1,6 @@
-import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/vue";
+import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent } from "vue";
 import { DateField } from "../src/components/date-field/DateField.js";
 
@@ -28,7 +28,15 @@ interface FixtureProps {
 
 function makeFixture({ disabled, readOnly, onValueChange }: FixtureProps = {}) {
   return defineComponent({
-    components: { DateFieldRoot, DateFieldGroup, DateFieldMonth, DateFieldDay, DateFieldYear, DateFieldSeparator, DateFieldHiddenInput },
+    components: {
+      DateFieldRoot,
+      DateFieldGroup,
+      DateFieldMonth,
+      DateFieldDay,
+      DateFieldYear,
+      DateFieldSeparator,
+      DateFieldHiddenInput,
+    },
     setup: () => ({ disabled, readOnly, onValueChange }),
     template: `
       <DateFieldRoot :disabled="disabled" :readOnly="readOnly" :onValueChange="onValueChange">

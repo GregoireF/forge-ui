@@ -34,7 +34,11 @@ export interface DateFieldGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
 function Group({ children, ...rest }: DateFieldGroupProps) {
   const api = useCtx();
-  return <div {...api.getGroupProps()} {...rest}>{children}</div>;
+  return (
+    <div {...api.getGroupProps()} {...rest}>
+      {children}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -46,7 +50,7 @@ export interface DateFieldMonthSegmentProps extends HTMLAttributes<HTMLDivElemen
 function MonthSegment({ children, ...rest }: DateFieldMonthSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getMonthSegmentProps()} {...rest}>
+    <div {...(api.getMonthSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.month ?? "MM"}
     </div>
   );
@@ -57,7 +61,7 @@ export interface DateFieldDaySegmentProps extends HTMLAttributes<HTMLDivElement>
 function DaySegment({ children, ...rest }: DateFieldDaySegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getDaySegmentProps()} {...rest}>
+    <div {...(api.getDaySegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.day ?? "DD"}
     </div>
   );
@@ -68,7 +72,7 @@ export interface DateFieldYearSegmentProps extends HTMLAttributes<HTMLDivElement
 function YearSegment({ children, ...rest }: DateFieldYearSegmentProps) {
   const api = useCtx();
   return (
-    <div {...api.getYearSegmentProps()} {...rest}>
+    <div {...(api.getYearSegmentProps() as unknown as HTMLAttributes<HTMLDivElement>)} {...rest}>
       {children ?? api.displayValues.year ?? "YYYY"}
     </div>
   );
@@ -82,7 +86,11 @@ export interface DateFieldSeparatorProps extends HTMLAttributes<HTMLSpanElement>
 
 function Separator({ children, ...rest }: DateFieldSeparatorProps) {
   const api = useCtx();
-  return <span {...api.getSeparatorProps()} {...rest}>{children}</span>;
+  return (
+    <span {...api.getSeparatorProps()} {...rest}>
+      {children}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -101,6 +109,14 @@ function HiddenInput({ name }: DateFieldHiddenInputProps) {
 // ---------------------------------------------------------------------------
 // Namespace export
 // ---------------------------------------------------------------------------
+
+Root.displayName = "DateField.Root";
+Group.displayName = "DateField.Group";
+MonthSegment.displayName = "DateField.MonthSegment";
+DaySegment.displayName = "DateField.DaySegment";
+YearSegment.displayName = "DateField.YearSegment";
+Separator.displayName = "DateField.Separator";
+HiddenInput.displayName = "DateField.HiddenInput";
 
 export const DateField = {
   Root,
