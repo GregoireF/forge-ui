@@ -1,6 +1,6 @@
-import type { HTMLAttributes, ReactNode } from "react";
 import type { VisuallyHiddenOptions } from "@forge-ui/visually-hidden";
 import { connectVisuallyHidden } from "@forge-ui/visually-hidden";
+import type { HTMLAttributes, ReactNode } from "react";
 
 export interface VisuallyHiddenProps
   extends VisuallyHiddenOptions,

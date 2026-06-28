@@ -1,5 +1,10 @@
 import { createMachine } from "@forge-ui/core";
-import type { CheckboxChecked, CheckboxContext, CheckboxEvent, CheckboxState } from "./checkbox.types.js";
+import type {
+  CheckboxChecked,
+  CheckboxContext,
+  CheckboxEvent,
+  CheckboxState,
+} from "./checkbox.types.js";
 
 export interface CreateCheckboxMachineOptions {
   id: string;
@@ -53,7 +58,10 @@ export function createCheckboxMachine(options: CreateCheckboxMachineOptions) {
         on: {
           TOGGLE: { target: "checked", actions: [invokeOnChange(true)] },
           CHECK: { target: "checked", actions: [invokeOnChange(true)] },
-          SET_INDETERMINATE: { target: "indeterminate", actions: [invokeOnChange("indeterminate")] },
+          SET_INDETERMINATE: {
+            target: "indeterminate",
+            actions: [invokeOnChange("indeterminate")],
+          },
         },
       },
       indeterminate: {
@@ -70,7 +78,10 @@ export function createCheckboxMachine(options: CreateCheckboxMachineOptions) {
         on: {
           TOGGLE: { target: "unchecked", actions: [invokeOnChange(false)] },
           UNCHECK: { target: "unchecked", actions: [invokeOnChange(false)] },
-          SET_INDETERMINATE: { target: "indeterminate", actions: [invokeOnChange("indeterminate")] },
+          SET_INDETERMINATE: {
+            target: "indeterminate",
+            actions: [invokeOnChange("indeterminate")],
+          },
         },
       },
     },

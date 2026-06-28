@@ -1,0 +1,152 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "extends": [
+    "config:recommended",
+    "group:monorepos",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separateMultipleMajorReleases",
+    "helpers:pinGitHubActionDigests"
+  ],
+
+  "timezone": "Europe/Paris",
+  "schedule": ["every weekend"],
+
+  "packageManager": "bun",
+
+  "commitMessagePrefix": "⬆️ ",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "branchConcurrentLimit": 10,
+
+  "automerge": true,
+  "automergeType": "branch",
+  "automergeStrategy": "squash",
+
+  "stabilityDays": 3,
+
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true,
+    "stabilityDays": 0
+  },
+
+  "osvVulnerabilityAlerts": true,
+
+  "ignoreDeps": [
+    "@forge-ui/accordion",
+    "@forge-ui/alert-dialog",
+    "@forge-ui/avatar",
+    "@forge-ui/checkbox",
+    "@forge-ui/collapsible",
+    "@forge-ui/combobox",
+    "@forge-ui/core",
+    "@forge-ui/date-field",
+    "@forge-ui/date-picker",
+    "@forge-ui/date-range-picker",
+    "@forge-ui/dialog",
+    "@forge-ui/field",
+    "@forge-ui/floating",
+    "@forge-ui/hover-card",
+    "@forge-ui/menu",
+    "@forge-ui/number-input",
+    "@forge-ui/popover",
+    "@forge-ui/progress",
+    "@forge-ui/radio-group",
+    "@forge-ui/select",
+    "@forge-ui/separator",
+    "@forge-ui/slider",
+    "@forge-ui/switch",
+    "@forge-ui/tabs",
+    "@forge-ui/tags-input",
+    "@forge-ui/time-picker",
+    "@forge-ui/toggle",
+    "@forge-ui/toggle-group",
+    "@forge-ui/tooltip",
+    "@forge-ui/visually-hidden"
+  ],
+
+  "packageRules": [
+    {
+      "description": "Vite ecosystem — always move together across all workspaces",
+      "matchPackageNames": ["vite", "@vitejs/plugin-react", "@vitejs/plugin-vue", "vue-tsc"],
+      "groupName": "Vite ecosystem",
+      "automerge": true
+    },
+
+    {
+      "description": "Vitest ecosystem",
+      "matchPackageNames": ["vitest", "@vitest/coverage-v8", "@vitest/ui", "happy-dom"],
+      "groupName": "Vitest ecosystem",
+      "automerge": true
+    },
+
+    {
+      "description": "Playwright — browser engine updates need E2E validation",
+      "matchPackageNames": ["playwright", "@playwright/test"],
+      "groupName": "Playwright",
+      "automerge": true,
+      "stabilityDays": 5
+    },
+
+    {
+      "description": "Changesets",
+      "matchPackageNames": ["@changesets/cli", "@changesets/action", "@changesets/changelog-github"],
+      "groupName": "Changesets",
+      "automerge": true
+    },
+
+    {
+      "description": "Astro ecosystem — major bumps need manual docs build validation",
+      "matchPackageNames": ["astro", "@astrojs/react", "@astrojs/vue", "@astrojs/starlight", "@astrojs/sitemap"],
+      "groupName": "Astro ecosystem",
+      "automerge": true,
+      "major": {
+        "automerge": false,
+        "labels": ["needs-manual-review"]
+      }
+    },
+
+    {
+      "description": "TypeScript — major bumps (5→6) can silently break exactOptionalPropertyTypes and generics. Manual review required.",
+      "matchPackageNames": ["typescript"],
+      "groupName": "TypeScript",
+      "major": {
+        "automerge": false,
+        "labels": ["needs-manual-review"],
+        "stabilityDays": 14
+      }
+    },
+
+    {
+      "description": "GitHub Actions — SHA-pin new actions automatically",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true,
+      "pinDigests": true
+    },
+
+    {
+      "description": "Biome — linter/formatter, minor API changes possible",
+      "matchPackageNames": ["@biomejs/biome"],
+      "groupName": "Biome",
+      "automerge": true,
+      "major": {
+        "automerge": false,
+        "labels": ["needs-manual-review"]
+      }
+    },
+
+    {
+      "description": "All major version bumps require manual review by default",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["major-update"]
+    }
+  ]
+}

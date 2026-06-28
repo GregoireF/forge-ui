@@ -25,7 +25,9 @@ test.describe("TagsInput — React (forge-ui)", () => {
   });
 
   test("initial tag TypeScript is visible", async ({ page }) => {
-    await expect(page.locator('[data-forge-scope="tags-input"]').getByText("TypeScript")).toBeVisible();
+    await expect(
+      page.locator('[data-forge-scope="tags-input"]').getByText("TypeScript"),
+    ).toBeVisible();
   });
 
   test("initial tag React is visible", async ({ page }) => {
@@ -55,7 +57,9 @@ test.describe("TagsInput — React (forge-ui)", () => {
 
   test("clicking × on a tag removes it", async ({ page }) => {
     const countBefore = await tags(page).count();
-    const deleteBtn = page.locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]').first();
+    const deleteBtn = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]')
+      .first();
     await deleteBtn.click();
     await expect(tags(page)).toHaveCount(countBefore - 1);
   });
@@ -70,7 +74,9 @@ test.describe("TagsInput — React (forge-ui)", () => {
   // WAI-ARIA: delete button aria-label must include the tag value so AT
   // announces which tag will be removed, not just "button".
   test("tag delete button has aria-label containing tag value", async ({ page }) => {
-    const deleteBtn = page.locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]').first();
+    const deleteBtn = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]')
+      .first();
     const label = await deleteBtn.getAttribute("aria-label");
     expect(label).toBeTruthy();
     expect(label).toContain("TypeScript");
@@ -90,12 +96,16 @@ test.describe("TagsInput — React (forge-ui)", () => {
     await tagInput(page).fill("SvelteKit");
     await page.mouse.click(5, 5); // blur away
     await expect(tags(page)).toHaveCount(countBefore + 1);
-    await expect(page.locator('[data-forge-scope="tags-input"]').getByText("SvelteKit")).toBeVisible();
+    await expect(
+      page.locator('[data-forge-scope="tags-input"]').getByText("SvelteKit"),
+    ).toBeVisible();
   });
 
   // WAI-ARIA: a live region lets AT announce tag add/remove without interrupting the user.
   test("live region exists with role=status and aria-live=polite", async ({ page }) => {
-    const liveRegion = page.locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]').first();
+    const liveRegion = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]')
+      .first();
     await expect(liveRegion).toBeAttached();
     await expect(liveRegion).toHaveAttribute("role", "status");
     await expect(liveRegion).toHaveAttribute("aria-live", "polite");
@@ -103,7 +113,9 @@ test.describe("TagsInput — React (forge-ui)", () => {
   });
 
   test("live region announces added tag", async ({ page }) => {
-    const liveRegion = page.locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]').first();
+    const liveRegion = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]')
+      .first();
     await tagInput(page).fill("Svelte");
     await tagInput(page).press("Enter");
     await expect(liveRegion).toContainText("Svelte");

@@ -6,7 +6,9 @@ type AccordionSend = (event: AccordionEvent) => void;
 /** WAI-ARIA Accordion Pattern §keyboard — moves focus between header buttons. */
 function navigateAccordion(e: KeyboardEvent): boolean {
   const current = e.currentTarget as HTMLElement;
-  const root = current.closest<HTMLElement>('[data-forge-scope="accordion"][data-forge-part="root"]');
+  const root = current.closest<HTMLElement>(
+    '[data-forge-scope="accordion"][data-forge-part="root"]',
+  );
   if (!root) return false;
   const triggers = [
     ...root.querySelectorAll<HTMLElement>('[data-forge-part="trigger"]:not([disabled])'),

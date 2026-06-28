@@ -17,7 +17,8 @@ function useCtx(): AccordionApi {
 
 function useItemValue(): string {
   const val = useContext(AccordionItemCtx);
-  if (val === null) throw new Error("Accordion.Header/Trigger/Content must be inside <Accordion.Item>");
+  if (val === null)
+    throw new Error("Accordion.Header/Trigger/Content must be inside <Accordion.Item>");
   return val;
 }
 

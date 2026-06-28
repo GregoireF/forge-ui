@@ -22,7 +22,13 @@ function makeFixture({
   disabled?: boolean;
 } = {}) {
   return (
-    <Select.Root multiple={multiple} defaultValue={defaultValue} defaultLabel={defaultLabel} onValueChange={onValueChange} disabled={disabled}>
+    <Select.Root
+      multiple={multiple}
+      defaultValue={defaultValue}
+      defaultLabel={defaultLabel}
+      onValueChange={onValueChange}
+      disabled={disabled}
+    >
       <Select.Label>Fruit</Select.Label>
       <Select.Trigger data-testid="trigger">
         <Select.Value placeholder="Pick a fruit" />
@@ -31,7 +37,9 @@ function makeFixture({
         <Select.Content data-testid="content">
           <Select.Item value="apple">Apple</Select.Item>
           <Select.Item value="banana">Banana</Select.Item>
-          <Select.Item value="cherry" disabled>Cherry</Select.Item>
+          <Select.Item value="cherry" disabled>
+            Cherry
+          </Select.Item>
         </Select.Content>
       </Select.Portal>
     </Select.Root>
@@ -141,8 +149,14 @@ describe("Select (React)", () => {
     it("marks pre-selected option as aria-selected=true", async () => {
       render(makeFixture({ defaultValue: "apple", defaultLabel: "Apple" }));
       await user.click(screen.getByTestId("trigger"));
-      expect(screen.getByRole("option", { name: "Apple" })).toHaveAttribute("aria-selected", "true");
-      expect(screen.getByRole("option", { name: "Banana" })).toHaveAttribute("aria-selected", "false");
+      expect(screen.getByRole("option", { name: "Apple" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(screen.getByRole("option", { name: "Banana" })).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
     });
   });
 
@@ -290,7 +304,9 @@ describe("Select (React)", () => {
 
     it("Value span has data-forge-scope=select", () => {
       render(makeFixture());
-      const valueSpan = document.querySelector('[data-forge-scope="select"][data-forge-part="value"]');
+      const valueSpan = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="value"]',
+      );
       expect(valueSpan).toBeInTheDocument();
     });
 
@@ -307,30 +323,40 @@ describe("Select (React)", () => {
           </Select.Portal>
         </Select.Root>,
       );
-      const placeholder = document.querySelector('[data-forge-scope="select"][data-forge-part="placeholder"]');
+      const placeholder = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="placeholder"]',
+      );
       expect(placeholder).toBeInTheDocument();
     });
 
     it("ItemText has data-forge-scope=select", async () => {
       render(
         <Select.Root>
-          <Select.Trigger data-testid="trigger"><Select.Value placeholder="Pick" /></Select.Trigger>
+          <Select.Trigger data-testid="trigger">
+            <Select.Value placeholder="Pick" />
+          </Select.Trigger>
           <Select.Portal>
             <Select.Content>
-              <Select.Item value="apple"><Select.ItemText>Apple</Select.ItemText></Select.Item>
+              <Select.Item value="apple">
+                <Select.ItemText>Apple</Select.ItemText>
+              </Select.Item>
             </Select.Content>
           </Select.Portal>
         </Select.Root>,
       );
       await user.click(screen.getByTestId("trigger"));
-      const itemText = document.querySelector('[data-forge-scope="select"][data-forge-part="item-text"]');
+      const itemText = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="item-text"]',
+      );
       expect(itemText).toBeInTheDocument();
     });
 
     it("Separator has data-forge-scope=select", async () => {
       render(
         <Select.Root>
-          <Select.Trigger data-testid="trigger"><Select.Value placeholder="Pick" /></Select.Trigger>
+          <Select.Trigger data-testid="trigger">
+            <Select.Value placeholder="Pick" />
+          </Select.Trigger>
           <Select.Portal>
             <Select.Content>
               <Select.Item value="a">A</Select.Item>
@@ -341,14 +367,18 @@ describe("Select (React)", () => {
         </Select.Root>,
       );
       await user.click(screen.getByTestId("trigger"));
-      const separator = document.querySelector('[data-forge-scope="select"][data-forge-part="separator"]');
+      const separator = document.querySelector(
+        '[data-forge-scope="select"][data-forge-part="separator"]',
+      );
       expect(separator).toBeInTheDocument();
     });
 
     it("Group and GroupLabel have data-forge-scope=select", async () => {
       render(
         <Select.Root>
-          <Select.Trigger data-testid="trigger"><Select.Value placeholder="Pick" /></Select.Trigger>
+          <Select.Trigger data-testid="trigger">
+            <Select.Value placeholder="Pick" />
+          </Select.Trigger>
           <Select.Portal>
             <Select.Content>
               <Select.Group>
@@ -360,8 +390,12 @@ describe("Select (React)", () => {
         </Select.Root>,
       );
       await user.click(screen.getByTestId("trigger"));
-      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group"]')).toBeInTheDocument();
-      expect(document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="select"][data-forge-part="group"]'),
+      ).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="select"][data-forge-part="group-label"]'),
+      ).toBeInTheDocument();
     });
 
     it("Indicator has data-forge-scope=select, data-forge-part=indicator, and data-state", () => {

@@ -174,9 +174,7 @@ describe("Avatar (React) — forceMount", () => {
 
   it("forceMount + delayMs: in DOM immediately but CSS-hidden during delay", () => {
     vi.useFakeTimers();
-    render(
-      makeFixture({ src: "https://example.com/photo.jpg", delayMs: 600, forceMount: true }),
-    );
+    render(makeFixture({ src: "https://example.com/photo.jpg", delayMs: 600, forceMount: true }));
     // In DOM (forceMount) but hidden (delay not elapsed yet)
     expect(screen.getByTestId("fallback")).toBeInTheDocument();
     expect(screen.getByTestId("fallback")).toHaveAttribute("data-state", "hidden");

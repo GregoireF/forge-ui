@@ -5,9 +5,9 @@ import { createContext, useContext, useMemo, useRef } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
 import { DialogPortal } from "../dialog/DialogPortal.js";
 import { Slot } from "../shared/Slot.js";
-import { TooltipProviderCtx } from "./use-tooltip-provider.js";
 import type { UseTooltipOptions } from "./use-tooltip.js";
 import { useTooltip } from "./use-tooltip.js";
+import { TooltipProviderCtx } from "./use-tooltip-provider.js";
 
 type TooltipApiReturn = ReturnType<typeof useTooltip>;
 
@@ -78,9 +78,7 @@ function Root({ children, ...opts }: TooltipRootProps) {
   const presence = usePresence(api.isOpen);
   return (
     <TooltipCtx.Provider value={api}>
-      <TooltipPresenceCtx.Provider value={presence}>
-        {children}
-      </TooltipPresenceCtx.Provider>
+      <TooltipPresenceCtx.Provider value={presence}>{children}</TooltipPresenceCtx.Provider>
     </TooltipCtx.Provider>
   );
 }

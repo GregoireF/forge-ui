@@ -1,14 +1,27 @@
-﻿import type { CalendarDate, CreateDateRangePickerOptions, DateRange } from "@forge-ui/date-range-picker";
+﻿import type {
+  CalendarDate,
+  CreateDateRangePickerOptions,
+  DateRange,
+} from "@forge-ui/date-range-picker";
 import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import { defineComponent, h, inject, provide, watch } from "vue";
 import { usePresence } from "../../hooks/use-presence.js";
-import type { UseDateRangePickerOptions, UseDateRangePickerReturn } from "./use-date-range-picker.js";
+import type {
+  UseDateRangePickerOptions,
+  UseDateRangePickerReturn,
+} from "./use-date-range-picker.js";
 import { useDateRangePicker } from "./use-date-range-picker.js";
 
-const dateRangePickerKey: InjectionKey<UseDateRangePickerReturn> = Symbol("forge-date-range-picker");
+const dateRangePickerKey: InjectionKey<UseDateRangePickerReturn> =
+  Symbol("forge-date-range-picker");
 
-type DateRangePickerPresenceContext = { isPresent: Ref<boolean>; presenceRef: Ref<HTMLElement | null> };
-const dateRangePickerPresenceKey: InjectionKey<DateRangePickerPresenceContext> = Symbol("forge-date-range-picker-presence");
+type DateRangePickerPresenceContext = {
+  isPresent: Ref<boolean>;
+  presenceRef: Ref<HTMLElement | null>;
+};
+const dateRangePickerPresenceKey: InjectionKey<DateRangePickerPresenceContext> = Symbol(
+  "forge-date-range-picker-presence",
+);
 
 function useCtx(): UseDateRangePickerReturn {
   const ctx = inject(dateRangePickerKey);
@@ -31,8 +44,14 @@ const DateRangePickerRoot = defineComponent({
     numberOfMonths: { type: Number, default: undefined },
     disabled: { type: Boolean, default: undefined },
     readOnly: { type: Boolean, default: undefined },
-    onValueChange: { type: Function as PropType<CreateDateRangePickerOptions["onValueChange"]>, default: undefined },
-    onOpenChange: { type: Function as PropType<CreateDateRangePickerOptions["onOpenChange"]>, default: undefined },
+    onValueChange: {
+      type: Function as PropType<CreateDateRangePickerOptions["onValueChange"]>,
+      default: undefined,
+    },
+    onOpenChange: {
+      type: Function as PropType<CreateDateRangePickerOptions["onOpenChange"]>,
+      default: undefined,
+    },
   },
   emits: {
     "update:value": (_v: { start: CalendarDate | null; end: CalendarDate | null }) => true,
@@ -71,7 +90,7 @@ const DateRangePickerRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(dateRangePickerPresenceKey, presence);
     provide(dateRangePickerKey, api);
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -80,7 +99,10 @@ const DateRangePickerRoot = defineComponent({
 // ---------------------------------------------------------------------------
 
 function remapKeyDown(props: Record<string, unknown>): Record<string, unknown> {
-  const { onKeyDown, ...rest } = props as { onKeyDown?: (e: KeyboardEvent) => void; [k: string]: unknown };
+  const { onKeyDown, ...rest } = props as {
+    onKeyDown?: (e: KeyboardEvent) => void;
+    [k: string]: unknown;
+  };
   return { ...rest, ...(onKeyDown && { onKeydown: onKeyDown }) };
 }
 
@@ -92,7 +114,7 @@ const DateRangePickerTrigger = defineComponent({
   name: "ForgeDateRangePickerTrigger",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getTriggerProps(), ...attrs }, slots['default']?.());
+    return () => h("button", { ...api.getTriggerProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -117,12 +139,18 @@ const DateRangePickerContent = defineComponent({
       const closingProps = !api.isOpen.value
         ? ({ "aria-hidden": true, style: { pointerEvents: "none" } } as const)
         : {};
-      return h("div", {
-        ...contentProps,
-        ...closingProps,
-        ...attrs,
-        ref(el: Element | ComponentPublicInstance | null) { presenceRef.value = el as HTMLElement | null; },
-      }, slots['default']?.());
+      return h(
+        "div",
+        {
+          ...contentProps,
+          ...closingProps,
+          ...attrs,
+          ref(el: Element | ComponentPublicInstance | null) {
+            presenceRef.value = el as HTMLElement | null;
+          },
+        },
+        slots["default"]?.(),
+      );
     };
   },
 });
@@ -138,7 +166,7 @@ const DateRangePickerCalendarHeader = defineComponent({
     const api = useCtx();
     return () => {
       const { label, ...headerProps } = api.getCalendarHeaderProps(props.monthOffset);
-      return h("div", { ...headerProps, ...attrs }, slots['default']?.() ?? [label]);
+      return h("div", { ...headerProps, ...attrs }, slots["default"]?.() ?? [label]);
     };
   },
 });
@@ -151,7 +179,7 @@ const DateRangePickerPrevMonthButton = defineComponent({
   name: "ForgeDateRangePickerPrevMonthButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getPrevMonthButtonProps(), ...attrs }, slots['default']?.());
+    return () => h("button", { ...api.getPrevMonthButtonProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -159,7 +187,7 @@ const DateRangePickerNextMonthButton = defineComponent({
   name: "ForgeDateRangePickerNextMonthButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getNextMonthButtonProps(), ...attrs }, slots['default']?.());
+    return () => h("button", { ...api.getNextMonthButtonProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -174,7 +202,7 @@ const DateRangePickerCalendarGrid = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getCalendarGridProps(props.monthOffset)), ...attrs };
-      return h("div", merged, slots['default']?.());
+      return h("div", merged, slots["default"]?.());
     };
   },
 });
@@ -188,7 +216,8 @@ const DateRangePickerCalendarRow = defineComponent({
   props: { weekIndex: { type: Number, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getCalendarRowProps(props.weekIndex), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getCalendarRowProps(props.weekIndex), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -197,7 +226,12 @@ const DateRangePickerWeekdayHeader = defineComponent({
   props: { dayIndex: { type: Number, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs }, slots['default']?.() ?? [api.weekdays.value[props.dayIndex]?.narrow]);
+    return () =>
+      h(
+        "div",
+        { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs },
+        slots["default"]?.() ?? [api.weekdays.value[props.dayIndex]?.narrow],
+      );
   },
 });
 
@@ -215,7 +249,7 @@ const DateRangePickerCalendarCell = defineComponent({
     const api = useCtx();
     return () => {
       const cellProps = api.getCalendarCellProps(props.date, props.isOutsideMonth);
-      return h("div", { ...cellProps, ...attrs }, slots['default']?.() ?? [props.date.day]);
+      return h("div", { ...cellProps, ...attrs }, slots["default"]?.() ?? [props.date.day]);
     };
   },
 });
@@ -228,7 +262,8 @@ const DateRangePickerClearButton = defineComponent({
   name: "ForgeDateRangePickerClearButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getClearButtonProps(), ...attrs }, slots['default']?.() ?? ["Clear"]);
+    return () =>
+      h("button", { ...api.getClearButtonProps(), ...attrs }, slots["default"]?.() ?? ["Clear"]);
   },
 });
 
@@ -239,11 +274,19 @@ const DateRangePickerClearButton = defineComponent({
 const DateRangePickerPreset = defineComponent({
   name: "ForgeDateRangePickerPreset",
   props: {
-    preset: { type: Object as PropType<{ label: string; getValue: (today: CalendarDate) => DateRange }>, required: true },
+    preset: {
+      type: Object as PropType<{ label: string; getValue: (today: CalendarDate) => DateRange }>,
+      required: true,
+    },
   },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getPresetProps(props.preset), ...attrs }, slots['default']?.() ?? [props.preset.label]);
+    return () =>
+      h(
+        "button",
+        { ...api.getPresetProps(props.preset), ...attrs },
+        slots["default"]?.() ?? [props.preset.label],
+      );
   },
 });
 
@@ -295,17 +338,17 @@ export const DateRangePicker = {
 } as const;
 
 export {
+  DateRangePickerCalendarCell,
+  DateRangePickerCalendarGrid,
+  DateRangePickerCalendarHeader,
+  DateRangePickerCalendarRow,
+  DateRangePickerClearButton,
+  DateRangePickerContent,
+  DateRangePickerHiddenInputs,
+  DateRangePickerNextMonthButton,
+  DateRangePickerPreset,
+  DateRangePickerPrevMonthButton,
   DateRangePickerRoot,
   DateRangePickerTrigger,
-  DateRangePickerContent,
-  DateRangePickerCalendarHeader,
-  DateRangePickerPrevMonthButton,
-  DateRangePickerNextMonthButton,
-  DateRangePickerCalendarGrid,
-  DateRangePickerCalendarRow,
   DateRangePickerWeekdayHeader,
-  DateRangePickerCalendarCell,
-  DateRangePickerClearButton,
-  DateRangePickerPreset,
-  DateRangePickerHiddenInputs,
 };

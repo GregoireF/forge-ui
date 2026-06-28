@@ -1,6 +1,6 @@
+import type { DialogContext, DialogState } from "@forge-ui/dialog";
 import { describe, expect, it, vi } from "vitest";
 import { connectAlertDialog } from "../src/alert-dialog.connect.js";
-import type { DialogContext, DialogState } from "@forge-ui/dialog";
 
 function makeCtx(overrides: Partial<DialogContext> = {}): DialogContext {
   return {

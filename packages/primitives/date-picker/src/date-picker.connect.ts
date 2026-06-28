@@ -54,7 +54,13 @@ export function connectDatePicker(
   const isOpenMonth = snapshot.matches("open.month");
   const isOpenYear = snapshot.matches("open.year");
   const isOpen = isOpenDay || isOpenMonth || isOpenYear;
-  const view = isOpenDay ? ("day" as const) : isOpenMonth ? ("month" as const) : isOpenYear ? ("year" as const) : null;
+  const view = isOpenDay
+    ? ("day" as const)
+    : isOpenMonth
+      ? ("month" as const)
+      : isOpenYear
+        ? ("year" as const)
+        : null;
 
   const {
     id,
@@ -209,9 +215,7 @@ export function connectDatePicker(
     getPrevMonthButtonProps() {
       const prevY = focusedDate.month === 1 ? focusedDate.year - 1 : focusedDate.year;
       const prevM = focusedDate.month === 1 ? 12 : focusedDate.month - 1;
-      const isAtMin = min
-        ? prevY < min.year || (prevY === min.year && prevM < min.month)
-        : false;
+      const isAtMin = min ? prevY < min.year || (prevY === min.year && prevM < min.month) : false;
 
       return {
         type: "button" as const,
@@ -230,9 +234,7 @@ export function connectDatePicker(
     getNextMonthButtonProps() {
       const nextY = focusedDate.month === 12 ? focusedDate.year + 1 : focusedDate.year;
       const nextM = focusedDate.month === 12 ? 1 : focusedDate.month + 1;
-      const isAtMax = max
-        ? nextY > max.year || (nextY === max.year && nextM > max.month)
-        : false;
+      const isAtMax = max ? nextY > max.year || (nextY === max.year && nextM > max.month) : false;
 
       return {
         type: "button" as const,
@@ -421,7 +423,8 @@ export function connectDatePicker(
      * @param month  1-indexed (1=January … 12=December)
      */
     getMonthCellProps(month: number) {
-      const isSelected = value !== null && value?.year === focusedDate.year && value?.month === month;
+      const isSelected =
+        value !== null && value?.year === focusedDate.year && value?.month === month;
       const isFocused = focusedDate.month === month;
       const monthInfo = getMonthsOfYear(locale)[month - 1];
       const monthLabel = monthInfo?.label ?? "";

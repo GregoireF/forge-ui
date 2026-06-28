@@ -1,5 +1,11 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import type { CheckboxChecked, CheckboxContext, CheckboxEvent, CheckboxSend, CheckboxState } from "./checkbox.types.js";
+import type {
+  CheckboxChecked,
+  CheckboxContext,
+  CheckboxEvent,
+  CheckboxSend,
+  CheckboxState,
+} from "./checkbox.types.js";
 
 export type CheckboxApi = ReturnType<typeof connectCheckbox>;
 

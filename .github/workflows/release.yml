@@ -1,11 +1,19 @@
 name: Release
 
+# Changesets flow: on every push to main, this workflow either:
+# 1. Creates/updates a "Version Packages" PR collecting all pending changesets, OR
+# 2. Publishes to npm when that PR is merged (changesets are consumed).
+#
+# Node.js 20 LTS is pinned for npm publish — provenance attestation requires
+# a stable, auditable runtime. Bun handles installs; Node handles publishing.
+
 on:
   push:
     branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
+  # Never cancel a release in progress — a partial publish is worse than a duplicate run.
   cancel-in-progress: false
 
 permissions: read-all
@@ -14,28 +22,37 @@ jobs:
   release:
     name: Version or Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       pull-requests: write
       packages: write
       id-token: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          registry-url: https://npm.pkg.github.com
+          scope: "@forge-ui"
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
           bun-version: latest
 
-      - name: Setup Node.js (for npm publish)
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - name: Cache Bun store
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          node-version: 22
-          registry-url: https://npm.pkg.github.com
-          scope: "@forge-ui"
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
