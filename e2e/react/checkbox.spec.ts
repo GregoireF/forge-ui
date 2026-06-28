@@ -10,11 +10,9 @@ test.describe("Checkbox — React (forge-ui)", () => {
   const checkboxes = (page: import("@playwright/test").Page) =>
     page.locator('[data-forge-scope="checkbox"][data-forge-part="root"]');
 
-  const firstCheckbox = (page: import("@playwright/test").Page) =>
-    checkboxes(page).nth(0);
+  const firstCheckbox = (page: import("@playwright/test").Page) => checkboxes(page).nth(0);
 
-  const secondCheckbox = (page: import("@playwright/test").Page) =>
-    checkboxes(page).nth(1);
+  const secondCheckbox = (page: import("@playwright/test").Page) => checkboxes(page).nth(1);
 
   // ---------------------------------------------------------------------------
   // Initial state
@@ -38,7 +36,10 @@ test.describe("Checkbox — React (forge-ui)", () => {
 
   test("clicking unchecked checkbox checks it", async ({ page }) => {
     // Third group item "React" in CheckboxGroup starts unchecked
-    const groupItem = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"]').filter({ hasText: "React" }).first();
+    const groupItem = page
+      .locator('[data-forge-scope="checkbox"][data-forge-part="root"]')
+      .filter({ hasText: "React" })
+      .first();
     await groupItem.click();
     // After click it should be checked
     await expect(groupItem).toHaveAttribute("aria-checked", "true");
@@ -58,7 +59,9 @@ test.describe("Checkbox — React (forge-ui)", () => {
   });
 
   // WAI-ARIA §3.7: "When a mixed checkbox is activated, it becomes checked" — not unchecked
-  test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({ page }) => {
+  test("clicking indeterminate checkbox transitions to checked (WAI-ARIA §3.7)", async ({
+    page,
+  }) => {
     await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "mixed");
     await secondCheckbox(page).click();
     await expect(secondCheckbox(page)).toHaveAttribute("aria-checked", "true");
@@ -71,7 +74,9 @@ test.describe("Checkbox — React (forge-ui)", () => {
   // WAI-ARIA: disabled checkbox must expose aria-disabled=true so AT can
   // announce it is non-interactive, not just visually dimmed.
   test("disabled checkbox has aria-disabled=true", async ({ page }) => {
-    const thirdCheckbox = page.locator('[data-forge-scope="checkbox"][data-forge-part="root"]').nth(2);
+    const thirdCheckbox = page
+      .locator('[data-forge-scope="checkbox"][data-forge-part="root"]')
+      .nth(2);
     await expect(thirdCheckbox).toHaveAttribute("aria-disabled", "true");
   });
 

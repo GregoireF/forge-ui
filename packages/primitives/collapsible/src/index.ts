@@ -1,5 +1,5 @@
-export { connectCollapsible } from "./collapsible.connect.js";
 export type { CollapsibleApi } from "./collapsible.connect.js";
+export { connectCollapsible } from "./collapsible.connect.js";
 export { createCollapsibleMachine } from "./collapsible.machine.js";
 export type {
   CollapsibleContext,

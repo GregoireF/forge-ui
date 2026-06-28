@@ -1,6 +1,6 @@
 import type { CreateSelectMachineOptions, SelectApi, SelectSend } from "@forge-ui/select";
 import { connectSelect, createSelectMachine } from "@forge-ui/select";
-import { computed, type ComputedRef, useId } from "vue";
+import { type ComputedRef, computed, useId } from "vue";
 import { useMachine } from "../../use-machine.js";
 
 export interface UseSelectOptions extends Omit<CreateSelectMachineOptions, "id"> {
@@ -18,7 +18,10 @@ export interface UseSelectReturn {
   getTriggerProps: () => ReturnType<SelectApi["getTriggerProps"]>;
   getPositionerProps: () => ReturnType<SelectApi["getPositionerProps"]>;
   getContentProps: () => ReturnType<SelectApi["getContentProps"]>;
-  getOptionProps: (option: { value: string; disabled?: boolean }) => ReturnType<SelectApi["getOptionProps"]>;
+  getOptionProps: (option: {
+    value: string;
+    disabled?: boolean;
+  }) => ReturnType<SelectApi["getOptionProps"]>;
   getIndicatorProps: () => ReturnType<SelectApi["getIndicatorProps"]>;
 }
 

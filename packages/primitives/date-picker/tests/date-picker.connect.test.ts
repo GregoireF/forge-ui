@@ -1,8 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
-import { connectDatePicker } from "../src/date-picker.connect.js";
-import { getYearGridStart } from "../src/calendar.js";
-import type { DatePickerContext, DatePickerState } from "../src/date-picker.types.js";
 import type { MachineSnapshot } from "@forge-ui/core";
+import { describe, expect, it, vi } from "vitest";
+import { getYearGridStart } from "../src/calendar.js";
+import { connectDatePicker } from "../src/date-picker.connect.js";
+import type { DatePickerContext, DatePickerState } from "../src/date-picker.types.js";
 
 const JUNE15 = { year: 2024, month: 6, day: 15 };
 const JAN15 = { year: 2024, month: 1, day: 15 };
@@ -26,10 +26,7 @@ function makeCtx(overrides: Partial<DatePickerContext> = {}): DatePickerContext 
   };
 }
 
-function makeApi(
-  overrides: Partial<DatePickerContext> = {},
-  state: DatePickerState = "closed",
-) {
+function makeApi(overrides: Partial<DatePickerContext> = {}, state: DatePickerState = "closed") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
   const machine = { setContext: vi.fn<(updates: Partial<DatePickerContext>) => void>() };
@@ -276,11 +273,15 @@ describe("connectDatePicker — month navigation buttons", () => {
 
 describe("connectDatePicker — year range navigation buttons", () => {
   it("prev range button has data-forge-part prev-year-range-button", () => {
-    expect(makeApi().api.getPrevYearRangeButtonProps()["data-forge-part"]).toBe("prev-year-range-button");
+    expect(makeApi().api.getPrevYearRangeButtonProps()["data-forge-part"]).toBe(
+      "prev-year-range-button",
+    );
   });
 
   it("next range button has data-forge-part next-year-range-button", () => {
-    expect(makeApi().api.getNextYearRangeButtonProps()["data-forge-part"]).toBe("next-year-range-button");
+    expect(makeApi().api.getNextYearRangeButtonProps()["data-forge-part"]).toBe(
+      "next-year-range-button",
+    );
   });
 
   it("prev range onClick sends NAVIGATE_PREV_YEAR_RANGE", () => {
@@ -306,7 +307,9 @@ describe("connectDatePicker — getCalendarGridProps", () => {
   });
 
   it("aria-label contains month/year", () => {
-    expect(makeApi({ focusedDate: JUNE15 }).api.getCalendarGridProps()["aria-label"]).toMatch(/june/i);
+    expect(makeApi({ focusedDate: JUNE15 }).api.getCalendarGridProps()["aria-label"]).toMatch(
+      /june/i,
+    );
   });
 
   it("aria-disabled when context.disabled", () => {
@@ -358,13 +361,17 @@ describe("connectDatePicker — getCalendarGridProps", () => {
 
   it("onKeyDown Shift+PageUp sends FOCUS_PREV_YEAR", () => {
     const { api, send } = makeApi();
-    api.getCalendarGridProps().onKeyDown(new KeyboardEvent("keydown", { key: "PageUp", shiftKey: true }));
+    api
+      .getCalendarGridProps()
+      .onKeyDown(new KeyboardEvent("keydown", { key: "PageUp", shiftKey: true }));
     expect(send).toHaveBeenCalledWith("FOCUS_PREV_YEAR");
   });
 
   it("onKeyDown Shift+PageDown sends FOCUS_NEXT_YEAR", () => {
     const { api, send } = makeApi();
-    api.getCalendarGridProps().onKeyDown(new KeyboardEvent("keydown", { key: "PageDown", shiftKey: true }));
+    api
+      .getCalendarGridProps()
+      .onKeyDown(new KeyboardEvent("keydown", { key: "PageDown", shiftKey: true }));
     expect(send).toHaveBeenCalledWith("FOCUS_NEXT_YEAR");
   });
 
@@ -415,11 +422,19 @@ describe("connectDatePicker — getCalendarCellProps", () => {
   });
 
   it("aria-selected true for selected date", () => {
-    expect(makeApi({ value: JUNE15, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)["aria-selected"]).toBe(true);
+    expect(
+      makeApi({ value: JUNE15, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)[
+        "aria-selected"
+      ],
+    ).toBe(true);
   });
 
   it("aria-selected false for non-selected date", () => {
-    expect(makeApi({ value: JAN15, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)["aria-selected"]).toBe(false);
+    expect(
+      makeApi({ value: JAN15, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)[
+        "aria-selected"
+      ],
+    ).toBe(false);
   });
 
   it("tabIndex 0 for focused date", () => {
@@ -431,14 +446,19 @@ describe("connectDatePicker — getCalendarCellProps", () => {
   });
 
   it("aria-disabled for date below min", () => {
-    expect(makeApi({ min: JUNE15, focusedDate: JUNE15 }).api.getCalendarCellProps(JAN15)["aria-disabled"]).toBe(true);
+    expect(
+      makeApi({ min: JUNE15, focusedDate: JUNE15 }).api.getCalendarCellProps(JAN15)[
+        "aria-disabled"
+      ],
+    ).toBe(true);
   });
 
   it("aria-disabled for unavailable date", () => {
     expect(
-      makeApi({ isDateUnavailable: (d) => d.month === 6, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)[
-        "aria-disabled"
-      ],
+      makeApi({
+        isDateUnavailable: (d) => d.month === 6,
+        focusedDate: JUNE15,
+      }).api.getCalendarCellProps(JUNE15)["aria-disabled"],
     ).toBe(true);
   });
 
@@ -450,12 +470,16 @@ describe("connectDatePicker — getCalendarCellProps", () => {
   });
 
   it("aria-label includes 'today' suffix for today's date", () => {
-    const label = makeApi({ focusedDate: TODAY, today: TODAY }).api.getCalendarCellProps(TODAY)["aria-label"];
+    const label = makeApi({ focusedDate: TODAY, today: TODAY }).api.getCalendarCellProps(TODAY)[
+      "aria-label"
+    ];
     expect(label).toMatch(/today/i);
   });
 
   it("aria-label does NOT include 'today' for non-today date", () => {
-    const label = makeApi({ focusedDate: JUNE15, today: TODAY }).api.getCalendarCellProps(JUNE15)["aria-label"];
+    const label = makeApi({ focusedDate: JUNE15, today: TODAY }).api.getCalendarCellProps(JUNE15)[
+      "aria-label"
+    ];
     expect(label).not.toMatch(/today/i);
   });
 
@@ -465,20 +489,30 @@ describe("connectDatePicker — getCalendarCellProps", () => {
   });
 
   it("data-today absent for non-today date", () => {
-    expect(makeApi({ focusedDate: JUNE15, today: TODAY }).api.getCalendarCellProps(JUNE15)["data-today"]).toBeUndefined();
+    expect(
+      makeApi({ focusedDate: JUNE15, today: TODAY }).api.getCalendarCellProps(JUNE15)["data-today"],
+    ).toBeUndefined();
   });
 
   it("data-selected present on selected cell", () => {
-    expect(makeApi({ value: JUNE15, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)["data-selected"]).toBe("");
+    expect(
+      makeApi({ value: JUNE15, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)[
+        "data-selected"
+      ],
+    ).toBe("");
   });
 
   it("data-focused present on focused cell", () => {
-    expect(makeApi({ focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)["data-focused"]).toBe("");
+    expect(makeApi({ focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)["data-focused"]).toBe(
+      "",
+    );
   });
 
   it("data-disabled present on unavailable cell", () => {
     expect(
-      makeApi({ isDateUnavailable: () => true, focusedDate: JUNE15 }).api.getCalendarCellProps(JUNE15)["data-disabled"],
+      makeApi({ isDateUnavailable: () => true, focusedDate: JUNE15 }).api.getCalendarCellProps(
+        JUNE15,
+      )["data-disabled"],
     ).toBe("");
   });
 
@@ -590,7 +624,9 @@ describe("connectDatePicker — getYearCellProps", () => {
   });
 
   it("aria-selected true when value.year matches", () => {
-    expect(makeApi({ value: JUNE15, focusedDate: JUNE15 }).api.getYearCellProps(2024)["aria-selected"]).toBe(true);
+    expect(
+      makeApi({ value: JUNE15, focusedDate: JUNE15 }).api.getYearCellProps(2024)["aria-selected"],
+    ).toBe(true);
   });
 
   it("aria-selected false when no value", () => {

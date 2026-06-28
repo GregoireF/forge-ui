@@ -118,9 +118,7 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
   // provides one, keep theirs (they can still call preventDefault themselves).
   const onInteractOutside =
     options.onInteractOutside ??
-    (role === "alertdialog"
-      ? (e: PointerEvent | FocusEvent) => e.preventDefault()
-      : undefined);
+    (role === "alertdialog" ? (e: PointerEvent | FocusEvent) => e.preventDefault() : undefined);
 
   return createMachine<DialogContext, DialogState, DialogEvent>({
     id: `forge-dialog:${id}`,

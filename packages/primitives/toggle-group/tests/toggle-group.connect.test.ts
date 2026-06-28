@@ -1,13 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { connectToggleGroup } from "../src/toggle-group.connect.js";
-import type {
-  ToggleGroupContext,
-  ToggleGroupState,
-} from "../src/toggle-group.types.js";
+import type { ToggleGroupContext, ToggleGroupState } from "../src/toggle-group.types.js";
 
-function makeCtx(
-  overrides: Partial<ToggleGroupContext> = {},
-): ToggleGroupContext {
+function makeCtx(overrides: Partial<ToggleGroupContext> = {}): ToggleGroupContext {
   return {
     id: "g",
     type: "multiple",

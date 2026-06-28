@@ -37,8 +37,7 @@ test.describe("SSR hydration integrity — no Vue hydration warnings", () => {
     page.on("console", (msg) => {
       if (
         msg.type() === "warning" &&
-        (msg.text().toLowerCase().includes("hydrat") ||
-          msg.text().includes("[Vue warn]"))
+        (msg.text().toLowerCase().includes("hydrat") || msg.text().includes("[Vue warn]"))
       ) {
         hydrationWarnings.push(msg.text());
       }
@@ -87,13 +86,17 @@ test.describe("SSR HTML — ARIA attributes present without JavaScript", () => {
 
   test("Accordion trigger has aria-expanded in SSR HTML", async ({ page }) => {
     await goto(page);
-    const trigger = page.locator('[data-forge-scope="accordion"][data-forge-part="trigger"]').first();
+    const trigger = page
+      .locator('[data-forge-scope="accordion"][data-forge-part="trigger"]')
+      .first();
     await expect(trigger).toHaveAttribute("aria-expanded");
   });
 
   test("Accordion trigger has aria-controls in SSR HTML", async ({ page }) => {
     await goto(page);
-    const trigger = page.locator('[data-forge-scope="accordion"][data-forge-part="trigger"]').first();
+    const trigger = page
+      .locator('[data-forge-scope="accordion"][data-forge-part="trigger"]')
+      .first();
     await expect(trigger).toHaveAttribute("aria-controls");
   });
 

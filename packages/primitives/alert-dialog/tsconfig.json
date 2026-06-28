@@ -9,10 +9,7 @@
       "@forge-ui/dialog": ["../dialog/src/index.ts"]
     }
   },
-  "references": [
-    { "path": "../../core" },
-    { "path": "../dialog" }
-  ],
+  "references": [{ "path": "../../core" }, { "path": "../dialog" }],
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tests"]
 }

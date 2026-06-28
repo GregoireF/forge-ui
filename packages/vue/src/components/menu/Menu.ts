@@ -1,9 +1,5 @@
 import type { MenuPositioning } from "@forge-ui/menu";
-import type {
-  InjectionKey,
-  PropType,
-  Ref,
-} from "vue";
+import type { InjectionKey, PropType, Ref } from "vue";
 import {
   defineComponent,
   h,
@@ -50,7 +46,8 @@ const menuRadioGroupKey: InjectionKey<{
   onValueChange: (v: string) => void;
 }> = Symbol("forge-menu-radio-group");
 /** Checked state for ItemIndicator. */
-const menuItemCheckedKey: InjectionKey<Ref<boolean | "indeterminate">> = Symbol("forge-menu-item-checked");
+const menuItemCheckedKey: InjectionKey<Ref<boolean | "indeterminate">> =
+  Symbol("forge-menu-item-checked");
 
 function useCtx(): MenuApi {
   const ctx = inject(menuKey);
@@ -111,16 +108,22 @@ const MenuRoot = defineComponent({
       ...(props.onSelect !== undefined && { onSelect: props.onSelect }),
       ...(props.onHighlightChange !== undefined && { onHighlightChange: props.onHighlightChange }),
       ...(props.onInteractOutside !== undefined && { onInteractOutside: props.onInteractOutside }),
-      ...(props.onPointerDownOutside !== undefined && { onPointerDownOutside: props.onPointerDownOutside }),
+      ...(props.onPointerDownOutside !== undefined && {
+        onPointerDownOutside: props.onPointerDownOutside,
+      }),
       ...(props.onFocusOutside !== undefined && { onFocusOutside: props.onFocusOutside }),
       ...(props.onEscapeKeyDown !== undefined && { onEscapeKeyDown: props.onEscapeKeyDown }),
     });
 
     // Controlled open sync: props.open changes after mount must be mirrored to the machine.
     // The machine reads `open` only at creation; this watch keeps it in sync.
-    watch(() => props.open, (v) => {
-      if (v !== undefined) api.send(v ? "OPEN" : "CLOSE");
-    }, { immediate: false });
+    watch(
+      () => props.open,
+      (v) => {
+        if (v !== undefined) api.send(v ? "OPEN" : "CLOSE");
+      },
+      { immediate: false },
+    );
 
     provide(menuKey, api);
 
@@ -130,7 +133,7 @@ const MenuRoot = defineComponent({
     const subTriggers = new Map<string, () => void>();
     provide(menuSubTriggersKey, subTriggers);
 
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -147,10 +150,14 @@ const MenuTrigger = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const { onKeydown: _kd, ref: _ref, ...rest } = api.getTriggerProps({ disabled: props.disabled });
+      const {
+        onKeydown: _kd,
+        ref: _ref,
+        ...rest
+      } = api.getTriggerProps({ disabled: props.disabled });
       const triggerProps = { ...rest, ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots['default']);
-      return h("button", triggerProps, slots['default']?.());
+      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
+      return h("button", triggerProps, slots["default"]?.());
     };
   },
 });
@@ -171,7 +178,7 @@ const MenuPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, {}, slots['default']);
+      return h(DialogPortal, {}, slots["default"]);
     };
   },
 });
@@ -224,7 +231,11 @@ const MenuContent = defineComponent({
 
     // ARIA roving tabindex: keyboard highlight moves real focus to the item.
     watch(api.highlighted, () => {
-      if (api.isOpen.value && api.highlighted.value !== null && api.highlightSource.value === "keyboard") {
+      if (
+        api.isOpen.value &&
+        api.highlighted.value !== null &&
+        api.highlightSource.value === "keyboard"
+      ) {
         nextTick(() => api.focusHighlightedItem());
       }
     });
@@ -232,7 +243,12 @@ const MenuContent = defineComponent({
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
 
-      const { ref: _ref, onKeydown: baseKeydown, onKeyDown: _kD, ...contentRest } = api.getContentProps() as ReturnType<typeof api.getContentProps> & { onKeyDown?: unknown };
+      const {
+        ref: _ref,
+        onKeydown: baseKeydown,
+        onKeyDown: _kD,
+        ...contentRest
+      } = api.getContentProps() as ReturnType<typeof api.getContentProps> & { onKeyDown?: unknown };
       const positionerProps = api.getPositionerProps();
 
       const closingAttrs = !api.isOpen.value
@@ -269,18 +285,19 @@ const MenuContent = defineComponent({
       };
 
       const inner = props.asChild
-        ? h(Slot, contentProps, slots['default'])
-        : h("div", contentProps, slots['default']?.());
+        ? h(Slot, contentProps, slots["default"])
+        : h("div", contentProps, slots["default"]?.());
 
       // Modal overlay: renders behind the positioner (z-index 49 vs 50).
       // Click on overlay → watchOutside → INTERACT_OUTSIDE → close.
-      const overlay = api.modal.value && api.isOpen.value
-        ? h("div", {
-            "data-forge-part": "modal-overlay",
-            "aria-hidden": "true",
-            style: { position: "fixed", inset: 0, zIndex: 49 },
-          })
-        : null;
+      const overlay =
+        api.modal.value && api.isOpen.value
+          ? h("div", {
+              "data-forge-part": "modal-overlay",
+              "aria-hidden": "true",
+              style: { position: "fixed", inset: 0, zIndex: 49 },
+            })
+          : null;
 
       return [overlay, h("div", positionerProps, [inner])];
     };
@@ -297,7 +314,9 @@ const MenuArrow = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const { ref: _ref, ...arrowRest } = api.getArrowProps() as ReturnType<typeof api.getArrowProps> & { ref?: unknown };
+      const { ref: _ref, ...arrowRest } = api.getArrowProps() as ReturnType<
+        typeof api.getArrowProps
+      > & { ref?: unknown };
       const arrowProps = {
         ...arrowRest,
         ...attrs,
@@ -305,11 +324,20 @@ const MenuArrow = defineComponent({
           if (typeof _ref === "function") (_ref as (el: unknown) => void)(el);
         },
       };
-      if (props.asChild) return h(Slot, arrowProps, slots['default']);
+      if (props.asChild) return h(Slot, arrowProps, slots["default"]);
       return h("span", arrowProps, [
-        h("svg", { ...api.getArrowTipProps(), width: 10, height: 5, viewBox: "0 0 10 5", "aria-hidden": "true", style: "display:block" }, [
-          h("path", { d: "M0 0L5 5L10 0", fill: "currentColor" }),
-        ]),
+        h(
+          "svg",
+          {
+            ...api.getArrowTipProps(),
+            width: 10,
+            height: 5,
+            viewBox: "0 0 10 5",
+            "aria-hidden": "true",
+            style: "display:block",
+          },
+          [h("path", { d: "M0 0L5 5L10 0", fill: "currentColor" })],
+        ),
       ]);
     };
   },
@@ -325,7 +353,9 @@ const MenuAnchor = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () => {
-      const { ref: _ref, ...anchorRest } = api.getAnchorProps() as ReturnType<typeof api.getAnchorProps> & { ref?: unknown };
+      const { ref: _ref, ...anchorRest } = api.getAnchorProps() as ReturnType<
+        typeof api.getAnchorProps
+      > & { ref?: unknown };
       const anchorProps = {
         ...anchorRest,
         ...attrs,
@@ -333,8 +363,8 @@ const MenuAnchor = defineComponent({
           if (typeof _ref === "function") (_ref as (el: unknown) => void)(el);
         },
       };
-      if (props.asChild) return h(Slot, anchorProps, slots['default']);
-      return h("span", anchorProps, slots['default']?.());
+      if (props.asChild) return h(Slot, anchorProps, slots["default"]);
+      return h("span", anchorProps, slots["default"]?.());
     };
   },
 });
@@ -360,11 +390,26 @@ const MenuItemComp = defineComponent({
   setup(props, { slots, attrs, emit }) {
     const api = useCtx();
 
-    onMounted(() => api.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      api.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => api.unregisterItem(props.value));
 
     return () => {
-      const { onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getItemProps(props.value, props.disabled) as ReturnType<typeof api.getItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      const {
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        onClick: baseClick,
+        ...itemRest
+      } = api.getItemProps(props.value, props.disabled) as ReturnType<typeof api.getItemProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
       const itemProps = {
         ...itemRest,
         ...attrs,
@@ -376,8 +421,8 @@ const MenuItemComp = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -390,7 +435,7 @@ const MenuLabel = defineComponent({
   name: "ForgeMenuLabel",
   setup(_props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots['default']?.());
+    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -415,7 +460,7 @@ const MenuGroup = defineComponent({
   props: { id: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots['default']?.());
+    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -424,7 +469,8 @@ const MenuGroupLabel = defineComponent({
   props: { groupId: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -444,7 +490,12 @@ const MenuRadioGroup = defineComponent({
   setup(props, { slots, attrs, emit }) {
     const api = useCtx();
     const valueRef = ref(props.value);
-    watch(() => props.value, (v) => { valueRef.value = v; });
+    watch(
+      () => props.value,
+      (v) => {
+        valueRef.value = v;
+      },
+    );
 
     provide(menuRadioGroupKey, {
       groupId: props.groupId,
@@ -455,7 +506,8 @@ const MenuRadioGroup = defineComponent({
       },
     });
 
-    return () => h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -464,7 +516,8 @@ const MenuRadioGroupLabel = defineComponent({
   props: { groupId: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots['default']?.());
+    return () =>
+      h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -487,21 +540,38 @@ const MenuRadioItem = defineComponent({
     const radioCtx = inject(menuRadioGroupKey);
     if (!radioCtx) throw new Error("Menu.RadioItem must be inside <Menu.RadioGroup>");
 
-    onMounted(() => api.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      api.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => api.unregisterItem(props.value));
 
     const isChecked = ref(radioCtx.value.value === props.value);
-    watch(radioCtx.value, (v) => { isChecked.value = v === props.value; });
+    watch(radioCtx.value, (v) => {
+      isChecked.value = v === props.value;
+    });
 
     provide(menuItemCheckedKey, isChecked as Ref<boolean | "indeterminate">);
 
     return () => {
-      const { onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getRadioItemProps({
+      const {
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        onClick: baseClick,
+        ...itemRest
+      } = api.getRadioItemProps({
         value: props.value,
         checked: isChecked.value,
         disabled: props.disabled,
         closeOnSelect: props.closeOnSelect,
-      }) as ReturnType<typeof api.getRadioItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      }) as ReturnType<typeof api.getRadioItemProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
 
       const itemProps = {
         ...itemRest,
@@ -513,8 +583,8 @@ const MenuRadioItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -540,20 +610,40 @@ const MenuCheckboxItem = defineComponent({
   setup(props, { slots, attrs, emit }) {
     const api = useCtx();
 
-    onMounted(() => api.registerItem({ value: props.value, label: props.label ?? props.value, ...(props.textValue !== undefined && { textValue: props.textValue }), disabled: props.disabled }));
+    onMounted(() =>
+      api.registerItem({
+        value: props.value,
+        label: props.label ?? props.value,
+        ...(props.textValue !== undefined && { textValue: props.textValue }),
+        disabled: props.disabled,
+      }),
+    );
     onScopeDispose(() => api.unregisterItem(props.value));
 
     const checkedRef = ref(props.checked);
-    watch(() => props.checked, (v) => { checkedRef.value = v; });
+    watch(
+      () => props.checked,
+      (v) => {
+        checkedRef.value = v;
+      },
+    );
     provide(menuItemCheckedKey, checkedRef as Ref<boolean | "indeterminate">);
 
     return () => {
-      const { onMousemove: _mm, onMouseleave: _ml, onClick: baseClick, ...itemRest } = api.getCheckboxItemProps({
+      const {
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        onClick: baseClick,
+        ...itemRest
+      } = api.getCheckboxItemProps({
         value: props.value,
         checked: checkedRef.value,
         disabled: props.disabled,
         closeOnSelect: props.closeOnSelect,
-      }) as ReturnType<typeof api.getCheckboxItemProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      }) as ReturnType<typeof api.getCheckboxItemProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
 
       const itemProps = {
         ...itemRest,
@@ -566,8 +656,8 @@ const MenuCheckboxItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots['default']);
-      return h("div", itemProps, slots['default']?.());
+      if (props.asChild) return h(Slot, itemProps, slots["default"]);
+      return h("div", itemProps, slots["default"]?.());
     };
   },
 });
@@ -588,7 +678,7 @@ const MenuItemIndicator = defineComponent({
     return () => {
       const isChecked = checkedCtx?.value ?? false;
       if (!props.forceMount && !isChecked) return null;
-      return h("span", api.getItemIndicatorProps(isChecked), slots['default']?.());
+      return h("span", api.getItemIndicatorProps(isChecked), slots["default"]?.());
     };
   },
 });
@@ -628,7 +718,7 @@ const MenuSub = defineComponent({
     // Override so SubContent and deeper SubTriggers see our own map.
     provide(menuSubTriggersKey, ownTriggers);
 
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -675,7 +765,20 @@ const MenuSubTrigger = defineComponent({
     onScopeDispose(() => parentApi.unregisterItem(props.value));
 
     return () => {
-      const { onMouseEnter: _pme, onMouseLeave: _pml, onMousemove: _mm, onMouseleave: _ml, ...baseTriggerProps } = parentApi.getSubTriggerProps(subMenuId, childApi.isOpen.value, props.disabled) as ReturnType<typeof parentApi.getSubTriggerProps> & { onMousemove?: unknown; onMouseleave?: unknown };
+      const {
+        onMouseEnter: _pme,
+        onMouseLeave: _pml,
+        onMousemove: _mm,
+        onMouseleave: _ml,
+        ...baseTriggerProps
+      } = parentApi.getSubTriggerProps(
+        subMenuId,
+        childApi.isOpen.value,
+        props.disabled,
+      ) as ReturnType<typeof parentApi.getSubTriggerProps> & {
+        onMousemove?: unknown;
+        onMouseleave?: unknown;
+      };
 
       const subTriggerProps = {
         ...baseTriggerProps,
@@ -710,7 +813,7 @@ const MenuSubTrigger = defineComponent({
         },
       };
 
-      return h("div", subTriggerProps, slots['default']?.());
+      return h("div", subTriggerProps, slots["default"]?.());
     };
   },
 });
@@ -738,7 +841,11 @@ const MenuSubContent = defineComponent({
 
     // ARIA roving tabindex: keyboard highlight moves real focus to the sub-menu item.
     watch(childApi.highlighted, () => {
-      if (childApi.isOpen.value && childApi.highlighted.value !== null && childApi.highlightSource.value === "keyboard") {
+      if (
+        childApi.isOpen.value &&
+        childApi.highlighted.value !== null &&
+        childApi.highlightSource.value === "keyboard"
+      ) {
         nextTick(() => childApi.focusHighlightedItem());
       }
     });
@@ -748,7 +855,14 @@ const MenuSubContent = defineComponent({
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
 
-      const { ref: _ref, onKeydown: baseKeydown, onKeyDown: _kD, ...contentRest } = childApi.getContentProps() as ReturnType<typeof childApi.getContentProps> & { onKeyDown?: unknown };
+      const {
+        ref: _ref,
+        onKeydown: baseKeydown,
+        onKeyDown: _kD,
+        ...contentRest
+      } = childApi.getContentProps() as ReturnType<typeof childApi.getContentProps> & {
+        onKeyDown?: unknown;
+      };
       const positionerProps = childApi.getPositionerProps();
 
       const closingAttrs = !childApi.isOpen.value
@@ -763,7 +877,9 @@ const MenuSubContent = defineComponent({
           presenceRef.value = el as HTMLElement | null;
           if (typeof _ref === "function") (_ref as (el: unknown) => void)(el);
         },
-        onMouseenter() { clearTimeout(subCloseTimer.value); },
+        onMouseenter() {
+          clearTimeout(subCloseTimer.value);
+        },
         onMouseleave() {
           subCloseTimer.value = setTimeout(() => childApi.setOpen(false), closeDelay);
         },
@@ -794,8 +910,8 @@ const MenuSubContent = defineComponent({
       };
 
       const inner = props.asChild
-        ? h(Slot, contentProps, slots['default'])
-        : h("div", contentProps, slots['default']?.());
+        ? h(Slot, contentProps, slots["default"])
+        : h("div", contentProps, slots["default"]?.());
 
       return h(DialogPortal, {}, () => h("div", positionerProps, [inner]));
     };
@@ -829,23 +945,23 @@ export const Menu = {
 } as const;
 
 export {
-  MenuRoot,
-  MenuTrigger,
-  MenuPortal,
-  MenuContent,
-  MenuArrow,
   MenuAnchor,
-  MenuItemComp as MenuItem,
-  MenuLabel,
-  MenuSeparator,
+  MenuArrow,
+  MenuCheckboxItem,
+  MenuContent,
   MenuGroup,
   MenuGroupLabel,
+  MenuItemComp as MenuItem,
+  MenuItemIndicator,
+  MenuLabel,
+  MenuPortal,
   MenuRadioGroup,
   MenuRadioGroupLabel,
   MenuRadioItem,
-  MenuCheckboxItem,
-  MenuItemIndicator,
+  MenuRoot,
+  MenuSeparator,
   MenuSub,
-  MenuSubTrigger,
   MenuSubContent,
+  MenuSubTrigger,
+  MenuTrigger,
 };

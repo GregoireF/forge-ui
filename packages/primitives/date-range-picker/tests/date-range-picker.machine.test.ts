@@ -435,7 +435,10 @@ describe("createDateRangePickerMachine — focus day navigation", () => {
 
   it("FOCUS_NEXT_DAY does not move past max", () => {
     const jan16: CalendarDate = { year: 2024, month: 1, day: 16 };
-    const m = make({ defaultValue: { start: jan15, end: null }, max: { year: 2024, month: 1, day: 16 } });
+    const m = make({
+      defaultValue: { start: jan15, end: null },
+      max: { year: 2024, month: 1, day: 16 },
+    });
     m.send("OPEN");
     m.send("FOCUS_NEXT_DAY");
     expect(m.getSnapshot().context.focusedDate).toEqual(jan16);

@@ -1,6 +1,11 @@
-import { createMachine } from "@forge-ui/core";
 import type { ActivityFn } from "@forge-ui/core";
-import type { CreateSliderOptions, SliderContext, SliderEvent, SliderState } from "./slider.types.js";
+import { createMachine } from "@forge-ui/core";
+import type {
+  CreateSliderOptions,
+  SliderContext,
+  SliderEvent,
+  SliderState,
+} from "./slider.types.js";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -36,7 +41,13 @@ function computeValueFromPointer(e: PointerEvent, ctx: SliderContext): number {
 }
 
 // Produce updated values array with one thumb changed, clamped between neighbors.
-function updateThumb(values: number[], index: number, next: number, min: number, max: number): number[] {
+function updateThumb(
+  values: number[],
+  index: number,
+  next: number,
+  min: number,
+  max: number,
+): number[] {
   const lo = index > 0 ? (values[index - 1] ?? min) : min;
   const hi = index < values.length - 1 ? (values[index + 1] ?? max) : max;
   const clamped = clamp(next, lo, hi);
@@ -219,7 +230,8 @@ const drag: ActivityFn<SliderContext> = (ctx, { send, notify }) => {
     const current = ctx.values[thumbIndex];
     if (current === undefined) return;
     const lo = thumbIndex > 0 ? (ctx.values[thumbIndex - 1] ?? ctx.min) : ctx.min;
-    const hi = thumbIndex < ctx.values.length - 1 ? (ctx.values[thumbIndex + 1] ?? ctx.max) : ctx.max;
+    const hi =
+      thumbIndex < ctx.values.length - 1 ? (ctx.values[thumbIndex + 1] ?? ctx.max) : ctx.max;
     const clamped = clamp(newValue, lo, hi);
     if (clamped === current) return;
     ctx.values = [...ctx.values];
@@ -234,7 +246,8 @@ const drag: ActivityFn<SliderContext> = (ctx, { send, notify }) => {
     const current = ctx.values[thumbIndex];
     if (current !== undefined) {
       const lo = thumbIndex > 0 ? (ctx.values[thumbIndex - 1] ?? ctx.min) : ctx.min;
-      const hi = thumbIndex < ctx.values.length - 1 ? (ctx.values[thumbIndex + 1] ?? ctx.max) : ctx.max;
+      const hi =
+        thumbIndex < ctx.values.length - 1 ? (ctx.values[thumbIndex + 1] ?? ctx.max) : ctx.max;
       const final = [...ctx.values];
       final[thumbIndex] = clamp(committed, lo, hi);
       ctx.onValueCommit?.(final);

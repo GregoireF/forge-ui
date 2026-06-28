@@ -20,7 +20,13 @@
 </template>
 
 <script setup lang="ts">
-import { ProgressFill, ProgressLabel, ProgressRoot, ProgressTrack, ProgressValueText } from "@forge-ui/vue";
+import {
+  ProgressFill,
+  ProgressLabel,
+  ProgressRoot,
+  ProgressTrack,
+  ProgressValueText,
+} from "@forge-ui/vue";
 import { ref } from "vue";
 
 const value = ref(40);

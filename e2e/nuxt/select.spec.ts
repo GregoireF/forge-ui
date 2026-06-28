@@ -154,23 +154,32 @@ test.describe("Select — Nuxt (forge-ui)", () => {
 
   test("click on item selects it and closes the listbox", async ({ page }) => {
     await selectTrigger(page).click();
-    const vueOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" }).first();
+    const vueOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" })
+      .first();
     await vueOption.click();
     await expect(selectContent(page)).not.toBeAttached();
   });
 
   test("selected item gets data-selected attribute", async ({ page }) => {
     await selectTrigger(page).click();
-    const reactOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first();
+    const reactOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" })
+      .first();
     await reactOption.click();
     await selectTrigger(page).click();
-    const reactOptionAgain = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first();
+    const reactOptionAgain = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" })
+      .first();
     await expect(reactOptionAgain).toHaveAttribute("data-selected", "");
   });
 
   test("trigger displays selected value label", async ({ page }) => {
     await selectTrigger(page).click();
-    await page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" }).first().click();
+    await page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" })
+      .first()
+      .click();
     await expect(selectTrigger(page)).toContainText("Vue");
   });
 
@@ -179,20 +188,32 @@ test.describe("Select — Nuxt (forge-ui)", () => {
   // ---------------------------------------------------------------------------
 
   test("multi-select: stays open after selecting an item", async ({ page }) => {
-    const multiTrigger = page.locator('[data-forge-scope="select"][data-forge-part="trigger"]').nth(1);
+    const multiTrigger = page
+      .locator('[data-forge-scope="select"][data-forge-part="trigger"]')
+      .nth(1);
     await multiTrigger.click();
-    const multiContent = page.locator('[data-forge-scope="select"][data-forge-part="content"]').nth(1);
+    const multiContent = page
+      .locator('[data-forge-scope="select"][data-forge-part="content"]')
+      .nth(1);
     await expect(multiContent).toBeVisible();
-    const firstOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Design" });
+    const firstOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', {
+      hasText: "Design",
+    });
     await firstOption.click();
     await expect(multiContent).toBeVisible();
   });
 
   test("multi-select: multiple items get data-selected", async ({ page }) => {
-    const multiTrigger = page.locator('[data-forge-scope="select"][data-forge-part="trigger"]').nth(1);
+    const multiTrigger = page
+      .locator('[data-forge-scope="select"][data-forge-part="trigger"]')
+      .nth(1);
     await multiTrigger.click();
-    const designOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Design" });
-    const devOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Développement" });
+    const designOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', {
+      hasText: "Design",
+    });
+    const devOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', {
+      hasText: "Développement",
+    });
     await designOption.click();
     await devOption.click();
     await expect(designOption).toHaveAttribute("data-selected", "");
@@ -232,16 +253,23 @@ test.describe("Select — Nuxt (forge-ui)", () => {
 
   test("selected option has aria-selected=true", async ({ page }) => {
     await selectTrigger(page).click();
-    await page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first().click();
+    await page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" })
+      .first()
+      .click();
     await selectTrigger(page).click();
     await expect(
-      page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" }).first()
+      page
+        .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "React" })
+        .first(),
     ).toHaveAttribute("aria-selected", "true");
   });
 
   test("unselected option has aria-selected=false", async ({ page }) => {
     await selectTrigger(page).click();
-    const vueOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" }).first();
+    const vueOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" })
+      .first();
     await expect(vueOption).toHaveAttribute("aria-selected", "false");
   });
 
@@ -283,7 +311,9 @@ test.describe("Select — Nuxt (forge-ui)", () => {
 
   test("disabled option has aria-disabled and cannot be selected", async ({ page }) => {
     await selectTrigger(page).click();
-    const disabledOption = page.locator('[data-forge-scope="select"][data-forge-part="option"][data-disabled]').first();
+    const disabledOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"][data-disabled]')
+      .first();
     await expect(disabledOption).toHaveAttribute("aria-disabled", "true");
   });
 
@@ -295,7 +325,9 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     await selectTrigger(page).focus();
     await page.keyboard.press("ArrowDown"); // open
     await page.keyboard.press("v");
-    const vueOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" }).first();
+    const vueOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Vue" })
+      .first();
     await expect(vueOption).toHaveAttribute("data-highlighted", "");
   });
 
@@ -303,10 +335,14 @@ test.describe("Select — Nuxt (forge-ui)", () => {
     await selectTrigger(page).focus();
     await page.keyboard.press("ArrowDown"); // open
     await page.keyboard.press("s"); // → Svelte
-    const svelteOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Svelte" }).first();
+    const svelteOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Svelte" })
+      .first();
     await expect(svelteOption).toHaveAttribute("data-highlighted", "");
     await page.keyboard.press("s"); // → Solid (next "s")
-    const solidOption = page.locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Solid" }).first();
+    const solidOption = page
+      .locator('[data-forge-scope="select"][data-forge-part="option"]', { hasText: "Solid" })
+      .first();
     await expect(solidOption).toHaveAttribute("data-highlighted", "");
   });
 

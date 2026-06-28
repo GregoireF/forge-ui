@@ -2,6 +2,10 @@
 import {
   Accordion,
   AlertDialog,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  AvatarRoot,
   CheckboxControl,
   CheckboxGroup,
   CheckboxGroupAll,
@@ -9,10 +13,6 @@ import {
   CheckboxLabel,
   CheckboxRoot,
   Collapsible,
-  Avatar,
-  AvatarRoot,
-  AvatarImage,
-  AvatarFallback,
   Combobox,
   ContextMenu,
   DateField,
@@ -29,35 +29,35 @@ import {
   HoverCardPortal,
   HoverCardRoot,
   HoverCardTrigger,
+  injectAvatarContext,
   Menu,
+  NumberInput,
   Popover,
   Progress,
   RadioGroup,
   Select,
-  NumberInput,
+  Separator,
   Slider,
   SwitchControl,
   SwitchLabel,
   SwitchRoot,
   SwitchThumb,
   Tabs,
+  TagsInput,
   TimePicker,
+  Toggle,
+  ToggleGroup,
   TooltipAnchor,
   TooltipContent,
   TooltipPortal,
   TooltipProvider,
   TooltipRoot,
   TooltipTrigger,
-  TagsInput,
-  Toggle,
-  ToggleGroup,
-  Separator,
-  VisuallyHidden,
   useAvatar,
-  injectAvatarContext,
-  useDialog,
   useDatePickerContext,
   useDateRangePickerContext,
+  useDialog,
+  VisuallyHidden,
 } from "@forge-ui/vue";
 import { defineComponent, h, ref } from "vue";
 
@@ -70,8 +70,21 @@ const calendarCellStyle = {
   lineHeight: 1,
 };
 
-const calPickerCellStyle = { textAlign: "center" as const, padding: "8px 4px", cursor: "pointer", borderRadius: "6px", fontSize: "0.8rem" };
-const calNavBtn = { padding: "0.25rem 0.6rem", background: "transparent", border: "1px solid #e2e8f0", borderRadius: "6px", cursor: "pointer", fontSize: "0.9rem" };
+const calPickerCellStyle = {
+  textAlign: "center" as const,
+  padding: "8px 4px",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontSize: "0.8rem",
+};
+const calNavBtn = {
+  padding: "0.25rem 0.6rem",
+  background: "transparent",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "0.9rem",
+};
 
 const DatePickerCalendarContent = defineComponent({
   name: "DatePickerCalendarContent",
@@ -80,49 +93,138 @@ const DatePickerCalendarContent = defineComponent({
     return () => {
       const view = api.view.value;
       // "open.month" handles no navigation events — only day/year views have prev/next buttons
-      const prevBtn = view === "day"
-        ? h(DatePicker.PrevMonthButton, { "data-testid": "date-picker-prev", style: calNavBtn }, { default: () => "←" })
-        : view === "year"
-          ? h(DatePicker.PrevYearRangeButton, { style: calNavBtn }, { default: () => "←" })
-          : h("span", { style: { width: "2rem" } });
-      const nextBtn = view === "day"
-        ? h(DatePicker.NextMonthButton, { "data-testid": "date-picker-next", style: calNavBtn }, { default: () => "→" })
-        : view === "year"
-          ? h(DatePicker.NextYearRangeButton, { style: calNavBtn }, { default: () => "→" })
-          : h("span", { style: { width: "2rem" } });
+      const prevBtn =
+        view === "day"
+          ? h(
+              DatePicker.PrevMonthButton,
+              { "data-testid": "date-picker-prev", style: calNavBtn },
+              { default: () => "←" },
+            )
+          : view === "year"
+            ? h(DatePicker.PrevYearRangeButton, { style: calNavBtn }, { default: () => "←" })
+            : h("span", { style: { width: "2rem" } });
+      const nextBtn =
+        view === "day"
+          ? h(
+              DatePicker.NextMonthButton,
+              { "data-testid": "date-picker-next", style: calNavBtn },
+              { default: () => "→" },
+            )
+          : view === "year"
+            ? h(DatePicker.NextYearRangeButton, { style: calNavBtn }, { default: () => "→" })
+            : h("span", { style: { width: "2rem" } });
 
-      const header = h("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" } }, [
-        prevBtn,
-        h(DatePicker.ViewSwitchButton, { "data-testid": "date-picker-header", style: { fontWeight: 600, fontSize: "0.875rem", background: "none", border: "none", cursor: "pointer", padding: "0.25rem 0.5rem", borderRadius: "6px" } }, { default: () => [api.monthYearLabel.value] }),
-        nextBtn,
-      ]);
+      const header = h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "0.75rem",
+          },
+        },
+        [
+          prevBtn,
+          h(
+            DatePicker.ViewSwitchButton,
+            {
+              "data-testid": "date-picker-header",
+              style: {
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "0.25rem 0.5rem",
+                borderRadius: "6px",
+              },
+            },
+            { default: () => [api.monthYearLabel.value] },
+          ),
+          nextBtn,
+        ],
+      );
 
       let body;
       if (view === "day") {
         const weekdays = api.weekdays.value;
         const weeks = api.weeks.value;
-        body = h(DatePicker.CalendarGrid, { "data-testid": "date-picker-grid", style: { display: "grid", gap: "2px" } }, {
-          default: () => [
-            h(DatePicker.CalendarRow, { weekIndex: -1, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" } }, {
-              default: () => weekdays.map((_, i) => h(DatePicker.WeekdayHeader, { dayIndex: i, style: { textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" } })),
-            }),
-            ...weeks.map((week, wi) =>
-              h(DatePicker.CalendarRow, { weekIndex: wi, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" } }, {
-                default: () => week.map((cell) =>
-                  h(DatePicker.CalendarCell, { date: cell.date, isOutsideMonth: cell.isOutsideMonth, style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 } })
+        body = h(
+          DatePicker.CalendarGrid,
+          { "data-testid": "date-picker-grid", style: { display: "grid", gap: "2px" } },
+          {
+            default: () => [
+              h(
+                DatePicker.CalendarRow,
+                {
+                  weekIndex: -1,
+                  style: {
+                    display: "grid",
+                    gridTemplateColumns: "repeat(7, 1fr)",
+                    gap: "2px",
+                    marginBottom: "4px",
+                  },
+                },
+                {
+                  default: () =>
+                    weekdays.map((_, i) =>
+                      h(DatePicker.WeekdayHeader, {
+                        dayIndex: i,
+                        style: {
+                          textAlign: "center",
+                          fontSize: "0.7rem",
+                          fontWeight: 600,
+                          color: "#94a3b8",
+                        },
+                      }),
+                    ),
+                },
+              ),
+              ...weeks.map((week, wi) =>
+                h(
+                  DatePicker.CalendarRow,
+                  {
+                    weekIndex: wi,
+                    style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" },
+                  },
+                  {
+                    default: () =>
+                      week.map((cell) =>
+                        h(DatePicker.CalendarCell, {
+                          date: cell.date,
+                          isOutsideMonth: cell.isOutsideMonth,
+                          style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 },
+                        }),
+                      ),
+                  },
                 ),
-              })
-            ),
-          ],
-        });
+              ),
+            ],
+          },
+        );
       } else if (view === "month") {
-        body = h(DatePicker.MonthGrid, { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" } }, {
-          default: () => Array.from({ length: 12 }, (_, i) => h(DatePicker.MonthCell, { month: i + 1, style: calPickerCellStyle })),
-        });
+        body = h(
+          DatePicker.MonthGrid,
+          { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" } },
+          {
+            default: () =>
+              Array.from({ length: 12 }, (_, i) =>
+                h(DatePicker.MonthCell, { month: i + 1, style: calPickerCellStyle }),
+              ),
+          },
+        );
       } else {
-        body = h(DatePicker.YearGrid, { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" } }, {
-          default: () => api.yearRange.value.map((year) => h(DatePicker.YearCell, { year, style: calPickerCellStyle })),
-        });
+        body = h(
+          DatePicker.YearGrid,
+          { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" } },
+          {
+            default: () =>
+              api.yearRange.value.map((year) =>
+                h(DatePicker.YearCell, { year, style: calPickerCellStyle }),
+              ),
+          },
+        );
       }
 
       return h("div", {}, [header, body]);
@@ -137,20 +239,59 @@ const DateRangePickerCalendarGrid = defineComponent({
     return () => {
       const weekdays = api.weekdays.value;
       const weeks = api.weeksPerMonth.value[0] ?? [];
-      return h(DateRangePicker.CalendarGrid, { style: { display: "grid", gap: "2px" } }, {
-        default: () => [
-          h(DateRangePicker.CalendarRow, { weekIndex: -1, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "4px" } }, {
-            default: () => weekdays.map((_, i) => h(DateRangePicker.WeekdayHeader, { dayIndex: i, style: { textAlign: "center", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8" } })),
-          }),
-          ...weeks.map((week, wi) =>
-            h(DateRangePicker.CalendarRow, { weekIndex: wi, style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" } }, {
-              default: () => week.map((cell) =>
-                h(DateRangePicker.CalendarCell, { date: cell.date, isOutsideMonth: cell.isOutsideMonth, style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 } })
+      return h(
+        DateRangePicker.CalendarGrid,
+        { style: { display: "grid", gap: "2px" } },
+        {
+          default: () => [
+            h(
+              DateRangePicker.CalendarRow,
+              {
+                weekIndex: -1,
+                style: {
+                  display: "grid",
+                  gridTemplateColumns: "repeat(7, 1fr)",
+                  gap: "2px",
+                  marginBottom: "4px",
+                },
+              },
+              {
+                default: () =>
+                  weekdays.map((_, i) =>
+                    h(DateRangePicker.WeekdayHeader, {
+                      dayIndex: i,
+                      style: {
+                        textAlign: "center",
+                        fontSize: "0.7rem",
+                        fontWeight: 600,
+                        color: "#94a3b8",
+                      },
+                    }),
+                  ),
+              },
+            ),
+            ...weeks.map((week, wi) =>
+              h(
+                DateRangePicker.CalendarRow,
+                {
+                  weekIndex: wi,
+                  style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" },
+                },
+                {
+                  default: () =>
+                    week.map((cell) =>
+                      h(DateRangePicker.CalendarCell, {
+                        date: cell.date,
+                        isOutsideMonth: cell.isOutsideMonth,
+                        style: { ...calendarCellStyle, opacity: cell.isOutsideMonth ? 0.35 : 1 },
+                      }),
+                    ),
+                },
               ),
-            })
-          ),
-        ],
-      });
+            ),
+          ],
+        },
+      );
     };
   },
 });
@@ -184,9 +325,31 @@ const menuAnchorSelect = ref<string | null>(null);
 const ctxMenuSelect = ref<string | null>(null);
 const ctxMenuBookmarked = ref(false);
 
-const menuContentStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "4px", boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)", minWidth: "160px", outline: "none" } as const;
-const menuItemStyle = { padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontSize: "0.875rem", outline: "none", userSelect: "none" as const };
-const menuGroupLabelStyle = { padding: "4px 12px 2px", fontSize: "0.7rem", color: "#94a3b8", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.05em" };
+const menuContentStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "6px",
+  padding: "4px",
+  boxShadow: "0 4px 16px rgb(0 0 0 / 0.12)",
+  minWidth: "160px",
+  outline: "none",
+} as const;
+const menuItemStyle = {
+  padding: "6px 12px",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.875rem",
+  outline: "none",
+  userSelect: "none" as const,
+};
+const menuGroupLabelStyle = {
+  padding: "4px 12px 2px",
+  fontSize: "0.7rem",
+  color: "#94a3b8",
+  fontWeight: 600,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+};
 const menuSepStyle = { height: "1px", background: "#e2e8f0", margin: "4px 0" };
 
 function onDateFieldChange(d: { year: number; month: number; day: number } | null) {
@@ -196,9 +359,16 @@ function onTimePickerChange(t: { hours: number; minutes: number; seconds: number
   timePickerValue.value = t;
 }
 function onDatePickerChange(d: { year: number; month: number; day: number } | null) {
-  datePickerSelected.value = d ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}` : null;
+  datePickerSelected.value = d
+    ? `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`
+    : null;
 }
-function onDateRangePickerChange(r: { start: { year: number; month: number; day: number } | null; end: { year: number; month: number; day: number } | null } | null) {
+function onDateRangePickerChange(
+  r: {
+    start: { year: number; month: number; day: number } | null;
+    end: { year: number; month: number; day: number } | null;
+  } | null,
+) {
   if (r?.start && r?.end) {
     dateRangePickerRange.value = `${r.start.year}-${String(r.start.month).padStart(2, "0")}-${String(r.start.day).padStart(2, "0")} → ${r.end.year}-${String(r.end.month).padStart(2, "0")}-${String(r.end.day).padStart(2, "0")}`;
   } else {
@@ -240,7 +410,15 @@ const btnGhostStyle = {
 } as const;
 
 const btnDangerStyle = { ...btnStyle, background: "#dc2626" } as const;
-const tooltipStyle = { background: "#1e293b", color: "#f1f5f9", borderRadius: "6px", padding: "0.35rem 0.6rem", fontSize: "0.8rem", boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)", maxWidth: "240px" } as const;
+const tooltipStyle = {
+  background: "#1e293b",
+  color: "#f1f5f9",
+  borderRadius: "6px",
+  padding: "0.35rem 0.6rem",
+  fontSize: "0.8rem",
+  boxShadow: "0 4px 12px rgb(0 0 0 / 0.2)",
+  maxWidth: "240px",
+} as const;
 
 const overlayStyle = {
   position: "fixed" as const,
@@ -273,15 +451,38 @@ const popoverStyle = {
 };
 
 const titleStyle = { margin: "0 0 0.5rem", fontSize: "1.05rem", fontWeight: 600 };
-const descStyle = { color: "#64748b", marginBottom: "1.5rem", fontSize: "0.875rem", lineHeight: 1.5 };
+const descStyle = {
+  color: "#64748b",
+  marginBottom: "1.5rem",
+  fontSize: "0.875rem",
+  lineHeight: 1.5,
+};
 const footerStyle = { display: "flex", justifyContent: "flex-end", gap: "0.5rem" };
 const sectionStyle = { padding: "1.5rem 0", borderBottom: "1px solid #e2e8f0" };
 const sectionTitleStyle = { margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 600 };
 const sectionDescStyle = { margin: "0 0 1rem", color: "#64748b", fontSize: "0.8rem" };
 
-const avatarRootStyle = { display: "inline-flex", position: "relative", width: "48px", height: "48px", borderRadius: "50%", overflow: "hidden", background: "#e2e8f0" };
+const avatarRootStyle = {
+  display: "inline-flex",
+  position: "relative",
+  width: "48px",
+  height: "48px",
+  borderRadius: "50%",
+  overflow: "hidden",
+  background: "#e2e8f0",
+};
 const avatarImgStyle = { width: "100%", height: "100%", objectFit: "cover" };
-const avatarFallbackStyle = { position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.875rem", fontWeight: 600, color: "#475569", background: "#e2e8f0" };
+const avatarFallbackStyle = {
+  position: "absolute",
+  inset: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "0.875rem",
+  fontWeight: 600,
+  color: "#475569",
+  background: "#e2e8f0",
+};
 
 // Reads initials from the nearest <Avatar.Root> via injectAvatarContext.
 // injectAvatarContext must be called inside setup() — hence the defineComponent wrapper.
@@ -290,13 +491,24 @@ const AvatarInitialsFallback = defineComponent({
   props: { style: { type: Object, default: undefined } },
   setup(props, { slots }) {
     const { initials } = injectAvatarContext();
-    return () => h(AvatarFallback, { style: props.style }, {
-      default: () => initials.value || slots["default"]?.(),
-    });
+    return () =>
+      h(
+        AvatarFallback,
+        { style: props.style },
+        {
+          default: () => initials.value || slots["default"]?.(),
+        },
+      );
   },
 });
 
-const labelStyle = { display: "block", fontSize: "0.8rem", fontWeight: 500, color: "#374151", marginBottom: "0.35rem" };
+const labelStyle = {
+  display: "block",
+  fontSize: "0.8rem",
+  fontWeight: 500,
+  color: "#374151",
+  marginBottom: "0.35rem",
+};
 const selectTriggerStyle = {
   display: "flex",
   alignItems: "center",
@@ -319,24 +531,125 @@ const selectContentStyle = {
   listStyle: "none",
   margin: 0,
 } as const;
-const selectItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b" };
-const separatorStyle = { height: "1px", background: "#e2e8f0", margin: "0.25rem 0", listStyle: "none" as const };
-const groupLabelStyle = { padding: "0.35rem 0.75rem 0.15rem", fontSize: "0.7rem", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase" as const, letterSpacing: "0.05em", listStyle: "none" as const };
+const selectItemStyle = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+};
+const separatorStyle = {
+  height: "1px",
+  background: "#e2e8f0",
+  margin: "0.25rem 0",
+  listStyle: "none" as const,
+};
+const groupLabelStyle = {
+  padding: "0.35rem 0.75rem 0.15rem",
+  fontSize: "0.7rem",
+  fontWeight: 600,
+  color: "#94a3b8",
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.05em",
+  listStyle: "none" as const,
+};
 
-const checkboxControlStyle = { width: "18px", height: "18px", border: "2px solid #cbd5e1", borderRadius: "4px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 };
-const checkboxIndicatorStyle = { fontSize: "11px", fontWeight: 700, color: "#1e293b", lineHeight: 1 };
+const checkboxControlStyle = {
+  width: "18px",
+  height: "18px",
+  border: "2px solid #cbd5e1",
+  borderRadius: "4px",
+  background: "#fff",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  flexShrink: 0,
+};
+const checkboxIndicatorStyle = {
+  fontSize: "11px",
+  fontWeight: 700,
+  color: "#1e293b",
+  lineHeight: 1,
+};
 const checkboxLabelStyle = { fontSize: "0.875rem", color: "#1e293b", cursor: "pointer" };
-const switchOffStyle = { width: "44px", height: "24px", borderRadius: "12px", background: "#cbd5e1", border: "none", cursor: "pointer", padding: "2px", display: "flex", alignItems: "center", transition: "background 0.15s", flexShrink: 0 };
+const switchOffStyle = {
+  width: "44px",
+  height: "24px",
+  borderRadius: "12px",
+  background: "#cbd5e1",
+  border: "none",
+  cursor: "pointer",
+  padding: "2px",
+  display: "flex",
+  alignItems: "center",
+  transition: "background 0.15s",
+  flexShrink: 0,
+};
 const switchOnStyle = { ...switchOffStyle, background: "#1e293b" };
-const switchThumbOffStyle = { width: "20px", height: "20px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)", transform: "translateX(0)", transition: "transform 0.15s" };
+const switchThumbOffStyle = {
+  width: "20px",
+  height: "20px",
+  borderRadius: "50%",
+  background: "#fff",
+  boxShadow: "0 1px 3px rgb(0 0 0 / 0.2)",
+  transform: "translateX(0)",
+  transition: "transform 0.15s",
+};
 const switchThumbOnStyle = { ...switchThumbOffStyle, transform: "translateX(20px)" };
 
-const comboboxContentStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "0.25rem", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)", listStyle: "none" as const, margin: 0, maxHeight: "200px", overflowY: "auto" as const };
-const comboboxItemStyle = { padding: "0.45rem 0.75rem", borderRadius: "4px", fontSize: "0.875rem", cursor: "pointer", color: "#1e293b", display: "flex", alignItems: "center", gap: "0.25rem" };
+const comboboxContentStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "8px",
+  padding: "0.25rem",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+  listStyle: "none" as const,
+  margin: 0,
+  maxHeight: "200px",
+  overflowY: "auto" as const,
+};
+const comboboxItemStyle = {
+  padding: "0.45rem 0.75rem",
+  borderRadius: "4px",
+  fontSize: "0.875rem",
+  cursor: "pointer",
+  color: "#1e293b",
+  display: "flex",
+  alignItems: "center",
+  gap: "0.25rem",
+};
 
-const hoverCardStyle = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", minWidth: "260px", maxWidth: "320px", boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)" } as const;
-const hoverCardAvatarStyle = { width: "40px", height: "40px", borderRadius: "50%", background: "#6366f1", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1.1rem", flexShrink: 0 } as const;
-const hoverCardLinkStyle = { color: "#6366f1", fontWeight: 500, fontSize: "0.9rem", textDecoration: "underline", cursor: "pointer" } as const;
+const hoverCardStyle = {
+  background: "#fff",
+  border: "1px solid #e2e8f0",
+  borderRadius: "10px",
+  padding: "1rem",
+  minWidth: "260px",
+  maxWidth: "320px",
+  boxShadow: "0 8px 30px rgb(0 0 0 / 0.12)",
+} as const;
+const hoverCardAvatarStyle = {
+  width: "40px",
+  height: "40px",
+  borderRadius: "50%",
+  background: "#6366f1",
+  color: "#fff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontWeight: 700,
+  fontSize: "1.1rem",
+  flexShrink: 0,
+} as const;
+const hoverCardLinkStyle = {
+  color: "#6366f1",
+  fontWeight: 500,
+  fontSize: "0.9rem",
+  textDecoration: "underline",
+  cursor: "pointer",
+} as const;
 
 const fieldInvalid = ref(false);
 const fieldEmail = ref("");

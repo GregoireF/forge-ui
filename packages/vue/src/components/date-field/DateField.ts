@@ -25,7 +25,10 @@ const DateFieldRoot = defineComponent({
     locale: { type: String, default: undefined },
     disabled: { type: Boolean, default: undefined },
     readOnly: { type: Boolean, default: undefined },
-    onValueChange: { type: Function as PropType<CreateDateFieldOptions["onValueChange"]>, default: undefined },
+    onValueChange: {
+      type: Function as PropType<CreateDateFieldOptions["onValueChange"]>,
+      default: undefined,
+    },
   },
   emits: {
     "update:value": (_v: CalendarDate | null) => true,
@@ -67,7 +70,7 @@ const DateFieldRoot = defineComponent({
     });
 
     provide(dateFieldKey, api);
-    return () => slots['default']?.();
+    return () => slots["default"]?.();
   },
 });
 
@@ -80,7 +83,7 @@ const DateFieldGroup = defineComponent({
   props: { asChild: { type: Boolean, default: false } },
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(), ...attrs }, slots['default']?.());
+    return () => h("div", { ...api.getGroupProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -89,7 +92,10 @@ const DateFieldGroup = defineComponent({
 // ---------------------------------------------------------------------------
 
 function remapKeyDown(props: Record<string, unknown>): Record<string, unknown> {
-  const { onKeyDown, ...rest } = props as { onKeyDown?: (e: KeyboardEvent) => void; [k: string]: unknown };
+  const { onKeyDown, ...rest } = props as {
+    onKeyDown?: (e: KeyboardEvent) => void;
+    [k: string]: unknown;
+  };
   return { ...rest, ...(onKeyDown && { onKeydown: onKeyDown }) };
 }
 
@@ -103,7 +109,7 @@ const DateFieldMonthSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getMonthSegmentProps()), ...attrs };
-      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.month ?? "MM"]);
+      return h("div", merged, slots["default"]?.() ?? [api.displayValues.value.month ?? "MM"]);
     };
   },
 });
@@ -118,7 +124,7 @@ const DateFieldDaySegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getDaySegmentProps()), ...attrs };
-      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.day ?? "DD"]);
+      return h("div", merged, slots["default"]?.() ?? [api.displayValues.value.day ?? "DD"]);
     };
   },
 });
@@ -133,7 +139,7 @@ const DateFieldYearSegment = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getYearSegmentProps()), ...attrs };
-      return h("div", merged, slots['default']?.() ?? [api.displayValues.value.year ?? "YYYY"]);
+      return h("div", merged, slots["default"]?.() ?? [api.displayValues.value.year ?? "YYYY"]);
     };
   },
 });
@@ -146,7 +152,7 @@ const DateFieldSeparator = defineComponent({
   name: "ForgeDateFieldSeparator",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("span", { ...api.getSeparatorProps(), ...attrs }, slots['default']?.());
+    return () => h("span", { ...api.getSeparatorProps(), ...attrs }, slots["default"]?.());
   },
 });
 
@@ -178,11 +184,11 @@ export const DateField = {
 } as const;
 
 export {
-  DateFieldRoot,
-  DateFieldGroup,
-  DateFieldMonthSegment,
   DateFieldDaySegment,
-  DateFieldYearSegment,
-  DateFieldSeparator,
+  DateFieldGroup,
   DateFieldHiddenInput,
+  DateFieldMonthSegment,
+  DateFieldRoot,
+  DateFieldSeparator,
+  DateFieldYearSegment,
 };

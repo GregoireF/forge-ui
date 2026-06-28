@@ -158,7 +158,9 @@ describe("connectField — getRequiredIndicatorProps", () => {
   });
 
   it("data-forge-part=required-indicator", () => {
-    expect(connectField(makeCtx()).getRequiredIndicatorProps()["data-forge-part"]).toBe("required-indicator");
+    expect(connectField(makeCtx()).getRequiredIndicatorProps()["data-forge-part"]).toBe(
+      "required-indicator",
+    );
   });
 });
 

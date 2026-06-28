@@ -10,8 +10,7 @@ test.describe("AlertDialog — Vue (forge-ui)", () => {
   const trigger = (page: import("@playwright/test").Page) =>
     page.locator('[data-forge-scope="alert-dialog"][data-forge-part="trigger"]');
 
-  const content = (page: import("@playwright/test").Page) =>
-    page.getByRole("alertdialog");
+  const content = (page: import("@playwright/test").Page) => page.getByRole("alertdialog");
 
   test("alertdialog is hidden on load", async ({ page }) => {
     await expect(content(page)).not.toBeVisible();

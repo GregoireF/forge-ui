@@ -82,12 +82,16 @@ test.describe("WAI-ARIA compliance — Vue playground", () => {
   });
 
   test("Switch disabled: aria-disabled=true", async ({ page }) => {
-    const disabledControl = page.locator('[data-forge-scope="switch"][data-forge-part="control"][data-disabled]').first();
+    const disabledControl = page
+      .locator('[data-forge-scope="switch"][data-forge-part="control"][data-disabled]')
+      .first();
     await expect(disabledControl).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Switch invalid: aria-invalid=true", async ({ page }) => {
-    const invalidControl = page.locator('[data-forge-scope="switch"][data-forge-part="control"][data-invalid]').first();
+    const invalidControl = page
+      .locator('[data-forge-scope="switch"][data-forge-part="control"][data-invalid]')
+      .first();
     await expect(invalidControl).toHaveAttribute("aria-invalid", "true");
   });
 
@@ -112,8 +116,14 @@ test.describe("WAI-ARIA compliance — Vue playground", () => {
   });
 
   test("Tabs: selected trigger has aria-selected=true", async ({ page }) => {
-    await expect(page.locator('[data-testid="tabs-trigger-react"]')).toHaveAttribute("aria-selected", "true");
-    await expect(page.locator('[data-testid="tabs-trigger-vue"]')).toHaveAttribute("aria-selected", "false");
+    await expect(page.locator('[data-testid="tabs-trigger-react"]')).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await expect(page.locator('[data-testid="tabs-trigger-vue"]')).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
   });
 
   test("Tabs: aria-controls links trigger to its panel", async ({ page }) => {
@@ -124,7 +134,10 @@ test.describe("WAI-ARIA compliance — Vue playground", () => {
   });
 
   test("Tabs: panels have role=tabpanel", async ({ page }) => {
-    await expect(page.locator('[data-testid="tabs-panel-react"]')).toHaveAttribute("role", "tabpanel");
+    await expect(page.locator('[data-testid="tabs-panel-react"]')).toHaveAttribute(
+      "role",
+      "tabpanel",
+    );
   });
 
   test("Tabs: panel has aria-labelledby pointing to its trigger", async ({ page }) => {
@@ -252,28 +265,39 @@ test.describe("WAI-ARIA compliance — Vue playground", () => {
 
   test("Combobox open: input aria-expanded=true", async ({ page }) => {
     await page.locator('[data-forge-scope="combobox"][data-forge-part="trigger"]').first().click();
-    await page.locator('[data-forge-scope="combobox"][data-forge-part="content"]').first().waitFor({ state: "visible" });
+    await page
+      .locator('[data-forge-scope="combobox"][data-forge-part="content"]')
+      .first()
+      .waitFor({ state: "visible" });
     const input = page.locator('[data-forge-scope="combobox"][data-forge-part="input"]').first();
     await expect(input).toHaveAttribute("aria-expanded", "true");
   });
 
   test("Combobox open: content has role=listbox", async ({ page }) => {
     await page.locator('[data-forge-scope="combobox"][data-forge-part="trigger"]').first().click();
-    const content = page.locator('[data-forge-scope="combobox"][data-forge-part="content"]').first();
+    const content = page
+      .locator('[data-forge-scope="combobox"][data-forge-part="content"]')
+      .first();
     await content.waitFor({ state: "visible" });
     await expect(content).toHaveAttribute("role", "listbox");
   });
 
   test("Combobox open: options have role=option", async ({ page }) => {
     await page.locator('[data-forge-scope="combobox"][data-forge-part="trigger"]').first().click();
-    await page.locator('[data-forge-scope="combobox"][data-forge-part="content"]').first().waitFor({ state: "visible" });
+    await page
+      .locator('[data-forge-scope="combobox"][data-forge-part="content"]')
+      .first()
+      .waitFor({ state: "visible" });
     const options = page.locator('[data-forge-scope="combobox"][data-forge-part="option"]');
     await expect(options.first()).toHaveAttribute("role", "option");
   });
 
   test("Combobox open: no axe violations (WCAG2A + WCAG21AA)", async ({ page }) => {
     await page.locator('[data-forge-scope="combobox"][data-forge-part="trigger"]').first().click();
-    await page.locator('[data-forge-scope="combobox"][data-forge-part="content"]').first().waitFor({ state: "visible" });
+    await page
+      .locator('[data-forge-scope="combobox"][data-forge-part="content"]')
+      .first()
+      .waitFor({ state: "visible" });
     const results = await new AxeBuilder({ page })
       .include('[data-forge-scope="combobox"]')
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -284,22 +308,31 @@ test.describe("WAI-ARIA compliance — Vue playground", () => {
   // ── TagsInput (WAI-ARIA live region §7.4.3) ───────────────────────────────
 
   test("TagsInput: live region has role=status", async ({ page }) => {
-    const liveRegion = page.locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]').first();
+    const liveRegion = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]')
+      .first();
     await expect(liveRegion).toHaveAttribute("role", "status");
   });
 
   test("TagsInput: live region has aria-live=polite", async ({ page }) => {
-    const liveRegion = page.locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]').first();
+    const liveRegion = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="live-region"]')
+      .first();
     await expect(liveRegion).toHaveAttribute("aria-live", "polite");
   });
 
   test("TagsInput: tag delete buttons have aria-label", async ({ page }) => {
-    const deleteBtn = page.locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]').first();
+    const deleteBtn = page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="tag-delete"]')
+      .first();
     await expect(deleteBtn).toHaveAttribute("aria-label");
   });
 
   test("TagsInput: no axe violations (WCAG2A + WCAG21AA)", async ({ page }) => {
-    await page.locator('[data-forge-scope="tags-input"][data-forge-part="input"]').first().waitFor({ state: "visible" });
+    await page
+      .locator('[data-forge-scope="tags-input"][data-forge-part="input"]')
+      .first()
+      .waitFor({ state: "visible" });
     const results = await new AxeBuilder({ page })
       .include('[data-forge-scope="tags-input"]')
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])

@@ -6,7 +6,14 @@ import { TagsInput } from "../src/components/tags-input/TagsInput.js";
 // TagsInput — React
 // ---------------------------------------------------------------------------
 
-function BasicTagsInput(props: { onValueChange?: (v: string[]) => void; defaultValue?: string[]; value?: string[]; maxTags?: number; allowDuplicates?: boolean; disabled?: boolean }) {
+function BasicTagsInput(props: {
+  onValueChange?: (v: string[]) => void;
+  defaultValue?: string[];
+  value?: string[];
+  maxTags?: number;
+  allowDuplicates?: boolean;
+  disabled?: boolean;
+}) {
   return (
     <TagsInput.Root {...props}>
       <TagsInput.Label data-testid="label">Tags</TagsInput.Label>

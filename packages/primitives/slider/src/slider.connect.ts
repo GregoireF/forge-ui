@@ -130,7 +130,11 @@ export function connectSlider(
         style:
           orientation === "horizontal"
             ? { position: "absolute" as const, left: `${percent}%`, transform: "translateX(-50%)" }
-            : { position: "absolute" as const, bottom: `${percent}%`, transform: "translateY(50%)" },
+            : {
+                position: "absolute" as const,
+                bottom: `${percent}%`,
+                transform: "translateY(50%)",
+              },
         onPointerDown(e: PointerEvent) {
           if (disabled || e.button !== 0) return;
           e.preventDefault();
@@ -252,9 +256,18 @@ export function connectSlider(
         "data-value": markValue,
         "data-in-range": inRange ? ("" as const) : undefined,
         "data-orientation": orientation,
-        style: orientation === "horizontal"
-          ? { position: "absolute" as const, left: `${clampedPercent}%`, transform: "translateX(-50%)" }
-          : { position: "absolute" as const, bottom: `${clampedPercent}%`, transform: "translateY(50%)" },
+        style:
+          orientation === "horizontal"
+            ? {
+                position: "absolute" as const,
+                left: `${clampedPercent}%`,
+                transform: "translateX(-50%)",
+              }
+            : {
+                position: "absolute" as const,
+                bottom: `${clampedPercent}%`,
+                transform: "translateY(50%)",
+              },
       };
     },
   };
