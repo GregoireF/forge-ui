@@ -7,17 +7,13 @@ test.describe("Switch — React (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const switches = (page: import("@playwright/test").Page) =>
-    page.getByRole("switch");
+  const switches = (page: import("@playwright/test").Page) => page.getByRole("switch");
 
-  const firstSwitch = (page: import("@playwright/test").Page) =>
-    switches(page).nth(0);
+  const firstSwitch = (page: import("@playwright/test").Page) => switches(page).nth(0);
 
-  const disabledSwitch = (page: import("@playwright/test").Page) =>
-    switches(page).nth(1);
+  const disabledSwitch = (page: import("@playwright/test").Page) => switches(page).nth(1);
 
-  const invalidSwitch = (page: import("@playwright/test").Page) =>
-    switches(page).nth(2);
+  const invalidSwitch = (page: import("@playwright/test").Page) => switches(page).nth(2);
 
   // ---------------------------------------------------------------------------
   // Initial state

@@ -1,8 +1,4 @@
-import {
-  createMachine,
-  makeLayerActivity,
-  makeWatchOutsideActivity,
-} from "@forge-ui/core";
+import { createMachine, makeLayerActivity, makeWatchOutsideActivity } from "@forge-ui/core";
 import type { FloatingPositioning } from "@forge-ui/floating";
 import { makeComputePositionActivity } from "@forge-ui/floating";
 import type { MenuContext, MenuEvent, MenuItem, MenuState } from "./menu.types.js";
@@ -15,25 +11,35 @@ function getEnabled(items: MenuItem[]): MenuItem[] {
   return items.filter((i) => !i.disabled);
 }
 
-function getNextHighlighted(items: MenuItem[], current: string | null, loop: boolean): string | null {
+function getNextHighlighted(
+  items: MenuItem[],
+  current: string | null,
+  loop: boolean,
+): string | null {
   const enabled = getEnabled(items);
   if (enabled.length === 0) return null;
   if (current === null) return enabled[0]?.value ?? null;
   const idx = enabled.findIndex((i) => i.value === current);
   if (idx === -1) return enabled[0]?.value ?? null;
   const nextIdx = idx + 1;
-  if (nextIdx >= enabled.length) return loop ? (enabled[0]?.value ?? null) : (enabled[idx]?.value ?? null);
+  if (nextIdx >= enabled.length)
+    return loop ? (enabled[0]?.value ?? null) : (enabled[idx]?.value ?? null);
   return enabled[nextIdx]?.value ?? null;
 }
 
-function getPrevHighlighted(items: MenuItem[], current: string | null, loop: boolean): string | null {
+function getPrevHighlighted(
+  items: MenuItem[],
+  current: string | null,
+  loop: boolean,
+): string | null {
   const enabled = getEnabled(items);
   if (enabled.length === 0) return null;
   if (current === null) return enabled[enabled.length - 1]?.value ?? null;
   const idx = enabled.findIndex((i) => i.value === current);
   if (idx === -1) return enabled[enabled.length - 1]?.value ?? null;
   const prevIdx = idx - 1;
-  if (prevIdx < 0) return loop ? (enabled[enabled.length - 1]?.value ?? null) : (enabled[0]?.value ?? null);
+  if (prevIdx < 0)
+    return loop ? (enabled[enabled.length - 1]?.value ?? null) : (enabled[0]?.value ?? null);
   return enabled[prevIdx]?.value ?? null;
 }
 
@@ -51,35 +57,84 @@ function invokeOnHighlightChange({ context }: { context: MenuContext }) {
   context.onHighlightChange?.(context.highlighted);
 }
 
-function setHighlightFirst({ context, setContext }: { context: MenuContext; setContext: (u: Partial<MenuContext>) => void }) {
+function setHighlightFirst({
+  context,
+  setContext,
+}: {
+  context: MenuContext;
+  setContext: (u: Partial<MenuContext>) => void;
+}) {
   const first = getEnabled(context.items)[0]?.value ?? null;
   setContext({ highlighted: first, highlightSource: "keyboard" });
 }
 
-function setHighlightLast({ context, setContext }: { context: MenuContext; setContext: (u: Partial<MenuContext>) => void }) {
+function setHighlightLast({
+  context,
+  setContext,
+}: {
+  context: MenuContext;
+  setContext: (u: Partial<MenuContext>) => void;
+}) {
   const enabled = getEnabled(context.items);
-  setContext({ highlighted: enabled[enabled.length - 1]?.value ?? null, highlightSource: "keyboard" });
+  setContext({
+    highlighted: enabled[enabled.length - 1]?.value ?? null,
+    highlightSource: "keyboard",
+  });
 }
 
-function highlightNext({ context, setContext }: { context: MenuContext; setContext: (u: Partial<MenuContext>) => void }) {
-  setContext({ highlighted: getNextHighlighted(context.items, context.highlighted, context.loop), highlightSource: "keyboard" });
+function highlightNext({
+  context,
+  setContext,
+}: {
+  context: MenuContext;
+  setContext: (u: Partial<MenuContext>) => void;
+}) {
+  setContext({
+    highlighted: getNextHighlighted(context.items, context.highlighted, context.loop),
+    highlightSource: "keyboard",
+  });
 }
 
-function highlightPrev({ context, setContext }: { context: MenuContext; setContext: (u: Partial<MenuContext>) => void }) {
-  setContext({ highlighted: getPrevHighlighted(context.items, context.highlighted, context.loop), highlightSource: "keyboard" });
+function highlightPrev({
+  context,
+  setContext,
+}: {
+  context: MenuContext;
+  setContext: (u: Partial<MenuContext>) => void;
+}) {
+  setContext({
+    highlighted: getPrevHighlighted(context.items, context.highlighted, context.loop),
+    highlightSource: "keyboard",
+  });
 }
 
 function clearHighlight({ setContext }: { setContext: (u: Partial<MenuContext>) => void }) {
   setContext({ highlighted: null });
 }
 
-const registerItemAction = ({ context, setContext, event }: { context: MenuContext; setContext: (u: Partial<MenuContext>) => void; event: MenuEvent }) => {
+const registerItemAction = ({
+  context,
+  setContext,
+  event,
+}: {
+  context: MenuContext;
+  setContext: (u: Partial<MenuContext>) => void;
+  event: MenuEvent;
+}) => {
   if (event.type !== "REGISTER_ITEM") return;
   const exists = context.items.some((i) => i.value === event.item.value);
   if (!exists) setContext({ items: [...context.items, event.item] });
 };
 
-const unregisterItemAction = ({ context, setContext, event }: { context: MenuContext; setContext: (u: Partial<MenuContext>) => void; event: MenuEvent }) => {
+const unregisterItemAction = ({
+  context,
+  setContext,
+  event,
+}: {
+  context: MenuContext;
+  setContext: (u: Partial<MenuContext>) => void;
+  event: MenuEvent;
+}) => {
   if (event.type !== "UNREGISTER_ITEM") return;
   setContext({ items: context.items.filter((i) => i.value !== event.value) });
 };
@@ -98,9 +153,7 @@ const computePosition = makeComputePositionActivity<MenuContext>();
 function makeMenuWatchOutside(isContextMenu: boolean) {
   return makeWatchOutsideActivity<MenuContext>({
     getId: (ctx) => ctx.id,
-    getContainers: (ctx) => isContextMenu
-      ? [ctx.contentEl]
-      : [ctx.contentEl, ctx.triggerEl],
+    getContainers: (ctx) => (isContextMenu ? [ctx.contentEl] : [ctx.contentEl, ctx.triggerEl]),
     sendClose: "INTERACT_OUTSIDE",
     getOnInteractOutside: (ctx) => ctx.onInteractOutside,
     getOnPointerDownOutside: (ctx) => ctx.onPointerDownOutside,
@@ -185,9 +238,15 @@ export function createMenuMachine(options: CreateMenuMachineOptions) {
       contentId: `${id}-content`,
       ...(options.onOpenChange !== undefined && { onOpenChange: options.onOpenChange }),
       ...(options.onSelect !== undefined && { onSelect: options.onSelect }),
-      ...(options.onHighlightChange !== undefined && { onHighlightChange: options.onHighlightChange }),
-      ...(options.onInteractOutside !== undefined && { onInteractOutside: options.onInteractOutside }),
-      ...(options.onPointerDownOutside !== undefined && { onPointerDownOutside: options.onPointerDownOutside }),
+      ...(options.onHighlightChange !== undefined && {
+        onHighlightChange: options.onHighlightChange,
+      }),
+      ...(options.onInteractOutside !== undefined && {
+        onInteractOutside: options.onInteractOutside,
+      }),
+      ...(options.onPointerDownOutside !== undefined && {
+        onPointerDownOutside: options.onPointerDownOutside,
+      }),
       ...(options.onFocusOutside !== undefined && { onFocusOutside: options.onFocusOutside }),
       ...(options.onEscapeKeyDown !== undefined && { onEscapeKeyDown: options.onEscapeKeyDown }),
     },
@@ -226,7 +285,10 @@ export function createMenuMachine(options: CreateMenuMachineOptions) {
           CLOSE: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
           TOGGLE: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
           ESCAPE_KEY: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
-          INTERACT_OUTSIDE: { target: "closed", actions: [clearHighlight, invokeOnOpenChange(false)] },
+          INTERACT_OUTSIDE: {
+            target: "closed",
+            actions: [clearHighlight, invokeOnOpenChange(false)],
+          },
 
           SELECT_ITEM: {
             target: "closed",
@@ -255,7 +317,10 @@ export function createMenuMachine(options: CreateMenuMachineOptions) {
             actions: [
               ({ setContext, event }) => {
                 if (event.type !== "HIGHLIGHT_ITEM") return;
-                setContext({ highlighted: event.value, highlightSource: event.source ?? "pointer" });
+                setContext({
+                  highlighted: event.value,
+                  highlightSource: event.source ?? "pointer",
+                });
               },
               invokeOnHighlightChange,
             ],

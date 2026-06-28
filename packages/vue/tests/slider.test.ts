@@ -1,5 +1,5 @@
-import { cleanup, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
 import { Slider } from "../src/components/slider/Slider.js";
@@ -206,7 +206,9 @@ describe("Slider (Vue)", () => {
       const controlledValue = ref(30);
       const Fixture = defineComponent({
         components: { SliderRoot, SliderTrack, SliderRange, SliderThumb },
-        setup() { return { controlledValue }; },
+        setup() {
+          return { controlledValue };
+        },
         template: `
           <SliderRoot :value="controlledValue" :min="0" :max="100" :step="1" data-testid="root">
             <SliderTrack data-testid="track">

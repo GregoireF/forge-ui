@@ -167,7 +167,9 @@ describe("connectTagsInput — getInputProps", () => {
   });
 
   it("aria-invalid absent when not invalid", () => {
-    expect((makeApi({ invalid: false }).api.getInputProps() as Record<string, unknown>)["aria-invalid"]).toBeUndefined();
+    expect(
+      (makeApi({ invalid: false }).api.getInputProps() as Record<string, unknown>)["aria-invalid"],
+    ).toBeUndefined();
   });
 
   it("aria-required=true when required", () => {
@@ -176,28 +178,44 @@ describe("connectTagsInput — getInputProps", () => {
 
   it("onKeyDown Enter sends ADD_TAG", () => {
     const { api, send } = makeApi();
-    const e = { key: "Enter", preventDefault: vi.fn(), target: { value: "newtag" } as HTMLInputElement };
+    const e = {
+      key: "Enter",
+      preventDefault: vi.fn(),
+      target: { value: "newtag" } as HTMLInputElement,
+    };
     api.getInputProps().onKeyDown(e as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "ADD_TAG" });
   });
 
   it("onKeyDown Backspace on empty input sends REMOVE_LAST_TAG", () => {
     const { api, send } = makeApi({ inputValue: "" });
-    const e = { key: "Backspace", preventDefault: vi.fn(), target: { value: "" } as HTMLInputElement };
+    const e = {
+      key: "Backspace",
+      preventDefault: vi.fn(),
+      target: { value: "" } as HTMLInputElement,
+    };
     api.getInputProps().onKeyDown(e as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "REMOVE_LAST_TAG" });
   });
 
   it("onKeyDown Backspace with text in input does NOT send REMOVE_LAST_TAG", () => {
     const { api, send } = makeApi();
-    const e = { key: "Backspace", preventDefault: vi.fn(), target: { value: "abc" } as HTMLInputElement };
+    const e = {
+      key: "Backspace",
+      preventDefault: vi.fn(),
+      target: { value: "abc" } as HTMLInputElement,
+    };
     api.getInputProps().onKeyDown(e as unknown as KeyboardEvent);
     expect(send).not.toHaveBeenCalledWith({ type: "REMOVE_LAST_TAG" });
   });
 
   it("onKeyDown delimiter key sends ADD_TAG", () => {
     const { api, send } = makeApi({ delimiter: "," });
-    const e = { key: ",", preventDefault: vi.fn(), target: { value: "mytag," } as HTMLInputElement };
+    const e = {
+      key: ",",
+      preventDefault: vi.fn(),
+      target: { value: "mytag," } as HTMLInputElement,
+    };
     api.getInputProps().onKeyDown(e as unknown as KeyboardEvent);
     expect(send).toHaveBeenCalledWith({ type: "ADD_TAG" });
   });

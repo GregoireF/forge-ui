@@ -18,7 +18,8 @@ function useCtx(): SliderApi {
 // Root
 // ---------------------------------------------------------------------------
 
-export interface SliderRootProps extends Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "defaultChecked"> {
+export interface SliderRootProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "defaultChecked"> {
   children: ReactNode;
   asChild?: boolean;
   value?: number | number[];
@@ -87,7 +88,12 @@ function Track({ children, asChild, ...rest }: SliderTrackProps) {
   const api = useCtx();
   const { ref, onPointerDown, ...trackAttrs } = api.getTrackProps();
   const onPD = onPointerDown as unknown as React.PointerEventHandler<HTMLDivElement>;
-  if (asChild) return <Slot ref={ref as React.Ref<HTMLDivElement>} onPointerDown={onPD} {...trackAttrs} {...rest}>{children}</Slot>;
+  if (asChild)
+    return (
+      <Slot ref={ref as React.Ref<HTMLDivElement>} onPointerDown={onPD} {...trackAttrs} {...rest}>
+        {children}
+      </Slot>
+    );
   return (
     <div ref={ref as React.Ref<HTMLDivElement>} onPointerDown={onPD} {...trackAttrs} {...rest}>
       {children}
@@ -124,11 +130,24 @@ export interface SliderThumbProps extends Omit<HTMLAttributes<HTMLDivElement>, "
 
 function Thumb({ asChild, index = 0, style: userStyle, ...rest }: SliderThumbProps) {
   const api = useCtx();
-  const { onKeydown: _kd, onPointerdown: _pd, onKeyDown, onPointerDown, style: connectStyle, ...thumbAttrs } = api.getThumbProps(index);
+  const {
+    onKeydown: _kd,
+    onPointerdown: _pd,
+    onKeyDown,
+    onPointerDown,
+    style: connectStyle,
+    ...thumbAttrs
+  } = api.getThumbProps(index);
   const onKD = onKeyDown as unknown as React.KeyboardEventHandler<HTMLDivElement>;
   const onPD = onPointerDown as unknown as React.PointerEventHandler<HTMLDivElement>;
   // connect styles (position/left/transform) must win over user styles
-  const props = { ...thumbAttrs, onKeyDown: onKD, onPointerDown: onPD, ...rest, style: { ...userStyle, ...connectStyle } };
+  const props = {
+    ...thumbAttrs,
+    onKeyDown: onKD,
+    onPointerDown: onPD,
+    ...rest,
+    style: { ...userStyle, ...connectStyle },
+  };
   if (asChild) return <Slot {...props} />;
   return <div {...props} />;
 }

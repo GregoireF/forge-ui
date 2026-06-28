@@ -203,7 +203,10 @@ describe("createPopoverMachine — focus management (WAI-ARIA §6.2)", () => {
   // Scope to this describe only — other tests open without triggerEl which would
   // trigger computePosition's retry loop with a global synchronous stub.
   beforeEach(() => {
-    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    });
     vi.stubGlobal("cancelAnimationFrame", () => {});
   });
   afterEach(() => {
@@ -331,7 +334,9 @@ describe("createPopoverMachine — optional spread options", () => {
   });
 
   it("positioning middleware stored when provided (line 150)", () => {
-    const middleware = [{ name: "offset" }] as unknown as Parameters<typeof createPopoverMachine>[0]["positioning"]["middleware"];
+    const middleware = [{ name: "offset" }] as unknown as Parameters<
+      typeof createPopoverMachine
+    >[0]["positioning"]["middleware"];
     const m = makeMachine({ positioning: { middleware } });
     expect(m.getSnapshot().context.positioning.middleware).toBe(middleware);
   });
@@ -339,7 +344,10 @@ describe("createPopoverMachine — optional spread options", () => {
 
 describe("createPopoverMachine — activity config callbacks (contentEl required)", () => {
   beforeEach(() => {
-    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => { cb(0); return 0; });
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    });
     vi.stubGlobal("cancelAnimationFrame", () => {});
   });
   afterEach(() => {

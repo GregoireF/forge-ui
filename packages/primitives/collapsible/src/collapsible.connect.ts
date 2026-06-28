@@ -1,12 +1,19 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import type { CollapsibleContext, CollapsibleEvent, CollapsibleState } from "./collapsible.types.js";
+import type {
+  CollapsibleContext,
+  CollapsibleEvent,
+  CollapsibleState,
+} from "./collapsible.types.js";
 
 type CollapsibleSend = (event: CollapsibleEvent) => void;
 
 export function connectCollapsible(
   snapshot: MachineSnapshot<CollapsibleContext, CollapsibleState>,
   send: CollapsibleSend,
-  _machine: Pick<MachineInstance<CollapsibleContext, CollapsibleState, CollapsibleEvent>, "setContext">,
+  _machine: Pick<
+    MachineInstance<CollapsibleContext, CollapsibleState, CollapsibleEvent>,
+    "setContext"
+  >,
 ) {
   const { context } = snapshot;
   const isOpen = context.open;

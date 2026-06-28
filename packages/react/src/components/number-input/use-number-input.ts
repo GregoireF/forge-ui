@@ -19,7 +19,7 @@ export function useNumberInput(options: UseNumberInputOptions = {}): NumberInput
     if (options.value !== undefined) {
       machine.update({ value: options.value ?? null });
     }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: options.value triggers sync
+    // biome-ignore lint/correctness/useExhaustiveDependencies: options.value triggers sync
   }, [options.value]);
 
   return connectNumberInput(snapshot, send, machine);

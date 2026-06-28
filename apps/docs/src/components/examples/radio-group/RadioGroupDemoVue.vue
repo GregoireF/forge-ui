@@ -10,12 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  RadioGroupItem,
-  RadioGroupLabel,
-  RadioGroupRadio,
-  RadioGroupRoot,
-} from "@forge-ui/vue";
+import { RadioGroupItem, RadioGroupLabel, RadioGroupRadio, RadioGroupRoot } from "@forge-ui/vue";
 
 const options = [
   { value: "react", label: "React" },

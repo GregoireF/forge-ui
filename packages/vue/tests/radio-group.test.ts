@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick } from "vue";
 import { RadioGroup } from "../src/components/radio-group/RadioGroup.js";
@@ -252,12 +252,16 @@ describe("RadioGroup (Vue)", () => {
   describe("CSS contract", () => {
     it("root has data-forge-scope=radio-group and data-forge-part=root", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="radio-group"][data-forge-part="root"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="radio-group"][data-forge-part="root"]'),
+      ).toBeInTheDocument();
     });
 
     it("item has data-forge-scope=radio-group and data-forge-part=item", () => {
       render(makeFixture());
-      const items = document.querySelectorAll('[data-forge-scope="radio-group"][data-forge-part="item"]');
+      const items = document.querySelectorAll(
+        '[data-forge-scope="radio-group"][data-forge-part="item"]',
+      );
       expect(items.length).toBe(2);
     });
 

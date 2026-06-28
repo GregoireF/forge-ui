@@ -1,4 +1,8 @@
-import type { CreateTooltipMachineOptions, TooltipPositioning, TooltipProviderContext } from "@forge-ui/tooltip";
+import type {
+  CreateTooltipMachineOptions,
+  TooltipPositioning,
+  TooltipProviderContext,
+} from "@forge-ui/tooltip";
 import { connectTooltip, createTooltipMachine } from "@forge-ui/tooltip";
 import { computed, inject, useId, watchEffect } from "vue";
 import { useMachine } from "../../use-machine.js";

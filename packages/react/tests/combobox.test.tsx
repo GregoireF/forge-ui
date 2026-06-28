@@ -73,7 +73,9 @@ describe("Combobox (React)", () => {
   describe("open / close", () => {
     it("opens when Trigger is clicked", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
       expect(screen.getByTestId("input")).toHaveAttribute("aria-expanded", "true");
     });
 
@@ -84,14 +86,20 @@ describe("Combobox (React)", () => {
 
     it("listbox appears when input is typed into", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.change(screen.getByTestId("input"), { target: { value: "app" } }); });
+      await act(async () => {
+        fireEvent.change(screen.getByTestId("input"), { target: { value: "app" } });
+      });
       expect(screen.getByTestId("input")).toHaveAttribute("aria-expanded", "true");
     });
 
     it("closes on Escape", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      await act(async () => { fireEvent.keyDown(screen.getByTestId("input"), { key: "Escape" }); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      await act(async () => {
+        fireEvent.keyDown(screen.getByTestId("input"), { key: "Escape" });
+      });
       expect(screen.getByTestId("input")).toHaveAttribute("aria-expanded", "false");
     });
   });
@@ -99,7 +107,9 @@ describe("Combobox (React)", () => {
   describe("client-side filtering", () => {
     it("filters options based on input text", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.change(screen.getByTestId("input"), { target: { value: "an" } }); });
+      await act(async () => {
+        fireEvent.change(screen.getByTestId("input"), { target: { value: "an" } });
+      });
       // "Banana" matches "an". "Apple", "Cherry", "Grape" do not.
       expect(screen.getByTestId("item-banana")).toBeInTheDocument();
       expect(screen.queryByTestId("item-apple")).toBeNull();
@@ -107,7 +117,9 @@ describe("Combobox (React)", () => {
 
     it("is case-insensitive", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.change(screen.getByTestId("input"), { target: { value: "APPLE" } }); });
+      await act(async () => {
+        fireEvent.change(screen.getByTestId("input"), { target: { value: "APPLE" } });
+      });
       expect(screen.getByTestId("item-apple")).toBeInTheDocument();
     });
   });
@@ -116,24 +128,36 @@ describe("Combobox (React)", () => {
     it("selects item on click and closes", async () => {
       const onValueChange = vi.fn();
       render(<FruitCombobox onValueChange={onValueChange} />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      await act(async () => { fireEvent.click(screen.getByTestId("item-apple")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("item-apple"));
+      });
       expect(onValueChange).toHaveBeenCalledWith(["apple"]);
       expect(screen.getByTestId("input")).toHaveAttribute("aria-expanded", "false");
     });
 
     it("sets input value to selected label after selection (single-select)", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      await act(async () => { fireEvent.click(screen.getByTestId("item-apple")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("item-apple"));
+      });
       expect(screen.getByTestId("input")).toHaveValue("Apple");
     });
 
     it("does not select disabled items on click", async () => {
       const onValueChange = vi.fn();
       render(<FruitCombobox onValueChange={onValueChange} />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      await act(async () => { fireEvent.click(screen.getByTestId("item-grape")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("item-grape"));
+      });
       expect(onValueChange).not.toHaveBeenCalled();
     });
   });
@@ -141,17 +165,27 @@ describe("Combobox (React)", () => {
   describe("keyboard navigation", () => {
     it("ArrowDown highlights first option", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      await act(async () => { fireEvent.keyDown(screen.getByTestId("input"), { key: "ArrowDown" }); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      await act(async () => {
+        fireEvent.keyDown(screen.getByTestId("input"), { key: "ArrowDown" });
+      });
       expect(screen.getByTestId("item-apple")).toHaveAttribute("data-highlighted", "");
     });
 
     it("Enter selects highlighted option", async () => {
       const onValueChange = vi.fn();
       render(<FruitCombobox onValueChange={onValueChange} />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      await act(async () => { fireEvent.keyDown(screen.getByTestId("input"), { key: "ArrowDown" }); });
-      await act(async () => { fireEvent.keyDown(screen.getByTestId("input"), { key: "Enter" }); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      await act(async () => {
+        fireEvent.keyDown(screen.getByTestId("input"), { key: "ArrowDown" });
+      });
+      await act(async () => {
+        fireEvent.keyDown(screen.getByTestId("input"), { key: "Enter" });
+      });
       expect(onValueChange).toHaveBeenCalledWith(["apple"]);
     });
   });
@@ -160,7 +194,9 @@ describe("Combobox (React)", () => {
     it("calls onInputChange when typing", async () => {
       const onInputChange = vi.fn();
       render(<FruitCombobox onInputChange={onInputChange} />);
-      await act(async () => { fireEvent.change(screen.getByTestId("input"), { target: { value: "ap" } }); });
+      await act(async () => {
+        fireEvent.change(screen.getByTestId("input"), { target: { value: "ap" } });
+      });
       expect(onInputChange).toHaveBeenCalledWith("ap");
     });
   });
@@ -169,10 +205,16 @@ describe("Combobox (React)", () => {
     it("selects multiple values without closing", async () => {
       const onValueChange = vi.fn();
       render(<FruitCombobox multiple onValueChange={onValueChange} />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
       // multi-select: clicking an item does NOT close the dropdown
-      await act(async () => { fireEvent.click(screen.getByTestId("item-apple")); });
-      await act(async () => { fireEvent.click(screen.getByTestId("item-banana")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("item-apple"));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("item-banana"));
+      });
       expect(onValueChange).toHaveBeenLastCalledWith(["apple", "banana"]);
     });
   });
@@ -193,22 +235,30 @@ describe("Combobox (React)", () => {
 
     it("content has data-forge-scope=combobox and data-forge-part=content", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
       expect(screen.getByTestId("content")).toHaveAttribute("data-forge-scope", "combobox");
       expect(screen.getByTestId("content")).toHaveAttribute("data-forge-part", "content");
     });
 
     it("item has data-forge-scope=combobox and data-forge-part=option", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
       expect(screen.getByTestId("item-apple")).toHaveAttribute("data-forge-scope", "combobox");
       expect(screen.getByTestId("item-apple")).toHaveAttribute("data-forge-part", "option");
     });
 
     it("ItemText has data-forge-scope=combobox", async () => {
       render(<FruitCombobox />);
-      await act(async () => { fireEvent.click(screen.getByTestId("trigger")); });
-      const itemText = document.querySelector('[data-forge-scope="combobox"][data-forge-part="item-text"]');
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("trigger"));
+      });
+      const itemText = document.querySelector(
+        '[data-forge-scope="combobox"][data-forge-part="item-text"]',
+      );
       expect(itemText).toBeInTheDocument();
     });
   });

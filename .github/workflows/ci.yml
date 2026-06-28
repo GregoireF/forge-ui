@@ -1,15 +1,13 @@
 name: CI
 
-# What this job guarantees:
-# Lint + Typecheck + Unit tests (with coverage) + Build.
-# This is the "code quality" signal. It is intentionally separate from E2E
-# (see e2e.yml) so that a flaky browser test never turns this badge red.
-#
-# Invariant: if this job passes, the codebase is:
+# Guarantees on every push/PR to main:
 # 1. Lint-clean (Biome)
-# 2. TypeScript-valid (strict mode, project references)
-# 3. Unit-test-passing (Vitest + happy-dom)
-# 4. Build-successful (Turbo → tsc project refs → dist/)
+# 2. TypeScript-valid (strict, project references)
+# 3. Unit tests passing (Vitest + happy-dom) with coverage upload
+# 4. Build successful (Turbo → tsc project refs → dist/)
+#
+# Kept intentionally separate from e2e.yml: a flaky browser test must never
+# turn this badge red. Two independent signals, not one monolith.
 
 on:
   push:
@@ -27,9 +25,11 @@ jobs:
   ci:
     name: Typecheck · Lint · Test · Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       packages: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -39,10 +39,16 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Cache Bun store
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
         env:
-          # Needed to install @gregoiref/* packages from GitHub Package Registry
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint
@@ -55,32 +61,41 @@ jobs:
         run: bun run test:coverage
 
       - name: Upload coverage to Codecov
-        # TODO: pin to a SHA hash once verified (run: gh release view -R codecov/codecov-action).
-        # @v5 is used here because the previous @v4 was also unpinned;
-        # upgrading to v5 picks up the latest security patches in the meantime.
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: >-
             packages/react/coverage/lcov.info,
             packages/vue/coverage/lcov.info,
+            packages/core/coverage/lcov.info,
             packages/primitives/accordion/coverage/lcov.info,
             packages/primitives/alert-dialog/coverage/lcov.info,
+            packages/primitives/avatar/coverage/lcov.info,
             packages/primitives/checkbox/coverage/lcov.info,
             packages/primitives/collapsible/coverage/lcov.info,
             packages/primitives/combobox/coverage/lcov.info,
+            packages/primitives/date-field/coverage/lcov.info,
+            packages/primitives/date-picker/coverage/lcov.info,
+            packages/primitives/date-range-picker/coverage/lcov.info,
             packages/primitives/dialog/coverage/lcov.info,
             packages/primitives/field/coverage/lcov.info,
             packages/primitives/hover-card/coverage/lcov.info,
+            packages/primitives/menu/coverage/lcov.info,
+            packages/primitives/number-input/coverage/lcov.info,
             packages/primitives/popover/coverage/lcov.info,
             packages/primitives/progress/coverage/lcov.info,
             packages/primitives/radio-group/coverage/lcov.info,
             packages/primitives/select/coverage/lcov.info,
+            packages/primitives/separator/coverage/lcov.info,
             packages/primitives/slider/coverage/lcov.info,
             packages/primitives/switch/coverage/lcov.info,
             packages/primitives/tabs/coverage/lcov.info,
             packages/primitives/tags-input/coverage/lcov.info,
-            packages/primitives/tooltip/coverage/lcov.info
+            packages/primitives/time-picker/coverage/lcov.info,
+            packages/primitives/toggle/coverage/lcov.info,
+            packages/primitives/toggle-group/coverage/lcov.info,
+            packages/primitives/tooltip/coverage/lcov.info,
+            packages/primitives/visually-hidden/coverage/lcov.info
           flags: unit
           fail_ci_if_error: false
 

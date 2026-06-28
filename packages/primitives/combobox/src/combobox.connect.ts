@@ -1,6 +1,12 @@
 import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
 import { getAlignFromPlacement, getSideFromPlacement } from "@forge-ui/floating";
-import type { ComboboxContext, ComboboxEvent, ComboboxOption, ComboboxSend, ComboboxState } from "./combobox.types.js";
+import type {
+  ComboboxContext,
+  ComboboxEvent,
+  ComboboxOption,
+  ComboboxSend,
+  ComboboxState,
+} from "./combobox.types.js";
 
 export type ComboboxApi = ReturnType<typeof connectCombobox>;
 
@@ -36,9 +42,7 @@ export function connectCombobox(
     !filteredOptions.some((o) => o.label.toLowerCase() === context.inputValue.toLowerCase());
 
   const highlightedId =
-    context.highlighted !== null
-      ? `${context.contentId}-option-${context.highlighted}`
-      : undefined;
+    context.highlighted !== null ? `${context.contentId}-option-${context.highlighted}` : undefined;
 
   // Derive label of current selection (for single-select display).
   const valueLabel: string =
@@ -91,9 +95,10 @@ export function connectCombobox(
         "aria-autocomplete": (context.onInputChange ? "list" : "both") as "list" | "both",
         autocomplete: "off" as const,
         value: context.inputValue,
-        placeholder: context.multiple && !isOpen && valueLabels.length > 0
-          ? valueLabels.join(", ")
-          : context.placeholder,
+        placeholder:
+          context.multiple && !isOpen && valueLabels.length > 0
+            ? valueLabels.join(", ")
+            : context.placeholder,
         disabled: context.disabled ? true : undefined,
         readOnly: context.readOnly ? true : undefined,
         "data-state": state,
@@ -125,10 +130,16 @@ export function connectCombobox(
               }
               break;
             case "Home":
-              if (isOpen) { e.preventDefault(); send("HIGHLIGHT_FIRST"); }
+              if (isOpen) {
+                e.preventDefault();
+                send("HIGHLIGHT_FIRST");
+              }
               break;
             case "End":
-              if (isOpen) { e.preventDefault(); send("HIGHLIGHT_LAST"); }
+              if (isOpen) {
+                e.preventDefault();
+                send("HIGHLIGHT_LAST");
+              }
               break;
             case "Enter":
               if (isOpen && context.highlighted !== null) {

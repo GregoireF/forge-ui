@@ -27,17 +27,18 @@ export interface ToggleGroupRootProps extends UseToggleGroupOptions {
   "aria-label"?: string;
 }
 
-function Root({ children, className, style, "aria-label": ariaLabel, ...opts }: ToggleGroupRootProps) {
+function Root({
+  children,
+  className,
+  style,
+  "aria-label": ariaLabel,
+  ...opts
+}: ToggleGroupRootProps) {
   const api = useToggleGroup(opts);
 
   return (
     <ToggleGroupCtx.Provider value={api}>
-      <div
-        {...api.getRootProps()}
-        className={className}
-        style={style}
-        aria-label={ariaLabel}
-      >
+      <div {...api.getRootProps()} className={className} style={style} aria-label={ariaLabel}>
         {children}
       </div>
     </ToggleGroupCtx.Provider>

@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { cleanup, fireEvent, render, screen } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, nextTick } from "vue";
 import { Tabs } from "../src/components/tabs/Tabs.js";
@@ -260,12 +260,16 @@ describe("Tabs (Vue)", () => {
   describe("CSS contract", () => {
     it("root has data-forge-scope=tabs and data-forge-part=root", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="tabs"][data-forge-part="root"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="tabs"][data-forge-part="root"]'),
+      ).toBeInTheDocument();
     });
 
     it("list has data-forge-scope=tabs and data-forge-part=list", () => {
       render(makeFixture());
-      expect(document.querySelector('[data-forge-scope="tabs"][data-forge-part="list"]')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-forge-scope="tabs"][data-forge-part="list"]'),
+      ).toBeInTheDocument();
     });
 
     it("trigger has data-forge-scope=tabs and data-forge-part=trigger", () => {

@@ -40,8 +40,8 @@ const ToggleRoot = defineComponent({
 
     return () => {
       const toggleProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, toggleProps, slots['default']);
-      return h("button", toggleProps, slots['default']?.());
+      if (props.asChild) return h(Slot, toggleProps, slots["default"]);
+      return h("button", toggleProps, slots["default"]?.());
     };
   },
 });

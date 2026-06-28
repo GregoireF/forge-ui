@@ -8,11 +8,16 @@ test.describe("DateField — React (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const group = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-field-group"]');
-  const month = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-field-month"]');
-  const day = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-field-day"]');
-  const year = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-field-year"]');
-  const valueDisplay = (page: import("@playwright/test").Page) => page.locator('[data-testid="date-field-value"]');
+  const group = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-field-group"]');
+  const month = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-field-month"]');
+  const day = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-field-day"]');
+  const year = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-field-year"]');
+  const valueDisplay = (page: import("@playwright/test").Page) =>
+    page.locator('[data-testid="date-field-value"]');
 
   // ---------------------------------------------------------------------------
   // Structure & ARIA
@@ -153,9 +158,7 @@ test.describe("DateField — React (forge-ui)", () => {
   // ---------------------------------------------------------------------------
 
   test("date field has no axe violations", async ({ page }) => {
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
     expect(results.violations).toEqual([]);
   });
 });

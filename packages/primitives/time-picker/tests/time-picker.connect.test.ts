@@ -1,7 +1,7 @@
+import type { MachineSnapshot } from "@forge-ui/core";
 import { describe, expect, it, vi } from "vitest";
 import { connectTimePicker } from "../src/time-picker.connect.js";
 import type { TimePickerContext, TimePickerState } from "../src/time-picker.types.js";
-import type { MachineSnapshot } from "@forge-ui/core";
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -360,12 +360,22 @@ describe("connectTimePicker — assembledTime and hidden input", () => {
   });
 
   it("assembledTime null when seconds missing (showSeconds:true)", () => {
-    const { api } = makeApi({ hoursValue: 14, minutesValue: 30, secondsValue: null, showSeconds: true });
+    const { api } = makeApi({
+      hoursValue: 14,
+      minutesValue: 30,
+      secondsValue: null,
+      showSeconds: true,
+    });
     expect(api.assembledTime).toBeNull();
   });
 
   it("isoValue is HH:MM:SS format", () => {
-    const { api } = makeApi({ hoursValue: 9, minutesValue: 5, secondsValue: 0, showSeconds: false });
+    const { api } = makeApi({
+      hoursValue: 9,
+      minutesValue: 5,
+      secondsValue: 0,
+      showSeconds: false,
+    });
     expect(api.isoValue).toBe("09:05:00");
   });
 
@@ -519,12 +529,22 @@ describe("connectTimePicker — getSecondsSegmentProps with value", () => {
 
 describe("connectTimePicker — assembledTime showSeconds branch", () => {
   it("assembledTime includes seconds when showSeconds=true and all values set", () => {
-    const { api } = makeApi({ hoursValue: 9, minutesValue: 30, showSeconds: true, secondsValue: 45 });
+    const { api } = makeApi({
+      hoursValue: 9,
+      minutesValue: 30,
+      showSeconds: true,
+      secondsValue: 45,
+    });
     expect(api.assembledTime).toEqual({ hours: 9, minutes: 30, seconds: 45 });
   });
 
   it("assembledTime is null when showSeconds=true and secondsValue is null", () => {
-    const { api } = makeApi({ hoursValue: 9, minutesValue: 30, showSeconds: true, secondsValue: null });
+    const { api } = makeApi({
+      hoursValue: 9,
+      minutesValue: 30,
+      showSeconds: true,
+      secondsValue: null,
+    });
     expect(api.assembledTime).toBeNull();
   });
 });

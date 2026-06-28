@@ -1,7 +1,7 @@
+import type { MachineSnapshot } from "@forge-ui/core";
 import { describe, expect, it, vi } from "vitest";
 import { connectDateField } from "../src/date-field.connect.js";
 import type { DateFieldContext, DateFieldState } from "../src/date-field.types.js";
-import type { MachineSnapshot } from "@forge-ui/core";
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -22,10 +22,7 @@ function makeCtx(overrides: Partial<DateFieldContext> = {}): DateFieldContext {
   };
 }
 
-function makeApi(
-  ctxOverrides: Partial<DateFieldContext> = {},
-  state: DateFieldState = "idle",
-) {
+function makeApi(ctxOverrides: Partial<DateFieldContext> = {}, state: DateFieldState = "idle") {
   const ctx = makeCtx(ctxOverrides);
   const send = vi.fn();
   const machine = { setContext: vi.fn<(updates: Partial<DateFieldContext>) => void>() };

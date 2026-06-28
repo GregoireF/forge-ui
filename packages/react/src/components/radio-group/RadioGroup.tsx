@@ -31,12 +31,26 @@ function useItemCtx(): RadioItemCtx {
 // Root
 // ---------------------------------------------------------------------------
 
-export interface RadioGroupRootProps extends UseRadioGroupOptions, Omit<HTMLAttributes<HTMLDivElement>, keyof UseRadioGroupOptions | "children"> {
+export interface RadioGroupRootProps
+  extends UseRadioGroupOptions,
+    Omit<HTMLAttributes<HTMLDivElement>, keyof UseRadioGroupOptions | "children"> {
   children: ReactNode;
   asChild?: boolean;
 }
 
-function Root({ children, asChild, value, defaultValue, onValueChange, disabled, required, orientation, name, id, ...rest }: RadioGroupRootProps) {
+function Root({
+  children,
+  asChild,
+  value,
+  defaultValue,
+  onValueChange,
+  disabled,
+  required,
+  orientation,
+  name,
+  id,
+  ...rest
+}: RadioGroupRootProps) {
   const api = useRadioGroup({
     ...(value !== undefined && { value }),
     ...(defaultValue !== undefined && { defaultValue }),
@@ -50,7 +64,15 @@ function Root({ children, asChild, value, defaultValue, onValueChange, disabled,
   const props = api.getRootProps();
   return (
     <RadioGroupCtx.Provider value={api}>
-      {asChild ? <Slot {...props} {...rest}>{children}</Slot> : <div {...props} {...rest}>{children}</div>}
+      {asChild ? (
+        <Slot {...props} {...rest}>
+          {children}
+        </Slot>
+      ) : (
+        <div {...props} {...rest}>
+          {children}
+        </div>
+      )}
     </RadioGroupCtx.Provider>
   );
 }

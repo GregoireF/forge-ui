@@ -14,7 +14,17 @@ export interface ToggleProps
   children?: ReactNode;
 }
 
-export function Toggle({ asChild, children, pressed, defaultPressed, onPressedChange, disabled, id, value, ...rest }: ToggleProps) {
+export function Toggle({
+  asChild,
+  children,
+  pressed,
+  defaultPressed,
+  onPressedChange,
+  disabled,
+  id,
+  value,
+  ...rest
+}: ToggleProps) {
   const api = useToggle({
     ...(pressed !== undefined && { pressed }),
     ...(defaultPressed !== undefined && { defaultPressed }),

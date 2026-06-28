@@ -44,9 +44,17 @@ export function useField(options: CreateFieldOptions = {}): FieldApi {
 
   return {
     ...connect,
-    registerDescription() { ctx.hasDescription = true; },
-    unregisterDescription() { ctx.hasDescription = false; },
-    registerError() { ctx.hasError = true; },
-    unregisterError() { ctx.hasError = false; },
+    registerDescription() {
+      ctx.hasDescription = true;
+    },
+    unregisterDescription() {
+      ctx.hasDescription = false;
+    },
+    registerError() {
+      ctx.hasError = true;
+    },
+    unregisterError() {
+      ctx.hasError = false;
+    },
   };
 }

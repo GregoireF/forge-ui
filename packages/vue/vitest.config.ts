@@ -19,16 +19,16 @@ export default defineConfig({
       "@forge-ui/radio-group": fileURLToPath(
         new URL("../primitives/radio-group/src/index.ts", import.meta.url),
       ),
-      "@forge-ui/tabs": fileURLToPath(
-        new URL("../primitives/tabs/src/index.ts", import.meta.url),
-      ),
+      "@forge-ui/tabs": fileURLToPath(new URL("../primitives/tabs/src/index.ts", import.meta.url)),
       "@forge-ui/alert-dialog": fileURLToPath(
         new URL("../primitives/alert-dialog/src/index.ts", import.meta.url),
       ),
       "@forge-ui/dialog": fileURLToPath(
         new URL("../primitives/dialog/src/index.ts", import.meta.url),
       ),
-      "@forge-ui/field": fileURLToPath(new URL("../primitives/field/src/index.ts", import.meta.url)),
+      "@forge-ui/field": fileURLToPath(
+        new URL("../primitives/field/src/index.ts", import.meta.url),
+      ),
       "@forge-ui/floating": fileURLToPath(new URL("../floating/src/index.ts", import.meta.url)),
       "@forge-ui/popover": fileURLToPath(
         new URL("../primitives/popover/src/index.ts", import.meta.url),

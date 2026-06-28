@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 const URL = "http://localhost:3000";
 
-
 test.describe("Popover — React (forge-ui)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(URL);

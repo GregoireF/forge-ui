@@ -7,14 +7,11 @@ test.describe("Switch — Vue (forge-ui)", () => {
     await page.goto(URL);
   });
 
-  const firstSwitch = (page: import("@playwright/test").Page) =>
-    page.getByRole("switch").nth(0);
+  const firstSwitch = (page: import("@playwright/test").Page) => page.getByRole("switch").nth(0);
 
-  const disabledSwitch = (page: import("@playwright/test").Page) =>
-    page.getByRole("switch").nth(1);
+  const disabledSwitch = (page: import("@playwright/test").Page) => page.getByRole("switch").nth(1);
 
-  const invalidSwitch = (page: import("@playwright/test").Page) =>
-    page.getByRole("switch").nth(2);
+  const invalidSwitch = (page: import("@playwright/test").Page) => page.getByRole("switch").nth(2);
 
   test("switches exist on load", async ({ page }) => {
     await expect(page.getByRole("switch")).toHaveCount(3);
