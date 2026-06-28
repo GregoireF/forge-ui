@@ -21,9 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     # Skip for bot PRs — their commit format is auto-generated, not human-authored.
+    # Use pull_request.user.login (PR author) not github.actor (who triggered the run),
+    # because "Update branch" actions change the actor to the user even on bot PRs.
     if: |
-      github.actor != 'dependabot[bot]' &&
-      github.actor != 'renovate[bot]'
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.event.pull_request.user.login != 'renovate[bot]'
     permissions:
       contents: read
 
