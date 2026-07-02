@@ -83,6 +83,9 @@
             "noLabelWithoutControl": "off",
             "useSemanticElements": "off",
             "useAriaPropsSupportedByRole": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }
