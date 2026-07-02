@@ -498,7 +498,7 @@ describe("connectSelect — getOptionProps mouse events", () => {
       string,
       () => void
     >;
-    props["onMousemove"]();
+    props.onMousemove();
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: "react" });
   });
 
@@ -508,7 +508,7 @@ describe("connectSelect — getOptionProps mouse events", () => {
       string,
       () => void
     >;
-    props["onMousemove"]();
+    props.onMousemove();
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -518,7 +518,7 @@ describe("connectSelect — getOptionProps mouse events", () => {
       string,
       () => void
     >;
-    props["onMouseleave"]();
+    props.onMouseleave();
     expect(send).toHaveBeenCalledWith({ type: "HIGHLIGHT_OPTION", value: null });
   });
 });
@@ -631,7 +631,7 @@ describe("connectSelect — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectSelect(makeSnapshot(ctx), send, machine);
     const el = document.createElement("button");
-    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
@@ -641,7 +641,7 @@ describe("connectSelect — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectSelect(makeSnapshot(ctx), send, machine);
     const el = document.createElement("div");
-    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 });

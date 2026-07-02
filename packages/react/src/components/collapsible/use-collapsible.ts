@@ -18,7 +18,7 @@ export function useCollapsible(options: UseCollapsibleOptions = {}): Collapsible
     if (options.open !== undefined) {
       machine.send({ type: "SET_OPEN", open: options.open });
     }
-  }, [options.open]);
+  }, [options.open, machine.send]);
 
   return connectCollapsible(snapshot, send, machine);
 }

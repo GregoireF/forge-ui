@@ -220,7 +220,7 @@ function Item({ value, label, disabled = false, asChild, children, ...rest }: Co
     api.send({ type: "REGISTER_OPTION", option: { value, label: resolvedLabel, disabled } });
     return () => api.send({ type: "UNREGISTER_OPTION", value });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, resolvedLabel, disabled]);
+  }, [value, resolvedLabel, disabled, api.send]);
 
   // Hide when not in filteredOptions (client-side filtering mode).
   // In async mode filteredOptions === all options, so nothing is hidden automatically.

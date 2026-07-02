@@ -123,7 +123,7 @@ function Root({ children, value: itemValue, name: itemName, ...opts }: CheckboxR
           onClick(e: MouseEvent) {
             e.preventDefault();
             if (api.isDisabled) return;
-            group!.toggle(itemValue!);
+            group?.toggle(itemValue!);
           },
         }),
       }

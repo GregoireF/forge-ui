@@ -280,7 +280,7 @@ describe("connectSlider — getThumbProps", () => {
 describe("connectSlider — onKeydown (Vue alias)", () => {
   function callKeydown(api: ReturnType<typeof makeApi>["api"], key: string, index = 0) {
     const props = api.getThumbProps(index) as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key, preventDefault: vi.fn() });
+    props.onKeydown({ key, preventDefault: vi.fn() });
   }
 
   it("ArrowRight → INCREMENT", () => {
@@ -375,7 +375,7 @@ describe("connectSlider — getTrackProps", () => {
     const machine = { setContext: vi.fn() };
     const api = connectSlider(makeSnapshot(ctx), vi.fn(), machine);
     const el = document.createElement("div");
-    (api.getTrackProps() as Record<string, (el: Element | null) => void>)["ref"](el);
+    (api.getTrackProps() as Record<string, (el: Element | null) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ trackEl: el });
   });
 });
@@ -473,7 +473,7 @@ describe("connectSlider — getHiddenInputProps", () => {
   it("onChange is a no-op (required by React for controlled inputs)", () => {
     const { api } = makeApi();
     const props = api.getHiddenInputProps() as Record<string, () => void>;
-    expect(() => props["onChange"]()).not.toThrow();
+    expect(() => props.onChange()).not.toThrow();
   });
 });
 

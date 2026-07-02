@@ -135,7 +135,7 @@ describe("connectToggle — onKeydown (Vue alias)", () => {
   it("Enter sends TOGGLE via lowercase alias", () => {
     const { api, send } = makeApi();
     const props = api.getRootProps() as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key: "Enter", preventDefault: vi.fn() });
+    props.onKeydown({ key: "Enter", preventDefault: vi.fn() });
     expect(send).toHaveBeenCalledWith({ type: "TOGGLE" });
   });
 });

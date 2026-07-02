@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { AlertDialog } from "../src/components/alert-dialog/AlertDialog.js";
 import { useAlertDialog } from "../src/components/alert-dialog/use-alert-dialog.js";

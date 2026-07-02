@@ -351,7 +351,7 @@ describe("connectTabs — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "b" });
     cleanup();
   });
@@ -363,7 +363,7 @@ describe("connectTabs — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "a" });
     cleanup();
   });
@@ -376,7 +376,7 @@ describe("connectTabs — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).not.toHaveBeenCalled();
     cleanup();
   });
@@ -388,7 +388,7 @@ describe("connectTabs — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "a" });
     cleanup();
   });
@@ -400,7 +400,7 @@ describe("connectTabs — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     // navigateTabs returns true (handled) → early return; no SELECT_TAB in manual mode
     expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ type: "SELECT_TAB" }));
     cleanup();
@@ -417,21 +417,21 @@ describe("connectTabs — onFocusin (Vue alias for onFocus)", () => {
   it("onFocusin sends SELECT_TAB in automatic mode", () => {
     const { api, send } = makeApi({ activationMode: "automatic" });
     const props = api.getTriggerProps("tab2") as Record<string, () => void>;
-    props["onFocusin"]();
+    props.onFocusin();
     expect(send).toHaveBeenCalledWith({ type: "SELECT_TAB", value: "tab2" });
   });
 
   it("onFocusin does NOT send SELECT_TAB in manual mode", () => {
     const { api, send } = makeApi({ activationMode: "manual" });
     const props = api.getTriggerProps("tab2") as Record<string, () => void>;
-    props["onFocusin"]();
+    props.onFocusin();
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onFocusin does NOT send SELECT_TAB when globally disabled", () => {
     const { api, send } = makeApi({ activationMode: "automatic", disabled: true });
     const props = api.getTriggerProps("tab2") as Record<string, () => void>;
-    props["onFocusin"]();
+    props.onFocusin();
     expect(send).not.toHaveBeenCalled();
   });
 });

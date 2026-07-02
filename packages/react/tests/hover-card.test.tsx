@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { HoverCard } from "../src/components/hover-card/HoverCard.js";
 import { useHoverCard } from "../src/components/hover-card/use-hover-card.js";

@@ -189,7 +189,7 @@ describe("connectTooltip — getContentProps", () => {
     const machine = { setContext: vi.fn() };
     const api = connectTooltip(makeSnapshot(ctx), send, machine);
     const el = document.createElement("div");
-    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 
@@ -359,7 +359,7 @@ describe("connectTooltip — getTriggerProps ref callback", () => {
     const machine = { setContext: vi.fn() };
     const api = connectTooltip(makeSnapshot(ctx), send, machine);
     const el = document.createElement("div");
-    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 });
@@ -374,21 +374,21 @@ describe("connectTooltip — getTriggerProps closeOnPointerDown", () => {
   it("closeOnPointerDown=true: onPointerDown while open sends CLOSE", () => {
     const { api, send } = makeApi({ closeOnPointerDown: true }, "open");
     const props = api.getTriggerProps() as Record<string, () => void>;
-    props["onPointerDown"]();
+    props.onPointerDown();
     expect(send).toHaveBeenCalledWith("CLOSE");
   });
 
   it("closeOnPointerDown=true: onPointerDown while closed clears timer but does not send CLOSE", () => {
     const { api, send } = makeApi({ closeOnPointerDown: true }, "closed");
     const props = api.getTriggerProps() as Record<string, () => void>;
-    props["onPointerDown"]();
+    props.onPointerDown();
     expect(send).not.toHaveBeenCalled();
   });
 
   it("closeOnPointerDown=false: onPointerDown is not present on trigger", () => {
     const { api } = makeApi({ closeOnPointerDown: false });
     const props = api.getTriggerProps() as Record<string, unknown>;
-    expect(props["onPointerDown"]).toBeUndefined();
+    expect(props.onPointerDown).toBeUndefined();
   });
 });
 
@@ -403,7 +403,7 @@ describe("connectTooltip — getContentProps interactive handlers", () => {
     vi.useFakeTimers();
     const { api, send } = makeApi({ interactive: true, openDelay: 50 });
     const props = api.getContentProps() as Record<string, () => void>;
-    props["onPointerEnter"]();
+    props.onPointerEnter();
     vi.advanceTimersByTime(50);
     expect(send).toHaveBeenCalledWith("OPEN");
     vi.useRealTimers();
@@ -413,7 +413,7 @@ describe("connectTooltip — getContentProps interactive handlers", () => {
     vi.useFakeTimers();
     const { api, send } = makeApi({ interactive: true, closeDelay: 50 });
     const props = api.getContentProps() as Record<string, () => void>;
-    props["onPointerLeave"]();
+    props.onPointerLeave();
     vi.advanceTimersByTime(50);
     expect(send).toHaveBeenCalledWith("CLOSE");
     vi.useRealTimers();
@@ -422,7 +422,7 @@ describe("connectTooltip — getContentProps interactive handlers", () => {
   it("interactive=false: onPointerEnter/onPointerLeave are absent on content", () => {
     const { api } = makeApi({ interactive: false });
     const props = api.getContentProps() as Record<string, unknown>;
-    expect(props["onPointerEnter"]).toBeUndefined();
-    expect(props["onPointerLeave"]).toBeUndefined();
+    expect(props.onPointerEnter).toBeUndefined();
+    expect(props.onPointerLeave).toBeUndefined();
   });
 });

@@ -19,7 +19,7 @@ export function useTabs(options: UseTabsOptions = {}): TabsApi {
     if (options.value !== undefined) {
       machine.send({ type: "SET_VALUE", value: options.value });
     }
-  }, [options.value]);
+  }, [options.value, machine.send]);
 
   return connectTabs(snapshot, send, machine);
 }

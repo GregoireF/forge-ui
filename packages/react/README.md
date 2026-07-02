@@ -1,6 +1,6 @@
 # @forge-ui/react
 
-React 19+ bindings for forge-ui headless UI primitives. All 22 primitives — WAI-ARIA compliant, zero styles.
+React 19+ bindings for forge-ui headless UI primitives. All 28 primitives — WAI-ARIA compliant, zero styles.
 
 ## Install
 
@@ -129,6 +129,34 @@ import { HoverCard } from '@forge-ui/react'
   </HoverCard.Portal>
 </HoverCard.Root>
 ```
+
+---
+
+### Menu
+
+`role="menu"` dropdown with keyboard navigation and submenus.
+
+```tsx
+import { Menu } from '@forge-ui/react'
+
+<Menu.Root>
+  <Menu.Trigger>Actions</Menu.Trigger>
+  <Menu.Portal>
+    <Menu.Content>
+      <Menu.Item onSelect={() => console.log('edit')}>Edit</Menu.Item>
+      <Menu.Item onSelect={() => console.log('duplicate')}>Duplicate</Menu.Item>
+      <Menu.Separator />
+      <Menu.Item onSelect={() => console.log('delete')} disabled>Delete</Menu.Item>
+    </Menu.Content>
+  </Menu.Portal>
+</Menu.Root>
+```
+
+| Prop (`Root`) | Type | Default |
+|---|---|---|
+| `open` | `boolean` | — |
+| `onOpenChange` | `(open: boolean) => void` | — |
+| `positioning` | `FloatingPositioning` | `{ placement: 'bottom-start' }` |
 
 ---
 
@@ -312,6 +340,65 @@ import { Switch } from '@forge-ui/react'
   <Switch.HiddenInput name="dark-mode" />
 </Switch.Root>
 ```
+
+---
+
+### Toggle
+
+Stateful button with `aria-pressed`. Single element — no compound children.
+
+```tsx
+import { Toggle } from '@forge-ui/react'
+
+// Uncontrolled
+<Toggle aria-label="Bold" defaultPressed={false}>
+  <strong>B</strong>
+</Toggle>
+
+// Controlled
+<Toggle pressed={isBold} onPressedChange={setIsBold} aria-label="Bold">
+  <strong>B</strong>
+</Toggle>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `pressed` / `defaultPressed` | `boolean` | — / `false` |
+| `onPressedChange` | `(pressed: boolean) => void` | — |
+| `disabled` | `boolean` | `false` |
+| `value` | `string` | — |
+
+---
+
+### Toggle Group
+
+Group of toggle buttons — `role="toolbar"` with roving tabindex.
+
+```tsx
+import { ToggleGroup } from '@forge-ui/react'
+
+// Single selection (text alignment)
+<ToggleGroup.Root type="single" aria-label="Text alignment">
+  <ToggleGroup.Item value="left" aria-label="Align left">←</ToggleGroup.Item>
+  <ToggleGroup.Item value="center" aria-label="Center">↔</ToggleGroup.Item>
+  <ToggleGroup.Item value="right" aria-label="Align right">→</ToggleGroup.Item>
+</ToggleGroup.Root>
+
+// Multiple selection (text formatting)
+<ToggleGroup.Root type="multiple" aria-label="Text formatting" defaultValue={['bold']}>
+  <ToggleGroup.Item value="bold" aria-label="Bold"><strong>B</strong></ToggleGroup.Item>
+  <ToggleGroup.Item value="italic" aria-label="Italic"><em>I</em></ToggleGroup.Item>
+  <ToggleGroup.Item value="underline" aria-label="Underline"><u>U</u></ToggleGroup.Item>
+</ToggleGroup.Root>
+```
+
+| Prop (`Root`) | Type | Default |
+|---|---|---|
+| `type` | `"single" \| "multiple"` | `"single"` |
+| `value` / `defaultValue` | `string[]` | — / `[]` |
+| `onValueChange` | `(value: string[]) => void` | — |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` |
+| `rovingFocus` / `loop` | `boolean` | `true` / `true` |
 
 ---
 
@@ -616,6 +703,89 @@ import { DateRangePicker } from '@forge-ui/react'
   <DateRangePicker.HiddenInputs name="range" />
 </DateRangePicker.Root>
 ```
+
+---
+
+### Avatar
+
+Image with accessible fallback. FSM-driven: tracks load status, computes initials from `name`.
+
+```tsx
+import { Avatar } from '@forge-ui/react'
+
+<Avatar.Root name="Alice Smith" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', position: 'relative' }}>
+  <Avatar.Image src="https://example.com/photo.jpg" alt="Alice Smith" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+  <Avatar.Fallback delayMs={600}>AS</Avatar.Fallback>
+</Avatar.Root>
+```
+
+Use `useAvatarContext()` inside a child to read `initials` without duplicating the machine:
+
+```tsx
+import { Avatar, useAvatarContext } from '@forge-ui/react'
+
+function InitialsFallback() {
+  const { initials } = useAvatarContext()
+  return <Avatar.Fallback delayMs={600}>{initials}</Avatar.Fallback>
+}
+```
+
+| Prop (`Root`) | Type | Default |
+|---|---|---|
+| `name` | `string` | — |
+| `onStatusChange` | `(status: "idle" \| "loading" \| "loaded" \| "error") => void` | — |
+
+| Prop (`Fallback`) | Type | Default |
+|---|---|---|
+| `delayMs` | `number` | `0` |
+| `forceMount` | `boolean` | `false` |
+
+---
+
+### Separator
+
+Semantic or decorative divider — stateless, no machine.
+
+```tsx
+import { Separator } from '@forge-ui/react'
+
+// Semantic (announced by screen readers)
+<Separator />
+<Separator orientation="vertical" />
+
+// Decorative (aria-hidden, role="none")
+<Separator decorative />
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` |
+| `decorative` | `boolean` | `false` |
+
+---
+
+### Visually Hidden
+
+Hides content visually while keeping it in the accessibility tree. Use for icon-button labels and skip links.
+
+```tsx
+import { VisuallyHidden } from '@forge-ui/react'
+
+// Icon button with accessible label
+<button aria-label={undefined}>
+  <CloseIcon />
+  <VisuallyHidden>Close dialog</VisuallyHidden>
+</button>
+
+// Skip link (focusable — reveals itself on focus via CSS)
+<VisuallyHidden focusable>
+  <a href="#main-content">Skip to content</a>
+</VisuallyHidden>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `focusable` | `boolean` | `false` |
 
 ---
 

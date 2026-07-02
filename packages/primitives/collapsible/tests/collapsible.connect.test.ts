@@ -188,28 +188,28 @@ describe("connectCollapsible — onKeydown (Vue alias for onKeyDown)", () => {
   it("Enter sends TOGGLE", () => {
     const { api, send } = makeApi();
     const props = api.getTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key: "Enter", preventDefault: vi.fn() });
+    props.onKeydown({ key: "Enter", preventDefault: vi.fn() });
     expect(send).toHaveBeenCalledWith({ type: "TOGGLE" });
   });
 
   it("Space sends TOGGLE", () => {
     const { api, send } = makeApi();
     const props = api.getTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key: " ", preventDefault: vi.fn() });
+    props.onKeydown({ key: " ", preventDefault: vi.fn() });
     expect(send).toHaveBeenCalledWith({ type: "TOGGLE" });
   });
 
   it("disabled: Enter does not send TOGGLE", () => {
     const { api, send } = makeApi({ disabled: true });
     const props = api.getTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key: "Enter", preventDefault: vi.fn() });
+    props.onKeydown({ key: "Enter", preventDefault: vi.fn() });
     expect(send).not.toHaveBeenCalled();
   });
 
   it("other keys: no-op", () => {
     const { api, send } = makeApi();
     const props = api.getTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key: "Tab", preventDefault: vi.fn() });
+    props.onKeydown({ key: "Tab", preventDefault: vi.fn() });
     expect(send).not.toHaveBeenCalled();
   });
 });

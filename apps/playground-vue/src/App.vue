@@ -496,7 +496,7 @@ const AvatarInitialsFallback = defineComponent({
         AvatarFallback,
         { style: props.style },
         {
-          default: () => initials.value || slots["default"]?.(),
+          default: () => initials.value || slots.default?.(),
         },
       );
   },

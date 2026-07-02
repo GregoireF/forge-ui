@@ -19,7 +19,7 @@ export function useDatePicker(options: UseDatePickerOptions = {}) {
       machine.update({ value: options.value ?? null });
     }
     // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
-  }, [options.value]);
+  }, [options.value, machine.update]);
 
   return connectDatePicker(snapshot, send, machine);
 }

@@ -185,7 +185,7 @@ function clearSegment({
   if (context.focusedSegment === "day") setContext({ dayValue: null, typingBuffer: "" });
   else if (context.focusedSegment === "month") setContext({ monthValue: null, typingBuffer: "" });
   else setContext({ yearValue: null, typingBuffer: "" });
-  const draft = { ...context, ...update, [context.focusedSegment + "Value"]: null };
+  const draft = { ...context, ...update, [`${context.focusedSegment}Value`]: null };
   const date = tryBuildDate(draft);
   context.onValueChange?.(date);
 }

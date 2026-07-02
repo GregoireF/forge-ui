@@ -22,7 +22,7 @@ export function useDateRangePicker(options: UseDateRangePickerOptions = {}) {
       });
     }
     // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
-  }, [options.value]);
+  }, [options.value, machine.update]);
 
   return connectDateRangePicker(snapshot, send, machine);
 }

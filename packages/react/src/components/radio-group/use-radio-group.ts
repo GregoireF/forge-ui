@@ -18,7 +18,7 @@ export function useRadioGroup(options: UseRadioGroupOptions = {}): RadioGroupApi
     if (options.value !== undefined) {
       machine.send({ type: "SET_VALUE", value: options.value });
     }
-  }, [options.value]);
+  }, [options.value, machine.send]);
 
   return connectRadioGroup(snapshot, send, machine);
 }

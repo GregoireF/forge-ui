@@ -61,9 +61,9 @@ describe("createNumberInputMachine — initial state", () => {
   });
 
   it("fractionDigits: initial inputText formatted with decimals (value stored as-is, display truncated)", () => {
-    const m = make({ defaultValue: 3.14159, fractionDigits: 2 });
+    const m = make({ defaultValue: Math.PI, fractionDigits: 2 });
     // Value is not rounded on init — only the display text is formatted to 2 decimals
-    expect(m.getSnapshot().context.value).toBe(3.14159);
+    expect(m.getSnapshot().context.value).toBe(Math.PI);
     expect(m.getSnapshot().context.inputText).toBe("3.14");
   });
 

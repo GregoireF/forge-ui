@@ -720,21 +720,21 @@ describe("connectCombobox — getInputProps onInput handler", () => {
   it("onInput sends INPUT_CHANGE with the current input value", () => {
     const { api, send } = makeApi();
     const e = { target: { value: "typescript" } as HTMLInputElement } as Event;
-    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    (api.getInputProps() as Record<string, (e: Event) => void>).onInput(e);
     expect(send).toHaveBeenCalledWith({ type: "INPUT_CHANGE", value: "typescript" });
   });
 
   it("onInput when disabled does nothing", () => {
     const { api, send } = makeApi({ disabled: true });
     const e = { target: { value: "x" } as HTMLInputElement } as Event;
-    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    (api.getInputProps() as Record<string, (e: Event) => void>).onInput(e);
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onInput when readOnly does nothing", () => {
     const { api, send } = makeApi({ readOnly: true });
     const e = { target: { value: "x" } as HTMLInputElement } as Event;
-    (api.getInputProps() as Record<string, (e: Event) => void>)["onInput"](e);
+    (api.getInputProps() as Record<string, (e: Event) => void>).onInput(e);
     expect(send).not.toHaveBeenCalled();
   });
 });
@@ -755,7 +755,7 @@ describe("connectCombobox — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectCombobox(makeSnapshot(ctx), send, machine);
     const el = document.createElement("input");
-    (api.getInputProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getInputProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
@@ -765,7 +765,7 @@ describe("connectCombobox — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectCombobox(makeSnapshot(ctx), send, machine);
     const el = document.createElement("div");
-    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 
@@ -775,7 +775,7 @@ describe("connectCombobox — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectCombobox(makeSnapshot(ctx), send, machine);
     const el = document.createElement("button");
-    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ buttonEl: el });
   });
 });

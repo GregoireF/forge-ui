@@ -28,7 +28,7 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
       ...(options.onCreateOption !== undefined && { onCreateOption: options.onCreateOption }),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.options, options.onHighlightedScroll, options.onCreateOption]);
+  }, [options.options, options.onHighlightedScroll, options.onCreateOption, machine.setContext]);
 
   return {
     ...connectCombobox(snapshot, send, machine),

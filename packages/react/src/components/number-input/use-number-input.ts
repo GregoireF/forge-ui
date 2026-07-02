@@ -20,7 +20,7 @@ export function useNumberInput(options: UseNumberInputOptions = {}): NumberInput
       machine.update({ value: options.value ?? null });
     }
     // biome-ignore lint/correctness/useExhaustiveDependencies: options.value triggers sync
-  }, [options.value]);
+  }, [options.value, machine.update]);
 
   return connectNumberInput(snapshot, send, machine);
 }

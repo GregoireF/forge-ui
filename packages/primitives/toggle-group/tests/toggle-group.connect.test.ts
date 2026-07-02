@@ -166,7 +166,7 @@ describe("connectToggleGroup — onKeydown (Vue alias)", () => {
   it("Enter sends PRESS_ITEM via lowercase alias", () => {
     const { api, send } = makeApi();
     const props = api.getItemProps("bold") as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key: "Enter", preventDefault: vi.fn() });
+    props.onKeydown({ key: "Enter", preventDefault: vi.fn() });
     expect(send).toHaveBeenCalledWith({ type: "PRESS_ITEM", value: "bold" });
   });
 });

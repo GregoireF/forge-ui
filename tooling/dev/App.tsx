@@ -148,7 +148,7 @@ export function App() {
 
   useEffect(() => {
     setScrollOffset(0);
-  }, [filter, searchQuery]);
+  }, []);
 
   const cols = stdout?.columns ?? 80;
   const rows = stdout?.rows ?? 24;

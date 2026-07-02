@@ -316,7 +316,7 @@ describe("connectHoverCard — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectHoverCard(makeSnapshot(ctx), send, machine);
     const el = document.createElement("button");
-    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
@@ -326,7 +326,7 @@ describe("connectHoverCard — ref callbacks", () => {
     const machine = { setContext: vi.fn() };
     const api = connectHoverCard(makeSnapshot(ctx), send, machine);
     const el = document.createElement("div");
-    (api.getContentProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 });

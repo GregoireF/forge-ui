@@ -325,7 +325,7 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
     const props = api.getRadioProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
     cleanup();
   });
@@ -335,7 +335,7 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
     const props = api.getRadioProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "a" });
     cleanup();
   });
@@ -345,7 +345,7 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
     const props = api.getRadioProps("a", true) as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).not.toHaveBeenCalled();
     cleanup();
   });
@@ -355,7 +355,7 @@ describe("connectRadioGroup — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: radioEls[0] });
     const props = api.getRadioProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     // navigateRadioGroup returns true (handled ArrowDown) → early return; SELECT sent via navigateRadioGroup
     expect(send).toHaveBeenCalledWith({ type: "SELECT", value: "b" });
     cleanup();

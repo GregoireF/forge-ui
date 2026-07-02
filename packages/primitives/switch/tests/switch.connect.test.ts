@@ -281,12 +281,12 @@ describe("connectSwitch — getLabelProps state attributes", () => {
 describe("connectSwitch — getHiddenInputProps form", () => {
   it("form attribute present when form is set", () => {
     const props = makeApi({ form: "signup-form" }).api.getHiddenInputProps();
-    expect((props as Record<string, unknown>)["form"]).toBe("signup-form");
+    expect((props as Record<string, unknown>).form).toBe("signup-form");
   });
 
   it("form attribute absent when form is undefined", () => {
     const props = makeApi({ form: undefined }).api.getHiddenInputProps();
-    expect((props as Record<string, unknown>)["form"]).toBeUndefined();
+    expect((props as Record<string, unknown>).form).toBeUndefined();
   });
 });
 
@@ -305,7 +305,7 @@ describe("connectSwitch — getRootProps ref callback", () => {
     const machine = { setContext: vi.fn() };
     const api = connectSwitch(makeSnapshot(ctx), send, machine);
     const el = document.createElement("div");
-    (api.getRootProps() as Record<string, (el: HTMLElement) => void>)["ref"](el);
+    (api.getRootProps() as Record<string, (el: HTMLElement) => void>).ref(el);
     expect(machine.setContext).toHaveBeenCalledWith({ rootEl: el });
   });
 });

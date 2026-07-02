@@ -209,7 +209,7 @@ function Item({ value, disabled = false, label, asChild, children, ...rest }: Se
     api.send({ type: "REGISTER_OPTION", option });
     return () => api.send({ type: "UNREGISTER_OPTION", value });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, resolvedLabel, disabled]);
+  }, [value, resolvedLabel, disabled, api.send]);
 
   // Strip Vue-specific casing (onMousemove / onMouseleave) â€" React uses camelCase.
   const {
@@ -262,7 +262,7 @@ function ItemIndicator({ children }: SelectItemIndicatorProps) {
 export interface SelectSeparatorProps extends HTMLAttributes<HTMLLIElement> {}
 
 function Separator({ ...rest }: SelectSeparatorProps) {
-  return <li role="separator" data-forge-scope="select" data-forge-part="separator" {...rest} />;
+  return <li data-forge-scope="select" data-forge-part="separator" {...rest} />;
 }
 
 // ---------------------------------------------------------------------------

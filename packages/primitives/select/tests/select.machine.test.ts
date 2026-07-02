@@ -295,7 +295,7 @@ describe("createSelectMachine — REGISTER_OPTION", () => {
     const m = make({ defaultOpen: true });
     m.send({ type: "REGISTER_OPTION", option: { value: "react", label: "React" } });
     m.send("CLOSE");
-    expect(m.getSnapshot().context.valueLabelMap["react"]).toBe("React");
+    expect(m.getSnapshot().context.valueLabelMap.react).toBe("React");
   });
 });
 
@@ -341,13 +341,13 @@ describe("createSelectMachine — callbacks", () => {
 describe("createSelectMachine — defaultLabel", () => {
   it("string defaultLabel seeds label for single defaultValue", () => {
     const m = make({ defaultValue: "react", defaultLabel: "React" });
-    expect(m.getSnapshot().context.valueLabelMap["react"]).toBe("React");
+    expect(m.getSnapshot().context.valueLabelMap.react).toBe("React");
   });
 
   it("array defaultLabel seeds labels for multiple defaultValues", () => {
     const m = make({ defaultValue: ["react", "vue"], defaultLabel: ["React", "Vue"] });
-    expect(m.getSnapshot().context.valueLabelMap["react"]).toBe("React");
-    expect(m.getSnapshot().context.valueLabelMap["vue"]).toBe("Vue");
+    expect(m.getSnapshot().context.valueLabelMap.react).toBe("React");
+    expect(m.getSnapshot().context.valueLabelMap.vue).toBe("Vue");
   });
 
   it("no defaultLabel: valueLabelMap starts empty", () => {
@@ -388,7 +388,7 @@ describe("createSelectMachine — UNREGISTER_OPTION", () => {
     const m = make();
     m.send({ type: "REGISTER_OPTION", option: { value: "a", label: "Alpha" } });
     m.send({ type: "UNREGISTER_OPTION", value: "a" });
-    expect(m.getSnapshot().context.valueLabelMap["a"]).toBe("Alpha");
+    expect(m.getSnapshot().context.valueLabelMap.a).toBe("Alpha");
   });
 });
 
@@ -523,9 +523,9 @@ describe("createSelectMachine — defaultLabel partial match", () => {
   it("only seeds labels that have a corresponding defaultLabel entry (line 155)", () => {
     const m = make({ defaultValue: ["react", "vue", "angular"], defaultLabel: ["React"] });
     const map = m.getSnapshot().context.valueLabelMap;
-    expect(map["react"]).toBe("React");
-    expect(map["vue"]).toBeUndefined();
-    expect(map["angular"]).toBeUndefined();
+    expect(map.react).toBe("React");
+    expect(map.vue).toBeUndefined();
+    expect(map.angular).toBeUndefined();
   });
 });
 

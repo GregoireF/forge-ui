@@ -219,7 +219,7 @@ describe("connectNumberInput — getInputProps", () => {
 describe("connectNumberInput — onKeydown (Vue alias)", () => {
   function callKeydown(api: ReturnType<typeof makeApi>["api"], key: string) {
     const props = api.getInputProps() as Record<string, (e: unknown) => void>;
-    props["onKeydown"]({ key, preventDefault: vi.fn() });
+    props.onKeydown({ key, preventDefault: vi.fn() });
   }
 
   it("ArrowUp → INCREMENT", () => {
@@ -503,7 +503,7 @@ describe("connectNumberInput — increment trigger Vue pointer aliases", () => {
   it("onPointerdown sends INCREMENT then SPIN_START_UP", () => {
     const { api, send } = makeApi();
     const props = api.getIncrementTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    props.onPointerdown({ button: 0, preventDefault: vi.fn() });
     expect(send).toHaveBeenNthCalledWith(1, { type: "INCREMENT" });
     expect(send).toHaveBeenNthCalledWith(2, { type: "SPIN_START_UP" });
   });
@@ -511,28 +511,28 @@ describe("connectNumberInput — increment trigger Vue pointer aliases", () => {
   it("onPointerdown: disabled is no-op", () => {
     const { api, send } = makeApi({ disabled: true });
     const props = api.getIncrementTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    props.onPointerdown({ button: 0, preventDefault: vi.fn() });
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onPointerdown: non-primary button is no-op", () => {
     const { api, send } = makeApi();
     const props = api.getIncrementTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onPointerdown"]({ button: 2, preventDefault: vi.fn() });
+    props.onPointerdown({ button: 2, preventDefault: vi.fn() });
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onPointerup sends SPIN_STOP", () => {
     const { api, send } = makeApi();
     const props = api.getIncrementTriggerProps() as Record<string, () => void>;
-    props["onPointerup"]();
+    props.onPointerup();
     expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
   });
 
   it("onPointerleave sends SPIN_STOP", () => {
     const { api, send } = makeApi();
     const props = api.getIncrementTriggerProps() as Record<string, () => void>;
-    props["onPointerleave"]();
+    props.onPointerleave();
     expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
   });
 });
@@ -545,7 +545,7 @@ describe("connectNumberInput — decrement trigger Vue pointer aliases", () => {
   it("onPointerdown sends DECREMENT then SPIN_START_DOWN", () => {
     const { api, send } = makeApi();
     const props = api.getDecrementTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    props.onPointerdown({ button: 0, preventDefault: vi.fn() });
     expect(send).toHaveBeenNthCalledWith(1, { type: "DECREMENT" });
     expect(send).toHaveBeenNthCalledWith(2, { type: "SPIN_START_DOWN" });
   });
@@ -553,21 +553,21 @@ describe("connectNumberInput — decrement trigger Vue pointer aliases", () => {
   it("onPointerdown: disabled is no-op", () => {
     const { api, send } = makeApi({ disabled: true });
     const props = api.getDecrementTriggerProps() as Record<string, (e: unknown) => void>;
-    props["onPointerdown"]({ button: 0, preventDefault: vi.fn() });
+    props.onPointerdown({ button: 0, preventDefault: vi.fn() });
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onPointerup sends SPIN_STOP", () => {
     const { api, send } = makeApi();
     const props = api.getDecrementTriggerProps() as Record<string, () => void>;
-    props["onPointerup"]();
+    props.onPointerup();
     expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
   });
 
   it("onPointerleave sends SPIN_STOP", () => {
     const { api, send } = makeApi();
     const props = api.getDecrementTriggerProps() as Record<string, () => void>;
-    props["onPointerleave"]();
+    props.onPointerleave();
     expect(send).toHaveBeenCalledWith({ type: "SPIN_STOP" });
   });
 });
@@ -580,28 +580,28 @@ describe("connectNumberInput — Vue input aliases", () => {
   it("onInput_vue sends SET_INPUT_TEXT", () => {
     const { api, send } = makeApi();
     const props = api.getInputProps() as Record<string, (e: unknown) => void>;
-    props["onInput_vue"]({ target: { value: "42" } });
+    props.onInput_vue({ target: { value: "42" } });
     expect(send).toHaveBeenCalledWith({ type: "SET_INPUT_TEXT", text: "42" });
   });
 
   it("onInput_vue: disabled is no-op", () => {
     const { api, send } = makeApi({ disabled: true });
     const props = api.getInputProps() as Record<string, (e: unknown) => void>;
-    props["onInput_vue"]({ target: { value: "42" } });
+    props.onInput_vue({ target: { value: "42" } });
     expect(send).not.toHaveBeenCalled();
   });
 
   it("onChange sends SET_INPUT_TEXT", () => {
     const { api, send } = makeApi();
     const props = api.getInputProps() as Record<string, (e: unknown) => void>;
-    props["onChange"]({ target: { value: "99" } });
+    props.onChange({ target: { value: "99" } });
     expect(send).toHaveBeenCalledWith({ type: "SET_INPUT_TEXT", text: "99" });
   });
 
   it("onChange: readOnly is no-op", () => {
     const { api, send } = makeApi({ readOnly: true });
     const props = api.getInputProps() as Record<string, (e: unknown) => void>;
-    props["onChange"]({ target: { value: "99" } });
+    props.onChange({ target: { value: "99" } });
     expect(send).not.toHaveBeenCalled();
   });
 });

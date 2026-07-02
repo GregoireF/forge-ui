@@ -176,7 +176,14 @@ function Content({
     });
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api.isOpen, api.titleRegistered, api.descriptionRegistered]);
+  }, [
+    api.isOpen,
+    api.titleRegistered,
+    api.descriptionRegistered,
+    rest["aria-labelledby"],
+    rest["aria-label"],
+    rest["aria-describedby"],
+  ]);
 
   // Sync content-level event callbacks into the machine so activities pick them up.
   // Content-level callbacks take precedence over Root-level ones.

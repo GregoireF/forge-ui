@@ -222,12 +222,12 @@ describe("connectCheckbox — getHiddenInputProps", () => {
 
   it("form attribute present when form is set", () => {
     const props = makeApi({ form: "my-form" }).api.getHiddenInputProps();
-    expect((props as Record<string, unknown>)["form"]).toBe("my-form");
+    expect((props as Record<string, unknown>).form).toBe("my-form");
   });
 
   it("form attribute absent when form is undefined", () => {
     const props = makeApi({ form: undefined }).api.getHiddenInputProps();
-    expect((props as Record<string, unknown>)["form"]).toBeUndefined();
+    expect((props as Record<string, unknown>).form).toBeUndefined();
   });
 });
 

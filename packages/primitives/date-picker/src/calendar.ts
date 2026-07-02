@@ -153,9 +153,8 @@ export function isDateDisabled(
 ): boolean {
   if (min && compareDate(date, min) < 0) return true;
   if (max && compareDate(date, max) > 0) return true;
-  if (isDateUnavailable && isDateUnavailable(date)) return true;
-  if (disabledWeekdays && disabledWeekdays.includes(getDayOfWeek(date.year, date.month, date.day)))
-    return true;
+  if (isDateUnavailable?.(date)) return true;
+  if (disabledWeekdays?.includes(getDayOfWeek(date.year, date.month, date.day))) return true;
   return false;
 }
 

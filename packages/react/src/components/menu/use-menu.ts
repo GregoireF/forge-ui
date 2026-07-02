@@ -80,7 +80,7 @@ export function useMenu(options: UseMenuOptions = {}): UseMenuReturn {
     if (openProp !== undefined) {
       send(openProp ? "OPEN" : "CLOSE");
     }
-  }, [openProp]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [openProp, send]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const api = connectMenu(snapshot, send, machine);
 

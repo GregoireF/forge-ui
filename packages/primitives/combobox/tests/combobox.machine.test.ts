@@ -233,7 +233,7 @@ describe("createComboboxMachine — SELECT_OPTION (multiple)", () => {
     m.send("OPEN");
     m.send({ type: "REGISTER_OPTION", option: { value: "react", label: "React" } });
     m.send({ type: "SELECT_OPTION", value: "react" });
-    expect(m.getSnapshot().context.selectedLabels["react"]).toBe("React");
+    expect(m.getSnapshot().context.selectedLabels.react).toBe("React");
   });
 });
 
@@ -452,7 +452,7 @@ describe("createComboboxMachine — SELECT_HIGHLIGHTED (multiple)", () => {
     m.send({ type: "REGISTER_OPTION", option: { value: "ts", label: "TypeScript" } });
     m.send({ type: "HIGHLIGHT_OPTION", value: "ts" });
     m.send("SELECT_HIGHLIGHTED");
-    expect(m.getSnapshot().context.selectedLabels["ts"]).toBe("TypeScript");
+    expect(m.getSnapshot().context.selectedLabels.ts).toBe("TypeScript");
   });
 
   it("removes from selectedLabels on deselect", () => {
@@ -461,7 +461,7 @@ describe("createComboboxMachine — SELECT_HIGHLIGHTED (multiple)", () => {
     m.send({ type: "REGISTER_OPTION", option: { value: "ts", label: "TypeScript" } });
     m.send({ type: "HIGHLIGHT_OPTION", value: "ts" });
     m.send("SELECT_HIGHLIGHTED");
-    expect(m.getSnapshot().context.selectedLabels["ts"]).toBeUndefined();
+    expect(m.getSnapshot().context.selectedLabels.ts).toBeUndefined();
   });
 });
 
@@ -477,7 +477,7 @@ describe("createComboboxMachine — CLOSE with multiple=true (label capture)", (
     m.send({ type: "SELECT_OPTION", value: "a" });
     m.send("CLOSE");
     // Label must be preserved in selectedLabels after options portal unmounts.
-    expect(m.getSnapshot().context.selectedLabels["a"]).toBe("Apple");
+    expect(m.getSnapshot().context.selectedLabels.a).toBe("Apple");
   });
 
   it("resets highlighted and inputValue on CLOSE (multiple)", () => {
@@ -517,7 +517,7 @@ describe("createComboboxMachine — INTERACT_OUTSIDE with multiple=true", () => 
     m.send({ type: "REGISTER_OPTION", option: { value: "b", label: "Banana" } });
     m.send({ type: "SELECT_OPTION", value: "b" });
     m.send("INTERACT_OUTSIDE");
-    expect(m.getSnapshot().context.selectedLabels["b"]).toBe("Banana");
+    expect(m.getSnapshot().context.selectedLabels.b).toBe("Banana");
   });
 
   it("resets highlighted and inputValue", () => {
@@ -797,7 +797,7 @@ describe("createComboboxMachine — SELECT_OPTION option not in options list", (
     m.send("OPEN");
     // Select "unknown" without registering it → opt=undefined → label falls back to value
     m.send({ type: "SELECT_OPTION", value: "unknown" });
-    expect(m.getSnapshot().context.selectedLabels["unknown"]).toBe("unknown");
+    expect(m.getSnapshot().context.selectedLabels.unknown).toBe("unknown");
   });
 });
 
@@ -905,7 +905,7 @@ describe("createComboboxMachine — SELECT_HIGHLIGHTED option not registered", (
     m.send({ type: "HIGHLIGHT_OPTION", value: "unregistered" });
     m.send("SELECT_HIGHLIGHTED");
     // opt=undefined → opt?.label=undefined → ?? "unregistered"
-    expect(m.getSnapshot().context.selectedLabels["unregistered"]).toBe("unregistered");
+    expect(m.getSnapshot().context.selectedLabels.unregistered).toBe("unregistered");
   });
 });
 

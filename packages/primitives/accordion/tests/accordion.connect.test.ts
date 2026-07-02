@@ -200,7 +200,7 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     root.setAttribute("data-forge-scope", "accordion");
     root.setAttribute("data-forge-part", "root");
 
-    const triggerEls: HTMLButtonElement[] = itemValues.map((v) => {
+    const triggerEls: HTMLButtonElement[] = itemValues.map((_v) => {
       const btn = document.createElement("button");
       btn.setAttribute("data-forge-part", "trigger");
       root.appendChild(btn);
@@ -290,7 +290,7 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "a" });
     cleanup();
   });
@@ -300,7 +300,7 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).not.toHaveBeenCalled();
     cleanup();
   });
@@ -310,7 +310,7 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     expect(send).toHaveBeenCalledWith({ type: "TOGGLE_ITEM", value: "a" });
     cleanup();
   });
@@ -320,7 +320,7 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     // navigateAccordion returns false (Escape is not arrow/home/end), Enter||Space both false → no action
     expect(send).not.toHaveBeenCalled();
     cleanup();
@@ -331,7 +331,7 @@ describe("connectAccordion — onKeyDown keyboard navigation", () => {
     const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
     Object.defineProperty(e, "currentTarget", { value: triggerEls[0] });
     const props = api.getTriggerProps("a") as Record<string, (e: unknown) => void>;
-    props["onKeydown"](e);
+    props.onKeydown(e);
     // navigateAccordion returns true (handled ArrowDown) → early return in onKeydown; no send
     expect(send).not.toHaveBeenCalled();
     cleanup();

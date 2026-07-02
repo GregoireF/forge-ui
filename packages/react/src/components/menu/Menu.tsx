@@ -176,7 +176,15 @@ function Content({
       if (!closeEvent.defaultPrevented) api.focusTrigger();
     }
     wasOpenRef.current = api.isOpen;
-  }, [api.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    api.isOpen,
+    api.highlighted,
+    api.focusTrigger,
+    onOpenAutoFocus,
+    api.send,
+    api.focusContent,
+    onCloseAutoFocus,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ARIA roving tabindex / real focus: move DOM focus to the highlighted item on keyboard nav.
   // Pointer hover only updates data-highlighted visually — no focus move.
@@ -184,7 +192,7 @@ function Content({
     if (api.isOpen && api.highlighted !== null && api.highlightSource === "keyboard") {
       api.focusHighlightedItem();
     }
-  }, [api.highlighted, api.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [api.highlighted, api.isOpen, api.highlightSource, api.focusHighlightedItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!forceMount && !isPresent) return null;
 
@@ -356,7 +364,7 @@ function Item({
       disabled,
     });
     return () => api.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, api.registerItem, api.unregisterItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter,
@@ -524,7 +532,7 @@ function RadioItem({
       disabled,
     });
     return () => api.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, api.unregisterItem, api.registerItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter,
@@ -597,7 +605,7 @@ function CheckboxItem({
       disabled,
     });
     return () => api.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, api.unregisterItem, api.registerItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter,
@@ -743,7 +751,15 @@ function SubTrigger({
     return () => {
       parentTriggersRef?.current.delete(value);
     };
-  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    value,
+    parentTriggersRef?.current.delete,
+    childApi.setOpen, // Register in the PARENT's triggers map, not the own map.
+    // The outer Content/SubContent reads from its direct Sub's ownTriggersRef (= parentTriggersRef here).
+    parentTriggersRef?.current.set,
+    childApi.send,
+    childApi.focusContent,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useLayoutEffect(() => {
     parentApi.registerItem({
@@ -753,7 +769,7 @@ function SubTrigger({
       disabled,
     });
     return () => parentApi.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, parentApi.unregisterItem, parentApi.registerItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter: _pme,
@@ -842,7 +858,12 @@ function SubContent({
     ) {
       childApi.focusHighlightedItem();
     }
-  }, [childApi.highlighted, childApi.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    childApi.highlighted,
+    childApi.isOpen,
+    childApi.highlightSource,
+    childApi.focusHighlightedItem,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!forceMount && !isPresent) return null;
 

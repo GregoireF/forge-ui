@@ -131,14 +131,14 @@ function Content({
       // Context menu: no trigger element to return focus to by default.
     }
     wasOpenRef.current = api.isOpen;
-  }, [api.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [api.isOpen, api.send, onOpenAutoFocus, onCloseAutoFocus, api.highlighted, api.focusContent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ARIA roving tabindex: keyboard highlight moves real focus to the item.
   useEffect(() => {
     if (api.isOpen && api.highlighted !== null && api.highlightSource === "keyboard") {
       api.focusHighlightedItem();
     }
-  }, [api.highlighted, api.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [api.highlighted, api.isOpen, api.focusHighlightedItem, api.highlightSource]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!forceMount && !isPresent) return null;
 
@@ -237,7 +237,7 @@ function Item({
       disabled,
     });
     return () => api.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, api.unregisterItem, api.registerItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter,
@@ -411,7 +411,7 @@ function RadioItem({
       disabled,
     });
     return () => api.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, api.unregisterItem, api.registerItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter,
@@ -484,7 +484,7 @@ function CheckboxItem({
       disabled,
     });
     return () => api.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, api.unregisterItem, api.registerItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter,
@@ -642,7 +642,7 @@ function SubTrigger({
       disabled,
     });
     return () => parentApi.unregisterItem(value);
-  }, [value, label, textValue, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, label, textValue, disabled, parentApi.registerItem, parentApi.unregisterItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     onMouseEnter: _pme,
@@ -716,7 +716,12 @@ function SubContent({
     ) {
       childApi.focusHighlightedItem();
     }
-  }, [childApi.highlighted, childApi.isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    childApi.highlighted,
+    childApi.isOpen,
+    childApi.highlightSource,
+    childApi.focusHighlightedItem,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!forceMount && !isPresent) return null;
 
