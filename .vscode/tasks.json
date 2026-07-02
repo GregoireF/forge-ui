@@ -1,0 +1,112 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ── Développement ───────────────────────────────────────────────────────
+    {
+      "label": "dev: tous les playgrounds",
+      "type": "shell",
+      "command": "bun run dev",
+      "group": "build",
+      "presentation": { "panel": "new", "reveal": "always" },
+      "runOptions": { "runOn": "default" }
+    },
+    {
+      "label": "dev: React (localhost:3000)",
+      "type": "shell",
+      "command": "bun run dev:react",
+      "group": "build",
+      "presentation": { "panel": "new", "reveal": "always" }
+    },
+    {
+      "label": "dev: Vue (localhost:3001)",
+      "type": "shell",
+      "command": "bun run dev:vue",
+      "group": "build",
+      "presentation": { "panel": "new", "reveal": "always" }
+    },
+    {
+      "label": "dev: Nuxt (localhost:3002)",
+      "type": "shell",
+      "command": "bun run dev:nuxt",
+      "group": "build",
+      "presentation": { "panel": "new", "reveal": "always" }
+    },
+
+    // ── Build ───────────────────────────────────────────────────────────────
+    {
+      "label": "build: tous les packages",
+      "type": "shell",
+      "command": "bun run build",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$tsc"]
+    },
+
+    // ── Tests ───────────────────────────────────────────────────────────────
+    {
+      "label": "test: unitaires",
+      "type": "shell",
+      "command": "bun run test",
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "panel": "shared", "reveal": "always" }
+    },
+    {
+      "label": "test: couverture",
+      "type": "shell",
+      "command": "bun run test:coverage",
+      "group": "test",
+      "presentation": { "panel": "shared", "reveal": "always" }
+    },
+    {
+      "label": "test: E2E Playwright",
+      "type": "shell",
+      "command": "bun run test:e2e",
+      "group": "test",
+      "presentation": { "panel": "new", "reveal": "always" }
+    },
+
+    // ── Qualité ─────────────────────────────────────────────────────────────
+    {
+      "label": "lint: vérifier",
+      "type": "shell",
+      "command": "bun run lint",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint: corriger auto",
+      "type": "shell",
+      "command": "bun run lint:fix",
+      "group": "build"
+    },
+    {
+      "label": "typecheck: tous les packages",
+      "type": "shell",
+      "command": "bun run typecheck",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    },
+
+    // ── Release ─────────────────────────────────────────────────────────────
+    {
+      "label": "changeset: créer",
+      "type": "shell",
+      "command": "bun run changeset",
+      "group": "build",
+      "presentation": { "panel": "shared", "reveal": "always" }
+    },
+
+    // ── CI locale (tout avant de pousser) ────────────────────────────────────
+    {
+      "label": "ci: vérification complète",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "lint: vérifier",
+        "typecheck: tous les packages",
+        "test: unitaires",
+        "build: tous les packages"
+      ],
+      "group": "build",
+      "presentation": { "panel": "shared", "reveal": "always" }
+    }
+  ]
+}

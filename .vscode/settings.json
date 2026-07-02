@@ -1,0 +1,68 @@
+{
+  // ── Formatage (Biome gère tout) ────────────────────────────────────────────
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "[javascript]":       { "editor.defaultFormatter": "biomejs.biome" },
+  "[typescript]":       { "editor.defaultFormatter": "biomejs.biome" },
+  "[typescriptreact]":  { "editor.defaultFormatter": "biomejs.biome" },
+  "[vue]":              { "editor.defaultFormatter": "biomejs.biome" },
+  "[json]":             { "editor.defaultFormatter": "biomejs.biome" },
+  "[jsonc]":            { "editor.defaultFormatter": "biomejs.biome" },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit"
+  },
+
+  // ── TypeScript ─────────────────────────────────────────────────────────────
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+
+  // ── Vue / Volar ────────────────────────────────────────────────────────────
+  "vue.server.hybridMode": true,
+
+  // ── Vitest ─────────────────────────────────────────────────────────────────
+  "vitest.enable": true,
+  "vitest.workspaceFile": "${workspaceFolder}/vitest.workspace.ts",
+
+  // ── Playwright ─────────────────────────────────────────────────────────────
+  "playwright.reuseBrowser": true,
+
+  // ── Explorateur ────────────────────────────────────────────────────────────
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.turbo": true,
+    "**/dist": true,
+    "**/*.tsbuildinfo": true,
+    "**/.changeset/*.md": false
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.turbo": true,
+    "**/coverage": true,
+    "bun.lock": true
+  },
+
+  // ── Spell check ────────────────────────────────────────────────────────────
+  "cSpell.words": [
+    "forge", "headless", "composable", "composables",
+    "spinbutton", "listbox", "combobox",
+    "biomejs", "lefthook", "turbo",
+    "changesets", "changeset",
+    "prerelease",
+    "WAI", "ARIA", "WCAG",
+    "Driessen", "GitFlow"
+  ],
+
+  // ── Éditeur ────────────────────────────────────────────────────────────────
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.tabSize": 2,
+  "editor.rulers": [100],
+
+  // ── Git ────────────────────────────────────────────────────────────────────
+  "git.autofetch": true,
+  "git.pruneOnFetch": true,
+  "gitlens.codeLens.enabled": false,
+  "gitlens.currentLine.enabled": true
+}

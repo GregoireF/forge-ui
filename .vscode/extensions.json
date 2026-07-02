@@ -1,0 +1,29 @@
+{
+  "recommendations": [
+    // — Qualité code ——————————————————————————————————————————————
+    "biomejs.biome",               // Linter + formatter (remplace ESLint + Prettier)
+    "usernamehw.errorlens",        // Erreurs inline dans le code
+    "streetsidesoftware.code-spell-checker",
+
+    // — TypeScript / Vue ———————————————————————————————————————————
+    "vue.volar",                   // Support Vue 3 + TypeScript (remplace Vetur)
+    "ms-vscode.vscode-typescript-next", // Dernier TypeScript en preview
+
+    // — Tests —————————————————————————————————————————————————————
+    "vitest.explorer",             // UI Vitest intégrée dans VS Code
+    "ms-playwright.playwright",    // Runner E2E Playwright
+
+    // — Git & GitHub ———————————————————————————————————————————————
+    "eamodio.gitlens",             // Git blame inline + historique
+    "github.vscode-pull-request-github", // PRs, issues, reviews dans VS Code
+    "github.vscode-github-actions",// Autocomplétion et linting des workflows CI
+
+    // — DX générale ————————————————————————————————————————————————
+    "ms-vsliveshare.vsliveshare",  // Pair programming en temps réel
+    "formulahendry.auto-rename-tag" // Sync balises ouvrantes/fermantes
+  ],
+  "unwantedRecommendations": [
+    "dbaeumer.vscode-eslint",      // Remplacé par Biome
+    "esbenp.prettier-vscode"       // Remplacé par Biome
+  ]
+}

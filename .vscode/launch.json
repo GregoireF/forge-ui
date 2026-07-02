@@ -1,0 +1,63 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ── Playgrounds ─────────────────────────────────────────────────────────
+    {
+      "name": "Ouvrir React playground (3000)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/apps/playground-react/src",
+      "preLaunchTask": "dev: React (localhost:3000)"
+    },
+    {
+      "name": "Ouvrir Vue playground (3001)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:3001",
+      "webRoot": "${workspaceFolder}/apps/playground-vue/src",
+      "preLaunchTask": "dev: Vue (localhost:3001)"
+    },
+    {
+      "name": "Ouvrir Nuxt playground (3002)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:3002",
+      "webRoot": "${workspaceFolder}/apps/playground-nuxt",
+      "preLaunchTask": "dev: Nuxt (localhost:3002)"
+    },
+
+    // ── Tests Vitest ─────────────────────────────────────────────────────────
+    {
+      "name": "Debug: tests Vitest",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["test", "--inspect-wait", "--no-coverage"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+
+    // ── Playwright E2E ───────────────────────────────────────────────────────
+    {
+      "name": "Debug: Playwright (headed)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["x", "playwright", "test", "--headed", "--debug"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Tous les playgrounds (React + Vue + Nuxt)",
+      "configurations": [
+        "Ouvrir React playground (3000)",
+        "Ouvrir Vue playground (3001)",
+        "Ouvrir Nuxt playground (3002)"
+      ]
+    }
+  ]
+}
