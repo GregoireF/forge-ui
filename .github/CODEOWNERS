@@ -1,0 +1,27 @@
+# forge-ui — Code Owners
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ── Propriétaire global ────────────────────────────────────────────────────
+*                               @GregoireF
+
+# ── Moteur & primitifs — Grégoire (lead architecture) ─────────────────────
+packages/core/                  @GregoireF
+packages/floating/              @GregoireF
+packages/primitives/            @GregoireF
+
+# ── React binding — Grégoire ───────────────────────────────────────────────
+packages/react/                 @GregoireF
+apps/playground-react/          @GregoireF
+e2e/react/                      @GregoireF
+
+# ── Vue + Nuxt — collègue (lead), Grégoire (fallback) ─────────────────────
+packages/vue/                   @GregoireF @versnic
+packages/nuxt/                  @versnic @GregoireF
+apps/playground-vue/            @GregoireF @versnic
+apps/playground-nuxt/           @versnic @GregoireF
+e2e/vue/                        @GregoireF @versnic
+e2e/nuxt/                       @versnic @GregoireF
+
+# ── CI / Release — Grégoire ────────────────────────────────────────────────
+.github/                        @GregoireF
+tooling/                        @GregoireF
