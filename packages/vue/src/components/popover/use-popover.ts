@@ -15,7 +15,7 @@ export function usePopover(options: UsePopoverOptions = {}) {
   const { snapshot, send } = useMachine(machine);
 
   const isOpen = computed(() => snapshot.value.matches("open"));
-  const api = computed(() => connectPopover(snapshot.value, send, machine));
+  const api = computed(() => connectPopover(snapshot.value, send, machine.setContext));
 
   return {
     isOpen,
@@ -31,5 +31,7 @@ export function usePopover(options: UsePopoverOptions = {}) {
     getCloseProps: () => api.value.getCloseProps(),
     getTitleProps: () => api.value.getTitleProps(),
     getDescriptionProps: () => api.value.getDescriptionProps(),
+    registerTitle: (registered = true) => machine.update({ titleRegistered: registered }),
+    registerDescription: (registered = true) => machine.update({ descriptionRegistered: registered }),
   };
 }

@@ -119,37 +119,37 @@ describe("createPopoverMachine — context IDs", () => {
 });
 
 describe("createPopoverMachine — presence registration", () => {
-  it("REGISTER_TITLE sets titleRegistered:true", () => {
+  it("machine.update() sets titleRegistered:true", () => {
     const m = makeMachine();
-    m.send("REGISTER_TITLE");
+    m.update({ titleRegistered: true });
     expect(m.getSnapshot().context.titleRegistered).toBe(true);
   });
 
-  it("UNREGISTER_TITLE sets titleRegistered:false", () => {
+  it("machine.update() clears titleRegistered", () => {
     const m = makeMachine();
-    m.send("REGISTER_TITLE");
-    m.send("UNREGISTER_TITLE");
+    m.update({ titleRegistered: true });
+    m.update({ titleRegistered: false });
     expect(m.getSnapshot().context.titleRegistered).toBe(false);
   });
 
-  it("REGISTER_DESCRIPTION sets descriptionRegistered:true", () => {
+  it("machine.update() sets descriptionRegistered:true", () => {
     const m = makeMachine();
-    m.send("REGISTER_DESCRIPTION");
+    m.update({ descriptionRegistered: true });
     expect(m.getSnapshot().context.descriptionRegistered).toBe(true);
   });
 
-  it("UNREGISTER_DESCRIPTION sets descriptionRegistered:false", () => {
+  it("machine.update() clears descriptionRegistered", () => {
     const m = makeMachine();
-    m.send("REGISTER_DESCRIPTION");
-    m.send("UNREGISTER_DESCRIPTION");
+    m.update({ descriptionRegistered: true });
+    m.update({ descriptionRegistered: false });
     expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
   });
 
-  it("UNREGISTER_DESCRIPTION in open state sets descriptionRegistered:false", () => {
+  it("machine.update() works in open state", () => {
     const m = makeMachine();
     m.send("OPEN");
-    m.send("REGISTER_DESCRIPTION");
-    m.send("UNREGISTER_DESCRIPTION");
+    m.update({ descriptionRegistered: true });
+    m.update({ descriptionRegistered: false });
     expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
   });
 });

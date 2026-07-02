@@ -1,11 +1,11 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import { updateLayerContentEl } from "@forge-ui/core";
 import {
   getAlignFromPlacement,
   getSideFromPlacement,
   getTransformOrigin,
 } from "@forge-ui/floating";
-import type { PopoverContext, PopoverEvent, PopoverSend, PopoverState } from "./popover.types.js";
+import type { PopoverContext, PopoverSend, PopoverState } from "./popover.types.js";
 
 export type PopoverApi = ReturnType<typeof connectPopover>;
 
@@ -22,7 +22,7 @@ export type PopoverApi = ReturnType<typeof connectPopover>;
 export function connectPopover(
   snapshot: MachineSnapshot<PopoverContext, PopoverState>,
   send: PopoverSend,
-  machine: Pick<MachineInstance<PopoverContext, PopoverState, PopoverEvent>, "setContext">,
+  setContext: (updates: Partial<PopoverContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open");
@@ -44,7 +44,7 @@ export function connectPopover(
         "data-state": state,
         "data-forge-scope": "popover",
         "data-forge-part": "trigger",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onClick() {
           send("TOGGLE");
         },
@@ -55,7 +55,7 @@ export function connectPopover(
       return {
         "data-forge-scope": "popover",
         "data-forge-part": "anchor",
-        ref: (el: unknown) => machine.setContext({ anchorEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ anchorEl: el as HTMLElement | null }),
       };
     },
 
@@ -101,7 +101,7 @@ export function connectPopover(
         } as unknown as Record<string, string>,
         ref: (el: unknown) => {
           const contentEl = el as HTMLElement | null;
-          machine.setContext({ contentEl });
+          setContext({ contentEl });
           updateLayerContentEl(context.id, contentEl);
         },
       };
@@ -112,7 +112,7 @@ export function connectPopover(
         "data-forge-scope": "popover",
         "data-forge-part": "arrow",
         "data-side": side,
-        ref: (el: unknown) => machine.setContext({ arrowEl: el as Element | null }),
+        ref: (el: unknown) => setContext({ arrowEl: el as Element | null }),
       };
     },
 

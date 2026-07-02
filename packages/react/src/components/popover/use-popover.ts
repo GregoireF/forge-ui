@@ -15,8 +15,10 @@ export function usePopover(options: UsePopoverOptions = {}) {
   const [snapshot, send] = useMachine(machine);
 
   return {
-    ...connectPopover(snapshot, send, machine),
+    ...connectPopover(snapshot, send, machine.setContext),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
+    registerTitle: (registered = true) => machine.update({ titleRegistered: registered }),
+    registerDescription: (registered = true) => machine.update({ descriptionRegistered: registered }),
   };
 }

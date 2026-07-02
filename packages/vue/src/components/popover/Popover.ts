@@ -272,8 +272,8 @@ const PopoverTitle = defineComponent({
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    onMounted(() => api.send("REGISTER_TITLE"));
-    onUnmounted(() => api.send("UNREGISTER_TITLE"));
+    onMounted(() => api.registerTitle());
+    onUnmounted(() => api.registerTitle(false));
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
       if (props.asChild) return h(Slot, titleProps, slots.default);
@@ -291,8 +291,8 @@ const PopoverDescription = defineComponent({
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    onMounted(() => api.send("REGISTER_DESCRIPTION"));
-    onUnmounted(() => api.send("UNREGISTER_DESCRIPTION"));
+    onMounted(() => api.registerDescription());
+    onUnmounted(() => api.registerDescription(false));
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
       if (props.asChild) return h(Slot, descriptionProps, slots.default);

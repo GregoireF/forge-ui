@@ -40,23 +40,6 @@ function invokeOnOpenChange(open: boolean) {
   };
 }
 
-function registerTitle({ setContext }: { setContext: (u: Partial<PopoverContext>) => void }) {
-  setContext({ titleRegistered: true });
-}
-function unregisterTitle({ setContext }: { setContext: (u: Partial<PopoverContext>) => void }) {
-  setContext({ titleRegistered: false });
-}
-function registerDescription({ setContext }: { setContext: (u: Partial<PopoverContext>) => void }) {
-  setContext({ descriptionRegistered: true });
-}
-function unregisterDescription({
-  setContext,
-}: {
-  setContext: (u: Partial<PopoverContext>) => void;
-}) {
-  setContext({ descriptionRegistered: false });
-}
-
 // ---------------------------------------------------------------------------
 // Activity factories
 // ---------------------------------------------------------------------------
@@ -117,7 +100,6 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
     id: `forge-popover:${id}`,
     context: {
       id,
-      open: options.open ?? false,
       modal,
       trapFocus: options.trapFocus ?? modal,
       preventScroll: options.preventScroll ?? false,
@@ -171,10 +153,6 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
         on: {
           OPEN: { target: "open", actions: [invokeOnOpenChange(true)] },
           TOGGLE: { target: "open", actions: [invokeOnOpenChange(true)] },
-          REGISTER_TITLE: { actions: [registerTitle] },
-          UNREGISTER_TITLE: { actions: [unregisterTitle] },
-          REGISTER_DESCRIPTION: { actions: [registerDescription] },
-          UNREGISTER_DESCRIPTION: { actions: [unregisterDescription] },
         },
       },
       open: {
@@ -195,10 +173,6 @@ export function createPopoverMachine(options: CreatePopoverMachineOptions) {
           TOGGLE: { target: "closed", actions: [invokeOnOpenChange(false)] },
           ESCAPE_KEY: { target: "closed", actions: [invokeOnOpenChange(false)] },
           INTERACT_OUTSIDE: { target: "closed", actions: [invokeOnOpenChange(false)] },
-          REGISTER_TITLE: { actions: [registerTitle] },
-          UNREGISTER_TITLE: { actions: [unregisterTitle] },
-          REGISTER_DESCRIPTION: { actions: [registerDescription] },
-          UNREGISTER_DESCRIPTION: { actions: [unregisterDescription] },
         },
       },
     },

@@ -182,9 +182,9 @@ function Title({ asChild, children, ...rest }: PopoverTitleProps) {
   const api = useCtx();
 
   useLayoutEffect(() => {
-    api.send("REGISTER_TITLE");
-    return () => api.send("UNREGISTER_TITLE");
-  }, [api.send]);
+    api.registerTitle();
+    return () => api.registerTitle(false);
+  }, [api.registerTitle]);
 
   const props = { ...api.getTitleProps(), ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;
@@ -203,9 +203,9 @@ function Description({ asChild, children, ...rest }: PopoverDescriptionProps) {
   const api = useCtx();
 
   useLayoutEffect(() => {
-    api.send("REGISTER_DESCRIPTION");
-    return () => api.send("UNREGISTER_DESCRIPTION");
-  }, [api.send]);
+    api.registerDescription();
+    return () => api.registerDescription(false);
+  }, [api.registerDescription]);
 
   const props = { ...api.getDescriptionProps(), ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;

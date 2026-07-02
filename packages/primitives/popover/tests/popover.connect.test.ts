@@ -6,7 +6,7 @@ function makeApi(overrides = {}) {
   const machine = createPopoverMachine({ id: "test", ...overrides });
   machine.start();
   const snapshot = machine.getSnapshot();
-  const api = connectPopover(snapshot, machine.send.bind(machine), machine);
+  const api = connectPopover(snapshot, machine.send.bind(machine), machine.setContext);
   return { machine, api };
 }
 
@@ -14,7 +14,7 @@ function makeOpenApi(overrides = {}) {
   const machine = createPopoverMachine({ id: "test", open: true, ...overrides });
   machine.start();
   const snapshot = machine.getSnapshot();
-  const api = connectPopover(snapshot, machine.send.bind(machine), machine);
+  const api = connectPopover(snapshot, machine.send.bind(machine), machine.setContext);
   return { machine, api };
 }
 
@@ -75,11 +75,11 @@ describe("connectPopover — getContentProps", () => {
     expect(api.getContentProps()["aria-labelledby"]).toBeUndefined();
   });
 
-  it("emits aria-labelledby when title is registered", () => {
+  it("emits aria-labelledby when title is registered via machine.update()", () => {
     const { machine } = makeOpenApi();
-    machine.send("REGISTER_TITLE");
+    machine.update({ titleRegistered: true });
     const snapshot = machine.getSnapshot();
-    const updated = connectPopover(snapshot, machine.send.bind(machine), machine);
+    const updated = connectPopover(snapshot, machine.send.bind(machine), machine.setContext);
     expect(updated.getContentProps()["aria-labelledby"]).toBe("test-title");
   });
 
@@ -88,11 +88,11 @@ describe("connectPopover — getContentProps", () => {
     expect(api.getContentProps()["aria-describedby"]).toBeUndefined();
   });
 
-  it("aria-describedby set when description is registered (line 91)", () => {
+  it("aria-describedby set when description is registered via machine.update()", () => {
     const { machine } = makeOpenApi();
-    machine.send("REGISTER_DESCRIPTION");
+    machine.update({ descriptionRegistered: true });
     const snapshot = machine.getSnapshot();
-    const updated = connectPopover(snapshot, machine.send.bind(machine), machine);
+    const updated = connectPopover(snapshot, machine.send.bind(machine), machine.setContext);
     expect(updated.getContentProps()["aria-describedby"]).toBe("test-description");
   });
 

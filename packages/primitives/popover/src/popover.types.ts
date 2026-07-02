@@ -10,7 +10,6 @@ export type { FloatingPositioning as PopoverPositioning };
 
 export interface PopoverContext {
   id: string;
-  open: boolean;
   modal: boolean;
   trapFocus: boolean;
   preventScroll: boolean;
@@ -49,10 +48,6 @@ export type PopoverEvent =
   | { type: "TOGGLE" }
   | { type: "ESCAPE_KEY" }
   | { type: "INTERACT_OUTSIDE" }
-  | { type: "REGISTER_TITLE" }
-  | { type: "UNREGISTER_TITLE" }
-  | { type: "REGISTER_DESCRIPTION" }
-  | { type: "UNREGISTER_DESCRIPTION" }
   | { type: "@@INIT" };
 
 export type PopoverSend = (event: PopoverEvent | PopoverEvent["type"]) => void;
