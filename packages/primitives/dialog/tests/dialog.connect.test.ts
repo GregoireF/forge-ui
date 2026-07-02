@@ -6,7 +6,7 @@ function makeApi(overrides = {}) {
   const machine = createDialogMachine({ id: "test", ...overrides });
   machine.start();
   const snapshot = machine.getSnapshot();
-  const api = connectDialog(snapshot, machine.send.bind(machine), machine);
+  const api = connectDialog(snapshot, machine.send.bind(machine), machine.setContext);
   return { machine, api };
 }
 
@@ -14,7 +14,7 @@ function makeOpenApi(overrides = {}) {
   const machine = createDialogMachine({ id: "test", open: true, ...overrides });
   machine.start();
   const snapshot = machine.getSnapshot();
-  const api = connectDialog(snapshot, machine.send.bind(machine), machine);
+  const api = connectDialog(snapshot, machine.send.bind(machine), machine.setContext);
   return { machine, api };
 }
 
@@ -82,19 +82,20 @@ describe("connectDialog — getContentProps", () => {
     expect(api.getContentProps()["aria-describedby"]).toBeUndefined();
   });
 
-  it("emits aria-labelledby when title is registered", () => {
+  it("emits aria-labelledby when title is registered via machine.update()", () => {
     const { machine } = makeOpenApi();
-    machine.send("REGISTER_TITLE");
+    // machine.update() is how Title/Description register themselves (not FSM events).
+    machine.update({ titleRegistered: true });
     const snapshot = machine.getSnapshot();
-    const updated = connectDialog(snapshot, machine.send.bind(machine), machine);
+    const updated = connectDialog(snapshot, machine.send.bind(machine), machine.setContext);
     expect(updated.getContentProps()["aria-labelledby"]).toBe("test-title");
   });
 
-  it("emits aria-describedby when description is registered", () => {
+  it("emits aria-describedby when description is registered via machine.update()", () => {
     const { machine } = makeOpenApi();
-    machine.send("REGISTER_DESCRIPTION");
+    machine.update({ descriptionRegistered: true });
     const snapshot = machine.getSnapshot();
-    const updated = connectDialog(snapshot, machine.send.bind(machine), machine);
+    const updated = connectDialog(snapshot, machine.send.bind(machine), machine.setContext);
     expect(updated.getContentProps()["aria-describedby"]).toBe("test-description");
   });
 
@@ -110,7 +111,7 @@ describe("connectDialog — getContentProps", () => {
     const machine = createDialogMachine({ id: "test", open: true, role: "alertdialog" });
     machine.start();
     const snapshot = machine.getSnapshot();
-    const api = connectDialog(snapshot, machine.send.bind(machine), machine);
+    const api = connectDialog(snapshot, machine.send.bind(machine), machine.setContext);
     expect(api.getContentProps().role).toBe("alertdialog");
   });
 
@@ -194,27 +195,28 @@ describe("connectDialog — setContentCallbacks", () => {
     const { machine, api } = makeOpenApi();
     const handler = (e: KeyboardEvent) => e.preventDefault();
     api.setContentCallbacks({ onEscapeKeyDown: handler });
-    expect(machine.getSnapshot().context.contentOnEscapeKeyDown).toBe(handler);
+    expect(machine.getSnapshot().context.contentCallbacks?.onEscapeKeyDown).toBe(handler);
   });
 
   it("sets content-level onOpenAutoFocus in machine context", () => {
     const { machine, api } = makeOpenApi();
     const handler = (e: Event) => e.preventDefault();
     api.setContentCallbacks({ onOpenAutoFocus: handler });
-    expect(machine.getSnapshot().context.contentOnOpenAutoFocus).toBe(handler);
+    expect(machine.getSnapshot().context.contentCallbacks?.onOpenAutoFocus).toBe(handler);
   });
 
   it("sets content-level onCloseAutoFocus in machine context", () => {
     const { machine, api } = makeOpenApi();
     const handler = (e: Event) => e.preventDefault();
     api.setContentCallbacks({ onCloseAutoFocus: handler });
-    expect(machine.getSnapshot().context.contentOnCloseAutoFocus).toBe(handler);
+    expect(machine.getSnapshot().context.contentCallbacks?.onCloseAutoFocus).toBe(handler);
   });
 
   it("clears content-level callbacks when called with empty object", () => {
     const { machine, api } = makeOpenApi();
     api.setContentCallbacks({ onEscapeKeyDown: () => {} });
     api.setContentCallbacks({});
-    expect(machine.getSnapshot().context.contentOnEscapeKeyDown).toBeUndefined();
+    // contentCallbacks is now {} — accessing any handler returns undefined
+    expect(machine.getSnapshot().context.contentCallbacks?.onEscapeKeyDown).toBeUndefined();
   });
 });

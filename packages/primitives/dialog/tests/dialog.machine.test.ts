@@ -183,49 +183,53 @@ describe("createDialogMachine — callbacks", () => {
 });
 
 describe("createDialogMachine — presence registration", () => {
+  // Title/Description registration uses machine.update() rather than FSM events.
+  // This keeps ARIA tracking out of the FSM event graph while still triggering
+  // a snapshot emit (so frameworks re-render and pick up aria-labelledby).
+
   it("titleRegistered defaults to false", () => {
     const m = makeMachine();
     expect(m.getSnapshot().context.titleRegistered).toBe(false);
   });
 
-  it("REGISTER_TITLE sets titleRegistered:true in closed state", () => {
+  it("machine.update() sets titleRegistered:true (simulates Dialog.Title mount)", () => {
     const m = makeMachine();
-    m.send("REGISTER_TITLE");
+    m.update({ titleRegistered: true });
     expect(m.getSnapshot().context.titleRegistered).toBe(true);
   });
 
-  it("UNREGISTER_TITLE sets titleRegistered:false", () => {
+  it("machine.update() sets titleRegistered:false (simulates Dialog.Title unmount)", () => {
     const m = makeMachine();
-    m.send("REGISTER_TITLE");
-    m.send("UNREGISTER_TITLE");
+    m.update({ titleRegistered: true });
+    m.update({ titleRegistered: false });
     expect(m.getSnapshot().context.titleRegistered).toBe(false);
   });
 
-  it("REGISTER_TITLE works in open state too", () => {
+  it("titleRegistered updates correctly while open", () => {
     const m = makeMachine();
     m.send("OPEN");
-    m.send("REGISTER_TITLE");
+    m.update({ titleRegistered: true });
     expect(m.getSnapshot().context.titleRegistered).toBe(true);
   });
 
-  it("REGISTER_DESCRIPTION sets descriptionRegistered:true", () => {
+  it("machine.update() sets descriptionRegistered:true (simulates Dialog.Description mount)", () => {
     const m = makeMachine();
-    m.send("REGISTER_DESCRIPTION");
+    m.update({ descriptionRegistered: true });
     expect(m.getSnapshot().context.descriptionRegistered).toBe(true);
   });
 
-  it("UNREGISTER_DESCRIPTION sets descriptionRegistered:false", () => {
+  it("machine.update() sets descriptionRegistered:false (simulates Dialog.Description unmount)", () => {
     const m = makeMachine();
-    m.send("REGISTER_DESCRIPTION");
-    m.send("UNREGISTER_DESCRIPTION");
+    m.update({ descriptionRegistered: true });
+    m.update({ descriptionRegistered: false });
     expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
   });
 
-  it("UNREGISTER_DESCRIPTION in open state sets descriptionRegistered:false", () => {
+  it("descriptionRegistered updates correctly while open", () => {
     const m = makeMachine();
     m.send("OPEN");
-    m.send("REGISTER_DESCRIPTION");
-    m.send("UNREGISTER_DESCRIPTION");
+    m.update({ descriptionRegistered: true });
+    m.update({ descriptionRegistered: false });
     expect(m.getSnapshot().context.descriptionRegistered).toBe(false);
   });
 });
@@ -465,5 +469,20 @@ describe("createDialogMachine — activity config callbacks (contentEl required)
     outsideBtn.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true }));
     content.remove();
     outsideBtn.remove();
+  });
+
+  it("contentCallbacks.onEscapeKeyDown overrides Root-level onEscapeKeyDown", () => {
+    const rootHandler = vi.fn();
+    const contentHandler = vi.fn((e: KeyboardEvent) => e.preventDefault());
+    const m = makeMachine({ onEscapeKeyDown: rootHandler });
+    m.setContext({ contentCallbacks: { onEscapeKeyDown: contentHandler } });
+    m.send("OPEN");
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+    );
+    // Content-level handler runs and calls preventDefault — dialog stays open
+    expect(contentHandler).toHaveBeenCalled();
+    expect(rootHandler).not.toHaveBeenCalled();
+    expect(m.getSnapshot().matches("open")).toBe(true);
   });
 });

@@ -86,7 +86,9 @@ export interface AlertDialogOverlayProps extends HTMLAttributes<HTMLDivElement> 
 
 function Overlay({ asChild, forceMount, children, ...rest }: AlertDialogOverlayProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  const injectedPresence = useContext(AlertDialogPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   if (!forceMount && !isPresent) return null;
 
@@ -193,9 +195,9 @@ export interface AlertDialogTitleProps extends HTMLAttributes<HTMLHeadingElement
 function Title({ asChild, children, ...rest }: AlertDialogTitleProps) {
   const api = useCtx();
   useLayoutEffect(() => {
-    api.send("REGISTER_TITLE");
-    return () => api.send("UNREGISTER_TITLE");
-  }, [api.send]);
+    api.registerTitle();
+    return () => api.registerTitle(false);
+  }, [api.registerTitle]);
   const props = { ...api.getTitleProps(), ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <h2 {...props}>{children}</h2>;
@@ -212,9 +214,9 @@ export interface AlertDialogDescriptionProps extends HTMLAttributes<HTMLParagrap
 function Description({ asChild, children, ...rest }: AlertDialogDescriptionProps) {
   const api = useCtx();
   useLayoutEffect(() => {
-    api.send("REGISTER_DESCRIPTION");
-    return () => api.send("UNREGISTER_DESCRIPTION");
-  }, [api.send]);
+    api.registerDescription();
+    return () => api.registerDescription(false);
+  }, [api.registerDescription]);
   const props = { ...api.getDescriptionProps(), ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;
   return <p {...props}>{children}</p>;

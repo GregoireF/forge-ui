@@ -1,4 +1,4 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import type {
   DialogContentCallbacks,
   DialogContext,
@@ -23,9 +23,9 @@ export type AlertDialogApi = ReturnType<typeof connectAlertDialog>;
 export function connectAlertDialog(
   snapshot: MachineSnapshot<DialogContext, DialogState>,
   send: (event: DialogEvent | DialogEvent["type"]) => void,
-  machine: Pick<MachineInstance<DialogContext, DialogState, DialogEvent>, "setContext">,
+  setContext: (updates: Partial<DialogContext>) => void,
 ) {
-  const base = connectDialog(snapshot, send, machine);
+  const base = connectDialog(snapshot, send, setContext);
   const scope = "alert-dialog" as const;
 
   return {

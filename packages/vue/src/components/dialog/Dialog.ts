@@ -1,4 +1,4 @@
-﻿import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
+import type { ComponentPublicInstance, InjectionKey, PropType, Ref } from "vue";
 import {
   defineComponent,
   h,
@@ -153,7 +153,9 @@ const DialogPortalCompound = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Overlay â€" Presence-aware.
+// Overlay — Presence-aware.
+// Uses the presence instance injected from Root so that Overlay and Content
+// share the same mount/unmount lifecycle and avoid desync on animation end.
 // ---------------------------------------------------------------------------
 
 const DialogOverlay = defineComponent({
@@ -164,7 +166,12 @@ const DialogOverlay = defineComponent({
   },
   setup(props, { attrs, slots }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    // Prefer the Root-injected presence so Overlay, Portal, and Content share
+    // the same isPresent/presenceRef lifecycle. Fall back to a local instance
+    // only when Overlay is rendered without a Root that provides presence.
+    const injectedPresence = inject(dialogPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
@@ -187,7 +194,7 @@ const DialogOverlay = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Content â€" Presence-aware.
+// Content — Presence-aware.
 // Accepts event callbacks that override Root-level ones when provided.
 // ---------------------------------------------------------------------------
 
@@ -278,7 +285,8 @@ const DialogContent = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Title (with presence registration)
+// Title — registers itself via machine.update() on mount (not a FSM event)
+// so that getContentProps() emits aria-labelledby only when Title is mounted.
 // ---------------------------------------------------------------------------
 
 const DialogTitle = defineComponent({
@@ -287,8 +295,8 @@ const DialogTitle = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
 
-    onMounted(() => api.send("REGISTER_TITLE"));
-    onUnmounted(() => api.send("UNREGISTER_TITLE"));
+    onMounted(() => api.registerTitle());
+    onUnmounted(() => api.registerTitle(false));
 
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
@@ -299,7 +307,7 @@ const DialogTitle = defineComponent({
 });
 
 // ---------------------------------------------------------------------------
-// Description (with presence registration)
+// Description — same registration pattern as Title.
 // ---------------------------------------------------------------------------
 
 const DialogDescription = defineComponent({
@@ -308,8 +316,8 @@ const DialogDescription = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
 
-    onMounted(() => api.send("REGISTER_DESCRIPTION"));
-    onUnmounted(() => api.send("UNREGISTER_DESCRIPTION"));
+    onMounted(() => api.registerDescription());
+    onUnmounted(() => api.registerDescription(false));
 
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };

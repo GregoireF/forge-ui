@@ -9,7 +9,7 @@ export function useMachine<
   machine: MachineInstance<TContext, TState, TEvent>,
 ): [MachineSnapshot<TContext, TState>, (event: TEvent | TEvent["type"]) => void] {
   // Start synchronously so the machine is running when child useLayoutEffect hooks
-  // fire (e.g., Dialog.Title sending REGISTER_TITLE). machine.start() is idempotent
+  // fire (e.g., Dialog.Title calling machine.update()). machine.start() is idempotent
   // (guarded by `if (running) return`), so re-renders and Strict Mode double render
   // are safe.
   //

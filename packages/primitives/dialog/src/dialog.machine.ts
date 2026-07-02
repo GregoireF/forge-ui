@@ -41,25 +41,10 @@ function invokeOnOpenChange(open: boolean) {
   };
 }
 
-function registerTitle({ setContext }: { setContext: (u: Partial<DialogContext>) => void }) {
-  setContext({ titleRegistered: true });
-}
-function unregisterTitle({ setContext }: { setContext: (u: Partial<DialogContext>) => void }) {
-  setContext({ titleRegistered: false });
-}
-function registerDescription({ setContext }: { setContext: (u: Partial<DialogContext>) => void }) {
-  setContext({ descriptionRegistered: true });
-}
-function unregisterDescription({
-  setContext,
-}: {
-  setContext: (u: Partial<DialogContext>) => void;
-}) {
-  setContext({ descriptionRegistered: false });
-}
-
 // ---------------------------------------------------------------------------
 // Activity factories
+// Content-level callbacks (contentCallbacks) take precedence over Root-level
+// ones (onOpen*, onClose*, etc.) when defined.
 // ---------------------------------------------------------------------------
 
 const registerLayer = makeLayerActivity<DialogContext>({
@@ -71,9 +56,8 @@ const manageFocus = makeFocusActivity<DialogContext>({
   getContentEl: (ctx) => ctx.contentEl,
   getInitialFocusEl: (ctx) => ctx.initialFocusEl?.() ?? null,
   getFinalFocusEl: (ctx) => ctx.finalFocusEl?.() ?? null,
-  // Content-level overrides take precedence over Root-level callbacks.
-  getOnOpenAutoFocus: (ctx) => ctx.contentOnOpenAutoFocus ?? ctx.onOpenAutoFocus,
-  getOnCloseAutoFocus: (ctx) => ctx.contentOnCloseAutoFocus ?? ctx.onCloseAutoFocus,
+  getOnOpenAutoFocus: (ctx) => ctx.contentCallbacks?.onOpenAutoFocus ?? ctx.onOpenAutoFocus,
+  getOnCloseAutoFocus: (ctx) => ctx.contentCallbacks?.onCloseAutoFocus ?? ctx.onCloseAutoFocus,
 });
 
 const trapKeyboard = makeKeyboardActivity<DialogContext>({
@@ -81,7 +65,7 @@ const trapKeyboard = makeKeyboardActivity<DialogContext>({
   getContentEl: (ctx) => ctx.contentEl,
   isModal: (ctx) => ctx.trapFocus,
   sendEscape: "ESCAPE_KEY",
-  getOnEscapeKeyDown: (ctx) => ctx.contentOnEscapeKeyDown ?? ctx.onEscapeKeyDown,
+  getOnEscapeKeyDown: (ctx) => ctx.contentCallbacks?.onEscapeKeyDown ?? ctx.onEscapeKeyDown,
 });
 
 const hideBackground = makeHideBackgroundActivity<DialogContext>({
@@ -98,9 +82,11 @@ const watchOutside = makeWatchOutsideActivity<DialogContext>({
   getId: (ctx) => ctx.id,
   getContainers: (ctx) => [ctx.contentEl, ctx.triggerEl],
   sendClose: "INTERACT_OUTSIDE",
-  getOnPointerDownOutside: (ctx) => ctx.contentOnPointerDownOutside ?? ctx.onPointerDownOutside,
-  getOnFocusOutside: (ctx) => ctx.contentOnFocusOutside ?? ctx.onFocusOutside,
-  getOnInteractOutside: (ctx) => ctx.contentOnInteractOutside ?? ctx.onInteractOutside,
+  getOnPointerDownOutside: (ctx) =>
+    ctx.contentCallbacks?.onPointerDownOutside ?? ctx.onPointerDownOutside,
+  getOnFocusOutside: (ctx) => ctx.contentCallbacks?.onFocusOutside ?? ctx.onFocusOutside,
+  getOnInteractOutside: (ctx) =>
+    ctx.contentCallbacks?.onInteractOutside ?? ctx.onInteractOutside,
 });
 
 // ---------------------------------------------------------------------------
@@ -114,8 +100,6 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
   const initialOpen = options.open ?? options.defaultOpen ?? false;
 
   // alertdialog must never close on outside interaction (WAI-ARIA 1.2 §3.2).
-  // Use a default handler that calls preventDefault; if the consumer also
-  // provides one, keep theirs (they can still call preventDefault themselves).
   const onInteractOutside =
     options.onInteractOutside ??
     (role === "alertdialog" ? (e: PointerEvent | FocusEvent) => e.preventDefault() : undefined);
@@ -124,7 +108,6 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
     id: `forge-dialog:${id}`,
     context: {
       id,
-      open: initialOpen,
       role,
       modal,
       trapFocus: options.trapFocus ?? modal,
@@ -158,10 +141,6 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
         on: {
           OPEN: { target: "open", actions: [invokeOnOpenChange(true)] },
           TOGGLE: { target: "open", actions: [invokeOnOpenChange(true)] },
-          REGISTER_TITLE: { actions: [registerTitle] },
-          UNREGISTER_TITLE: { actions: [unregisterTitle] },
-          REGISTER_DESCRIPTION: { actions: [registerDescription] },
-          UNREGISTER_DESCRIPTION: { actions: [unregisterDescription] },
         },
       },
       open: {
@@ -180,10 +159,6 @@ export function createDialogMachine(options: CreateDialogMachineOptions) {
           TOGGLE: { target: "closed", actions: [invokeOnOpenChange(false)] },
           ESCAPE_KEY: { target: "closed", actions: [invokeOnOpenChange(false)] },
           INTERACT_OUTSIDE: { target: "closed", actions: [invokeOnOpenChange(false)] },
-          REGISTER_TITLE: { actions: [registerTitle] },
-          UNREGISTER_TITLE: { actions: [unregisterTitle] },
-          REGISTER_DESCRIPTION: { actions: [registerDescription] },
-          UNREGISTER_DESCRIPTION: { actions: [unregisterDescription] },
         },
       },
     },

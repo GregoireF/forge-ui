@@ -22,7 +22,7 @@ export function useAlertDialog(options: UseAlertDialogOptions = {}) {
   const titleRegistered = computed(() => snapshot.value.context.titleRegistered);
   const descriptionRegistered = computed(() => snapshot.value.context.descriptionRegistered);
 
-  const api = computed(() => connectAlertDialog(snapshot.value, send, machine));
+  const api = computed(() => connectAlertDialog(snapshot.value, send, machine.setContext));
 
   return {
     isOpen,
@@ -40,5 +40,7 @@ export function useAlertDialog(options: UseAlertDialogOptions = {}) {
     getActionProps: () => api.value.getActionProps(),
     setContentCallbacks: (callbacks: AlertDialogContentCallbacks) =>
       api.value.setContentCallbacks(callbacks),
+    registerTitle: (registered = true) => machine.update({ titleRegistered: registered }),
+    registerDescription: (registered = true) => machine.update({ descriptionRegistered: registered }),
   };
 }

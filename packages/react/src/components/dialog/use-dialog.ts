@@ -27,8 +27,12 @@ export function useDialog(options: UseDialogOptions = {}) {
   const [snapshot, send] = useMachine(machine);
 
   return {
-    ...connectDialog(snapshot, send, machine),
+    ...connectDialog(snapshot, send, machine.setContext),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
+    // Title/Description call these on mount/unmount instead of sending FSM events.
+    // machine.update() sets context AND emits, triggering aria-labelledby/aria-describedby.
+    registerTitle: (registered = true) => machine.update({ titleRegistered: registered }),
+    registerDescription: (registered = true) => machine.update({ descriptionRegistered: registered }),
   };
 }

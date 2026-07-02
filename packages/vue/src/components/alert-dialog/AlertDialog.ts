@@ -129,7 +129,9 @@ const AlertDialogOverlay = defineComponent({
   },
   setup(props, { attrs, slots }) {
     const api = useCtx();
-    const { isPresent, presenceRef } = usePresence(api.isOpen);
+    const injectedPresence = inject(alertDialogPresenceKey, null);
+    const ownPresence = usePresence(api.isOpen);
+    const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
     return () => {
       if (!props.forceMount && !isPresent.value) return null;
@@ -230,8 +232,8 @@ const AlertDialogTitle = defineComponent({
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    onMounted(() => api.send("REGISTER_TITLE"));
-    onScopeDispose(() => api.send("UNREGISTER_TITLE"));
+    onMounted(() => api.registerTitle());
+    onScopeDispose(() => api.registerTitle(false));
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
       if (props.asChild) return h(Slot, titleProps, slots.default);
@@ -249,8 +251,8 @@ const AlertDialogDescription = defineComponent({
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    onMounted(() => api.send("REGISTER_DESCRIPTION"));
-    onScopeDispose(() => api.send("UNREGISTER_DESCRIPTION"));
+    onMounted(() => api.registerDescription());
+    onScopeDispose(() => api.registerDescription(false));
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
       if (props.asChild) return h(Slot, descriptionProps, slots.default);

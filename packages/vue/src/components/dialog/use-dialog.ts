@@ -22,7 +22,7 @@ export function useDialog(options: UseDialogOptions = {}) {
 
   // Single connectDialog instance per snapshot — avoids creating N instances
   // per-render (one per getter call in the old pattern).
-  const api = computed(() => connectDialog(snapshot.value, send, machine));
+  const api = computed(() => connectDialog(snapshot.value, send, machine.setContext));
 
   return {
     isOpen,
@@ -31,6 +31,11 @@ export function useDialog(options: UseDialogOptions = {}) {
     snapshot,
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
+    // Title/Description call these on mount/unmount instead of sending FSM events.
+    // machine.update() sets context AND emits, triggering aria-labelledby/aria-describedby.
+    registerTitle: (registered = true) => machine.update({ titleRegistered: registered }),
+    registerDescription: (registered = true) =>
+      machine.update({ descriptionRegistered: registered }),
     getTriggerProps: () => api.value.getTriggerProps(),
     getOverlayProps: () => api.value.getOverlayProps(),
     getContentProps: () => api.value.getContentProps(),

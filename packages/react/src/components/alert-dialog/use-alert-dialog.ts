@@ -24,8 +24,10 @@ export function useAlertDialog(options: UseAlertDialogOptions = {}) {
   const [snapshot, send] = useMachine(machine);
 
   return {
-    ...connectAlertDialog(snapshot, send, machine),
+    ...connectAlertDialog(snapshot, send, machine.setContext),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
+    registerTitle: (registered = true) => machine.update({ titleRegistered: registered }),
+    registerDescription: (registered = true) => machine.update({ descriptionRegistered: registered }),
   };
 }

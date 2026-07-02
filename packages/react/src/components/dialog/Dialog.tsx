@@ -1,4 +1,4 @@
-﻿import { mergeRefs } from "@forge-ui/core";
+import { mergeRefs } from "@forge-ui/core";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useEffect, useLayoutEffect } from "react";
 import { usePresence } from "../../hooks/use-presence.js";
@@ -55,7 +55,7 @@ export interface DialogTriggerProps extends ButtonHTMLAttributes<HTMLButtonEleme
 function Trigger({ asChild, children, ...rest }: DialogTriggerProps) {
   const api = useCtx();
   const { "aria-haspopup": hasPopup, ...triggerRest } = api.getTriggerProps();
-  // React's aria-haspopup type set omits "alertdialog" â€" cast to widen for WAI-ARIA compliance.
+  // React's aria-haspopup type set omits "alertdialog" — cast to widen for WAI-ARIA compliance.
   const props = {
     ...triggerRest,
     "aria-haspopup": hasPopup as ButtonHTMLAttributes<HTMLButtonElement>["aria-haspopup"],
@@ -87,6 +87,8 @@ function Portal({ children, container, forceMount }: DialogPortalCompoundProps) 
 // Overlay
 // Presence-aware: stays in DOM while exit animation runs (data-state="closed").
 // During exit: aria-hidden + pointer-events:none prevent interaction.
+// Uses the presence instance injected from Root so that Overlay and Content
+// share the same mount/unmount lifecycle and avoid desync on animation end.
 // ---------------------------------------------------------------------------
 
 export interface DialogOverlayProps extends HTMLAttributes<HTMLDivElement> {
@@ -96,7 +98,12 @@ export interface DialogOverlayProps extends HTMLAttributes<HTMLDivElement> {
 
 function Overlay({ asChild, forceMount, children, ...rest }: DialogOverlayProps) {
   const api = useCtx();
-  const { isPresent, presenceRef } = usePresence(api.isOpen);
+  // Prefer the Root-injected presence so Overlay, Portal, and Content all share
+  // the same isPresent/presenceRef lifecycle. Fall back to a local instance only
+  // when Overlay is rendered outside a Portal/Root that provides presence.
+  const injectedPresence = useContext(DialogPresenceCtx);
+  const ownPresence = usePresence(api.isOpen);
+  const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   if (!forceMount && !isPresent) return null;
 
@@ -157,8 +164,7 @@ function Content({
   const { isPresent, presenceRef } = injectedPresence ?? ownPresence;
 
   // Dev-only: warn when the dialog opens and no accessible title is registered.
-  // Fires via rAF so Dialog.Title has had a chance to mount and send REGISTER_TITLE.
-  // The rAF delay avoids a false positive when Title and Content mount in the same tick.
+  // Fires via rAF so Dialog.Title has had a chance to mount and register.
   useEffect(() => {
     if (process.env.NODE_ENV === "production") return;
     if (!api.isOpen) return;
@@ -227,6 +233,8 @@ function Content({
 
 // ---------------------------------------------------------------------------
 // Title
+// Registers itself with the machine via machine.update() (not a FSM event) so
+// that getContentProps() emits aria-labelledby only when Title is mounted.
 // ---------------------------------------------------------------------------
 
 export interface DialogTitleProps extends HTMLAttributes<HTMLHeadingElement> {
@@ -237,9 +245,9 @@ function Title({ asChild, children, ...rest }: DialogTitleProps) {
   const api = useCtx();
 
   useLayoutEffect(() => {
-    api.send("REGISTER_TITLE");
-    return () => api.send("UNREGISTER_TITLE");
-  }, [api.send]);
+    api.registerTitle();
+    return () => api.registerTitle(false);
+  }, [api.registerTitle]);
 
   const props = { ...api.getTitleProps(), ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;
@@ -258,9 +266,9 @@ function Description({ asChild, children, ...rest }: DialogDescriptionProps) {
   const api = useCtx();
 
   useLayoutEffect(() => {
-    api.send("REGISTER_DESCRIPTION");
-    return () => api.send("UNREGISTER_DESCRIPTION");
-  }, [api.send]);
+    api.registerDescription();
+    return () => api.registerDescription(false);
+  }, [api.registerDescription]);
 
   const props = { ...api.getDescriptionProps(), ...rest };
   if (asChild) return <Slot {...props}>{children}</Slot>;

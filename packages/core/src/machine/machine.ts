@@ -19,6 +19,12 @@ export function createMachine<
   const context: TContext = { ...config.context };
   let running = false;
 
+  // Reentrancy guard: if send() is called while a transition is already executing
+  // (e.g., from an entry action or an activity setup that fires synchronously),
+  // queue the event and drain the queue after the current transition completes.
+  let isDispatching = false;
+  const pendingEvents: Array<TEvent | TEvent["type"]> = [];
+
   const listeners = new Set<SnapshotListener<TContext, TState>>();
   // Maps activity name → its cleanup function (called on state exit or stop).
   const activeCleanups = new Map<string, () => void>();
@@ -83,6 +89,8 @@ export function createMachine<
     if (!after) return;
     for (const [delayStr, transition] of Object.entries(after)) {
       const delay = Number(delayStr);
+      // Key is unique per delay value — JS objects cannot have duplicate keys,
+      // so a state can only have one `after` transition per distinct delay.
       const key = `@@after:${delay}`;
       const timeoutId = setTimeout(() => {
         activeCleanups.delete(key);
@@ -144,36 +152,52 @@ export function createMachine<
   function send(eventOrType: TEvent | TEvent["type"]): void {
     if (!running) return;
 
+    // Queue reentrant calls and drain them after the current dispatch completes.
+    // This prevents state corruption if an entry action or activity setup calls send().
+    if (isDispatching) {
+      pendingEvents.push(eventOrType);
+      return;
+    }
+
     const event = (typeof eventOrType === "string" ? { type: eventOrType } : eventOrType) as TEvent;
     const stateNode = config.states[currentState];
     const transition = resolveTransition(event);
 
     if (!transition) return;
 
-    const prevState = currentState;
-    const nextState = transition.target ?? currentState;
-    const isChanging = nextState !== prevState;
+    isDispatching = true;
+    try {
+      const prevState = currentState;
+      const nextState = transition.target ?? currentState;
+      const isChanging = nextState !== prevState;
 
-    // Exit: stop after-timers + activities + run exit actions of current state.
-    if (isChanging) {
-      stopAfterTimers(prevState);
-      stopActivities(prevState);
+      // Exit: stop after-timers + activities + run exit actions of current state.
+      if (isChanging) {
+        stopAfterTimers(prevState);
+        stopActivities(prevState);
+      }
+      runActions(stateNode.exit, event);
+
+      // Transition actions.
+      runActions(transition.actions, event);
+
+      if (isChanging) currentState = nextState;
+
+      // Entry: run entry actions + start activities + start after-timers of next state.
+      runActions(config.states[currentState].entry, event);
+      if (isChanging) {
+        startActivities(currentState);
+        startAfterTimers(currentState);
+      }
+
+      emit();
+    } finally {
+      isDispatching = false;
+      // Drain any events that were queued during this dispatch.
+      while (pendingEvents.length > 0) {
+        send(pendingEvents.shift()!);
+      }
     }
-    runActions(stateNode.exit, event);
-
-    // Transition actions.
-    runActions(transition.actions, event);
-
-    if (isChanging) currentState = nextState;
-
-    // Entry: run entry actions + start activities + start after-timers of next state.
-    runActions(config.states[currentState].entry, event);
-    if (isChanging) {
-      startActivities(currentState);
-      startAfterTimers(currentState);
-    }
-
-    emit();
   }
 
   function subscribe(listener: SnapshotListener<TContext, TState>): () => void {
@@ -191,8 +215,9 @@ export function createMachine<
   }
 
   function stop(): void {
-    stopAllActivities();
+    // Set running=false first so any send() calls inside activity cleanups are no-ops.
     running = false;
+    stopAllActivities();
     listeners.clear();
   }
 

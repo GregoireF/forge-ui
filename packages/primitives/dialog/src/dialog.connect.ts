@@ -1,18 +1,7 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import { updateLayerContentEl } from "@forge-ui/core";
-import type { DialogContext, DialogEvent, DialogSend, DialogState } from "./dialog.types.js";
+import { type MachineSnapshot, updateLayerContentEl } from "@forge-ui/core";
+import type { DialogContentCallbacks, DialogContext, DialogSend, DialogState } from "./dialog.types.js";
 
 export type DialogApi = ReturnType<typeof connectDialog>;
-
-/** Callbacks that can be provided on Dialog.Content to override Root-level ones. */
-export interface DialogContentCallbacks {
-  onOpenAutoFocus?: ((e: Event) => void) | undefined;
-  onCloseAutoFocus?: ((e: Event) => void) | undefined;
-  onPointerDownOutside?: ((e: PointerEvent) => void) | undefined;
-  onFocusOutside?: ((e: FocusEvent) => void) | undefined;
-  onInteractOutside?: ((e: PointerEvent | FocusEvent) => void) | undefined;
-  onEscapeKeyDown?: ((e: KeyboardEvent) => void) | undefined;
-}
 
 /**
  * Maps machine snapshot → framework-agnostic DOM props.
@@ -22,11 +11,16 @@ export interface DialogContentCallbacks {
  * - data-forge-scope="dialog" on every part enables precise CSS scoping.
  * - aria-labelledby / aria-describedby are conditional on presence registration.
  * - setContentCallbacks allows Dialog.Content to override Root-level event callbacks.
+ *
+ * @param snapshot  Current machine snapshot (read-only).
+ * @param send      Dispatch a DialogEvent to the machine.
+ * @param setContext Mutate machine context in-place (does not emit). Used for DOM refs
+ *                  and content-level callback overrides.
  */
 export function connectDialog(
   snapshot: MachineSnapshot<DialogContext, DialogState>,
   send: DialogSend,
-  machine: Pick<MachineInstance<DialogContext, DialogState, DialogEvent>, "setContext">,
+  setContext: (updates: Partial<DialogContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open");
@@ -49,7 +43,7 @@ export function connectDialog(
         "data-state": state,
         "data-forge-scope": "dialog",
         "data-forge-part": "trigger",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onClick() {
           send("TOGGLE");
         },
@@ -81,7 +75,7 @@ export function connectDialog(
         "data-forge-part": "content",
         ref: (el: unknown) => {
           const contentEl = el as HTMLElement | null;
-          machine.setContext({ contentEl });
+          setContext({ contentEl });
           updateLayerContentEl(context.id, contentEl);
         },
       };
@@ -116,18 +110,11 @@ export function connectDialog(
 
     /**
      * Override event callbacks from Dialog.Content.
-     * Content-level callbacks take precedence over Root-level ones (set via machine options).
-     * Pass an empty object or call with no-ops to clear overrides.
+     * Content-level callbacks take precedence over Root-level ones.
+     * Call with an empty object to clear all overrides (on Content unmount).
      */
     setContentCallbacks(callbacks: DialogContentCallbacks) {
-      machine.setContext({
-        contentOnOpenAutoFocus: callbacks.onOpenAutoFocus,
-        contentOnCloseAutoFocus: callbacks.onCloseAutoFocus,
-        contentOnPointerDownOutside: callbacks.onPointerDownOutside,
-        contentOnFocusOutside: callbacks.onFocusOutside,
-        contentOnInteractOutside: callbacks.onInteractOutside,
-        contentOnEscapeKeyDown: callbacks.onEscapeKeyDown,
-      });
+      setContext({ contentCallbacks: callbacks });
     },
   };
 }
