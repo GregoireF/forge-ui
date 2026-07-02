@@ -108,7 +108,7 @@ const ComboboxRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(comboboxPresenceKey, presence);
 
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -123,8 +123,8 @@ const ComboboxLabel = defineComponent({
     const api = useCtx();
     return () => {
       const labelProps = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, labelProps, slots["default"]);
-      return h("label", labelProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, labelProps, slots.default);
+      return h("label", labelProps, slots.default?.());
     };
   },
 });
@@ -148,7 +148,7 @@ const ComboboxInput = defineComponent({
         ...attrs,
         ...(machineRef != null && { ref: machineRef as VNodeRef }),
       };
-      if (props.asChild) return h(Slot, inputProps, slots["default"]);
+      if (props.asChild) return h(Slot, inputProps, slots.default);
       return h("input", inputProps);
     };
   },
@@ -165,8 +165,8 @@ const ComboboxTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
-      return h("button", triggerProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, triggerProps, slots.default);
+      return h("button", triggerProps, slots.default?.());
     };
   },
 });
@@ -185,8 +185,8 @@ const ComboboxClearTrigger = defineComponent({
       const inputVal = api.getInputValue();
       if (!val.length && !inputVal) return null;
       const clearProps = { ...api.getClearTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, clearProps, slots["default"]);
-      return h("button", clearProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, clearProps, slots.default);
+      return h("button", clearProps, slots.default?.());
     };
   },
 });
@@ -208,7 +208,7 @@ const ComboboxPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots["default"]);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
 });
@@ -252,9 +252,9 @@ const ComboboxContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots["default"]));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots.default));
       }
-      return h("div", positionerProps, h("ul", finalContentProps, slots["default"]?.()));
+      return h("div", positionerProps, h("ul", finalContentProps, slots.default?.()));
     };
   },
 });
@@ -275,7 +275,7 @@ const ComboboxItem = defineComponent({
     const api = useCtx();
 
     onMounted(() => {
-      const defaultChildren = slots["default"]?.();
+      const defaultChildren = slots.default?.();
       const label =
         props.label ??
         (typeof defaultChildren?.[0]?.children === "string"
@@ -302,8 +302,8 @@ const ComboboxItem = defineComponent({
         ),
         ...attrs,
       };
-      if (props.asChild) return h(Slot, optionProps, slots["default"]);
-      return h("li", optionProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, optionProps, slots.default);
+      return h("li", optionProps, slots.default?.());
     };
   },
 });
@@ -319,7 +319,7 @@ const ComboboxItemText = defineComponent({
       h(
         "span",
         { "data-forge-scope": "combobox", "data-forge-part": "item-text" },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -338,7 +338,7 @@ const ComboboxItemIndicator = defineComponent({
       return h(
         "span",
         { "data-forge-scope": "combobox", "data-forge-part": "item-indicator" },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },
@@ -355,7 +355,7 @@ const ComboboxGroup = defineComponent({
       h(
         "ul",
         { role: "group", "data-forge-scope": "combobox", "data-forge-part": "group", ...attrs },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -372,7 +372,7 @@ const ComboboxGroupLabel = defineComponent({
           "data-forge-part": "group-label",
           ...attrs,
         },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -394,7 +394,7 @@ const ComboboxTagsInput = defineComponent({
           "data-forge-part": "tags-input",
           ...attrs,
         },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },
@@ -416,7 +416,7 @@ const ComboboxTag = defineComponent({
           "data-value": props.value,
           ...attrs,
         },
-        slots["default"]?.() ?? [label],
+        slots.default?.() ?? [label],
       );
     };
   },
@@ -459,8 +459,8 @@ const ComboboxCreateOption = defineComponent({
       if (!api.hasCreateOption.value) return null;
       const label = api.createOptionLabel.value;
       const createProps = { ...api.getCreateOptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, createProps, slots["default"]);
-      const content = slots["default"]?.() ?? [`CrÃ©er "${label}"`];
+      if (props.asChild) return h(Slot, createProps, slots.default);
+      const content = slots.default?.() ?? [`CrÃ©er "${label}"`];
       return h("li", createProps, content);
     };
   },

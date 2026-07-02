@@ -62,8 +62,8 @@ const RadioGroupRoot = defineComponent({
     provide(radioGroupKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots["default"]);
-      return h("div", rootProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, rootProps, slots.default);
+      return h("div", rootProps, slots.default?.());
     };
   },
 });
@@ -84,8 +84,8 @@ const RadioGroupItem = defineComponent({
     provide(radioItemKey, { value: props.value, disabled: props.disabled });
     return () => {
       const itemProps = { ...api.getItemProps(props.value, props.disabled), ...attrs };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -103,8 +103,8 @@ const RadioGroupRadio = defineComponent({
       const { value, disabled } = useItemCtx();
       const { onKeyDown: _kd, ...radioProps } = api.getRadioProps(value, disabled);
       const merged = { ...radioProps, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots["default"]);
-      return h("button", merged, slots["default"]?.());
+      if (props.asChild) return h(Slot, merged, slots.default);
+      return h("button", merged, slots.default?.());
     };
   },
 });
@@ -122,8 +122,8 @@ const RadioGroupLabel = defineComponent({
       const { value } = useItemCtx();
       const { htmlFor, ...labelProps } = api.getLabelProps(value);
       const merged = { ...labelProps, for: htmlFor, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots["default"]);
-      return h("label", merged, slots["default"]?.());
+      if (props.asChild) return h(Slot, merged, slots.default);
+      return h("label", merged, slots.default?.());
     };
   },
 });

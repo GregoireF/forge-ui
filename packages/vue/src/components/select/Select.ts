@@ -76,7 +76,7 @@ const SelectRoot = defineComponent({
 
     watch(api.isOpen, (open) => emit("update:open", open));
 
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -91,8 +91,8 @@ const SelectLabel = defineComponent({
     const api = useCtx();
     return () => {
       const labelProps = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, labelProps, slots["default"]);
-      return h("label", labelProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, labelProps, slots.default);
+      return h("label", labelProps, slots.default?.());
     };
   },
 });
@@ -108,8 +108,8 @@ const SelectTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
-      return h("button", triggerProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, triggerProps, slots.default);
+      return h("button", triggerProps, slots.default?.());
     };
   },
 });
@@ -130,11 +130,11 @@ const SelectValue = defineComponent({
       // When a value is selected, always show the label â€" default slot acts as a placeholder slot.
       if (label)
         return h("span", { "data-forge-scope": "select", "data-forge-part": "value" }, label);
-      if (slots["default"])
+      if (slots.default)
         return h(
           "span",
           { "data-forge-scope": "select", "data-forge-part": "value" },
-          slots["default"]?.(),
+          slots.default?.(),
         );
       return h(
         "span",
@@ -158,7 +158,7 @@ const SelectPlaceholder = defineComponent({
       return h(
         "span",
         { "data-forge-scope": "select", "data-forge-part": "placeholder", ...attrs },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },
@@ -181,7 +181,7 @@ const SelectPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots["default"]);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
 });
@@ -226,9 +226,9 @@ const SelectContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots["default"]));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots.default));
       }
-      return h("div", positionerProps, h("ul", finalContentProps, slots["default"]?.()));
+      return h("div", positionerProps, h("ul", finalContentProps, slots.default?.()));
     };
   },
 });
@@ -249,7 +249,7 @@ const SelectItem = defineComponent({
     const api = useCtx();
 
     onMounted(() => {
-      const defaultChildren = slots["default"]?.();
+      const defaultChildren = slots.default?.();
       const label =
         props.label ??
         (typeof defaultChildren?.[0]?.children === "string"
@@ -267,8 +267,8 @@ const SelectItem = defineComponent({
         ...api.getOptionProps({ value: props.value, disabled: props.disabled }),
         ...attrs,
       };
-      if (props.asChild) return h(Slot, optionProps, slots["default"]);
-      return h("li", optionProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, optionProps, slots.default);
+      return h("li", optionProps, slots.default?.());
     };
   },
 });
@@ -284,7 +284,7 @@ const SelectItemText = defineComponent({
       h(
         "span",
         { "data-forge-scope": "select", "data-forge-part": "item-text" },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -300,7 +300,7 @@ const SelectItemIndicator = defineComponent({
       h(
         "span",
         { "data-forge-scope": "select", "data-forge-part": "item-indicator" },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -333,7 +333,7 @@ const SelectGroup = defineComponent({
       h(
         "ul",
         { role: "group", "data-forge-scope": "select", "data-forge-part": "group", ...attrs },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -350,7 +350,7 @@ const SelectGroupLabel = defineComponent({
           "data-forge-part": "group-label",
           ...attrs,
         },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -363,7 +363,7 @@ const SelectIndicator = defineComponent({
   name: "ForgeSelectIndicator",
   setup(_props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("span", { ...api.getIndicatorProps(), ...attrs }, slots["default"]?.());
+    return () => h("span", { ...api.getIndicatorProps(), ...attrs }, slots.default?.());
   },
 });
 

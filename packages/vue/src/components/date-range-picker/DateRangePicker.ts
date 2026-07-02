@@ -90,7 +90,7 @@ const DateRangePickerRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(dateRangePickerPresenceKey, presence);
     provide(dateRangePickerKey, api);
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -114,7 +114,7 @@ const DateRangePickerTrigger = defineComponent({
   name: "ForgeDateRangePickerTrigger",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getTriggerProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getTriggerProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -149,7 +149,7 @@ const DateRangePickerContent = defineComponent({
             presenceRef.value = el as HTMLElement | null;
           },
         },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },
@@ -166,7 +166,7 @@ const DateRangePickerCalendarHeader = defineComponent({
     const api = useCtx();
     return () => {
       const { label, ...headerProps } = api.getCalendarHeaderProps(props.monthOffset);
-      return h("div", { ...headerProps, ...attrs }, slots["default"]?.() ?? [label]);
+      return h("div", { ...headerProps, ...attrs }, slots.default?.() ?? [label]);
     };
   },
 });
@@ -179,7 +179,7 @@ const DateRangePickerPrevMonthButton = defineComponent({
   name: "ForgeDateRangePickerPrevMonthButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getPrevMonthButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getPrevMonthButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -187,7 +187,7 @@ const DateRangePickerNextMonthButton = defineComponent({
   name: "ForgeDateRangePickerNextMonthButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getNextMonthButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getNextMonthButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -202,7 +202,7 @@ const DateRangePickerCalendarGrid = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getCalendarGridProps(props.monthOffset)), ...attrs };
-      return h("div", merged, slots["default"]?.());
+      return h("div", merged, slots.default?.());
     };
   },
 });
@@ -217,7 +217,7 @@ const DateRangePickerCalendarRow = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("div", { ...api.getCalendarRowProps(props.weekIndex), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getCalendarRowProps(props.weekIndex), ...attrs }, slots.default?.());
   },
 });
 
@@ -230,7 +230,7 @@ const DateRangePickerWeekdayHeader = defineComponent({
       h(
         "div",
         { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs },
-        slots["default"]?.() ?? [api.weekdays.value[props.dayIndex]?.narrow],
+        slots.default?.() ?? [api.weekdays.value[props.dayIndex]?.narrow],
       );
   },
 });
@@ -249,7 +249,7 @@ const DateRangePickerCalendarCell = defineComponent({
     const api = useCtx();
     return () => {
       const cellProps = api.getCalendarCellProps(props.date, props.isOutsideMonth);
-      return h("div", { ...cellProps, ...attrs }, slots["default"]?.() ?? [props.date.day]);
+      return h("div", { ...cellProps, ...attrs }, slots.default?.() ?? [props.date.day]);
     };
   },
 });
@@ -263,7 +263,7 @@ const DateRangePickerClearButton = defineComponent({
   setup(_, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("button", { ...api.getClearButtonProps(), ...attrs }, slots["default"]?.() ?? ["Clear"]);
+      h("button", { ...api.getClearButtonProps(), ...attrs }, slots.default?.() ?? ["Clear"]);
   },
 });
 
@@ -285,7 +285,7 @@ const DateRangePickerPreset = defineComponent({
       h(
         "button",
         { ...api.getPresetProps(props.preset), ...attrs },
-        slots["default"]?.() ?? [props.preset.label],
+        slots.default?.() ?? [props.preset.label],
       );
   },
 });

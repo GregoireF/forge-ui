@@ -73,7 +73,7 @@ const DatePickerRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(datePickerPresenceKey, presence);
     provide(datePickerKey, api);
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -97,7 +97,7 @@ const DatePickerTrigger = defineComponent({
   name: "ForgeDatePickerTrigger",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getTriggerProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getTriggerProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -132,7 +132,7 @@ const DatePickerContent = defineComponent({
             presenceRef.value = el as HTMLElement | null;
           },
         },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },
@@ -150,7 +150,7 @@ const DatePickerCalendarHeader = defineComponent({
       h(
         "div",
         { ...api.getCalendarHeaderProps(), ...attrs },
-        slots["default"]?.() ?? [api.monthYearLabel.value],
+        slots.default?.() ?? [api.monthYearLabel.value],
       );
   },
 });
@@ -163,7 +163,7 @@ const DatePickerViewSwitchButton = defineComponent({
   name: "ForgeDatePickerViewSwitchButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getViewSwitchButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getViewSwitchButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -171,7 +171,7 @@ const DatePickerPrevMonthButton = defineComponent({
   name: "ForgeDatePickerPrevMonthButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getPrevMonthButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getPrevMonthButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -179,7 +179,7 @@ const DatePickerNextMonthButton = defineComponent({
   name: "ForgeDatePickerNextMonthButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("button", { ...api.getNextMonthButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getNextMonthButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -187,8 +187,7 @@ const DatePickerPrevYearRangeButton = defineComponent({
   name: "ForgeDatePickerPrevYearRangeButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () =>
-      h("button", { ...api.getPrevYearRangeButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getPrevYearRangeButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -196,8 +195,7 @@ const DatePickerNextYearRangeButton = defineComponent({
   name: "ForgeDatePickerNextYearRangeButton",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () =>
-      h("button", { ...api.getNextYearRangeButtonProps(), ...attrs }, slots["default"]?.());
+    return () => h("button", { ...api.getNextYearRangeButtonProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -211,7 +209,7 @@ const DatePickerCalendarGrid = defineComponent({
     const api = useCtx();
     return () => {
       const merged = { ...remapKeyDown(api.getCalendarGridProps()), ...attrs };
-      return h("div", merged, slots["default"]?.());
+      return h("div", merged, slots.default?.());
     };
   },
 });
@@ -226,7 +224,7 @@ const DatePickerCalendarRow = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("div", { ...api.getCalendarRowProps(props.weekIndex), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getCalendarRowProps(props.weekIndex), ...attrs }, slots.default?.());
   },
 });
 
@@ -243,7 +241,7 @@ const DatePickerWeekdayHeader = defineComponent({
       h(
         "div",
         { ...api.getWeekdayHeaderProps(props.dayIndex), ...attrs },
-        slots["default"]?.() ?? [api.weekdays.value[props.dayIndex]?.narrow],
+        slots.default?.() ?? [api.weekdays.value[props.dayIndex]?.narrow],
       );
   },
 });
@@ -262,7 +260,7 @@ const DatePickerCalendarCell = defineComponent({
     const api = useCtx();
     return () => {
       const cellProps = api.getCalendarCellProps(props.date, props.isOutsideMonth);
-      return h("div", { ...cellProps, ...attrs }, slots["default"]?.() ?? [props.date.day]);
+      return h("div", { ...cellProps, ...attrs }, slots.default?.() ?? [props.date.day]);
     };
   },
 });
@@ -275,7 +273,7 @@ const DatePickerMonthGrid = defineComponent({
   name: "ForgeDatePickerMonthGrid",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getMonthGridProps(), ...attrs }, slots["default"]?.());
+    return () => h("div", { ...api.getMonthGridProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -289,7 +287,7 @@ const DatePickerMonthCell = defineComponent({
       return h(
         "div",
         { ...api.getMonthCellProps(props.month), ...attrs },
-        slots["default"]?.() ?? [label],
+        slots.default?.() ?? [label],
       );
     };
   },
@@ -303,7 +301,7 @@ const DatePickerYearGrid = defineComponent({
   name: "ForgeDatePickerYearGrid",
   setup(_, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getYearGridProps(), ...attrs }, slots["default"]?.());
+    return () => h("div", { ...api.getYearGridProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -316,7 +314,7 @@ const DatePickerYearCell = defineComponent({
       h(
         "div",
         { ...api.getYearCellProps(props.year), ...attrs },
-        slots["default"]?.() ?? [props.year],
+        slots.default?.() ?? [props.year],
       );
   },
 });
@@ -334,7 +332,7 @@ const DatePickerPreset = defineComponent({
       h(
         "button",
         { ...api.getPresetProps(props.preset), ...attrs },
-        slots["default"]?.() ?? [props.preset.label],
+        slots.default?.() ?? [props.preset.label],
       );
   },
 });

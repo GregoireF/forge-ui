@@ -67,8 +67,8 @@ const AvatarRoot = defineComponent({
 
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots["default"]);
-      return h("span", rootProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, rootProps, slots.default);
+      return h("span", rootProps, slots.default?.());
     };
   },
 });
@@ -183,8 +183,8 @@ const AvatarFallback = defineComponent({
         ...(visible.value ? {} : { "aria-hidden": true }),
         ...attrs,
       };
-      if (props.asChild) return h(Slot, mergedProps, slots["default"]);
-      return h("span", mergedProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, mergedProps, slots.default);
+      return h("span", mergedProps, slots.default?.());
     };
   },
 });

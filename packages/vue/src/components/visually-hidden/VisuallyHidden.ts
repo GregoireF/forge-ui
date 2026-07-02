@@ -10,7 +10,7 @@ const VisuallyHiddenRoot = defineComponent({
   setup(props, { slots, attrs }) {
     return () => {
       const api = connectVisuallyHidden({ focusable: props.focusable } as VisuallyHiddenOptions);
-      return h("span", { ...api.getProps(), ...attrs }, slots["default"]?.());
+      return h("span", { ...api.getProps(), ...attrs }, slots.default?.());
     };
   },
 });

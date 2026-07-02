@@ -71,8 +71,8 @@ const SliderRoot = defineComponent({
     provide(sliderKey, api);
     return () => {
       const rootProps = { ...api.getRootProps(), ...attrs };
-      if (props.asChild) return h(Slot, rootProps, slots["default"]);
-      return h("div", rootProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, rootProps, slots.default);
+      return h("div", rootProps, slots.default?.());
     };
   },
 });
@@ -91,8 +91,8 @@ const SliderTrack = defineComponent({
       const vueRef = (el: Element | ComponentPublicInstance | null) =>
         trackRef(el instanceof Element ? el : null);
       const merged = { ...trackAttrs, onPointerdown: onPointerDown, ref: vueRef, ...attrs };
-      if (props.asChild) return h(Slot, merged, slots["default"]);
-      return h("div", merged, slots["default"]?.());
+      if (props.asChild) return h(Slot, merged, slots.default);
+      return h("div", merged, slots.default?.());
     };
   },
 });
@@ -111,7 +111,7 @@ const SliderRange = defineComponent({
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
       // connect styles (left/right) must win over user styles
       const merged = { ...rangeAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
-      if (props.asChild) return h(Slot, merged, slots["default"]);
+      if (props.asChild) return h(Slot, merged, slots.default);
       return h("div", merged);
     };
   },
@@ -141,8 +141,8 @@ const SliderThumb = defineComponent({
       const { style: userStyle, ...userAttrs } = attrs as { style?: Record<string, string> };
       // connect styles (position/left/transform) must win over user styles
       const merged = { ...thumbAttrs, ...userAttrs, style: { ...userStyle, ...connectStyle } };
-      if (props.asChild) return h(Slot, merged, slots["default"]);
-      return h("div", merged, slots["default"]?.());
+      if (props.asChild) return h(Slot, merged, slots.default);
+      return h("div", merged, slots.default?.());
     };
   },
 });
@@ -177,7 +177,7 @@ const SliderMarkerGroup = defineComponent({
       return h(
         "div",
         { ...groupAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },
@@ -200,7 +200,7 @@ const SliderMarker = defineComponent({
       return h(
         "span",
         { ...markerAttrs, ...userAttrs, style: { ...connectStyle, ...userStyle } },
-        slots["default"]?.(),
+        slots.default?.(),
       );
     };
   },

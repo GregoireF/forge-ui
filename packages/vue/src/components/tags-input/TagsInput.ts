@@ -99,7 +99,7 @@ const TagsInputRoot = defineComponent({
 
     return () =>
       h("div", api.getRootProps(), [
-        slots["default"]?.(),
+        slots.default?.(),
         h("span", { ...api.getLiveRegionProps(), ref: liveRegionEl, style: liveRegionStyle }),
       ]);
   },
@@ -113,7 +113,7 @@ const TagsInputLabel = defineComponent({
   name: "ForgeTagsInputLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots["default"]?.());
+    return () => h("label", api.getLabelProps(), slots.default?.());
   },
 });
 
@@ -159,7 +159,7 @@ const TagsInputTag = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
-    return () => h("span", api.getTagProps(props.value), slots["default"]?.());
+    return () => h("span", api.getTagProps(props.value), slots.default?.());
   },
 });
 
@@ -174,7 +174,7 @@ const TagsInputTagDelete = defineComponent({
   },
   setup(props, { slots }) {
     const api = useCtx();
-    return () => h("button", api.getTagDeleteProps(props.value), slots["default"]?.() ?? "Ã—");
+    return () => h("button", api.getTagDeleteProps(props.value), slots.default?.() ?? "Ã—");
   },
 });
 

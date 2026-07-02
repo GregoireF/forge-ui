@@ -111,7 +111,7 @@ const PopoverRoot = defineComponent({
 
     watch(api.isOpen, (open) => emit("update:open", open));
 
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -126,8 +126,8 @@ const PopoverTrigger = defineComponent({
     const api = useCtx();
     return () => {
       const triggerProps = { ...api.getTriggerProps(), ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
-      return h("button", triggerProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, triggerProps, slots.default);
+      return h("button", triggerProps, slots.default?.());
     };
   },
 });
@@ -140,7 +140,7 @@ const PopoverAnchor = defineComponent({
   name: "ForgePopoverAnchor",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h(Slot, api.getAnchorProps(), slots["default"]);
+    return () => h(Slot, api.getAnchorProps(), slots.default);
   },
 });
 
@@ -161,7 +161,7 @@ const PopoverPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots["default"]);
+      return h(DialogPortal, { to: props.to, disabled: props.disabled }, slots.default);
     };
   },
 });
@@ -205,9 +205,9 @@ const PopoverContent = defineComponent({
       };
 
       if (props.asChild) {
-        return h("div", positionerProps, h(Slot, finalContentProps, slots["default"]));
+        return h("div", positionerProps, h(Slot, finalContentProps, slots.default));
       }
-      return h("div", positionerProps, h("div", finalContentProps, slots["default"]?.()));
+      return h("div", positionerProps, h("div", finalContentProps, slots.default?.()));
     };
   },
 });
@@ -230,7 +230,7 @@ const PopoverArrow = defineComponent({
         ref?: (el: HTMLElement | null) => void;
       };
       const { ref: machineRef, ...arrowAttrs } = rawProps;
-      const children = slots["default"]?.();
+      const children = slots.default?.();
       if (!children?.length) return null;
       const child = children[0];
       if (!child) return null;
@@ -257,8 +257,8 @@ const PopoverClose = defineComponent({
     const api = useCtx();
     return () => {
       const closeProps = { ...api.getCloseProps(), ...attrs };
-      if (props.asChild) return h(Slot, closeProps, slots["default"]);
-      return h("button", closeProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, closeProps, slots.default);
+      return h("button", closeProps, slots.default?.());
     };
   },
 });
@@ -276,8 +276,8 @@ const PopoverTitle = defineComponent({
     onUnmounted(() => api.send("UNREGISTER_TITLE"));
     return () => {
       const titleProps = { ...api.getTitleProps(), ...attrs };
-      if (props.asChild) return h(Slot, titleProps, slots["default"]);
-      return h("h2", titleProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, titleProps, slots.default);
+      return h("h2", titleProps, slots.default?.());
     };
   },
 });
@@ -295,8 +295,8 @@ const PopoverDescription = defineComponent({
     onUnmounted(() => api.send("UNREGISTER_DESCRIPTION"));
     return () => {
       const descriptionProps = { ...api.getDescriptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, descriptionProps, slots["default"]);
-      return h("p", descriptionProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, descriptionProps, slots.default);
+      return h("p", descriptionProps, slots.default?.());
     };
   },
 });

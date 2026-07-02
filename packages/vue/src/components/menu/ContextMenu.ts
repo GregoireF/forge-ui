@@ -104,7 +104,7 @@ const ContextMenuRoot = defineComponent({
     const presence = usePresence(api.isOpen);
     provide(contextMenuPresenceKey, presence);
 
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -126,8 +126,8 @@ const ContextMenuTrigger = defineComponent({
         ref?: unknown;
       };
       const triggerProps = { ...rest, ...attrs, onContextmenu: onContextMenu };
-      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
-      return h("div", triggerProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, triggerProps, slots.default);
+      return h("div", triggerProps, slots.default?.());
     };
   },
 });
@@ -147,7 +147,7 @@ const ContextMenuPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, {}, slots["default"]);
+      return h(DialogPortal, {}, slots.default);
     };
   },
 });
@@ -242,8 +242,8 @@ const ContextMenuContent = defineComponent({
       };
 
       const inner = props.asChild
-        ? h(Slot, contentProps, slots["default"])
-        : h("div", contentProps, slots["default"]?.());
+        ? h(Slot, contentProps, slots.default)
+        : h("div", contentProps, slots.default?.());
 
       const overlay =
         api.modal.value && api.isOpen.value
@@ -314,8 +314,8 @@ const ContextMenuItemComp = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -328,7 +328,7 @@ const ContextMenuLabel = defineComponent({
   name: "ForgeContextMenuLabel",
   setup(_props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots["default"]?.());
+    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -353,7 +353,7 @@ const ContextMenuGroup = defineComponent({
   props: { id: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots["default"]?.());
+    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots.default?.());
   },
 });
 
@@ -363,7 +363,7 @@ const ContextMenuGroupLabel = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots.default?.());
   },
 });
 
@@ -400,7 +400,7 @@ const ContextMenuRadioGroup = defineComponent({
     });
 
     return () =>
-      h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots.default?.());
   },
 });
 
@@ -410,7 +410,7 @@ const ContextMenuRadioGroupLabel = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots.default?.());
   },
 });
 
@@ -476,8 +476,8 @@ const ContextMenuRadioItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -549,8 +549,8 @@ const ContextMenuCheckboxItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -571,7 +571,7 @@ const ContextMenuItemIndicator = defineComponent({
     return () => {
       const isChecked = checkedCtx?.value ?? false;
       if (!props.forceMount && !isChecked) return null;
-      return h("span", api.getItemIndicatorProps(isChecked), slots["default"]?.());
+      return h("span", api.getItemIndicatorProps(isChecked), slots.default?.());
     };
   },
 });
@@ -618,7 +618,7 @@ const ContextMenuSub = defineComponent({
       parentTriggers,
     });
     provide(contextMenuSubTriggersKey, ownTriggers);
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -702,8 +702,8 @@ const ContextMenuSubTrigger = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, subTriggerProps, slots["default"]);
-      return h("div", subTriggerProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, subTriggerProps, slots.default);
+      return h("div", subTriggerProps, slots.default?.());
     };
   },
 });
@@ -786,8 +786,8 @@ const ContextMenuSubContent = defineComponent({
         },
       };
       const inner = props.asChild
-        ? h(Slot, contentProps, slots["default"])
-        : h("div", contentProps, slots["default"]?.());
+        ? h(Slot, contentProps, slots.default)
+        : h("div", contentProps, slots.default?.());
       return h(DialogPortal, {}, () => h("div", positionerProps, [inner]));
     };
   },

@@ -133,7 +133,7 @@ const MenuRoot = defineComponent({
     const subTriggers = new Map<string, () => void>();
     provide(menuSubTriggersKey, subTriggers);
 
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -156,8 +156,8 @@ const MenuTrigger = defineComponent({
         ...rest
       } = api.getTriggerProps({ disabled: props.disabled });
       const triggerProps = { ...rest, ...attrs };
-      if (props.asChild) return h(Slot, triggerProps, slots["default"]);
-      return h("button", triggerProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, triggerProps, slots.default);
+      return h("button", triggerProps, slots.default?.());
     };
   },
 });
@@ -178,7 +178,7 @@ const MenuPortal = defineComponent({
     return () => {
       const isPresent = presence?.isPresent.value ?? api.isOpen.value;
       if (!props.forceMount && !isPresent) return null;
-      return h(DialogPortal, {}, slots["default"]);
+      return h(DialogPortal, {}, slots.default);
     };
   },
 });
@@ -285,8 +285,8 @@ const MenuContent = defineComponent({
       };
 
       const inner = props.asChild
-        ? h(Slot, contentProps, slots["default"])
-        : h("div", contentProps, slots["default"]?.());
+        ? h(Slot, contentProps, slots.default)
+        : h("div", contentProps, slots.default?.());
 
       // Modal overlay: renders behind the positioner (z-index 49 vs 50).
       // Click on overlay → watchOutside → INTERACT_OUTSIDE → close.
@@ -324,7 +324,7 @@ const MenuArrow = defineComponent({
           if (typeof _ref === "function") (_ref as (el: unknown) => void)(el);
         },
       };
-      if (props.asChild) return h(Slot, arrowProps, slots["default"]);
+      if (props.asChild) return h(Slot, arrowProps, slots.default);
       return h("span", arrowProps, [
         h(
           "svg",
@@ -363,8 +363,8 @@ const MenuAnchor = defineComponent({
           if (typeof _ref === "function") (_ref as (el: unknown) => void)(el);
         },
       };
-      if (props.asChild) return h(Slot, anchorProps, slots["default"]);
-      return h("span", anchorProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, anchorProps, slots.default);
+      return h("span", anchorProps, slots.default?.());
     };
   },
 });
@@ -421,8 +421,8 @@ const MenuItemComp = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -435,7 +435,7 @@ const MenuLabel = defineComponent({
   name: "ForgeMenuLabel",
   setup(_props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots["default"]?.());
+    return () => h("div", { ...api.getLabelProps(), ...attrs }, slots.default?.());
   },
 });
 
@@ -460,7 +460,7 @@ const MenuGroup = defineComponent({
   props: { id: { type: String, required: true } },
   setup(props, { slots, attrs }) {
     const api = useCtx();
-    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots["default"]?.());
+    return () => h("div", { ...api.getGroupProps(props.id), ...attrs }, slots.default?.());
   },
 });
 
@@ -470,7 +470,7 @@ const MenuGroupLabel = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getGroupLabelProps(props.groupId), ...attrs }, slots.default?.());
   },
 });
 
@@ -507,7 +507,7 @@ const MenuRadioGroup = defineComponent({
     });
 
     return () =>
-      h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getRadioGroupProps(props.groupId), ...attrs }, slots.default?.());
   },
 });
 
@@ -517,7 +517,7 @@ const MenuRadioGroupLabel = defineComponent({
   setup(props, { slots, attrs }) {
     const api = useCtx();
     return () =>
-      h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots["default"]?.());
+      h("div", { ...api.getRadioGroupLabelProps(props.groupId), ...attrs }, slots.default?.());
   },
 });
 
@@ -583,8 +583,8 @@ const MenuRadioItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -656,8 +656,8 @@ const MenuCheckboxItem = defineComponent({
           }
         },
       };
-      if (props.asChild) return h(Slot, itemProps, slots["default"]);
-      return h("div", itemProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, itemProps, slots.default);
+      return h("div", itemProps, slots.default?.());
     };
   },
 });
@@ -678,7 +678,7 @@ const MenuItemIndicator = defineComponent({
     return () => {
       const isChecked = checkedCtx?.value ?? false;
       if (!props.forceMount && !isChecked) return null;
-      return h("span", api.getItemIndicatorProps(isChecked), slots["default"]?.());
+      return h("span", api.getItemIndicatorProps(isChecked), slots.default?.());
     };
   },
 });
@@ -718,7 +718,7 @@ const MenuSub = defineComponent({
     // Override so SubContent and deeper SubTriggers see our own map.
     provide(menuSubTriggersKey, ownTriggers);
 
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -813,7 +813,7 @@ const MenuSubTrigger = defineComponent({
         },
       };
 
-      return h("div", subTriggerProps, slots["default"]?.());
+      return h("div", subTriggerProps, slots.default?.());
     };
   },
 });
@@ -910,8 +910,8 @@ const MenuSubContent = defineComponent({
       };
 
       const inner = props.asChild
-        ? h(Slot, contentProps, slots["default"])
-        : h("div", contentProps, slots["default"]?.());
+        ? h(Slot, contentProps, slots.default)
+        : h("div", contentProps, slots.default?.());
 
       return h(DialogPortal, {}, () => h("div", positionerProps, [inner]));
     };

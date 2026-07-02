@@ -57,8 +57,8 @@ export function watchPresence(
     if (settled) return;
     settled = true;
     clearTimeout(timer);
-    el!.removeEventListener("animationend", finish);
-    el!.removeEventListener("transitionend", finish);
+    el?.removeEventListener("animationend", finish);
+    el?.removeEventListener("transitionend", finish);
     onUnmount();
   }
 

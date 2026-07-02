@@ -92,7 +92,7 @@ const CheckboxGroup = defineComponent({
       h(
         "div",
         { role: "group", "data-forge-scope": "checkbox", "data-forge-part": "group" },
-        slots["default"]?.(),
+        slots.default?.(),
       );
   },
 });
@@ -132,13 +132,13 @@ const CheckboxRoot = defineComponent({
     const isInGroup = computed(() => group !== null && props.value !== undefined);
 
     const effectiveChecked = computed<CheckboxChecked | undefined>(() =>
-      isInGroup.value ? group!.isChecked(props.value!) : props.checked,
+      isInGroup.value ? group?.isChecked(props.value!) : props.checked,
     );
     const effectiveName = computed(() =>
-      isInGroup.value ? (group!.name ?? props.name) : props.name,
+      isInGroup.value ? (group?.name ?? props.name) : props.name,
     );
     const effectiveDisabled = computed(() =>
-      isInGroup.value ? (props.disabled ?? group!.disabled) : props.disabled,
+      isInGroup.value ? (props.disabled ?? group?.disabled) : props.disabled,
     );
 
     const api = useCheckbox({
@@ -170,7 +170,7 @@ const CheckboxRoot = defineComponent({
             onClick: (e: { preventDefault?: () => void }) => {
               e.preventDefault?.();
               if (api.isDisabled.value) return;
-              group!.toggle(props.value!);
+              group?.toggle(props.value!);
             },
           }),
         }
@@ -189,8 +189,8 @@ const CheckboxRoot = defineComponent({
 
     // Register value in group.
     if (isInGroup.value && props.value) {
-      group!.registerValue(props.value);
-      onUnmounted(() => group!.unregisterValue(props.value!));
+      group?.registerValue(props.value);
+      onUnmounted(() => group?.unregisterValue(props.value!));
     }
 
     provide(checkboxKey, providedApi);
@@ -199,7 +199,7 @@ const CheckboxRoot = defineComponent({
       const inputProps = api.getHiddenInputProps();
       const name = effectiveName.value;
       return h("div", api.getRootProps(), [
-        slots["default"]?.(),
+        slots.default?.(),
         name
           ? h("input", {
               ...inputProps,
@@ -220,7 +220,7 @@ const CheckboxControl = defineComponent({
   name: "ForgeCheckboxControl",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("button", api.getControlProps(), slots["default"]?.());
+    return () => h("button", api.getControlProps(), slots.default?.());
   },
 });
 
@@ -237,7 +237,7 @@ const CheckboxIndicator = defineComponent({
     const api = useCtx();
     return () => {
       if (!props.forceMount && !api.isChecked.value && !api.isIndeterminate.value) return null;
-      return h("span", api.getIndicatorProps(), slots["default"]?.());
+      return h("span", api.getIndicatorProps(), slots.default?.());
     };
   },
 });
@@ -250,7 +250,7 @@ const CheckboxLabel = defineComponent({
   name: "ForgeCheckboxLabel",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h("label", api.getLabelProps(), slots["default"]?.());
+    return () => h("label", api.getLabelProps(), slots.default?.());
   },
 });
 
@@ -307,7 +307,7 @@ const CheckboxGroupAll = defineComponent({
 
     provide(checkboxKey, modifiedApi);
 
-    return () => h("div", api.getRootProps(), slots["default"]?.());
+    return () => h("div", api.getRootProps(), slots.default?.());
   },
 });
 

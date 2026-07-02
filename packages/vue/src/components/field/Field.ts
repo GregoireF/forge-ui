@@ -42,7 +42,7 @@ const FieldRoot = defineComponent({
     // as string | undefined. The cast is safe â€" useField handles undefined via ?? false.
     const api = useField(props as Parameters<typeof useField>[0]);
     provide(fieldKey, api);
-    return () => slots["default"]?.();
+    return () => slots.default?.();
   },
 });
 
@@ -57,8 +57,8 @@ const FieldLabel = defineComponent({
     const api = useCtx();
     return () => {
       const labelProps = { ...api.getLabelProps(), ...attrs };
-      if (props.asChild) return h(Slot, labelProps, slots["default"]);
-      return h("label", labelProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, labelProps, slots.default);
+      return h("label", labelProps, slots.default?.());
     };
   },
 });
@@ -75,8 +75,8 @@ const FieldRequiredIndicator = defineComponent({
     return () => {
       if (!api.context.required) return null;
       const indicatorProps = { ...api.getRequiredIndicatorProps(), ...attrs };
-      if (props.asChild) return h(Slot, indicatorProps, slots["default"]);
-      return h("span", indicatorProps, slots["default"]?.() ?? ["*"]);
+      if (props.asChild) return h(Slot, indicatorProps, slots.default);
+      return h("span", indicatorProps, slots.default?.() ?? ["*"]);
     };
   },
 });
@@ -89,7 +89,7 @@ const FieldControl = defineComponent({
   name: "ForgeFieldControl",
   setup(_props, { slots }) {
     const api = useCtx();
-    return () => h(Slot, api.getControlProps(), slots["default"]);
+    return () => h(Slot, api.getControlProps(), slots.default);
   },
 });
 
@@ -108,8 +108,8 @@ const FieldDescription = defineComponent({
 
     return () => {
       const descProps = { ...api.getDescriptionProps(), ...attrs };
-      if (props.asChild) return h(Slot, descProps, slots["default"]);
-      return h("p", descProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, descProps, slots.default);
+      return h("p", descProps, slots.default?.());
     };
   },
 });
@@ -131,8 +131,8 @@ const FieldError = defineComponent({
     return () => {
       if (!api.context.invalid) return null;
       const errorProps = { ...api.getErrorProps(), ...attrs };
-      if (props.asChild) return h(Slot, errorProps, slots["default"]);
-      return h("p", errorProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, errorProps, slots.default);
+      return h("p", errorProps, slots.default?.());
     };
   },
 });
@@ -151,13 +151,13 @@ const FieldGroup = defineComponent({
   name: "ForgeFieldGroup",
   props: { asChild: { type: Boolean, default: false } },
   setup(props, { slots, attrs }) {
-    const uid = getCurrentInstance()!.uid;
+    const uid = getCurrentInstance()?.uid;
     const labelId = `forge-field-group-${uid}-label`;
     provide(fieldGroupKey, { labelId });
     return () => {
       const groupProps = { role: "group" as const, "aria-labelledby": labelId, ...attrs };
-      if (props.asChild) return h(Slot, groupProps, slots["default"]);
-      return h("div", groupProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, groupProps, slots.default);
+      return h("div", groupProps, slots.default?.());
     };
   },
 });
@@ -170,8 +170,8 @@ const FieldGroupLabel = defineComponent({
     if (!ctx) throw new globalThis.Error("Field.GroupLabel must be inside <Field.Group>");
     return () => {
       const labelProps = { id: ctx.labelId, ...attrs };
-      if (props.asChild) return h(Slot, labelProps, slots["default"]);
-      return h("p", labelProps, slots["default"]?.());
+      if (props.asChild) return h(Slot, labelProps, slots.default);
+      return h("p", labelProps, slots.default?.());
     };
   },
 });
