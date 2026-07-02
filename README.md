@@ -1,52 +1,66 @@
 # forge-ui
 
-<!-- Dynamic badges (updated by CI) -->
 [![CI](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml)
 [![E2E](https://github.com/GregoireF/forge-ui/actions/workflows/e2e.yml/badge.svg)](https://github.com/GregoireF/forge-ui/actions/workflows/e2e.yml)
 [![Coverage](https://codecov.io/gh/GregoireF/forge-ui/branch/main/graph/badge.svg)](https://codecov.io/gh/GregoireF/forge-ui)
 [![axe-core WCAG 2.1 AA](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/GregoireF/forge-ui/main/axe-badge.json)](e2e/react/a11y.spec.ts)
 [![Bundle size](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/GregoireF/forge-ui/main/bundle-size-badge.json)](tooling/scripts/bundle-size.ts)
-<!-- Static badges -->
 [![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
 [![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Composants headless accessibles pour **React 19** et **Vue 3**. Zéro style — vous gérez le CSS.
+Primitifs headless accessibles pour **React 19**, **Vue 3** et **Nuxt 4**. Zéro style — vous gérez le CSS, forge-ui gère la logique.
 
 > **Statut : pré-release (alpha).** API en cours de stabilisation. Pas encore publié sur npm.
 
 ---
 
-## Primitives (28 disponibles — React · Vue · Nuxt)
+## Pourquoi forge-ui ?
+
+| | forge-ui | Radix UI | Ark UI | Headless UI | Reka UI |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **React** | ✅ | ✅ | ✅ | ✅ | ❌ |
+| **Vue** | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **Nuxt (auto-import)** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **FSM machine exposée** | ✅ | ❌ | ✅ (Zag.js) | ❌ | ❌ |
+| **Core sans dépendance runtime** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Date Picker** | ✅ | ❌ | ✅ | ❌ | ✅ |
+| **Date Range Picker** | ✅ | ❌ | ✅ | ❌ | ✅ |
+| **Combobox creatable** | ✅ | ❌ | ✅ | ❌ | ✅ |
+| **Virtual scroll (Select / Combobox)** | ✅ | ❌ | ✅ | ❌ | ❌ |
+
+---
+
+## Primitives (28)
 
 ### Overlays & floating
 
-| Primitive | Package | WAI-ARIA |
+| Primitive | Package | Spec WAI-ARIA |
 |---|---|---|
-| Dialog | `@forge-ui/dialog` | [Dialog Modal](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) — focus trap, scroll lock, aria-hidden |
-| Alert Dialog | `@forge-ui/alert-dialog` | [Alert Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) — non-dismissible |
-| Popover | `@forge-ui/popover` | Floating panel — modal ou non-modal |
+| Dialog | `@forge-ui/dialog` | [Dialog Modal](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) |
+| Alert Dialog | `@forge-ui/alert-dialog` | [Alert Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) |
+| Popover | `@forge-ui/popover` | Panel flottant modal/non-modal |
 | Tooltip | `@forge-ui/tooltip` | `role="tooltip"` — provider skip-delay |
 | Hover Card | `@forge-ui/hover-card` | Popover déclenché au survol |
-| Menu | `@forge-ui/menu` | `role="menu"` — keyboard nav, submenus, roving tabindex |
+| Menu | `@forge-ui/menu` | `role="menu"` — keyboard nav, submenus |
 
 ### Formulaires & interactions
 
-| Primitive | Package | WAI-ARIA |
+| Primitive | Package | Spec WAI-ARIA |
 |---|---|---|
 | Checkbox | `@forge-ui/checkbox` | `role="checkbox"` — tri-state, groupe, select-all |
 | Radio Group | `@forge-ui/radio-group` | `role="radiogroup"` |
 | Switch | `@forge-ui/switch` | `role="switch"` |
-| Toggle | `@forge-ui/toggle` | `<button aria-pressed>` — [Button Pattern §3.5](https://www.w3.org/WAI/ARIA/apg/patterns/button/) |
-| Toggle Group | `@forge-ui/toggle-group` | `role="toolbar"` — roving tabindex, single / multiple |
-| Slider | `@forge-ui/slider` | `role="slider"` — multi-thumb, marks décoratifs, vertical |
+| Toggle | `@forge-ui/toggle` | `<button aria-pressed>` |
+| Toggle Group | `@forge-ui/toggle-group` | `role="toolbar"` — roving tabindex |
+| Slider | `@forge-ui/slider` | `role="slider"` — multi-thumb, marks, vertical |
 | Number Input | `@forge-ui/number-input` | `role="spinbutton"` — spin-repeat, locale |
-| Tags Input | `@forge-ui/tags-input` | Live region `role="status"` — delimiter, maxTags |
-| Field | `@forge-ui/field` | Provider d'IDs label / description / error |
+| Tags Input | `@forge-ui/tags-input` | Live region `role="status"` |
+| Field | `@forge-ui/field` | Provider IDs label / description / error |
 
 ### Sélection
 
-| Primitive | Package | WAI-ARIA |
+| Primitive | Package | Spec WAI-ARIA |
 |---|---|---|
 | Select | `@forge-ui/select` | [Select-Only Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/) — groupes, multi, virtual scroll |
 | Combobox | `@forge-ui/combobox` | [Combobox Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) — async, creatable, TagsInput, virtual scroll |
@@ -55,41 +69,71 @@ Composants headless accessibles pour **React 19** et **Vue 3**. Zéro style — 
 
 | Primitive | Package | Notes |
 |---|---|---|
-| Date Field | `@forge-ui/date-field` | Saisie segmentée spinbutton (jour / mois / année) |
-| Time Picker | `@forge-ui/time-picker` | 12 h / 24 h — secondes optionnelles |
-| Date Picker | `@forge-ui/date-picker` | Calendrier pop-up — vues jour/mois/année, presets, min/max, forceMount |
-| Date Range Picker | `@forge-ui/date-range-picker` | Sélection de plage deux phases — dual-calendar |
+| Date Field | `@forge-ui/date-field` | Saisie segmentée spinbutton |
+| Time Picker | `@forge-ui/time-picker` | 12 h / 24 h, secondes optionnelles |
+| Date Picker | `@forge-ui/date-picker` | Pop-up calendrier — vues jour/mois/année, min/max |
+| Date Range Picker | `@forge-ui/date-range-picker` | Sélection de plage deux phases, dual-calendar |
 
 ### Navigation & Layout
 
-| Primitive | Package | WAI-ARIA |
+| Primitive | Package | Spec WAI-ARIA |
 |---|---|---|
 | Accordion | `@forge-ui/accordion` | `role="region"` — single / multiple |
 | Collapsible | `@forge-ui/collapsible` | Disclosure widget |
-| Tabs | `@forge-ui/tabs` | `role="tablist"` — activation automatique / manuelle |
+| Tabs | `@forge-ui/tabs` | `role="tablist"` — activation auto / manuelle |
 | Progress | `@forge-ui/progress` | `role="progressbar"` — déterminé / indéterminé |
 
 ### Utilitaires
 
 | Primitive | Package | Notes |
 |---|---|---|
-| Avatar | `@forge-ui/avatar` | Machine FSM image load — fallback, initiales auto, delayMs |
-| Separator | `@forge-ui/separator` | `role="separator"` ou `role="none"` — horizontal / vertical |
-| Visually Hidden | `@forge-ui/visually-hidden` | CSS clip-path — accessible aux AT, invisible visuellement |
+| Avatar | `@forge-ui/avatar` | FSM image load — fallback, initiales auto |
+| Separator | `@forge-ui/separator` | `role="separator"` ou `role="none"` |
+| Visually Hidden | `@forge-ui/visually-hidden` | CSS clip-path — visible aux AT uniquement |
+
+---
+
+## Poids des primitives
+
+Les tailles ci-dessous sont mesurées en **gzip** après tree-shaking et minification (esbuild). Peer deps (`react`, `vue`, `@floating-ui/dom`) sont externalisés.
+
+| Catégorie | Primitives | Budget gzip | Seuil d'alerte |
+|---|---|---|---|
+| Stateless / zéro-machine | `separator`, `visually-hidden` | < 1 kB | 0,5 kB |
+| Simples (toggle, switch, progress…) | `toggle`, `toggle-group`, `checkbox`, `radio-group`, `switch`, `progress`, `tabs`, `collapsible` | < 3,5 kB | 2 kB |
+| Moyens (slider, accordion, tags…) | `accordion`, `slider`, `tags-input`, `dialog`, `field` | < 7 kB | 4 kB |
+| Floating (select, combobox, popover…) | `popover`, `select`, `combobox`, `tooltip`, `hover-card`, `menu` | < 12 kB | 6 kB |
+
+**Référence concurrente :**
+
+| Package | Gzip (gzip) |
+|---|---|
+| Radix UI `@radix-ui/react-dialog` | ~5.2 kB |
+| Radix UI `@radix-ui/react-select` | ~9.2 kB |
+| Zag.js `@zag-js/accordion` | ~2.5 kB |
+| Zag.js `@zag-js/combobox` | ~8.1 kB |
+| Headless UI `@headlessui/react` (Combobox) | ~12 kB |
+
+Le script d'analyse complet tourne à chaque PR :
+
+```bash
+bun run size         # rapport local
+bun run size:ci      # + sortie 1 si seuil dépassé
+```
 
 ---
 
 ## Architecture
 
-Inspirée de [Zag.js](https://zagjs.com) — implémentation FSM maison (~150 lignes, zéro dépendance runtime).
+Inspirée de [Zag.js](https://zagjs.com) — FSM maison (~150 lignes, zéro dépendance runtime).
 
 ```
 packages/
   core/                        # FSM engine + utilitaires a11y
   floating/                    # Wrapper @floating-ui/dom
   primitives/                  # 28 packages machine + connect
-  react/                       # Bindings React 19 (compound components + hooks)
-  vue/                         # Bindings Vue 3.5 (defineComponent + provide/inject)
+  react/                       # Bindings React 19
+  vue/                         # Bindings Vue 3.5
   nuxt/                        # Module Nuxt 4 (auto-import)
 apps/
   playground-react/            # Vite + React 19  (localhost:3000)
@@ -101,11 +145,11 @@ e2e/                           # Playwright — 3 browsers × 3 playgrounds
 ### Pattern machine → connect → binding
 
 ```
-createXMachine(options)              # FSM pure, sans DOM, testable unitairement
+createXMachine(options)              # FSM pure, testable unitairement
         ↓
 connectX(snapshot, send, machine)   # prop-getters framework-agnostiques
         ↓
-useX() + X.Root / X.Trigger / …     # Binding React ou Vue mince
+useX() + X.Root / X.Trigger / …     # Binding React / Vue (couche mince)
 ```
 
 ---
@@ -119,24 +163,20 @@ npm install @forge-ui/react
 ```
 
 ```tsx
-import { Dialog, Select, Combobox, Slider, DatePicker } from '@forge-ui/react'
+import { Dialog, Select, Slider, DatePicker } from '@forge-ui/react'
 
-// Dialog
 <Dialog.Root>
   <Dialog.Trigger>Ouvrir</Dialog.Trigger>
   <Dialog.Portal>
     <Dialog.Overlay />
     <Dialog.Content>
       <Dialog.Title>Titre</Dialog.Title>
-      <Dialog.Description>Description.</Dialog.Description>
       <Dialog.Close>Fermer</Dialog.Close>
     </Dialog.Content>
   </Dialog.Portal>
 </Dialog.Root>
 
-// Select — WAI-ARIA 1.2 Select-Only Combobox
 <Select.Root onValueChange={console.log}>
-  <Select.Label>Framework</Select.Label>
   <Select.Trigger><Select.Value><Select.Placeholder>Choisir…</Select.Placeholder></Select.Value></Select.Trigger>
   <Select.Portal>
     <Select.Content>
@@ -145,51 +185,9 @@ import { Dialog, Select, Combobox, Slider, DatePicker } from '@forge-ui/react'
     </Select.Content>
   </Select.Portal>
 </Select.Root>
-
-// Combobox — async, multi, creatable, TagsInput
-<Combobox.Root multiple>
-  <Combobox.Label>Langages</Combobox.Label>
-  <Combobox.TagsInput>
-    {selectedValues.map(v => (
-      <Combobox.Tag key={v} value={v}>
-        {labels[v]}
-        <Combobox.TagDelete value={v}>✕</Combobox.TagDelete>
-      </Combobox.Tag>
-    ))}
-  </Combobox.TagsInput>
-  <Combobox.Input />
-  <Combobox.Portal>
-    <Combobox.Content>
-      <Combobox.Item value="ts" label="TypeScript"><Combobox.ItemText>TypeScript</Combobox.ItemText></Combobox.Item>
-    </Combobox.Content>
-  </Combobox.Portal>
-</Combobox.Root>
-
-// Slider — range (2 thumbs) + marks décoratifs
-<Slider.Root value={[20, 80]} onValueChange={setRange} min={0} max={100} marks={[{value:0},{value:50,label:"50"},{value:100}]}>
-  <Slider.Track><Slider.Range /></Slider.Track>
-  <Slider.Thumb index={0} aria-label="Min" />
-  <Slider.Thumb index={1} aria-label="Max" />
-  <Slider.MarkerGroup>
-    {marks.map(m => <Slider.Marker key={m.value} value={m.value}>{m.label}</Slider.Marker>)}
-  </Slider.MarkerGroup>
-</Slider.Root>
-
-// DatePicker — min/max, forceMount, vues jour/mois/année
-<DatePicker.Root min={{year:2024,month:1,day:1}} max={{year:2025,month:12,day:31}} onValueChange={setDate}>
-  <DatePicker.Trigger>Choisir une date</DatePicker.Trigger>
-  <DatePicker.Portal>
-    <DatePicker.Content forceMount>
-      <DatePicker.CalendarHeader />
-      <DatePicker.CalendarGrid>
-        <DatePicker.CalendarRow weekIndex={-1}>
-          {Array.from({length:7},(_,i) => <DatePicker.WeekdayHeader key={i} dayIndex={i} />)}
-        </DatePicker.CalendarRow>
-      </DatePicker.CalendarGrid>
-    </DatePicker.Content>
-  </DatePicker.Portal>
-</DatePicker.Root>
 ```
+
+Voir [packages/react/README.md](packages/react/README.md) pour l'API complète des 28 primitives.
 
 ### Vue
 
@@ -199,11 +197,10 @@ npm install @forge-ui/vue
 
 ```vue
 <script setup>
-import { Dialog, Select, Combobox, Slider, DatePicker } from '@forge-ui/vue'
+import { Dialog, Select } from '@forge-ui/vue'
 </script>
 
 <template>
-  <!-- Dialog -->
   <Dialog.Root>
     <Dialog.Trigger>Ouvrir</Dialog.Trigger>
     <Dialog.Portal>
@@ -214,46 +211,10 @@ import { Dialog, Select, Combobox, Slider, DatePicker } from '@forge-ui/vue'
       </Dialog.Content>
     </Dialog.Portal>
   </Dialog.Root>
-
-  <!-- Select -->
-  <Select.Root @update:value="console.log($event)">
-    <Select.Label>Framework</Select.Label>
-    <Select.Trigger><Select.Value placeholder="Choisir…" /></Select.Trigger>
-    <Select.Portal>
-      <Select.Content>
-        <Select.Item value="react">React</Select.Item>
-        <Select.Item value="vue">Vue</Select.Item>
-      </Select.Content>
-    </Select.Portal>
-  </Select.Root>
-
-  <!-- Slider avec marks -->
-  <Slider.Root :value="50" :min="0" :max="100" :marks="[{value:0},{value:50,label:'50'},{value:100}]">
-    <Slider.Track><Slider.Range /></Slider.Track>
-    <Slider.Thumb aria-label="Valeur" />
-    <Slider.MarkerGroup>
-      <Slider.Marker :value="0" />
-      <Slider.Marker :value="50">50</Slider.Marker>
-      <Slider.Marker :value="100" />
-    </Slider.MarkerGroup>
-  </Slider.Root>
-
-  <!-- DatePicker -->
-  <DatePicker.Root :min="{year:2024,month:1,day:1}" @update:value="setDate">
-    <DatePicker.Trigger>Choisir une date</DatePicker.Trigger>
-    <DatePicker.Portal>
-      <DatePicker.Content>
-        <DatePicker.CalendarHeader />
-        <DatePicker.CalendarGrid>
-          <DatePicker.CalendarRow :week-index="-1">
-            <DatePicker.WeekdayHeader v-for="i in 7" :key="i" :day-index="i-1" />
-          </DatePicker.CalendarRow>
-        </DatePicker.CalendarGrid>
-      </DatePicker.Content>
-    </DatePicker.Portal>
-  </DatePicker.Root>
 </template>
 ```
+
+Voir [packages/vue/README.md](packages/vue/README.md) pour l'API complète.
 
 ### Nuxt (auto-import)
 
@@ -264,20 +225,7 @@ export default defineNuxtConfig({
 })
 ```
 
-```vue
-<!-- Aucun import — tout est auto-importé -->
-<template>
-  <Dialog.Root>
-    <Dialog.Trigger>Ouvrir</Dialog.Trigger>
-    <Dialog.Portal>
-      <Dialog.Content>
-        <Dialog.Title>Titre</Dialog.Title>
-        <Dialog.Close>Fermer</Dialog.Close>
-      </Dialog.Content>
-    </Dialog.Portal>
-  </Dialog.Root>
-</template>
-```
+Toutes les primitives sont auto-importées — aucun `import` requis dans les composants.
 
 ---
 
@@ -286,7 +234,6 @@ export default defineNuxtConfig({
 ### `asChild` — rendu polymorphe
 
 ```tsx
-// Merge les props forge-ui sur votre propre élément
 <Dialog.Trigger asChild>
   <MyButton variant="primary">Ouvrir</MyButton>
 </Dialog.Trigger>
@@ -308,26 +255,20 @@ export default defineNuxtConfig({
 | Attribut | Valeurs | Éléments |
 |---|---|---|
 | `data-state` | `"open"` / `"closed"` / `"checked"` / `"unchecked"` | Tous les overlays et inputs |
-| `data-forge-scope` | `"dialog"` / `"select"` / `"slider"` / … | Tous |
 | `data-forge-part` | `"trigger"` / `"content"` / `"item"` / `"thumb"` / … | Tous |
 | `data-disabled` | `""` (présent) | Éléments désactivés |
 | `data-selected` | `""` (présent) | Options sélectionnées |
 | `data-highlighted` | `""` (présent) | Option active au clavier |
-| `data-in-range` | `""` (présent) | Marks Slider dans la plage |
 | `data-orientation` | `"horizontal"` / `"vertical"` | Slider, Tabs |
 | `data-side` | `"top"` / `"bottom"` / `"left"` / `"right"` | Popover, Select, Tooltip |
 
 ```html
-<!-- Slider thumb -->
-<div data-forge-part="thumb"
-     class="w-5 h-5 rounded-full bg-white border-2 border-slate-900
-            data-[disabled]:opacity-40 data-[active]:scale-110" />
-
-<!-- Select option -->
+<!-- Utilisation Tailwind v4 -->
 <li data-forge-part="option"
-    class="px-3 py-1.5 rounded cursor-pointer
-           data-[highlighted]:bg-blue-50 data-[selected]:font-semibold
-           data-[disabled]:opacity-40 data-[disabled]:pointer-events-none" />
+    class="px-3 py-1.5 rounded
+           data-highlighted:bg-blue-50
+           data-selected:font-semibold
+           data-disabled:opacity-40 data-disabled:pointer-events-none" />
 ```
 
 ---
@@ -346,47 +287,28 @@ bun run dev:vue      # localhost:3001
 bun run dev:nuxt     # localhost:3002
 
 # Tests
-bun run test             # unitaires (tous packages)
-bun run test:coverage    # + rapport de couverture
+bun run test             # unitaires
+bun run test:coverage    # + rapport couverture
 bun run test:e2e         # Playwright 3 browsers
 
 # Qualité
 bun run build
 bun run typecheck
 bun run lint
+
+# Analyse de taille
+bun run size             # rapport local
+bun run size:ci          # échoue si seuil dépassé
 ```
 
 ---
 
-## Comparatif concurrents
+## Contribution
 
-> Données vérifiées sur les dépôts officiels — juin 2026.
-
-| | forge-ui | Radix UI | Ark UI | Headless UI | Reka UI |
-|---|---|---|---|---|---|
-| **Frameworks** | | | | | |
-| React | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Vue | ✅ | ❌ | ✅ | ✅ | ✅ |
-| Nuxt (auto-import) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Architecture** | | | | | |
-| FSM machine exposée | ✅ | ❌ | ✅ (Zag.js) | ❌ | ❌ |
-| Framework-agnostic core | ✅ | ❌ | ✅ | ❌ | ❌ |
-| Zero runtime deps (core) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Primitives notables** | | | | | |
-| Date Picker (calendrier pop-up) | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Date Range Picker | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Time Picker (segments) | ✅ | ❌ | ✅ | ❌ | ❌ |
-| Combobox creatable | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Combobox virtual scroll | ✅ | ❌ | ✅ | ❌ | ❌ |
-| Select virtual scroll | ✅ | ❌ | ✅ | ❌ | ❌ |
-| Slider multi-thumb + marks | ✅ | ❌ | ✅ | ❌ | ✅ |
-| TagsInput natif | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Avatar FSM (initiales auto) | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Toggle Group (`role="toolbar"`) | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Menu (keyboard + submenus) | ✅ | ✅ | ✅ | ✅ | ✅ |
+Voir [CONTRIBUTING.md](CONTRIBUTING.md) — GitFlow, conventions de commit (gitmoji), checklist PR, et processus de promotion vers main.
 
 ---
 
 ## Licence
 
-MIT
+MIT © [GregoireF](https://github.com/GregoireF)

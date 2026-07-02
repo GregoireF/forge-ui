@@ -1,6 +1,12 @@
 # @forge-ui/react
 
+[![CI](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml)
+[![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../../LICENSE)
+
 React 19+ bindings for forge-ui headless UI primitives. All 28 primitives — WAI-ARIA compliant, zero styles.
+
+Part of [forge-ui](../../README.md) — see the root README for the full primitive list, architecture overview, and competitor comparison.
 
 ## Install
 
@@ -481,15 +487,13 @@ import { TagsInput } from '@forge-ui/react'
 
 <TagsInput.Root defaultValue={['react']} onValueChange={setTags}>
   <TagsInput.Label>Technologies</TagsInput.Label>
-  <TagsInput.Root>
-    {tags.map(t => (
-      <TagsInput.Tag key={t} value={t}>
-        {t}
-        <TagsInput.TagDelete value={t}>✕</TagsInput.TagDelete>
-      </TagsInput.Tag>
-    ))}
-    <TagsInput.Input placeholder="Add tag…" />
-  </TagsInput.Root>
+  {tags.map(t => (
+    <TagsInput.Tag key={t} value={t}>
+      {t}
+      <TagsInput.TagDelete value={t}>✕</TagsInput.TagDelete>
+    </TagsInput.Tag>
+  ))}
+  <TagsInput.Input placeholder="Add tag…" />
   <TagsInput.HiddenInput name="tags" />
 </TagsInput.Root>
 ```

@@ -1,6 +1,12 @@
 # @forge-ui/vue
 
+[![CI](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml)
+[![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../../LICENSE)
+
 Vue 3.5+ bindings for forge-ui headless UI primitives. All 28 primitives — WAI-ARIA compliant, zero styles.
+
+Part of [forge-ui](../../README.md) — see the root README for the full primitive list, architecture overview, and competitor comparison.
 
 ## Install
 
