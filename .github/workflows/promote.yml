@@ -1,0 +1,79 @@
+name: Promote develop → main
+
+# Crée une PR de release depuis develop vers main.
+# Déclencheur manuel uniquement — le merge reste une décision humaine.
+# Après merge, changesets détecte les changements et crée le PR de versioning.
+
+on:
+  workflow_dispatch:
+    inputs:
+      description:
+        description: "Qu'est-ce qui est inclus dans cette promotion ?"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  promote:
+    name: Ouvrir PR develop → main
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Vérifier que develop existe et est à jour
+        run: |
+          git fetch origin develop main
+          AHEAD=$(git rev-list origin/main..origin/develop --count)
+          echo "develop est $AHEAD commit(s) devant main"
+          if [ "$AHEAD" -eq 0 ]; then
+            echo "::error::develop est identique à main — rien à promouvoir."
+            exit 1
+          fi
+
+      - name: Créer la PR release candidate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DESCRIPTION="${{ inputs.description }}"
+          COMMITS=$(git log origin/main..origin/develop --oneline --no-merges | head -30)
+          AHEAD=$(git rev-list origin/main..origin/develop --count)
+
+          gh pr create \
+            --base main \
+            --head develop \
+            --title "🚀 chore(release): promote develop → main" \
+            --label "release-candidate" \
+            --body "$(cat <<EOF
+          ## Release candidate
+
+          $DESCRIPTION
+
+          ---
+
+          ### $AHEAD commit(s) à merger
+
+          \`\`\`
+          $COMMITS
+          \`\`\`
+
+          ---
+
+          ### Checklist pré-merge
+
+          - [ ] CI verte (typecheck + lint + test + build)
+          - [ ] E2E Playwright verts
+          - [ ] CodeQL sans alerte critique
+          - [ ] Changesets créés pour tous les packages modifiés
+          - [ ] CHANGELOG à jour
+
+          > Après merge : changesets va créer automatiquement le PR **Version Packages** → bumps npm.
+          EOF
+          )"

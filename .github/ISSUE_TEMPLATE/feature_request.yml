@@ -1,0 +1,63 @@
+name: Feature request
+description: Proposer une nouvelle fonctionnalité ou amélioration
+title: "feat(<scope>): <description courte>"
+labels: ["enhancement", "needs-triage"]
+assignees: ["GregoireF"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Une idée d'amélioration ? Super. Décris le problème que tu cherches à résoudre —
+        souvent la solution émerge d'elle-même.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Catégorie
+      options:
+        - Nouveau primitif
+        - Amélioration d'un primitif existant
+        - API / connect
+        - Accessibilité (WAI-ARIA)
+        - Performance
+        - DX / tooling
+        - Documentation
+        - Autre
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Quel problème cherches-tu à résoudre ?
+      description: Décris le contexte et la douleur. "En tant que… je veux… pour…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution proposée
+      description: API idéale, comportement attendu, pseudo-code, wireframe…
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considérées
+      description: Workarounds actuels, autres approches possibles.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité estimée
+      options:
+        - Critique (bloque la production)
+        - Haute (bloque une feature)
+        - Normale
+        - Basse (nice-to-have)
+    validations:
+      required: true

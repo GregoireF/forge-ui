@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussion générale
+    url: https://github.com/GregoireF/forge-ui/discussions
+    about: Questions, idées, retours informels — utiliser les Discussions plutôt qu'une issue.

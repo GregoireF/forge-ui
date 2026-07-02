@@ -1,0 +1,71 @@
+name: Auto-label PRs
+
+# Applique automatiquement des labels selon le nom de la branche source.
+# Pas de GITHUB_TOKEN write requis au niveau workflow — la permission est déclarée sur le job.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    name: Appliquer labels par branche
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Labelliser selon le préfixe de branche
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+            const base   = context.payload.pull_request.base.ref;
+            const pr     = context.payload.pull_request.number;
+
+            const labelMap = [
+              { pattern: /^feat\//,    label: 'enhancement'        },
+              { pattern: /^fix\//,     label: 'bug'                },
+              { pattern: /^hotfix\//,  label: 'hotfix'             },
+              { pattern: /^docs\//,    label: 'documentation'      },
+              { pattern: /^chore\//,   label: 'chore'              },
+              { pattern: /^refactor\//, label: 'refactor'          },
+              { pattern: /^test\//,    label: 'test'               },
+              { pattern: /^ci\//,      label: 'ci'                 },
+              { pattern: /^perf\//,    label: 'performance'        },
+            ];
+
+            const toAdd = [];
+
+            for (const { pattern, label } of labelMap) {
+              if (pattern.test(branch)) {
+                toAdd.push(label);
+                break;
+              }
+            }
+
+            // PR depuis develop vers main → release candidate
+            if (branch === 'develop' && base === 'main') {
+              toAdd.push('release-candidate');
+            }
+
+            // Hotfix = urgence → ajouter priorité aussi
+            if (branch.startsWith('hotfix/')) {
+              toAdd.push('priority: high');
+            }
+
+            if (toAdd.length === 0) {
+              console.log(`Aucun label mappé pour la branche "${branch}"`);
+              return;
+            }
+
+            console.log(`Ajout des labels : ${toAdd.join(', ')}`);
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: pr,
+              labels: toAdd,
+            });

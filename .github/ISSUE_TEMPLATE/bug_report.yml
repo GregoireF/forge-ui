@@ -1,0 +1,100 @@
+name: Bug report
+description: Un comportement inattendu dans un primitif forge-ui
+title: "bug(<scope>): <description courte>"
+labels: ["bug", "needs-triage"]
+assignees: ["GregoireF"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de remplir ce formulaire. Plus les infos sont précises, plus vite on corrige.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package concerné
+      description: Quel primitif/package est affecté ?
+      options:
+        - "@forge-ui/accordion"
+        - "@forge-ui/alert-dialog"
+        - "@forge-ui/avatar"
+        - "@forge-ui/checkbox"
+        - "@forge-ui/collapsible"
+        - "@forge-ui/combobox"
+        - "@forge-ui/core"
+        - "@forge-ui/date-field"
+        - "@forge-ui/date-picker"
+        - "@forge-ui/date-range-picker"
+        - "@forge-ui/dialog"
+        - "@forge-ui/field"
+        - "@forge-ui/floating"
+        - "@forge-ui/hover-card"
+        - "@forge-ui/menu"
+        - "@forge-ui/number-input"
+        - "@forge-ui/nuxt"
+        - "@forge-ui/popover"
+        - "@forge-ui/progress"
+        - "@forge-ui/radio-group"
+        - "@forge-ui/react"
+        - "@forge-ui/select"
+        - "@forge-ui/separator"
+        - "@forge-ui/slider"
+        - "@forge-ui/switch"
+        - "@forge-ui/tabs"
+        - "@forge-ui/tags-input"
+        - "@forge-ui/time-picker"
+        - "@forge-ui/toggle"
+        - "@forge-ui/toggle-group"
+        - "@forge-ui/tooltip"
+        - "@forge-ui/vue"
+        - "@forge-ui/visually-hidden"
+        - "Autre / Inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework
+      multiple: true
+      options:
+        - React
+        - Vue
+        - Nuxt
+        - Machine (core, framework-agnostic)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description du bug
+      description: Que se passe-t-il ? Soyez précis.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Que devrait-il se passer à la place ?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes pour reproduire
+      placeholder: |
+        1. Monter le composant avec les props `…`
+        2. Cliquer sur `…`
+        3. Observer `…`
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexte (optionnel)
+      description: Version du package, navigateur, OS, snippet de code minimal, etc.
+      render: text
