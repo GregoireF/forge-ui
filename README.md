@@ -1,11 +1,11 @@
 # forge-ui
 
 <!-- Dynamic badges (updated by CI) -->
-[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
-[![E2E](https://github.com/OWNER/REPO/actions/workflows/e2e.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/e2e.yml)
-[![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg?token=TOKEN)](https://codecov.io/gh/OWNER/REPO)
-[![axe-core WCAG 2.1 AA](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/OWNER/REPO/main/axe-badge.json)](e2e/react/a11y.spec.ts)
-[![Bundle size](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/OWNER/REPO/main/bundle-size-badge.json)](tooling/scripts/bundle-size.ts)
+[![CI](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/GregoireF/forge-ui/actions/workflows/ci.yml)
+[![E2E](https://github.com/GregoireF/forge-ui/actions/workflows/e2e.yml/badge.svg)](https://github.com/GregoireF/forge-ui/actions/workflows/e2e.yml)
+[![Coverage](https://codecov.io/gh/GregoireF/forge-ui/branch/main/graph/badge.svg)](https://codecov.io/gh/GregoireF/forge-ui)
+[![axe-core WCAG 2.1 AA](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/GregoireF/forge-ui/main/axe-badge.json)](e2e/react/a11y.spec.ts)
+[![Bundle size](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/GregoireF/forge-ui/main/bundle-size-badge.json)](tooling/scripts/bundle-size.ts)
 <!-- Static badges -->
 [![WAI-ARIA 1.2](https://img.shields.io/badge/WAI--ARIA-1.2-0057b8)](https://www.w3.org/TR/wai-aria-1.2/)
 [![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
@@ -17,7 +17,7 @@ Composants headless accessibles pour **React 19** et **Vue 3**. Zéro style — 
 
 ---
 
-## Primitives (22 disponibles — React · Vue · Nuxt)
+## Primitives (28 disponibles — React · Vue · Nuxt)
 
 ### Overlays & floating
 
@@ -28,14 +28,17 @@ Composants headless accessibles pour **React 19** et **Vue 3**. Zéro style — 
 | Popover | `@forge-ui/popover` | Floating panel — modal ou non-modal |
 | Tooltip | `@forge-ui/tooltip` | `role="tooltip"` — provider skip-delay |
 | Hover Card | `@forge-ui/hover-card` | Popover déclenché au survol |
+| Menu | `@forge-ui/menu` | `role="menu"` — keyboard nav, submenus, roving tabindex |
 
-### Formulaires
+### Formulaires & interactions
 
 | Primitive | Package | WAI-ARIA |
 |---|---|---|
-| Checkbox | `@forge-ui/checkbox` | `role="checkbox"` — tri-state, groupe |
+| Checkbox | `@forge-ui/checkbox` | `role="checkbox"` — tri-state, groupe, select-all |
 | Radio Group | `@forge-ui/radio-group` | `role="radiogroup"` |
 | Switch | `@forge-ui/switch` | `role="switch"` |
+| Toggle | `@forge-ui/toggle` | `<button aria-pressed>` — [Button Pattern §3.5](https://www.w3.org/WAI/ARIA/apg/patterns/button/) |
+| Toggle Group | `@forge-ui/toggle-group` | `role="toolbar"` — roving tabindex, single / multiple |
 | Slider | `@forge-ui/slider` | `role="slider"` — multi-thumb, marks décoratifs, vertical |
 | Number Input | `@forge-ui/number-input` | `role="spinbutton"` — spin-repeat, locale |
 | Tags Input | `@forge-ui/tags-input` | Live region `role="status"` — delimiter, maxTags |
@@ -66,6 +69,14 @@ Composants headless accessibles pour **React 19** et **Vue 3**. Zéro style — 
 | Tabs | `@forge-ui/tabs` | `role="tablist"` — activation automatique / manuelle |
 | Progress | `@forge-ui/progress` | `role="progressbar"` — déterminé / indéterminé |
 
+### Utilitaires
+
+| Primitive | Package | Notes |
+|---|---|---|
+| Avatar | `@forge-ui/avatar` | Machine FSM image load — fallback, initiales auto, delayMs |
+| Separator | `@forge-ui/separator` | `role="separator"` ou `role="none"` — horizontal / vertical |
+| Visually Hidden | `@forge-ui/visually-hidden` | CSS clip-path — accessible aux AT, invisible visuellement |
+
 ---
 
 ## Architecture
@@ -76,7 +87,7 @@ Inspirée de [Zag.js](https://zagjs.com) — implémentation FSM maison (~150 li
 packages/
   core/                        # FSM engine + utilitaires a11y
   floating/                    # Wrapper @floating-ui/dom
-  primitives/                  # 22 packages machine + connect
+  primitives/                  # 28 packages machine + connect
   react/                       # Bindings React 19 (compound components + hooks)
   vue/                         # Bindings Vue 3.5 (defineComponent + provide/inject)
   nuxt/                        # Module Nuxt 4 (auto-import)
@@ -349,17 +360,30 @@ bun run lint
 
 ## Comparatif concurrents
 
+> Données vérifiées sur les dépôts officiels — juin 2026.
+
 | | forge-ui | Radix UI | Ark UI | Headless UI | Reka UI |
 |---|---|---|---|---|---|
+| **Frameworks** | | | | | |
 | React | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Vue | ✅ | ❌ | ✅ | ✅ | ✅ |
-| Nuxt auto-import | ✅ | ❌ | ❌ | ❌ | ❌ |
-| FSM machine exposée | ✅ | ❌ | ✅ (Zag) | ❌ | ❌ |
-| Date Picker complet | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Nuxt (auto-import) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Architecture** | | | | | |
+| FSM machine exposée | ✅ | ❌ | ✅ (Zag.js) | ❌ | ❌ |
+| Framework-agnostic core | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Zero runtime deps (core) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Primitives notables** | | | | | |
+| Date Picker (calendrier pop-up) | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Date Range Picker | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Time Picker (segments) | ✅ | ❌ | ✅ | ❌ | ❌ |
 | Combobox creatable | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Slider marks | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Virtual scroll Select | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Combobox virtual scroll | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Select virtual scroll | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Slider multi-thumb + marks | ✅ | ❌ | ✅ | ❌ | ✅ |
 | TagsInput natif | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Avatar FSM (initiales auto) | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Toggle Group (`role="toolbar"`) | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Menu (keyboard + submenus) | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ---
 

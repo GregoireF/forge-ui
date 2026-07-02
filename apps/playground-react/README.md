@@ -1,26 +1,30 @@
 # playground-react
 
-React 19 development sandbox for forge-ui primitives. All 22 components wired up in a single-page demo with live interaction.
+React 19 development sandbox for forge-ui primitives. All 28 components wired up in a single-page demo with live interaction.
 
 ## Run
 
 ```bash
 # From repo root
-pnpm dev --filter playground-react
+bun dev:react
 
 # Or from this directory
-pnpm dev
+bun dev
 ```
 
-Opens at `http://localhost:5174` (Vite dev server).
+Opens at `http://localhost:3000` (Vite dev server).
 
 ## What's included
 
-- All 22 forge-ui primitives with interactive examples
-- Slider: horizontal with marks, range (2 thumbs), vertical
-- Combobox: single, async, creatable, multi-select with TagsInput
-- DatePicker / DateRangePicker: min/max constraints, forceMount for CSS animations
-- Select: virtual scroll demo with `allOptions`
+- All 28 forge-ui primitives with interactive examples
+- Toggle / Toggle Group — pressed state, single/multiple toolbar selection
+- Avatar — image load FSM, fallback with delayMs, auto-initials
+- Separator — horizontal and vertical variants
+- Slider — horizontal with marks, range (2 thumbs), vertical
+- Combobox — single, async, creatable, multi-select with TagsInput
+- DatePicker / DateRangePicker — min/max constraints, forceMount for CSS animations
+- Select — virtual scroll demo with `allOptions`
+- Menu — keyboard navigation, separator, disabled items
 
 ## Stack
 

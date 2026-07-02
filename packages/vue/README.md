@@ -1,6 +1,6 @@
 # @forge-ui/vue
 
-Vue 3.5+ bindings for forge-ui headless UI primitives. All 22 primitives — WAI-ARIA compliant, zero styles.
+Vue 3.5+ bindings for forge-ui headless UI primitives. All 28 primitives — WAI-ARIA compliant, zero styles.
 
 ## Install
 
@@ -184,6 +184,26 @@ const open = ref(false)
       </HoverCard.Content>
     </HoverCard.Portal>
   </HoverCard.Root>
+</template>
+```
+
+---
+
+### Menu
+
+```vue
+<template>
+  <Menu.Root>
+    <Menu.Trigger>Actions</Menu.Trigger>
+    <Menu.Portal>
+      <Menu.Content>
+        <Menu.Item @select="edit">Edit</Menu.Item>
+        <Menu.Item @select="duplicate">Duplicate</Menu.Item>
+        <Menu.Separator />
+        <Menu.Item disabled @select="remove">Delete</Menu.Item>
+      </Menu.Content>
+    </Menu.Portal>
+  </Menu.Root>
 </template>
 ```
 
@@ -391,6 +411,62 @@ const options = [
   </Switch.Root>
 </template>
 ```
+
+---
+
+### Toggle
+
+```vue
+<script setup>
+import { Toggle } from '@forge-ui/vue'
+const isBold = ref(false)
+</script>
+
+<template>
+  <Toggle v-model:pressed="isBold" aria-label="Gras">
+    <strong>B</strong>
+  </Toggle>
+</template>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `pressed` / `defaultPressed` | `boolean` | — / `false` |
+| `onPressedChange` | `(pressed: boolean) => void` | — |
+| `disabled` | `boolean` | `false` |
+
+---
+
+### Toggle Group
+
+```vue
+<script setup>
+import { ToggleGroup } from '@forge-ui/vue'
+const alignment = ref([])
+</script>
+
+<template>
+  <!-- Single selection -->
+  <ToggleGroup.Root v-model:value="alignment" type="single" aria-label="Alignement texte">
+    <ToggleGroup.Item value="left" aria-label="Gauche">←</ToggleGroup.Item>
+    <ToggleGroup.Item value="center" aria-label="Centre">↔</ToggleGroup.Item>
+    <ToggleGroup.Item value="right" aria-label="Droite">→</ToggleGroup.Item>
+  </ToggleGroup.Root>
+
+  <!-- Multiple selection -->
+  <ToggleGroup.Root type="multiple" aria-label="Mise en forme">
+    <ToggleGroup.Item value="bold" aria-label="Gras"><strong>B</strong></ToggleGroup.Item>
+    <ToggleGroup.Item value="italic" aria-label="Italique"><em>I</em></ToggleGroup.Item>
+    <ToggleGroup.Item value="underline" aria-label="Souligné"><u>U</u></ToggleGroup.Item>
+  </ToggleGroup.Root>
+</template>
+```
+
+| Prop (`Root`) | Type | Default |
+|---|---|---|
+| `type` | `"single" \| "multiple"` | `"single"` |
+| `value` / `defaultValue` | `string[]` | — / `[]` |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` |
 
 ---
 
@@ -652,6 +728,73 @@ const marks = [{ value: 0 }, { value: 50, label: '50%' }, { value: 100 }]
     </DateRangePicker.Portal>
     <DateRangePicker.HiddenInputs name="range" />
   </DateRangePicker.Root>
+</template>
+```
+
+---
+
+### Avatar
+
+```vue
+<script setup>
+import { Avatar } from '@forge-ui/vue'
+</script>
+
+<template>
+  <Avatar.Root
+    name="Alice Smith"
+    style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; position: relative"
+  >
+    <Avatar.Image src="https://example.com/photo.jpg" alt="Alice Smith" style="width: 100%; height: 100%; object-fit: cover" />
+    <Avatar.Fallback :delay-ms="600">AS</Avatar.Fallback>
+  </Avatar.Root>
+</template>
+```
+
+Accès aux initiales calculées via `injectAvatarContext()` :
+
+```vue
+<script setup>
+import { Avatar, injectAvatarContext } from '@forge-ui/vue'
+const { initials } = injectAvatarContext()
+</script>
+
+<template>
+  <Avatar.Fallback :delay-ms="600">{{ initials }}</Avatar.Fallback>
+</template>
+```
+
+---
+
+### Separator
+
+```vue
+<template>
+  <!-- Sémantique (annoncé par les lecteurs d'écran) -->
+  <Separator.Root />
+  <Separator.Root orientation="vertical" />
+
+  <!-- Décoratif (aria-hidden, role="none") -->
+  <Separator.Root :decorative="true" />
+</template>
+```
+
+---
+
+### Visually Hidden
+
+```vue
+<template>
+  <!-- Bouton icône avec label accessible -->
+  <button>
+    <CloseIcon />
+    <VisuallyHidden.Root>Fermer le dialogue</VisuallyHidden.Root>
+  </button>
+
+  <!-- Skip link (visible au focus) -->
+  <VisuallyHidden.Root :focusable="true">
+    <a href="#main">Aller au contenu</a>
+  </VisuallyHidden.Root>
 </template>
 ```
 
