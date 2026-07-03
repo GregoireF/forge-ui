@@ -1,4 +1,4 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import type { SliderContext, SliderEvent, SliderState } from "./slider.types.js";
 
 export type SliderSend = (event: SliderEvent) => void;
@@ -42,7 +42,7 @@ function closestThumbIndex(pointerValue: number, values: number[]): number {
 export function connectSlider(
   snapshot: MachineSnapshot<SliderContext, SliderState>,
   send: SliderSend,
-  machine: Pick<MachineInstance<SliderContext, SliderState, SliderEvent>, "setContext">,
+  setContext: (updates: Partial<SliderContext>) => void,
 ) {
   const { context } = snapshot;
   const { values, min, max, step, orientation, disabled } = context;
@@ -77,7 +77,7 @@ export function connectSlider(
         "data-orientation": orientation,
         "data-disabled": disabled ? ("" as const) : undefined,
         ref(el: Element | null) {
-          machine.setContext({ trackEl: el });
+          setContext({ trackEl: el });
         },
         onPointerDown(e: PointerEvent) {
           if (disabled || e.button !== 0) return;

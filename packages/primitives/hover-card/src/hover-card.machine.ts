@@ -13,7 +13,6 @@ export interface CreateHoverCardMachineOptions {
 
 function invokeOnOpenChange(open: boolean) {
   return function action({ context }: { context: HoverCardContext }) {
-    context.isOpen = open;
     context.onOpenChange?.(open);
   };
 }
@@ -44,7 +43,6 @@ export function createHoverCardMachine(options: CreateHoverCardMachineOptions) {
       id,
       openDelay: options.openDelay ?? 700,
       closeDelay: options.closeDelay ?? 300,
-      isOpen: false,
       triggerId: `${id}-trigger`,
       contentId: `${id}-content`,
       currentPlacement: pos.placement ?? "bottom",

@@ -31,7 +31,7 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
   }, [options.options, options.onHighlightedScroll, options.onCreateOption, machine.setContext]);
 
   return {
-    ...connectCombobox(snapshot, send, machine),
+    ...connectCombobox(snapshot, send, machine.setContext),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
   };

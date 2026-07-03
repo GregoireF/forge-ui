@@ -31,7 +31,6 @@ export function createTooltipMachine(options: CreateTooltipMachineOptions) {
     id: `forge-tooltip:${id}`,
     context: {
       id,
-      open: options.open ?? false,
       disabled: options.disabled ?? false,
       interactive: options.interactive ?? false,
       closeOnPointerDown: options.closeOnPointerDown ?? true,

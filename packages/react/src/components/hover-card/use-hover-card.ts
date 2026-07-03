@@ -42,7 +42,7 @@ export function useHoverCard(options: UseHoverCardOptions = {}): UseHoverCardRet
   }, [machine, options.openDelay, options.closeDelay, options.onOpenChange]);
 
   return {
-    ...connectHoverCard(snapshot, send, machine),
+    ...connectHoverCard(snapshot, send, machine.setContext),
     send,
   };
 }

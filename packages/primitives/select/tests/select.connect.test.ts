@@ -42,8 +42,8 @@ function makeSnapshot(ctx: SelectContext, state: SelectState = "closed") {
 function makeApi(overrides: Partial<SelectContext> = {}, state: SelectState = "closed") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectSelect(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectSelect(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -628,21 +628,21 @@ describe("connectSelect — ref callbacks", () => {
   it("getTriggerProps ref registers triggerEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectSelect(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectSelect(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("button");
     (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
   it("getContentProps ref registers contentEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectSelect(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectSelect(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 });
 
@@ -786,8 +786,8 @@ describe("connectSelect — virtual scroll (allOptions)", () => {
   it("onHighlightedScroll stored in context and allOptions exposed via api", () => {
     const onHighlightedScroll = vi.fn();
     const ctx = makeCtx({ allOptions: ALL_OPTIONS, onHighlightedScroll, highlighted: "a" });
-    const machine = { setContext: vi.fn() };
-    const api = connectSelect(makeSnapshot(ctx, "open"), vi.fn(), machine);
+    const setContext = vi.fn();
+    const api = connectSelect(makeSnapshot(ctx, "open"), vi.fn(), setContext);
     // onHighlightedScroll is a context callback wired in machine, verify presence
     expect(ctx.onHighlightedScroll).toBe(onHighlightedScroll);
     expect(api.options).toEqual(ALL_OPTIONS);

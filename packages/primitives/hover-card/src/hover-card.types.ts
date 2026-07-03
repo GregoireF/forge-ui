@@ -7,7 +7,6 @@ export interface HoverCardContext {
   id: string;
   openDelay: number;
   closeDelay: number;
-  isOpen: boolean;
   triggerId: string;
   contentId: string;
   currentPlacement: Placement;

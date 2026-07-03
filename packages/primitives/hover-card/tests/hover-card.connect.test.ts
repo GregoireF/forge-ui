@@ -7,7 +7,6 @@ function makeCtx(overrides: Partial<HoverCardContext> = {}): HoverCardContext {
     id: "test-hc",
     openDelay: 700,
     closeDelay: 300,
-    isOpen: false,
     triggerId: "test-hc-trigger",
     contentId: "test-hc-content",
     currentPlacement: "bottom",
@@ -35,8 +34,8 @@ function makeSnapshot(ctx: HoverCardContext, state: HoverCardState = "idle") {
 function makeApi(overrides: Partial<HoverCardContext> = {}, state: HoverCardState = "idle") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectHoverCard(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectHoverCard(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -179,14 +178,14 @@ describe("connectHoverCard — getArrowProps", () => {
     expect(api.getArrowProps()["data-side"]).toBe("left");
   });
 
-  it("ref callback calls machine.setContext with arrowEl", () => {
+  it("ref callback calls setContext with arrowEl", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectHoverCard(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectHoverCard(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     api.getArrowProps().ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ arrowEl: el });
+    expect(setContext).toHaveBeenCalledWith({ arrowEl: el });
   });
 });
 
@@ -313,20 +312,20 @@ describe("connectHoverCard — ref callbacks", () => {
   it("getTriggerProps ref registers triggerEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectHoverCard(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectHoverCard(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("button");
     (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
   it("getContentProps ref registers contentEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectHoverCard(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectHoverCard(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 });

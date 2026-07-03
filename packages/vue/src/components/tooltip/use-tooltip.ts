@@ -47,7 +47,7 @@ export function useTooltip(options: UseTooltipOptions = {}) {
   });
 
   const { snapshot, send } = useMachine(machine);
-  const api = computed(() => connectTooltip(snapshot.value, send, machine));
+  const api = computed(() => connectTooltip(snapshot.value, send, machine.setContext));
 
   return {
     isOpen: computed(() => snapshot.value.matches("open")),

@@ -1,12 +1,12 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
-import type { SwitchContext, SwitchEvent, SwitchSend, SwitchState } from "./switch.types.js";
+import type { MachineSnapshot } from "@forge-ui/core";
+import type { SwitchContext, SwitchSend, SwitchState } from "./switch.types.js";
 
 export type SwitchApi = ReturnType<typeof connectSwitch>;
 
 export function connectSwitch(
   snapshot: MachineSnapshot<SwitchContext, SwitchState>,
   send: SwitchSend,
-  machine: Pick<MachineInstance<SwitchContext, SwitchState, SwitchEvent>, "setContext">,
+  setContext: (updates: Partial<SwitchContext>) => void,
 ) {
   const { context } = snapshot;
   const isChecked = snapshot.matches("on");
@@ -32,7 +32,7 @@ export function connectSwitch(
         "data-invalid": context.invalid ? "" : undefined,
         "data-forge-scope": "switch",
         "data-forge-part": "root",
-        ref: (el: unknown) => machine.setContext({ rootEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ rootEl: el as HTMLElement | null }),
       };
     },
 

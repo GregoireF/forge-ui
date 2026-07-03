@@ -29,8 +29,8 @@ function makeSnapshot(ctx: SliderContext, state: SliderState = "idle") {
 function makeApi(overrides: Partial<SliderContext> = {}, state: SliderState = "idle") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectSlider(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectSlider(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -372,11 +372,11 @@ describe("connectSlider — getTrackProps", () => {
 
   it("ref callback registers trackEl on machine", () => {
     const ctx = makeCtx();
-    const machine = { setContext: vi.fn() };
-    const api = connectSlider(makeSnapshot(ctx), vi.fn(), machine);
+    const setContext = vi.fn();
+    const api = connectSlider(makeSnapshot(ctx), vi.fn(), setContext);
     const el = document.createElement("div");
     (api.getTrackProps() as Record<string, (el: Element | null) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ trackEl: el });
+    expect(setContext).toHaveBeenCalledWith({ trackEl: el });
   });
 });
 

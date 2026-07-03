@@ -20,7 +20,7 @@ export function useSelect(options: UseSelectOptions = {}): UseSelectReturn {
   const [snapshot, send] = useMachine(machine);
 
   return {
-    ...connectSelect(snapshot, send, machine),
+    ...connectSelect(snapshot, send, machine.setContext),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
   };

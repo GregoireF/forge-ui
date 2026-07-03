@@ -1,4 +1,4 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import { updateLayerContentEl } from "@forge-ui/core";
 import {
   getAlignFromPlacement,
@@ -8,7 +8,6 @@ import {
 import type {
   KeyEventLike,
   SelectContext,
-  SelectEvent,
   SelectOption,
   SelectSend,
   SelectState,
@@ -78,7 +77,7 @@ function createTypeahead(
 export function connectSelect(
   snapshot: MachineSnapshot<SelectContext, SelectState>,
   send: SelectSend,
-  machine: Pick<MachineInstance<SelectContext, SelectState, SelectEvent>, "setContext">,
+  setContext: (updates: Partial<SelectContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open");
@@ -217,7 +216,7 @@ export function connectSelect(
         "data-placeholder": context.value.length === 0 ? "" : undefined,
         "data-forge-scope": "select",
         "data-forge-part": "trigger",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onClick() {
           if (!context.disabled) send("TOGGLE");
         },
@@ -269,7 +268,7 @@ export function connectSelect(
         } as unknown as Record<string, string>,
         ref: (el: unknown) => {
           const contentEl = el as HTMLElement | null;
-          machine.setContext({ contentEl });
+          setContext({ contentEl });
           updateLayerContentEl(context.id, contentEl);
         },
       };

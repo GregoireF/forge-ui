@@ -24,7 +24,7 @@ export function useDateRangePicker(options: UseDateRangePickerOptions = {}) {
     // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
   }, [options.value, machine.update]);
 
-  return connectDateRangePicker(snapshot, send, machine);
+  return connectDateRangePicker(snapshot, send, machine.setContext);
 }
 
 export type UseDateRangePickerReturn = ReturnType<typeof useDateRangePicker>;

@@ -45,7 +45,7 @@ function makeApi(
 ) {
   const ctx = makeCtx(ctxOverrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn<(updates: Partial<DateRangePickerContext>) => void>() };
+  const setContext = vi.fn<(updates: Partial<DateRangePickerContext>) => void>();
   const snapshot: MachineSnapshot<DateRangePickerContext, DateRangePickerState> = {
     value: state,
     context: ctx,
@@ -53,8 +53,8 @@ function makeApi(
     tags: state === "open" ? ["open"] : ["closed"],
     hasTag: (t: string) => (state === "open" ? t === "open" : t === "closed"),
   };
-  const api = connectDateRangePicker(snapshot, send, machine);
-  return { api, send, machine };
+  const api = connectDateRangePicker(snapshot, send, setContext);
+  return { api, send, setContext };
 }
 
 // ---------------------------------------------------------------------------
@@ -396,16 +396,16 @@ describe("connectDateRangePicker — previewEnd", () => {
 
 describe("connectDateRangePicker — trigger ref callback", () => {
   it("ref callback sets triggerEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("button");
     (api.getTriggerProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
   it("ref callback with null clears triggerEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     (api.getTriggerProps().ref as (el: unknown) => void)(null);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: null });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: null });
   });
 });
 
@@ -415,16 +415,16 @@ describe("connectDateRangePicker — trigger ref callback", () => {
 
 describe("connectDateRangePicker — content ref callback", () => {
   it("ref callback sets contentEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("div");
     (api.getContentProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 
   it("ref callback with null clears contentEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     (api.getContentProps().ref as (el: unknown) => void)(null);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: null });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: null });
   });
 });
 

@@ -38,7 +38,7 @@ function navigateTabs(
   if (target) {
     target.focus();
     if (activationMode === "automatic") {
-      const val = (target as HTMLElement).dataset.value;
+      const val = (target as HTMLElement).dataset["value"];
       if (val) send({ type: "SELECT_TAB", value: val });
     }
   }

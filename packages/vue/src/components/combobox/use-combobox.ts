@@ -57,7 +57,7 @@ export function useCombobox(options: UseComboboxOptions = {}): UseComboboxReturn
   });
 
   const isOpen = computed(() => snapshot.value.matches("open"));
-  const api = computed(() => connectCombobox(snapshot.value, send, machine));
+  const api = computed(() => connectCombobox(snapshot.value, send, machine.setContext));
 
   return {
     isOpen,

@@ -24,8 +24,8 @@ function makeSnapshot(ctx: SwitchContext, state: SwitchState = "off") {
 function makeApi(overrides: Partial<SwitchContext> = {}, state: SwitchState = "off") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectSwitch(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectSwitch(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -302,10 +302,10 @@ describe("connectSwitch — getRootProps ref callback", () => {
   it("ref registers rootEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectSwitch(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectSwitch(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     (api.getRootProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ rootEl: el });
+    expect(setContext).toHaveBeenCalledWith({ rootEl: el });
   });
 });

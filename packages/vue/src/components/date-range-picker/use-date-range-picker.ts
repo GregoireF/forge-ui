@@ -18,7 +18,7 @@ export function useDateRangePicker(options: UseDateRangePickerOptions = {}) {
   const machine = createDateRangePickerMachine({ id, ...options });
   const { snapshot, send } = useMachine(machine);
 
-  const api = computed(() => connectDateRangePicker(snapshot.value, send, machine));
+  const api = computed(() => connectDateRangePicker(snapshot.value, send, machine.setContext));
 
   return {
     isOpen: computed(() => api.value.isOpen),

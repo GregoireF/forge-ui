@@ -34,7 +34,7 @@ export function useHoverCard(options: UseHoverCardOptions = {}) {
   });
 
   const { snapshot, send } = useMachine(machine);
-  const api = computed(() => connectHoverCard(snapshot.value, send, machine));
+  const api = computed(() => connectHoverCard(snapshot.value, send, machine.setContext));
 
   const isOpen = computed(() => api.value.isOpen);
 

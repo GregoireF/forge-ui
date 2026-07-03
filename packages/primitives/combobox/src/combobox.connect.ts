@@ -1,8 +1,7 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import { getAlignFromPlacement, getSideFromPlacement } from "@forge-ui/floating";
 import type {
   ComboboxContext,
-  ComboboxEvent,
   ComboboxOption,
   ComboboxSend,
   ComboboxState,
@@ -16,7 +15,7 @@ const defaultFilterFn = (option: ComboboxOption, inputValue: string): boolean =>
 export function connectCombobox(
   snapshot: MachineSnapshot<ComboboxContext, ComboboxState>,
   send: ComboboxSend,
-  machine: Pick<MachineInstance<ComboboxContext, ComboboxState, ComboboxEvent>, "setContext">,
+  setContext: (updates: Partial<ComboboxContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open");
@@ -104,7 +103,7 @@ export function connectCombobox(
         "data-state": state,
         "data-forge-scope": "combobox",
         "data-forge-part": "input",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onInput(e: Event) {
           if (context.disabled || context.readOnly) return;
           const value = (e.target as HTMLInputElement).value;
@@ -191,7 +190,7 @@ export function connectCombobox(
         "data-forge-part": "content",
         "data-side": side,
         "data-align": align,
-        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ contentEl: el as HTMLElement | null }),
       };
     },
 
@@ -250,7 +249,7 @@ export function connectCombobox(
         "data-state": state,
         "data-forge-scope": "combobox",
         "data-forge-part": "trigger",
-        ref: (el: unknown) => machine.setContext({ buttonEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ buttonEl: el as HTMLElement | null }),
         onClick() {
           if (!context.disabled && !context.readOnly) {
             send(isOpen ? "CLOSE" : "OPEN");

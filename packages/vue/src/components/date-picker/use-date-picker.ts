@@ -14,7 +14,7 @@ export function useDatePicker(options: UseDatePickerOptions = {}) {
   const machine = createDatePickerMachine({ id, ...options });
   const { snapshot, send } = useMachine(machine);
 
-  const api = computed(() => connectDatePicker(snapshot.value, send, machine));
+  const api = computed(() => connectDatePicker(snapshot.value, send, machine.setContext));
 
   return {
     isOpen: computed(() => api.value.isOpen),

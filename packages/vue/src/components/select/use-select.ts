@@ -33,7 +33,7 @@ export function useSelect(options: UseSelectOptions = {}): UseSelectReturn {
   const { snapshot, send } = useMachine(machine);
 
   const isOpen = computed(() => snapshot.value.matches("open"));
-  const api = computed(() => connectSelect(snapshot.value, send, machine));
+  const api = computed(() => connectSelect(snapshot.value, send, machine.setContext));
 
   return {
     isOpen,

@@ -18,7 +18,7 @@
  * - View switching: day ↔ month ↔ year (drill-down; back with VIEW_DAYS/VIEW_MONTHS)
  */
 
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import {
   addMonths,
   formatDateLabel,
@@ -46,7 +46,7 @@ export type DatePickerApi = ReturnType<typeof connectDatePicker>;
 export function connectDatePicker(
   snapshot: MachineSnapshot<DatePickerContext, DatePickerState>,
   send: DatePickerSend,
-  machine: Pick<MachineInstance<DatePickerContext, DatePickerState, DatePickerEvent>, "setContext">,
+  setContext: (updates: Partial<DatePickerContext>) => void,
 ) {
   const { context } = snapshot;
 
@@ -145,7 +145,7 @@ export function connectDatePicker(
         "data-forge-part": "trigger",
         disabled: disabled || undefined,
         ref: (el: unknown) => {
-          machine.setContext({ triggerEl: el as HTMLElement | null });
+          setContext({ triggerEl: el as HTMLElement | null });
         },
         onClick() {
           if (disabled) return;
@@ -169,7 +169,7 @@ export function connectDatePicker(
         "data-forge-scope": "date-picker",
         "data-forge-part": "content",
         ref: (el: unknown) => {
-          machine.setContext({ contentEl: el as HTMLElement | null });
+          setContext({ contentEl: el as HTMLElement | null });
         },
       };
     },

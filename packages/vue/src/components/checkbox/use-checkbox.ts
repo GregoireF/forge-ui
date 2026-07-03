@@ -32,7 +32,7 @@ export function useCheckbox(options: UseCheckboxOptions = {}) {
     );
   }
 
-  const api = computed(() => connectCheckbox(snapshot.value, send, machine));
+  const api = computed(() => connectCheckbox(snapshot.value, send, machine.setContext));
 
   return {
     isChecked: computed(() => api.value.isChecked),

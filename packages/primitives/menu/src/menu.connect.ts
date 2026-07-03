@@ -1,4 +1,4 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import { updateLayerContentEl } from "@forge-ui/core";
 import {
   getAlignFromPlacement,
@@ -8,7 +8,6 @@ import {
 import type {
   KeyEventLike,
   MenuContext,
-  MenuEvent,
   MenuItem,
   MenuSend,
   MenuState,
@@ -76,7 +75,7 @@ function createTypeahead(
 export function connectMenu(
   snapshot: MachineSnapshot<MenuContext, MenuState>,
   send: MenuSend,
-  machine: Pick<MachineInstance<MenuContext, MenuState, MenuEvent>, "setContext">,
+  setContext: (updates: Partial<MenuContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open");
@@ -187,7 +186,7 @@ export function connectMenu(
     },
 
     send,
-    setContext: machine.setContext,
+    setContext,
 
     // ── Trigger ────────────────────────────────────────────────────────────
 
@@ -207,7 +206,7 @@ export function connectMenu(
         disabled: disabled || undefined,
         "aria-disabled": disabled || undefined,
         "data-disabled": disabled ? "" : undefined,
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onClick() {
           if (!disabled) send("TOGGLE");
         },
@@ -220,7 +219,7 @@ export function connectMenu(
       return {
         "data-forge-scope": "menu",
         "data-forge-part": "context-menu-trigger",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onContextMenu(event: { clientX: number; clientY: number; preventDefault(): void }) {
           event.preventDefault();
           send({ type: "CONTEXT_MENU", x: event.clientX, y: event.clientY });
@@ -280,7 +279,7 @@ export function connectMenu(
         "data-forge-part": "content",
         ref: (el: unknown) => {
           const htmlEl = el as HTMLElement | null;
-          machine.setContext({ contentEl: htmlEl });
+          setContext({ contentEl: htmlEl });
           updateLayerContentEl(context.id, htmlEl);
           if (htmlEl && !context.isContextMenu) {
             htmlEl.style.setProperty(
@@ -301,7 +300,7 @@ export function connectMenu(
         "data-forge-scope": "menu",
         "data-forge-part": "arrow",
         "data-side": side,
-        ref: (el: unknown) => machine.setContext({ arrowEl: el as Element | null }),
+        ref: (el: unknown) => setContext({ arrowEl: el as Element | null }),
       };
     },
 
@@ -320,7 +319,7 @@ export function connectMenu(
       return {
         "data-forge-scope": "menu",
         "data-forge-part": "anchor",
-        ref: (el: unknown) => machine.setContext({ anchorEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ anchorEl: el as HTMLElement | null }),
       };
     },
 

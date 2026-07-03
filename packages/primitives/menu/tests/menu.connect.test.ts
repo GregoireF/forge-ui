@@ -47,8 +47,8 @@ function makeSnapshot(ctx: MenuContext, state: MenuState = "closed") {
 function makeApi(overrides: Partial<MenuContext> = {}, state: MenuState = "closed") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectMenu(makeSnapshot(ctx, state), send, machine), send, machine };
+  const setContext = vi.fn();
+  return { api: connectMenu(makeSnapshot(ctx, state), send, setContext), send, setContext };
 }
 
 // ---------------------------------------------------------------------------
@@ -137,10 +137,10 @@ describe("connectMenu — getTriggerProps", () => {
   });
 
   it("sets triggerEl via ref callback", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("button");
     (api.getTriggerProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 });
 
@@ -533,16 +533,16 @@ describe("connectMenu — getAnchorProps", () => {
   });
 
   it("ref callback calls setContext with anchorEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("span");
     (api.getAnchorProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ anchorEl: el });
+    expect(setContext).toHaveBeenCalledWith({ anchorEl: el });
   });
 
   it("ref callback with null clears anchorEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     (api.getAnchorProps().ref as (el: unknown) => void)(null);
-    expect(machine.setContext).toHaveBeenCalledWith({ anchorEl: null });
+    expect(setContext).toHaveBeenCalledWith({ anchorEl: null });
   });
 });
 
@@ -701,10 +701,10 @@ describe("connectMenu — getArrowProps", () => {
   });
 
   it("ref callback calls setContext with arrowEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("span");
     (api.getArrowProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ arrowEl: el });
+    expect(setContext).toHaveBeenCalledWith({ arrowEl: el });
   });
 });
 
@@ -1041,16 +1041,16 @@ describe("connectMenu — focus helpers", () => {
 
 describe("connectMenu — getContextMenuTriggerProps", () => {
   it("ref callback sets triggerEl on machine", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("div");
     (api.getContextMenuTriggerProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
   it("ref callback with null clears triggerEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     (api.getContextMenuTriggerProps().ref as (el: unknown) => void)(null);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: null });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: null });
   });
 
   it("onContextMenu calls preventDefault and sends CONTEXT_MENU with coords", () => {
@@ -1068,16 +1068,16 @@ describe("connectMenu — getContextMenuTriggerProps", () => {
 
 describe("connectMenu — getContentProps ref callback", () => {
   it("ref callback sets contentEl on machine", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     const el = document.createElement("div");
     (api.getContentProps().ref as (el: unknown) => void)(el);
-    expect(machine.setContext).toHaveBeenCalledWith(expect.objectContaining({ contentEl: el }));
+    expect(setContext).toHaveBeenCalledWith(expect.objectContaining({ contentEl: el }));
   });
 
   it("ref callback with null clears contentEl", () => {
-    const { api, machine } = makeApi();
+    const { api, setContext } = makeApi();
     (api.getContentProps().ref as (el: unknown) => void)(null);
-    expect(machine.setContext).toHaveBeenCalledWith(expect.objectContaining({ contentEl: null }));
+    expect(setContext).toHaveBeenCalledWith(expect.objectContaining({ contentEl: null }));
   });
 });
 

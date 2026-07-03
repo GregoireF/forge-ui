@@ -5,7 +5,6 @@ import type { TooltipContext, TooltipState } from "../src/tooltip.types.js";
 function makeCtx(overrides: Partial<TooltipContext> = {}): TooltipContext {
   return {
     id: "test-tooltip",
-    open: false,
     disabled: false,
     interactive: false,
     closeOnPointerDown: false,
@@ -33,8 +32,8 @@ function makeSnapshot(ctx: TooltipContext, state: TooltipState = "closed") {
 function makeApi(overrides: Partial<TooltipContext> = {}, state: TooltipState = "closed") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectTooltip(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectTooltip(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -186,11 +185,11 @@ describe("connectTooltip — getContentProps", () => {
   it("ref callback registers contentEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectTooltip(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 
   it("id matches contentId", () => {
@@ -248,11 +247,11 @@ describe("connectTooltip — getArrowProps", () => {
   it("ref callback registers arrowEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectTooltip(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     api.getArrowProps().ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ arrowEl: el });
+    expect(setContext).toHaveBeenCalledWith({ arrowEl: el });
   });
 });
 
@@ -340,11 +339,11 @@ describe("connectTooltip — getAnchorProps", () => {
   it("ref callback registers anchorEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectTooltip(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     api.getAnchorProps().ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ anchorEl: el });
+    expect(setContext).toHaveBeenCalledWith({ anchorEl: el });
   });
 });
 
@@ -356,11 +355,11 @@ describe("connectTooltip — getTriggerProps ref callback", () => {
   it("ref callback registers triggerEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectTooltip(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectTooltip(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 });
 

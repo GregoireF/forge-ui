@@ -1,8 +1,7 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import type {
   CheckboxChecked,
   CheckboxContext,
-  CheckboxEvent,
   CheckboxSend,
   CheckboxState,
 } from "./checkbox.types.js";
@@ -12,7 +11,7 @@ export type CheckboxApi = ReturnType<typeof connectCheckbox>;
 export function connectCheckbox(
   snapshot: MachineSnapshot<CheckboxContext, CheckboxState>,
   send: CheckboxSend,
-  machine: Pick<MachineInstance<CheckboxContext, CheckboxState, CheckboxEvent>, "setContext">,
+  setContext: (updates: Partial<CheckboxContext>) => void,
 ) {
   const { context } = snapshot;
   const isChecked = snapshot.matches("checked");
@@ -41,7 +40,7 @@ export function connectCheckbox(
         "data-readonly": context.readOnly ? "" : undefined,
         "data-forge-scope": "checkbox",
         "data-forge-part": "root",
-        ref: (el: unknown) => machine.setContext({ rootEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ rootEl: el as HTMLElement | null }),
       };
     },
 

@@ -21,7 +21,7 @@ export function useDatePicker(options: UseDatePickerOptions = {}) {
     // biome-ignore lint/correctness/useExhaustiveDependencies: value object reference triggers sync
   }, [options.value, machine.update]);
 
-  return connectDatePicker(snapshot, send, machine);
+  return connectDatePicker(snapshot, send, machine.setContext);
 }
 
 export type UseDatePickerReturn = ReturnType<typeof useDatePicker>;

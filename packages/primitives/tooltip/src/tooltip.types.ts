@@ -5,7 +5,6 @@ export type { FloatingPositioning as TooltipPositioning };
 
 export interface TooltipContext {
   id: string;
-  open: boolean;
   disabled: boolean;
   interactive: boolean;
   closeOnPointerDown: boolean;

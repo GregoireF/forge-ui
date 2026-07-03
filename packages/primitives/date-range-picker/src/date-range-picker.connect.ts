@@ -15,7 +15,7 @@
  * - Trigger aria-label reflects the current range ("June 15 – July 1, 2024")
  */
 
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import {
   addMonths,
   compareDate,
@@ -44,10 +44,7 @@ export type DateRangePickerApi = ReturnType<typeof connectDateRangePicker>;
 export function connectDateRangePicker(
   snapshot: MachineSnapshot<DateRangePickerContext, DateRangePickerState>,
   send: DateRangePickerSend,
-  machine: Pick<
-    MachineInstance<DateRangePickerContext, DateRangePickerState, DateRangePickerEvent>,
-    "setContext"
-  >,
+  setContext: (updates: Partial<DateRangePickerContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.hasTag("open");
@@ -163,7 +160,7 @@ export function connectDateRangePicker(
         "data-forge-scope": "date-range-picker",
         "data-forge-part": "trigger",
         disabled: disabled || undefined,
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onClick() {
           if (disabled) return;
           send("TOGGLE");
@@ -185,7 +182,7 @@ export function connectDateRangePicker(
         "data-selection-phase": selectionPhase,
         "data-forge-scope": "date-range-picker",
         "data-forge-part": "content",
-        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ contentEl: el as HTMLElement | null }),
       };
     },
 

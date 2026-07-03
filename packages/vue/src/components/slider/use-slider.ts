@@ -14,7 +14,7 @@ export function useSlider(options: UseSliderOptions = {}) {
   const machine = createSliderMachine({ id, ...options });
   const { snapshot, send } = useMachine(machine);
 
-  const api = computed(() => connectSlider(snapshot.value, send, machine));
+  const api = computed(() => connectSlider(snapshot.value, send, machine.setContext));
 
   return {
     values: computed(() => api.value.values),

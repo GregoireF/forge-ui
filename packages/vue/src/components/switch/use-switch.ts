@@ -28,7 +28,7 @@ export function useSwitch(options: UseSwitchOptions = {}) {
     );
   }
 
-  const api = computed(() => connectSwitch(snapshot.value, send, machine));
+  const api = computed(() => connectSwitch(snapshot.value, send, machine.setContext));
 
   return {
     isChecked: computed(() => api.value.isChecked),

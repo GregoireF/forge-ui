@@ -47,8 +47,8 @@ function makeSnapshot(ctx: ComboboxContext, state: ComboboxState = "closed") {
 function makeApi(overrides: Partial<ComboboxContext> = {}, state: ComboboxState = "closed") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectCombobox(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectCombobox(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -752,31 +752,31 @@ describe("connectCombobox — ref callbacks", () => {
   it("getInputProps ref registers triggerEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectCombobox(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectCombobox(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("input");
     (api.getInputProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 
   it("getContentProps ref registers contentEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectCombobox(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectCombobox(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("div");
     (api.getContentProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 
   it("getTriggerProps ref registers buttonEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectCombobox(makeSnapshot(ctx), send, machine);
+    const setContext = vi.fn();
+    const api = connectCombobox(makeSnapshot(ctx), send, setContext);
     const el = document.createElement("button");
     (api.getTriggerProps() as Record<string, (el: HTMLElement) => void>).ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ buttonEl: el });
+    expect(setContext).toHaveBeenCalledWith({ buttonEl: el });
   });
 });
 

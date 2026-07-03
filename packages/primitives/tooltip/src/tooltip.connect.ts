@@ -1,6 +1,6 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import { getAlignFromPlacement, getSideFromPlacement } from "@forge-ui/floating";
-import type { TooltipContext, TooltipEvent, TooltipSend, TooltipState } from "./tooltip.types.js";
+import type { TooltipContext, TooltipSend, TooltipState } from "./tooltip.types.js";
 
 export type TooltipApi = ReturnType<typeof connectTooltip>;
 
@@ -18,7 +18,7 @@ export type TooltipApi = ReturnType<typeof connectTooltip>;
 export function connectTooltip(
   snapshot: MachineSnapshot<TooltipContext, TooltipState>,
   send: TooltipSend,
-  machine: Pick<MachineInstance<TooltipContext, TooltipState, TooltipEvent>, "setContext">,
+  setContext: (updates: Partial<TooltipContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open");
@@ -60,7 +60,7 @@ export function connectTooltip(
         "data-disabled": context.disabled || undefined,
         "data-forge-scope": "tooltip",
         "data-forge-part": "trigger",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onPointerEnter(e: { pointerType: string }) {
           if (e.pointerType === "touch") return;
           scheduleOpen();
@@ -123,7 +123,7 @@ export function connectTooltip(
         "data-side": side,
         "data-align": align,
         "data-placement": context.currentPlacement,
-        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ contentEl: el as HTMLElement | null }),
         ...(context.interactive && {
           onPointerEnter() {
             scheduleOpen();
@@ -141,7 +141,7 @@ export function connectTooltip(
       return {
         "data-forge-scope": "tooltip",
         "data-forge-part": "anchor",
-        ref: (el: unknown) => machine.setContext({ anchorEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ anchorEl: el as HTMLElement | null }),
       };
     },
 
@@ -150,7 +150,7 @@ export function connectTooltip(
         "data-forge-scope": "tooltip",
         "data-forge-part": "arrow",
         "data-side": side,
-        ref: (el: unknown) => machine.setContext({ arrowEl: el as Element | null }),
+        ref: (el: unknown) => setContext({ arrowEl: el as Element | null }),
       };
     },
 

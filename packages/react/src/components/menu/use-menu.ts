@@ -82,7 +82,7 @@ export function useMenu(options: UseMenuOptions = {}): UseMenuReturn {
     }
   }, [openProp, send]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const api = connectMenu(snapshot, send, machine);
+  const api = connectMenu(snapshot, send, machine.setContext);
 
   return {
     id,

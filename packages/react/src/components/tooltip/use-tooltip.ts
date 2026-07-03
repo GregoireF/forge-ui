@@ -64,7 +64,7 @@ export function useTooltip(options: UseTooltipOptions = {}) {
   }, [options.open, snapshot.value, send]);
 
   return {
-    ...connectTooltip(snapshot, send, machine),
+    ...connectTooltip(snapshot, send, machine.setContext),
     send,
     setOpen: (open: boolean) => send(open ? "OPEN" : "CLOSE"),
   };

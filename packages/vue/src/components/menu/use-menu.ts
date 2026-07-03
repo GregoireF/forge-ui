@@ -70,7 +70,7 @@ export function useMenu(options: UseMenuOptions = {}): UseMenuReturn {
   const highlighted = computed(() => snapshot.value.context.highlighted);
   const highlightSource = computed(() => snapshot.value.context.highlightSource);
   const modal = computed(() => snapshot.value.context.modal);
-  const api = computed(() => connectMenu(snapshot.value, send, machine));
+  const api = computed(() => connectMenu(snapshot.value, send, machine.setContext));
 
   return {
     id,

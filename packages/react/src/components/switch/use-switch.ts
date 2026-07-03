@@ -26,7 +26,7 @@ export function useSwitch(options: UseSwitchOptions = {}) {
   const [snapshot, send] = useMachine(machine);
 
   return {
-    ...connectSwitch(snapshot, send, machine),
+    ...connectSwitch(snapshot, send, machine.setContext),
     send,
   };
 }

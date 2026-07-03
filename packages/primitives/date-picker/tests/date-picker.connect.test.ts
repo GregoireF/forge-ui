@@ -29,7 +29,7 @@ function makeCtx(overrides: Partial<DatePickerContext> = {}): DatePickerContext 
 function makeApi(overrides: Partial<DatePickerContext> = {}, state: DatePickerState = "closed") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn<(updates: Partial<DatePickerContext>) => void>() };
+  const setContext = vi.fn<(updates: Partial<DatePickerContext>) => void>();
   const openStates = ["open.day", "open.month", "open.year"];
   const tags = openStates.includes(state) ? ["open"] : ["closed"];
   const snapshot: MachineSnapshot<DatePickerContext, DatePickerState> = {
@@ -39,7 +39,7 @@ function makeApi(overrides: Partial<DatePickerContext> = {}, state: DatePickerSt
     hasTag: (t: string) => tags.includes(t),
     tags,
   };
-  return { api: connectDatePicker(snapshot, send, machine), send, machine };
+  return { api: connectDatePicker(snapshot, send, setContext), send, setContext };
 }
 
 // ---------------------------------------------------------------------------
@@ -95,11 +95,11 @@ describe("connectDatePicker — getTriggerProps", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("ref callback calls machine.setContext with triggerEl", () => {
-    const { api, machine } = makeApi();
+  it("ref callback calls setContext with triggerEl", () => {
+    const { api, setContext } = makeApi();
     const el = document.createElement("button");
     api.getTriggerProps().ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ triggerEl: el });
+    expect(setContext).toHaveBeenCalledWith({ triggerEl: el });
   });
 });
 
@@ -142,11 +142,11 @@ describe("connectDatePicker — getContentProps", () => {
     expect(makeApi({}, "closed").api.getContentProps()["data-view"]).toBeUndefined();
   });
 
-  it("ref callback calls machine.setContext with contentEl", () => {
-    const { api, machine } = makeApi();
+  it("ref callback calls setContext with contentEl", () => {
+    const { api, setContext } = makeApi();
     const el = document.createElement("div");
     api.getContentProps().ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ contentEl: el });
+    expect(setContext).toHaveBeenCalledWith({ contentEl: el });
   });
 });
 

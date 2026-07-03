@@ -29,7 +29,7 @@ export function useCheckbox(options: UseCheckboxOptions = {}) {
   const [snapshot, send] = useMachine(machine);
 
   return {
-    ...connectCheckbox(snapshot, send, machine),
+    ...connectCheckbox(snapshot, send, machine.setContext),
     send,
   };
 }

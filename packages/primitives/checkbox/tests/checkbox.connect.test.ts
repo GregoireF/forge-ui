@@ -23,8 +23,8 @@ function makeSnapshot(ctx: CheckboxContext, state: CheckboxState = "unchecked") 
 function makeApi(overrides: Partial<CheckboxContext> = {}, state: CheckboxState = "unchecked") {
   const ctx = makeCtx(overrides);
   const send = vi.fn();
-  const machine = { setContext: vi.fn() };
-  return { api: connectCheckbox(makeSnapshot(ctx, state), send, machine), send };
+  const setContext = vi.fn();
+  return { api: connectCheckbox(makeSnapshot(ctx, state), send, setContext), send };
 }
 
 // ---------------------------------------------------------------------------
@@ -88,11 +88,11 @@ describe("connectCheckbox — getRootProps", () => {
   it("ref callback registers rootEl on machine", () => {
     const ctx = makeCtx();
     const send = vi.fn();
-    const machine = { setContext: vi.fn() };
-    const api = connectCheckbox(makeSnapshot(ctx, "unchecked"), send, machine);
+    const setContext = vi.fn();
+    const api = connectCheckbox(makeSnapshot(ctx, "unchecked"), send, setContext);
     const el = document.createElement("div");
     api.getRootProps().ref(el);
-    expect(machine.setContext).toHaveBeenCalledWith({ rootEl: el });
+    expect(setContext).toHaveBeenCalledWith({ rootEl: el });
   });
 });
 

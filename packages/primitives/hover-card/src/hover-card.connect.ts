@@ -1,11 +1,6 @@
-import type { MachineInstance, MachineSnapshot } from "@forge-ui/core";
+import type { MachineSnapshot } from "@forge-ui/core";
 import { getAlignFromPlacement, getSideFromPlacement } from "@forge-ui/floating";
-import type {
-  HoverCardContext,
-  HoverCardEvent,
-  HoverCardSend,
-  HoverCardState,
-} from "./hover-card.types.js";
+import type { HoverCardContext, HoverCardSend, HoverCardState } from "./hover-card.types.js";
 
 export type HoverCardApi = ReturnType<typeof connectHoverCard>;
 
@@ -22,7 +17,7 @@ export type HoverCardApi = ReturnType<typeof connectHoverCard>;
 export function connectHoverCard(
   snapshot: MachineSnapshot<HoverCardContext, HoverCardState>,
   send: HoverCardSend,
-  machine: Pick<MachineInstance<HoverCardContext, HoverCardState, HoverCardEvent>, "setContext">,
+  setContext: (updates: Partial<HoverCardContext>) => void,
 ) {
   const { context } = snapshot;
   const isOpen = snapshot.matches("open", "closing");
@@ -65,7 +60,7 @@ export function connectHoverCard(
         "data-state": state,
         "data-forge-scope": "hover-card",
         "data-forge-part": "trigger",
-        ref: (el: unknown) => machine.setContext({ triggerEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ triggerEl: el as HTMLElement | null }),
         onMouseEnter() {
           send({ type: "MOUSE_ENTER" });
           scheduleOpen();
@@ -116,7 +111,7 @@ export function connectHoverCard(
         "data-side": side,
         "data-align": align,
         "data-placement": context.currentPlacement,
-        ref: (el: unknown) => machine.setContext({ contentEl: el as HTMLElement | null }),
+        ref: (el: unknown) => setContext({ contentEl: el as HTMLElement | null }),
         onMouseEnter() {
           // Cancel any pending close timer when hovering over the content panel.
           // This keeps the card open while the user interacts with the content.
@@ -136,7 +131,7 @@ export function connectHoverCard(
         "data-forge-scope": "hover-card",
         "data-forge-part": "arrow",
         "data-side": side,
-        ref: (el: unknown) => machine.setContext({ arrowEl: el as Element | null }),
+        ref: (el: unknown) => setContext({ arrowEl: el as Element | null }),
       };
     },
   };
