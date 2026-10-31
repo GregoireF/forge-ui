@@ -15,12 +15,12 @@ apps/playground-react/          @GregoireF
 e2e/react/                      @GregoireF
 
 # ── Vue + Nuxt — collègue (lead), Grégoire (fallback) ─────────────────────
-packages/vue/                   @GregoireF @versnic
-packages/nuxt/                  @versnic @GregoireF
-apps/playground-vue/            @GregoireF @versnic
-apps/playground-nuxt/           @versnic @GregoireF
-e2e/vue/                        @GregoireF @versnic
-e2e/nuxt/                       @versnic @GregoireF
+packages/vue/                   @GregoireF
+packages/nuxt/                  @GregoireF
+apps/playground-vue/            @GregoireF
+apps/playground-nuxt/           @GregoireF
+e2e/vue/                        @GregoireF
+e2e/nuxt/                       @GregoireF
 
 # ── CI / Release — Grégoire ────────────────────────────────────────────────
 .github/                        @GregoireF
